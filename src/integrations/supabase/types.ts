@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          table_name: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          table_name: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          table_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       consents: {
         Row: {
           created_at: string
@@ -41,6 +65,105 @@ export type Database = {
         }
         Relationships: []
       }
+      hospital_stays: {
+        Row: {
+          created_at: string
+          event: string | null
+          hospital_country: string | null
+          id: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+          year: string | null
+        }
+        Insert: {
+          created_at?: string
+          event?: string | null
+          hospital_country?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+          year?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string | null
+          hospital_country?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      medical_conditions: {
+        Row: {
+          conditions_text: string | null
+          created_at: string
+          id: string
+          nothing_to_report: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conditions_text?: string | null
+          created_at?: string
+          id?: string
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conditions_text?: string | null
+          created_at?: string
+          id?: string
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      obstetric_history: {
+        Row: {
+          assisted_reproduction: boolean | null
+          complications: string | null
+          created_at: string
+          gave_birth: boolean | null
+          id: string
+          not_applicable: boolean
+          notes: string | null
+          num_children: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assisted_reproduction?: boolean | null
+          complications?: string | null
+          created_at?: string
+          gave_birth?: boolean | null
+          id?: string
+          not_applicable?: boolean
+          notes?: string | null
+          num_children?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assisted_reproduction?: boolean | null
+          complications?: string | null
+          created_at?: string
+          gave_birth?: boolean | null
+          id?: string
+          not_applicable?: boolean
+          notes?: string | null
+          num_children?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pairing_codes: {
         Row: {
           code: string
@@ -64,6 +187,30 @@ export type Database = {
           expires_at?: string
           id?: string
           used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      past_conditions: {
+        Row: {
+          conditions_text: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conditions_text?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conditions_text?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
