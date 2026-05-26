@@ -419,8 +419,8 @@ export default function MedicalHistoryForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s3")}</h2>
               <textarea
                 value={past}
-                onChange={(e) => setPast(e.target.value)}
-                onBlur={savePast}
+                onChange={(e) => { setPast(e.target.value); setDirty(true); }}
+                onBlur={() => { savePast(); setDirty(false); }}
                 placeholder={t("s3ph")}
                 rows={4}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
@@ -431,13 +431,13 @@ export default function MedicalHistoryForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s4")}</h2>
               <div className="space-y-3 rounded-xl bg-[#F8F9FA] p-4">
                 <label className="flex items-center gap-2 text-sm text-[#0D1B2A]">
-                  <Checkbox checked={obNA} onCheckedChange={(v) => setObNA(v === true)} />
+                  <Checkbox checked={obNA} onCheckedChange={(v) => { setObNA(v === true); setDirty(true); }} />
                   {t("na")}
                 </label>
 
                 {!obNA && (
                   <>
-                    <YesNo label={t("gave_birth")} value={gaveBirth} onChange={setGaveBirth} yes={t("yes")} no={t("no")} />
+                    <YesNo label={t("gave_birth")} value={gaveBirth} onChange={(v) => { setGaveBirth(v); setDirty(true); }} yes={t("yes")} no={t("no")} />
                     {gaveBirth && (
                       <div>
                         <label className="block text-xs text-gray-600">{t("num_children")}</label>
@@ -445,7 +445,7 @@ export default function MedicalHistoryForm() {
                           type="number"
                           min={0}
                           value={numChildren}
-                          onChange={(e) => setNumChildren(e.target.value)}
+                          onChange={(e) => { setNumChildren(e.target.value); setDirty(true); }}
                           className="mt-1 w-32 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#5B6BD4] focus:outline-none"
                         />
                       </div>
@@ -454,17 +454,17 @@ export default function MedicalHistoryForm() {
                       <label className="block text-xs text-gray-600">{t("complications")}</label>
                       <textarea
                         value={obComplications}
-                        onChange={(e) => setObComplications(e.target.value)}
+                        onChange={(e) => { setObComplications(e.target.value); setDirty(true); }}
                         placeholder={t("complications_ph")}
                         rows={3}
                         className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
                       />
                     </div>
-                    <YesNo label={t("assisted")} value={assisted} onChange={setAssisted} yes={t("yes")} no={t("no")} />
+                    <YesNo label={t("assisted")} value={assisted} onChange={(v) => { setAssisted(v); setDirty(true); }} yes={t("yes")} no={t("no")} />
                     {assisted && (
                       <textarea
                         value={assistedNotes}
-                        onChange={(e) => setAssistedNotes(e.target.value)}
+                        onChange={(e) => { setAssistedNotes(e.target.value); setDirty(true); }}
                         placeholder={t("describe")}
                         rows={3}
                         className="w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
