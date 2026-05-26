@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Bell, LogOut, Home as HomeIcon, Globe, FileText, Link as LinkIcon, User, ChevronRight, Check } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
+import { PassportSetupModal } from "@/components/PassportSetupModal";
 
 export const Route = createFileRoute("/passport/")({
   head: () => ({ meta: [{ title: "Health Passport — GlobeDoc" }] }),
@@ -34,6 +35,9 @@ const SECTIONS: {
 
 function PassportPage() {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string>("");
+  const [showSetup, setShowSetup] = useState(false);
+  const [setupInitial, setSetupInitial] = useState<any>({});
   const [done, setDone] = useState<Record<SectionKey, boolean>>({
     "medical-history": false,
     "medications": false,
@@ -52,6 +56,12 @@ function PassportPage() {
       if (!user) {
         navigate({ to: "/login" });
         return;
+      }
+      setUserId(user.id);
+      const { data: prof } = await supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
+      if (prof && !(prof as any).date_of_birth && !(prof as any).setup_dismissed_at) {
+        setSetupInitial(prof);
+        setShowSetup(true);
       }
       const sb = supabase as any;
       const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc] = await Promise.all([
@@ -212,9 +222,27 @@ function PassportPage() {
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" active />
           <NavTab icon={<FileText className="h-5 w-5" />} label="Records" />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
-          <NavTab icon={<User className="h-5 w-5" />} label="Profile" />
+          <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" />
         </ul>
       </nav>
+
+      {showSetup && userId && (
+        <PassportSetupModal userId={userId} initial={setupInitial} onDone={async () => {
+          setShowSetup(false);
+          // Apply Sweden/birth-year pre-checks for standard vaccines
+          const { data: p } = await supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle();
+          const prof: any = p;
+          if (prof?.nationality === "Sweden" && prof?.date_of_birth) {
+            const year = new Date(prof.date_of_birth).getFullYear();
+            const toCheck: string[] = [];
+            if (year < 1976) toCheck.push("BCG");
+            if (year >= 1993) toCheck.push("DTP/DTaP", "Polio (IPV)", "MMR", "Hib");
+            for (const v of toCheck) {
+              await supabase.from("standard_vaccines").insert({ user_id: userId, vaccine_name: v, received: true } as any);
+            }
+          }
+        }} />
+      )}
     </div>
   );
 }
@@ -237,7 +265,7 @@ function Hex({ children, bg, style, onClick }: { children: React.ReactNode; bg: 
   );
 }
 
-function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/pairing" }) {
+function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/pairing" | "/profile" }) {
   const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
     active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
   }`;

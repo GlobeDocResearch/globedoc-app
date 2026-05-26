@@ -313,29 +313,53 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
+          biological_sex: string | null
+          blood_group: string | null
+          country_of_residence: string | null
           created_at: string
+          date_of_birth: string | null
           first_name: string | null
           id: string
           language: string
           last_name: string | null
+          nationality: string | null
+          phone: string | null
+          setup_dismissed_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          address?: string | null
+          biological_sex?: string | null
+          blood_group?: string | null
+          country_of_residence?: string | null
           created_at?: string
+          date_of_birth?: string | null
           first_name?: string | null
           id?: string
           language?: string
           last_name?: string | null
+          nationality?: string | null
+          phone?: string | null
+          setup_dismissed_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          address?: string | null
+          biological_sex?: string | null
+          blood_group?: string | null
+          country_of_residence?: string | null
           created_at?: string
+          date_of_birth?: string | null
           first_name?: string | null
           id?: string
           language?: string
           last_name?: string | null
+          nationality?: string | null
+          phone?: string | null
+          setup_dismissed_at?: string | null
           updated_at?: string
           user_id?: string
         }

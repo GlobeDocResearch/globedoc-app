@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PairingRouteImport } from './routes/pairing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
@@ -21,6 +22,11 @@ import { Route as PassportSectionRouteImport } from './routes/passport.$section'
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PairingRoute = PairingRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport': typeof PassportIndexRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
+    | '/profile'
     | '/signup'
     | '/passport/$section'
     | '/passport/'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
+    | '/profile'
     | '/signup'
     | '/passport/$section'
     | '/passport'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
+    | '/profile'
     | '/signup'
     | '/passport/$section'
     | '/passport/'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
   PairingRoute: typeof PairingRoute
+  ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
   PassportSectionRoute: typeof PassportSectionRoute
   PassportIndexRoute: typeof PassportIndexRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pairing': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
   PairingRoute: PairingRoute,
+  ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
   PassportSectionRoute: PassportSectionRoute,
   PassportIndexRoute: PassportIndexRoute,
