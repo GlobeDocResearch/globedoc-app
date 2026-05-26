@@ -465,6 +465,7 @@ export type Database = {
           id: string
           ihr_card: string | null
           nothing_to_report: boolean
+          other_vaccine_text: string | null
           updated_at: string
           user_id: string
         }
@@ -474,6 +475,7 @@ export type Database = {
           id?: string
           ihr_card?: string | null
           nothing_to_report?: boolean
+          other_vaccine_text?: string | null
           updated_at?: string
           user_id: string
         }
@@ -483,6 +485,7 @@ export type Database = {
           id?: string
           ihr_card?: string | null
           nothing_to_report?: boolean
+          other_vaccine_text?: string | null
           updated_at?: string
           user_id?: string
         }
