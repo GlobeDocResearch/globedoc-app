@@ -6,6 +6,7 @@ import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 
 type Stay = {
   id: string;
