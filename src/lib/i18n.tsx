@@ -42,7 +42,7 @@ const en = {
   "consent.health2": "GlobeDoc will never sell or share my health data without my consent",
   "consent.health3": "I can withdraw this consent and permanently delete all my data at any time via Settings",
   "consent.health4": "I can request a full data export at any time",
-  "consent.health5": "Contact: privacy@globedoc.com",
+  "consent.health5": "Contact: hello@globedoc.com",
   "consent.create": "Create account",
   "consent.footer":
     "By creating an account you confirm the consents above. Your consent record is saved with a timestamp. You may withdraw consent at any time in Settings → Privacy & Data.",
@@ -93,7 +93,7 @@ const en = {
 
   "legal.pp.intro":
     "GlobeDoc Health AB (\"we\", \"us\") processes your personal data in accordance with the EU General Data Protection Regulation (GDPR) and Swedish data protection law.",
-  "legal.pp.controller": "Data controller: GlobeDoc Health AB, Sweden. Contact: privacy@globedoc.com",
+  "legal.pp.controller": "Data controller: GlobeDoc Health AB, Sweden. Contact: hello@globedoc.com",
   "legal.pp.collectTitle": "What data we collect:",
   "legal.pp.collect1": "Account information (email address, password hash)",
   "legal.pp.collect2": "Profile data (name, date of birth, contact information)",
@@ -108,7 +108,7 @@ const en = {
   "legal.pp.retention":
     "Retention: We retain your data for as long as your account is active. You may request deletion at any time.",
   "legal.pp.rights":
-    "Your rights: Under GDPR you have the right to access, correct, delete, restrict processing of, and port your personal data. Contact privacy@globedoc.com to exercise these rights.",
+    "Your rights: Under GDPR you have the right to access, correct, delete, restrict processing of, and port your personal data. Contact hello@globedoc.com to exercise these rights.",
   "legal.pp.cookies":
     "Cookies: We use only essential session cookies. We do not use advertising or tracking cookies.",
 
@@ -119,7 +119,7 @@ const en = {
   "legal.ds.l4": "Access controls: Row-level security ensures you can only access your own data.",
   "legal.ds.l5": "Pairing codes: Clinician access via pairing codes is time-limited (10 minutes) and read-only.",
   "legal.ds.l6": "Audit logging: All access to your health data is logged for your security.",
-  "legal.ds.report": "To report a security vulnerability, contact security@globedoc.com.",
+  "legal.ds.report": "To report a security vulnerability, contact hello@globedoc.com.",
 
   "legal.md.h": "GlobeDoc is not a medical device.",
   "legal.md.p1":
@@ -187,7 +187,7 @@ const sv: Record<keyof typeof en, string> = {
   "consent.health3":
     "Jag kan när som helst återkalla detta samtycke och permanent radera alla mina data via Inställningar",
   "consent.health4": "Jag kan när som helst begära en fullständig dataexport",
-  "consent.health5": "Kontakt: privacy@globedoc.com",
+  "consent.health5": "Kontakt: hello@globedoc.com",
   "consent.create": "Skapa konto",
   "consent.footer":
     "Genom att skapa ett konto bekräftar du samtyckena ovan. Ditt samtycke sparas med en tidsstämpel. Du kan när som helst återkalla samtycket under Inställningar → Integritet & Data.",
@@ -240,7 +240,7 @@ const sv: Record<keyof typeof en, string> = {
   "legal.pp.intro":
     "GlobeDoc Health AB (\"vi\", \"oss\") behandlar dina personuppgifter i enlighet med EU:s allmänna dataskyddsförordning (GDPR) och svensk dataskyddslagstiftning.",
   "legal.pp.controller":
-    "Personuppgiftsansvarig: GlobeDoc Health AB, Sverige. Kontakt: privacy@globedoc.com",
+    "Personuppgiftsansvarig: GlobeDoc Health AB, Sverige. Kontakt: hello@globedoc.com",
   "legal.pp.collectTitle": "Vilka uppgifter vi samlar in:",
   "legal.pp.collect1": "Kontoinformation (e-postadress, lösenords-hash)",
   "legal.pp.collect2": "Profildata (namn, födelsedatum, kontaktuppgifter)",
@@ -255,7 +255,7 @@ const sv: Record<keyof typeof en, string> = {
   "legal.pp.retention":
     "Lagringstid: Vi sparar dina data så länge ditt konto är aktivt. Du kan när som helst begära radering.",
   "legal.pp.rights":
-    "Dina rättigheter: Enligt GDPR har du rätt att få tillgång till, rätta, radera, begränsa behandling av och flytta dina personuppgifter. Kontakta privacy@globedoc.com för att utöva dessa rättigheter.",
+    "Dina rättigheter: Enligt GDPR har du rätt att få tillgång till, rätta, radera, begränsa behandling av och flytta dina personuppgifter. Kontakta hello@globedoc.com för att utöva dessa rättigheter.",
   "legal.pp.cookies":
     "Cookies: Vi använder endast nödvändiga sessionscookies. Vi använder inga annons- eller spårningscookies.",
 
@@ -270,7 +270,7 @@ const sv: Record<keyof typeof en, string> = {
     "Parkopplingskoder: Klinikers åtkomst via parkopplingskoder är tidsbegränsad (10 minuter) och endast läsbar.",
   "legal.ds.l6": "Granskningsloggning: All åtkomst till dina hälsodata loggas för din säkerhet.",
   "legal.ds.report":
-    "För att rapportera en säkerhetsbrist, kontakta security@globedoc.com.",
+    "För att rapportera en säkerhetsbrist, kontakta hello@globedoc.com.",
 
   "legal.md.h": "GlobeDoc är inte en medicinteknisk produkt.",
   "legal.md.p1":
