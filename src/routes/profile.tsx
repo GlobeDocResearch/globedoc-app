@@ -332,8 +332,8 @@ function ProfilePage() {
       {consentOpen && (
         <Modal onClose={() => setConsentOpen(false)} title={t.consentRecord} closeLabel={t.close}>
           <div className="space-y-2 text-sm">
-            <p><b>{t.termsAccepted}:</b> {consent?.terms_accepted_at ? new Date(consent.terms_accepted_at).toLocaleString() : t.notRecorded}</p>
-            <p><b>{t.healthAccepted}:</b> {consent?.health_data_accepted_at ? new Date(consent.health_data_accepted_at).toLocaleString() : t.notRecorded}</p>
+            <p><b>{t.termsAccepted}:</b> {consent?.terms_accepted_at ? formatConsentDate(consent.terms_accepted_at, lang) : t.notRecorded}</p>
+            <p><b>{t.healthAccepted}:</b> {consent?.health_data_accepted_at ? formatConsentDate(consent.health_data_accepted_at, lang) : t.notRecorded}</p>
           </div>
         </Modal>
       )}
