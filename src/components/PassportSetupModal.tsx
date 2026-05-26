@@ -100,9 +100,9 @@ export function PassportSetupModal({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={t.firstName}><input className={input} value={f.first_name ?? ""} onChange={(e) => update("first_name", e.target.value)} /></Field>
             <Field label={t.lastName}><input className={input} value={f.last_name ?? ""} onChange={(e) => update("last_name", e.target.value)} /></Field>
-            <Field label={t.dob}><input type="date" className={input} value={f.date_of_birth ?? ""} onChange={(e) => update("date_of_birth", e.target.value)} /></Field>
-            <Field label={t.sex}>
-              <select className={input} value={f.biological_sex ?? ""} onChange={(e) => update("biological_sex", e.target.value)}>
+            <Field label={`${t.dob} *`}><input type="date" required className={input} value={f.date_of_birth ?? ""} onChange={(e) => update("date_of_birth", e.target.value)} /></Field>
+            <Field label={`${t.sex} *`}>
+              <select required className={input} value={f.biological_sex ?? ""} onChange={(e) => update("biological_sex", e.target.value)}>
                 <option value="">{t.select}</option>
                 <option value="male">{t.male}</option>
                 <option value="female">{t.female}</option>
