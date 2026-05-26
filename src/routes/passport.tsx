@@ -34,14 +34,34 @@ const SECTIONS: {
 
 function PassportPage() {
   const navigate = useNavigate();
-  const completed = 0;
+  const [done, setDone] = useState<Record<SectionKey, boolean>>({
+    "medical-history": false,
+    "medications": false,
+    "allergies": false,
+    "vaccinations": false,
+    "heredity": false,
+    "lifestyle": false,
+  });
+  const completed = Object.values(done).filter(Boolean).length;
   const total = SECTIONS.length;
   const percent = Math.round((completed / total) * 100);
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) navigate({ to: "/login" });
+      if (!user) {
+        navigate({ to: "/login" });
+        return;
+      }
+      const [mc, hs] = await Promise.all([
+        supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
+      ]);
+      const mhDone =
+        !!mc.data?.nothing_to_report ||
+        !!(mc.data?.conditions_text && mc.data.conditions_text.trim().length > 0) ||
+        !!(hs.data && hs.data.length > 0);
+      setDone((d) => ({ ...d, "medical-history": mhDone }));
     })();
   }, [navigate]);
 
@@ -51,6 +71,7 @@ function PassportPage() {
   };
 
   const goSection = (key: SectionKey) => navigate({ to: "/passport/$section", params: { section: key } });
+
 
   return (
     <div className="min-h-screen bg-[#0D1B2A] pb-24">
@@ -93,7 +114,9 @@ function PassportPage() {
           <Hex style={{ left: 50, top: 0 }} bg={SECTIONS[0].color} onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
             <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Medical<br/>History</span>
+            {done["medical-history"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
+
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} bg={SECTIONS[1].color} onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
@@ -137,8 +160,9 @@ function PassportPage() {
               <p className="text-xs text-gray-400">{s.subtitle}</p>
             </div>
             <span className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-600">
-              {false && <Check className="h-4 w-4 text-green-400" />}
+              {done[s.key] && <Check className="h-4 w-4 text-green-400" />}
             </span>
+
           </button>
         ))}
 
