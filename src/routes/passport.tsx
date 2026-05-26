@@ -80,41 +80,42 @@ function PassportPage() {
         <p className="mt-2 text-xs text-gray-500">{percent}% complete</p>
       </section>
 
-      {/* Section 2 — Hexagon map */}
+      {/* Section 2 — Hexagon map (tight pointy-top honeycomb) */}
       <section className="mt-6 px-4">
-        <div className="relative mx-auto" style={{ width: 320, height: 340 }}>
+        <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
-          <Hex
-            style={{ left: 110, top: 120 }}
-            bg="#1A2B3C"
-            onClick={() => {}}
-          >
+          <Hex style={{ left: 100, top: 86 }} bg="#1A2B3C" onClick={() => {}}>
             <img src={logo} alt="" className="h-7 w-7" />
-            <span className="mt-1 text-[10px] font-bold leading-tight text-white">GlobeDoc<br/>Health Passport</span>
+            <span className="mt-1 text-[9px] font-bold leading-tight text-white text-center">GlobeDoc<br/>Health Passport</span>
             <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
           </Hex>
-          {/* 6 around */}
-          <Hex style={{ left: 20, top: 60 }} bg={SECTIONS[0].color} onClick={() => goSection(SECTIONS[0].key)}>
+          {/* Top-left: Medical History */}
+          <Hex style={{ left: 50, top: 0 }} bg={SECTIONS[0].color} onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">{SECTIONS[0].title}</span>
+            <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Medical<br/>History</span>
           </Hex>
-          <Hex style={{ left: 200, top: 60 }} bg={SECTIONS[1].color} onClick={() => goSection(SECTIONS[1].key)}>
+          {/* Top-right: Medications */}
+          <Hex style={{ left: 150, top: 0 }} bg={SECTIONS[1].color} onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">{SECTIONS[1].title}</span>
+            <span className="mt-1 text-[11px] font-bold text-white">Medications</span>
           </Hex>
-          <Hex style={{ left: 20, top: 180 }} bg={SECTIONS[2].color} onClick={() => goSection(SECTIONS[2].key)}>
+          {/* Left: Allergies */}
+          <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[2].color} onClick={() => goSection(SECTIONS[2].key)}>
             <span className="text-xl">{SECTIONS[2].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">{SECTIONS[2].title}</span>
+            <span className="mt-1 text-[11px] font-bold text-white">Allergies</span>
           </Hex>
-          <Hex style={{ left: 200, top: 180 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
+          {/* Right: Vaccinations */}
+          <Hex style={{ left: 200, top: 86 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">{SECTIONS[3].title}</span>
+            <span className="mt-1 text-[11px] font-bold text-white">Vaccinations</span>
           </Hex>
-          <Hex style={{ left: 110, top: 240 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
+          {/* Bottom-left: Heredity */}
+          <Hex style={{ left: 50, top: 173 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">{SECTIONS[4].title}</span>
+            <span className="mt-1 text-[11px] font-bold text-white">Heredity</span>
           </Hex>
-          <Hex style={{ left: 110, top: 0 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>
+          {/* Bottom-right: Lifestyle & Risk */}
+          <Hex style={{ left: 150, top: 173 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>
             <span className="text-xl">{SECTIONS[5].emoji}</span>
             <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Lifestyle<br/>& Risk</span>
           </Hex>
@@ -175,7 +176,7 @@ function Hex({ children, bg, style, onClick }: { children: React.ReactNode; bg: 
     <button
       type="button"
       onClick={onClick}
-      className="absolute flex h-[100px] w-[100px] flex-col items-center justify-center p-2 text-center transition-transform duration-200 hover:scale-[1.08] active:scale-[1.08]"
+      className="absolute flex h-[116px] w-[100px] flex-col items-center justify-center p-2 text-center transition-transform duration-200 hover:scale-[1.06] active:scale-[1.06]"
       style={{
         ...style,
         background: bg,
