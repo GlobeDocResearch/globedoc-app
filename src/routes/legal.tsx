@@ -152,7 +152,7 @@ function LegalPage() {
             <AccordionItem
               key={s.id}
               value={s.id}
-              className="rounded-2xl border border-border bg-muted/40 px-5 [&]:border-b"
+              className="rounded-2xl border border-border bg-white px-5 [&]:border-b"
             >
               <AccordionTrigger className="py-4 text-base font-semibold text-[#0D1B2A] hover:no-underline">
                 {t(s.titleKey)}
