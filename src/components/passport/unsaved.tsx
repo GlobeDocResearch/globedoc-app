@@ -44,7 +44,7 @@ export function LeaveDialog({
   onSaveAndLeave,
 }: {
   resolver: ReturnType<typeof useLeaveGuard>;
-  onSaveAndLeave: () => Promise<void> | void;
+  onSaveAndLeave: () => Promise<unknown> | unknown;
 }) {
   const tr = useUnsavedText();
   if (resolver.status !== "blocked") return null;
