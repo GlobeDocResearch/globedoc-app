@@ -19,15 +19,51 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PassportIndexRouteImport } from './routes/passport.index'
 import { Route as PassportSectionRouteImport } from './routes/passport.$section'
 
-const SignupRoute = SignupRouteImport.update({ id: '/signup', path: '/signup', getParentRoute: () => rootRouteImport } as any)
-const ProfileRoute = ProfileRouteImport.update({ id: '/profile', path: '/profile', getParentRoute: () => rootRouteImport } as any)
-const PairingRoute = PairingRouteImport.update({ id: '/pairing', path: '/pairing', getParentRoute: () => rootRouteImport } as any)
-const LoginRoute = LoginRouteImport.update({ id: '/login', path: '/login', getParentRoute: () => rootRouteImport } as any)
-const LegalRoute = LegalRouteImport.update({ id: '/legal', path: '/legal', getParentRoute: () => rootRouteImport } as any)
-const HomeRoute = HomeRouteImport.update({ id: '/home', path: '/home', getParentRoute: () => rootRouteImport } as any)
-const IndexRoute = IndexRouteImport.update({ id: '/', path: '/', getParentRoute: () => rootRouteImport } as any)
-const PassportIndexRoute = PassportIndexRouteImport.update({ id: '/passport/', path: '/passport/', getParentRoute: () => rootRouteImport } as any)
-const PassportSectionRoute = PassportSectionRouteImport.update({ id: '/passport/$section', path: '/passport/$section', getParentRoute: () => rootRouteImport } as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PairingRoute = PairingRouteImport.update({
+  id: '/pairing',
+  path: '/pairing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PassportIndexRoute = PassportIndexRouteImport.update({
+  id: '/passport/',
+  path: '/passport/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PassportSectionRoute = PassportSectionRouteImport.update({
+  id: '/passport/$section',
+  path: '/passport/$section',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -65,10 +101,38 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/legal' | '/login' | '/pairing' | '/profile' | '/signup' | '/passport/$section' | '/passport/'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/legal'
+    | '/login'
+    | '/pairing'
+    | '/profile'
+    | '/signup'
+    | '/passport/$section'
+    | '/passport/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/legal' | '/login' | '/pairing' | '/profile' | '/signup' | '/passport/$section' | '/passport'
-  id: '__root__' | '/' | '/home' | '/legal' | '/login' | '/pairing' | '/profile' | '/signup' | '/passport/$section' | '/passport/'
+  to:
+    | '/'
+    | '/home'
+    | '/legal'
+    | '/login'
+    | '/pairing'
+    | '/profile'
+    | '/signup'
+    | '/passport/$section'
+    | '/passport'
+  id:
+    | '__root__'
+    | '/'
+    | '/home'
+    | '/legal'
+    | '/login'
+    | '/pairing'
+    | '/profile'
+    | '/signup'
+    | '/passport/$section'
+    | '/passport/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -85,15 +149,69 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': { id: '/signup'; path: '/signup'; fullPath: '/signup'; preLoaderRoute: typeof SignupRouteImport; parentRoute: typeof rootRouteImport }
-    '/profile': { id: '/profile'; path: '/profile'; fullPath: '/profile'; preLoaderRoute: typeof ProfileRouteImport; parentRoute: typeof rootRouteImport }
-    '/pairing': { id: '/pairing'; path: '/pairing'; fullPath: '/pairing'; preLoaderRoute: typeof PairingRouteImport; parentRoute: typeof rootRouteImport }
-    '/login': { id: '/login'; path: '/login'; fullPath: '/login'; preLoaderRoute: typeof LoginRouteImport; parentRoute: typeof rootRouteImport }
-    '/legal': { id: '/legal'; path: '/legal'; fullPath: '/legal'; preLoaderRoute: typeof LegalRouteImport; parentRoute: typeof rootRouteImport }
-    '/home': { id: '/home'; path: '/home'; fullPath: '/home'; preLoaderRoute: typeof HomeRouteImport; parentRoute: typeof rootRouteImport }
-    '/': { id: '/'; path: '/'; fullPath: '/'; preLoaderRoute: typeof IndexRouteImport; parentRoute: typeof rootRouteImport }
-    '/passport/': { id: '/passport/'; path: '/passport'; fullPath: '/passport/'; preLoaderRoute: typeof PassportIndexRouteImport; parentRoute: typeof rootRouteImport }
-    '/passport/$section': { id: '/passport/$section'; path: '/passport/$section'; fullPath: '/passport/$section'; preLoaderRoute: typeof PassportSectionRouteImport; parentRoute: typeof rootRouteImport }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pairing': {
+      id: '/pairing'
+      path: '/pairing'
+      fullPath: '/pairing'
+      preLoaderRoute: typeof PairingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/passport/': {
+      id: '/passport/'
+      path: '/passport'
+      fullPath: '/passport/'
+      preLoaderRoute: typeof PassportIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/passport/$section': {
+      id: '/passport/$section'
+      path: '/passport/$section'
+      fullPath: '/passport/$section'
+      preLoaderRoute: typeof PassportSectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -111,13 +229,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
