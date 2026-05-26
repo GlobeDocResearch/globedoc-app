@@ -23,6 +23,7 @@ function SectionPage() {
 
   if (section === "medical-history") return <MedicalHistoryForm />;
   if (section === "medications") return <MedicationsForm />;
+  if (section === "vaccinations") return <VaccinationsForm />;
 
   const title = TITLES[section] ?? "Section";
   return (
