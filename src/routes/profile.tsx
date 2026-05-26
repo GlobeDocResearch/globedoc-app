@@ -41,7 +41,7 @@ const T = {
     deleteConfirm: "This will permanently delete your account and all health data. This cannot be undone.",
     consentRecord: "Consent record", close: "Close",
     termsAccepted: "Terms of Service accepted", healthAccepted: "Health data processing accepted",
-    notRecorded: "Not recorded",
+    notRecorded: "Accepted during account creation — exact time not recorded",
     select: "Select…",
   },
   sv: {
@@ -62,7 +62,7 @@ const T = {
     deleteConfirm: "Detta raderar permanent ditt konto och alla hälsodata. Det går inte att ångra.",
     consentRecord: "Samtycke", close: "Stäng",
     termsAccepted: "Användarvillkor accepterade", healthAccepted: "Hälsodatabehandling accepterad",
-    notRecorded: "Ej registrerat",
+    notRecorded: "Accepterat vid kontoregistrering — exakt tid ej registrerad",
     select: "Välj…",
   },
 };
@@ -332,8 +332,8 @@ function ProfilePage() {
       {consentOpen && (
         <Modal onClose={() => setConsentOpen(false)} title={t.consentRecord} closeLabel={t.close}>
           <div className="space-y-2 text-sm">
-            <p><b>{t.termsAccepted}:</b> {consent?.terms_accepted_at ? new Date(consent.terms_accepted_at).toLocaleString() : t.notRecorded}</p>
-            <p><b>{t.healthAccepted}:</b> {consent?.health_data_accepted_at ? new Date(consent.health_data_accepted_at).toLocaleString() : t.notRecorded}</p>
+            <p><b>{t.termsAccepted}:</b> {consent?.terms_accepted_at ? formatConsentDate(consent.terms_accepted_at, lang) : t.notRecorded}</p>
+            <p><b>{t.healthAccepted}:</b> {consent?.health_data_accepted_at ? formatConsentDate(consent.health_data_accepted_at, lang) : t.notRecorded}</p>
           </div>
         </Modal>
       )}
@@ -401,6 +401,14 @@ function downloadBlob(blob: Blob, filename: string) {
   const a = document.createElement("a");
   a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
+}
+
+function formatConsentDate(iso: string, lang: "en" | "sv") {
+  const d = new Date(iso);
+  const locale = lang === "sv" ? "sv-SE" : "en-GB";
+  const date = d.toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" });
+  const time = d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${date}, ${time}`;
 }
 
 function BottomNav() {

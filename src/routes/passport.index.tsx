@@ -59,7 +59,7 @@ function PassportPage() {
       }
       setUserId(user.id);
       const { data: prof } = await supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
-      if (prof && !(prof as any).date_of_birth && !(prof as any).setup_dismissed_at) {
+      if (prof && (!(prof as any).date_of_birth || !(prof as any).biological_sex)) {
         setSetupInitial(prof);
         setShowSetup(true);
       }

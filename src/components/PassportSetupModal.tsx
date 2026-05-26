@@ -79,10 +79,9 @@ export function PassportSetupModal({
     onDone();
   };
 
-  const skip = async () => {
-    await supabase.from("profiles").update({ setup_dismissed_at: new Date().toISOString() } as any).eq("user_id", userId);
-    onDone();
-  };
+  const skip = () => { onDone(); };
+
+  const canSubmit = !!f.date_of_birth && !!f.biological_sex && !saving;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
@@ -101,9 +100,9 @@ export function PassportSetupModal({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label={t.firstName}><input className={input} value={f.first_name ?? ""} onChange={(e) => update("first_name", e.target.value)} /></Field>
             <Field label={t.lastName}><input className={input} value={f.last_name ?? ""} onChange={(e) => update("last_name", e.target.value)} /></Field>
-            <Field label={t.dob}><input type="date" className={input} value={f.date_of_birth ?? ""} onChange={(e) => update("date_of_birth", e.target.value)} /></Field>
-            <Field label={t.sex}>
-              <select className={input} value={f.biological_sex ?? ""} onChange={(e) => update("biological_sex", e.target.value)}>
+            <Field label={`${t.dob} *`}><input type="date" required className={input} value={f.date_of_birth ?? ""} onChange={(e) => update("date_of_birth", e.target.value)} /></Field>
+            <Field label={`${t.sex} *`}>
+              <select required className={input} value={f.biological_sex ?? ""} onChange={(e) => update("biological_sex", e.target.value)}>
                 <option value="">{t.select}</option>
                 <option value="male">{t.male}</option>
                 <option value="female">{t.female}</option>
@@ -124,7 +123,7 @@ export function PassportSetupModal({
             </Field>
           </div>
           <div className="flex flex-col items-center gap-2 pt-2">
-            <button onClick={save} disabled={saving} className="w-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60">
+            <button onClick={save} disabled={!canSubmit} className="w-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50">
               {t.submit}
             </button>
             <button onClick={skip} className="text-xs text-gray-500 underline">{t.skip}</button>
