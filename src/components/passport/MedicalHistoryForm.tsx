@@ -86,6 +86,9 @@ const T: Record<Lang, Record<string, string>> = {
   },
 };
 
+const ACCENT = "#5B6BD4";
+const ACCENT_2 = "#7B8BE4";
+
 export default function MedicalHistoryForm() {
   const { lang } = useI18n();
   const t = (k: keyof typeof T["en"]) => T[lang][k] ?? T.en[k];
@@ -99,7 +102,6 @@ export default function MedicalHistoryForm() {
   const [past, setPast] = useState("");
   const [stays, setStays] = useState<Stay[]>([]);
 
-  // obstetric
   const [obNA, setObNA] = useState(false);
   const [gaveBirth, setGaveBirth] = useState<boolean | null>(null);
   const [numChildren, setNumChildren] = useState<string>("");
@@ -268,22 +270,22 @@ export default function MedicalHistoryForm() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-[#0D1B2A]" />;
+    return <div className="min-h-screen bg-white" />;
   }
 
   return (
-    <div className="min-h-screen bg-[#0D1B2A] pb-28 text-white">
+    <div className="min-h-screen bg-white pb-28 text-[#0D1B2A]">
       {/* Header */}
       <header
         className="px-5 pt-6 pb-7"
-        style={{ background: "linear-gradient(135deg, #5B6BD4 0%, #7B8BE4 100%)" }}
+        style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
       >
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
             <span className="text-3xl leading-none">🏥</span>
             <div>
               <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-              <p className="mt-1 text-sm text-white/80">{t("subtitle")}</p>
+              <p className="mt-1 text-sm text-white/85">{t("subtitle")}</p>
             </div>
           </div>
           <Link
@@ -297,9 +299,8 @@ export default function MedicalHistoryForm() {
       </header>
 
       <div className="space-y-5 px-5 pt-5">
-        {/* Nothing to report */}
-        <div className="flex items-center justify-between rounded-2xl bg-[#1A2B3C] p-4">
-          <span className="text-sm font-medium text-white">{t("nothing")}</span>
+        <div className="flex items-center justify-between rounded-2xl bg-[#F8F9FA] p-4">
+          <span className="text-sm font-medium text-[#0D1B2A]">{t("nothing")}</span>
           <Switch
             checked={nothing}
             onCheckedChange={(v) => {
@@ -319,91 +320,50 @@ export default function MedicalHistoryForm() {
 
         {!nothing && (
           <>
-            {/* Section 1 */}
             <section>
-              <h2 className="mb-2 text-sm font-bold text-white">{t("s1")}</h2>
+              <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <textarea
                 value={conditions}
                 onChange={(e) => setConditions(e.target.value)}
                 onBlur={saveConditions}
                 placeholder={t("s1ph")}
                 rows={4}
-                className="w-full rounded-xl border border-white/10 bg-[#1A2B3C] p-3 text-sm text-white placeholder:text-gray-500 focus:border-[#5B6BD4] focus:outline-none"
+                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
               />
             </section>
 
-            {/* Section 2 — hospital stays */}
             <section>
-              <h2 className="mb-2 text-sm font-bold text-white">{t("s2")}</h2>
+              <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s2")}</h2>
               <div className="space-y-3">
                 {stays.map((stay) =>
                   stay.collapsed ? (
                     <div
                       key={stay.id}
-                      className="flex items-center justify-between rounded-xl bg-[#1A2B3C] px-4 py-3"
+                      className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3"
                     >
-                      <span className="truncate text-sm text-white">
+                      <span className="truncate text-sm text-[#0D1B2A]">
                         {[stay.event, stay.year, stay.hospital_country].filter(Boolean).join(" · ")}
                       </span>
                       <div className="flex gap-2">
-                        <button
-                          type="button"
-                          aria-label="Edit"
-                          onClick={() => updateStay(stay.id, { collapsed: false })}
-                          className="rounded-md p-1.5 text-gray-300 hover:bg-white/10"
-                        >
+                        <button type="button" aria-label="Edit" onClick={() => updateStay(stay.id, { collapsed: false })} className="rounded-md p-1.5 text-gray-600 hover:bg-gray-200">
                           <Pencil className="h-4 w-4" />
                         </button>
-                        <button
-                          type="button"
-                          aria-label="Delete"
-                          onClick={() => deleteStay(stay)}
-                          className="rounded-md p-1.5 text-red-400 hover:bg-white/10"
-                        >
+                        <button type="button" aria-label="Delete" onClick={() => deleteStay(stay)} className="rounded-md p-1.5 text-red-500 hover:bg-gray-200">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div key={stay.id} className="space-y-2 rounded-xl bg-[#1A2B3C] p-4">
-                      <Field
-                        label={t("f_event")}
-                        value={stay.event}
-                        ph={t("f_event_ph")}
-                        onChange={(v) => updateStay(stay.id, { event: v })}
-                      />
-                      <Field
-                        label={t("f_year")}
-                        value={stay.year}
-                        ph={t("f_year_ph")}
-                        onChange={(v) => updateStay(stay.id, { year: v })}
-                      />
-                      <Field
-                        label={t("f_hosp")}
-                        value={stay.hospital_country}
-                        ph={t("f_hosp_ph")}
-                        onChange={(v) => updateStay(stay.id, { hospital_country: v })}
-                      />
-                      <Field
-                        label={t("f_notes")}
-                        value={stay.notes}
-                        ph={t("f_notes_ph")}
-                        onChange={(v) => updateStay(stay.id, { notes: v })}
-                      />
+                    <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                      <Field label={t("f_event")} value={stay.event} ph={t("f_event_ph")} onChange={(v) => updateStay(stay.id, { event: v })} />
+                      <Field label={t("f_year")} value={stay.year} ph={t("f_year_ph")} onChange={(v) => updateStay(stay.id, { year: v })} />
+                      <Field label={t("f_hosp")} value={stay.hospital_country} ph={t("f_hosp_ph")} onChange={(v) => updateStay(stay.id, { hospital_country: v })} />
+                      <Field label={t("f_notes")} value={stay.notes} ph={t("f_notes_ph")} onChange={(v) => updateStay(stay.id, { notes: v })} />
                       <div className="flex justify-end gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => deleteStay(stay)}
-                          className="rounded-md p-2 text-red-400 hover:bg-white/10"
-                          aria-label="Delete"
-                        >
+                        <button type="button" onClick={() => deleteStay(stay)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
                           <Trash2 className="h-4 w-4" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => saveStay(stay)}
-                          className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]"
-                        >
+                        <button type="button" onClick={() => saveStay(stay)} className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]">
                           {t("save_stay")}
                         </button>
                       </div>
@@ -414,83 +374,66 @@ export default function MedicalHistoryForm() {
               <button
                 type="button"
                 onClick={addStay}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 px-4 py-3 text-sm text-white/80 hover:bg-white/5"
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#E5E7EB] px-4 py-3 text-sm text-gray-600 hover:bg-[#F8F9FA]"
               >
                 <Plus className="h-4 w-4" />
                 {t("add_stay")}
               </button>
             </section>
 
-            {/* Section 3 */}
             <section>
-              <h2 className="mb-2 text-sm font-bold text-white">{t("s3")}</h2>
+              <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s3")}</h2>
               <textarea
                 value={past}
                 onChange={(e) => setPast(e.target.value)}
                 onBlur={savePast}
                 placeholder={t("s3ph")}
                 rows={4}
-                className="w-full rounded-xl border border-white/10 bg-[#1A2B3C] p-3 text-sm text-white placeholder:text-gray-500 focus:border-[#5B6BD4] focus:outline-none"
+                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
               />
             </section>
 
-            {/* Section 4 */}
             <section>
-              <h2 className="mb-2 text-sm font-bold text-white">{t("s4")}</h2>
-              <div className="space-y-3 rounded-xl bg-[#1A2B3C] p-4">
-                <label className="flex items-center gap-2 text-sm text-white">
-                  <Checkbox
-                    checked={obNA}
-                    onCheckedChange={(v) => setObNA(v === true)}
-                  />
+              <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s4")}</h2>
+              <div className="space-y-3 rounded-xl bg-[#F8F9FA] p-4">
+                <label className="flex items-center gap-2 text-sm text-[#0D1B2A]">
+                  <Checkbox checked={obNA} onCheckedChange={(v) => setObNA(v === true)} />
                   {t("na")}
                 </label>
 
                 {!obNA && (
                   <>
-                    <YesNo
-                      label={t("gave_birth")}
-                      value={gaveBirth}
-                      onChange={setGaveBirth}
-                      yes={t("yes")}
-                      no={t("no")}
-                    />
+                    <YesNo label={t("gave_birth")} value={gaveBirth} onChange={setGaveBirth} yes={t("yes")} no={t("no")} />
                     {gaveBirth && (
                       <div>
-                        <label className="block text-xs text-gray-400">{t("num_children")}</label>
+                        <label className="block text-xs text-gray-600">{t("num_children")}</label>
                         <input
                           type="number"
                           min={0}
                           value={numChildren}
                           onChange={(e) => setNumChildren(e.target.value)}
-                          className="mt-1 w-32 rounded-md border border-white/10 bg-[#0D1B2A] px-3 py-2 text-sm text-white focus:border-[#5B6BD4] focus:outline-none"
+                          className="mt-1 w-32 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#5B6BD4] focus:outline-none"
                         />
                       </div>
                     )}
                     <div>
-                      <label className="block text-xs text-gray-400">{t("complications")}</label>
+                      <label className="block text-xs text-gray-600">{t("complications")}</label>
                       <textarea
                         value={obComplications}
                         onChange={(e) => setObComplications(e.target.value)}
                         placeholder={t("complications_ph")}
                         rows={3}
-                        className="mt-1 w-full rounded-md border border-white/10 bg-[#0D1B2A] p-2 text-sm text-white placeholder:text-gray-500 focus:border-[#5B6BD4] focus:outline-none"
+                        className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
                       />
                     </div>
-                    <YesNo
-                      label={t("assisted")}
-                      value={assisted}
-                      onChange={setAssisted}
-                      yes={t("yes")}
-                      no={t("no")}
-                    />
+                    <YesNo label={t("assisted")} value={assisted} onChange={setAssisted} yes={t("yes")} no={t("no")} />
                     {assisted && (
                       <textarea
                         value={assistedNotes}
                         onChange={(e) => setAssistedNotes(e.target.value)}
                         placeholder={t("describe")}
                         rows={3}
-                        className="w-full rounded-md border border-white/10 bg-[#0D1B2A] p-2 text-sm text-white placeholder:text-gray-500 focus:border-[#5B6BD4] focus:outline-none"
+                        className="w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
                       />
                     )}
                   </>
@@ -501,8 +444,7 @@ export default function MedicalHistoryForm() {
         )}
       </div>
 
-      {/* Save bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#0D1B2A] p-4">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E5E7EB] bg-white p-4">
         <button
           type="button"
           onClick={saveAll}
@@ -516,61 +458,27 @@ export default function MedicalHistoryForm() {
   );
 }
 
-function Field({
-  label,
-  value,
-  ph,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  ph: string;
-  onChange: (v: string) => void;
-}) {
+function Field({ label, value, ph, onChange }: { label: string; value: string; ph: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <label className="block text-xs text-gray-400">{label}</label>
+      <label className="block text-xs text-gray-600">{label}</label>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={ph}
-        className="mt-1 w-full rounded-md border border-white/10 bg-[#0D1B2A] px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-[#5B6BD4] focus:outline-none"
+        className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
       />
     </div>
   );
 }
 
-function YesNo({
-  label,
-  value,
-  onChange,
-  yes,
-  no,
-}: {
-  label: string;
-  value: boolean | null;
-  onChange: (v: boolean) => void;
-  yes: string;
-  no: string;
-}) {
+function YesNo({ label, value, onChange, yes, no }: { label: string; value: boolean | null; onChange: (v: boolean) => void; yes: string; no: string }) {
   return (
     <div>
-      <label className="block text-xs text-gray-400">{label}</label>
-      <div className="mt-1 inline-flex overflow-hidden rounded-md border border-white/10">
-        <button
-          type="button"
-          onClick={() => onChange(true)}
-          className={`px-4 py-1.5 text-xs ${value === true ? "bg-[#5B6BD4] text-white" : "text-gray-300 hover:bg-white/5"}`}
-        >
-          {yes}
-        </button>
-        <button
-          type="button"
-          onClick={() => onChange(false)}
-          className={`px-4 py-1.5 text-xs ${value === false ? "bg-[#5B6BD4] text-white" : "text-gray-300 hover:bg-white/5"}`}
-        >
-          {no}
-        </button>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <div className="mt-1 inline-flex overflow-hidden rounded-md border border-[#E5E7EB]">
+        <button type="button" onClick={() => onChange(true)} className={`px-4 py-1.5 text-xs ${value === true ? "bg-[#5B6BD4] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{yes}</button>
+        <button type="button" onClick={() => onChange(false)} className={`px-4 py-1.5 text-xs ${value === false ? "bg-[#5B6BD4] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{no}</button>
       </div>
     </div>
   );

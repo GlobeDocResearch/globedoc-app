@@ -53,15 +53,25 @@ function PassportPage() {
         navigate({ to: "/login" });
         return;
       }
-      const [mc, hs] = await Promise.all([
+      const [mc, hs, pm, ot, sm, di] = await Promise.all([
         supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
+        supabase.from("prescription_medications").select("id").eq("user_id", user.id).limit(1),
+        supabase.from("otc_supplements").select("id").eq("user_id", user.id).limit(1),
+        supabase.from("stopped_medications").select("id").eq("user_id", user.id).limit(1),
+        supabase.from("drug_intolerances").select("intolerances_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
       ]);
       const mhDone =
         !!mc.data?.nothing_to_report ||
         !!(mc.data?.conditions_text && mc.data.conditions_text.trim().length > 0) ||
         !!(hs.data && hs.data.length > 0);
-      setDone((d) => ({ ...d, "medical-history": mhDone }));
+      const medsDone =
+        !!di.data?.nothing_to_report ||
+        !!(di.data?.intolerances_text && di.data.intolerances_text.trim().length > 0) ||
+        !!(pm.data && pm.data.length > 0) ||
+        !!(ot.data && ot.data.length > 0) ||
+        !!(sm.data && sm.data.length > 0);
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone }));
     })();
   }, [navigate]);
 
@@ -121,6 +131,7 @@ function PassportPage() {
           <Hex style={{ left: 150, top: 0 }} bg={SECTIONS[1].color} onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
             <span className="mt-1 text-[11px] font-bold text-white">Medications</span>
+            {done["medications"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[2].color} onClick={() => goSection(SECTIONS[2].key)}>

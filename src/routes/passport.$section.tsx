@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import MedicalHistoryForm from "@/components/passport/MedicalHistoryForm";
+import MedicationsForm from "@/components/passport/MedicationsForm";
 
 export const Route = createFileRoute("/passport/$section")({
   head: () => ({ meta: [{ title: "Passport Section — GlobeDoc" }] }),
@@ -20,6 +21,7 @@ function SectionPage() {
   const { section } = useParams({ from: "/passport/$section" });
 
   if (section === "medical-history") return <MedicalHistoryForm />;
+  if (section === "medications") return <MedicationsForm />;
 
   const title = TITLES[section] ?? "Section";
   return (
