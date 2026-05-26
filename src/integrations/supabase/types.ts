@@ -341,6 +341,33 @@ export type Database = {
         }
         Relationships: []
       }
+      standard_vaccines: {
+        Row: {
+          created_at: string
+          id: string
+          received: boolean
+          updated_at: string
+          user_id: string
+          vaccine_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          received?: boolean
+          updated_at?: string
+          user_id: string
+          vaccine_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          received?: boolean
+          updated_at?: string
+          user_id?: string
+          vaccine_name?: string
+        }
+        Relationships: []
+      }
       stopped_medications: {
         Row: {
           created_at: string
@@ -371,6 +398,102 @@ export type Database = {
           reason_stopped?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      travel_vaccines: {
+        Row: {
+          created_at: string
+          date: string | null
+          destination: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          vaccine: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          destination?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          vaccine?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          destination?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          vaccine?: string | null
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      vaccination_certificates: {
+        Row: {
+          contraindication_notes: string | null
+          created_at: string
+          id: string
+          ihr_card: string | null
+          nothing_to_report: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contraindication_notes?: string | null
+          created_at?: string
+          id?: string
+          ihr_card?: string | null
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contraindication_notes?: string | null
+          created_at?: string
+          id?: string
+          ihr_card?: string | null
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vaccination_records: {
+        Row: {
+          batch_number: string | null
+          created_at: string
+          date: string | null
+          id: string
+          provider: string | null
+          updated_at: string
+          user_id: string
+          vaccine: string | null
+        }
+        Insert: {
+          batch_number?: string | null
+          created_at?: string
+          date?: string | null
+          id?: string
+          provider?: string | null
+          updated_at?: string
+          user_id: string
+          vaccine?: string | null
+        }
+        Update: {
+          batch_number?: string | null
+          created_at?: string
+          date?: string | null
+          id?: string
+          provider?: string | null
+          updated_at?: string
+          user_id?: string
+          vaccine?: string | null
         }
         Relationships: []
       }
