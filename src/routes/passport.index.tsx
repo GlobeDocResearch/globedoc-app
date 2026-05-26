@@ -35,6 +35,9 @@ const SECTIONS: {
 
 function PassportPage() {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string>("");
+  const [showSetup, setShowSetup] = useState(false);
+  const [setupInitial, setSetupInitial] = useState<any>({});
   const [done, setDone] = useState<Record<SectionKey, boolean>>({
     "medical-history": false,
     "medications": false,
