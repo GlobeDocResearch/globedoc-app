@@ -122,7 +122,7 @@ function HomePage() {
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
           <NavTab icon={<FileText className="h-5 w-5" />} label={t("nav.records")} />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
-          <NavTab icon={<User className="h-5 w-5" />} label={t("nav.profile")} />
+          <NavTab to="/profile" icon={<User className="h-5 w-5" />} label={t("nav.profile")} />
         </ul>
       </nav>
     </div>
