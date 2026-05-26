@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
