@@ -335,6 +335,7 @@ export default function MedicalHistoryForm() {
             checked={nothing}
             onCheckedChange={(v) => {
               setNothing(v);
+              setDirty(true);
               if (userId) {
                 supabase
                   .from("medical_conditions")
