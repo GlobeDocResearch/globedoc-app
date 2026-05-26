@@ -110,6 +110,12 @@ export default function MedicalHistoryForm() {
   const [assisted, setAssisted] = useState<boolean | null>(null);
   const [assistedNotes, setAssistedNotes] = useState("");
 
+  const [dirty, setDirty] = useState(false);
+  const [dirtyStays, setDirtyStays] = useState<Set<string>>(new Set());
+  const markStayDirty = (id: string) => setDirtyStays((s) => { const n = new Set(s); n.add(id); return n; });
+  const clearStayDirty = (id: string) => setDirtyStays((s) => { const n = new Set(s); n.delete(id); return n; });
+  const anyDirty = dirty || dirtyStays.size > 0;
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
