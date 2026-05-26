@@ -403,6 +403,14 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+function formatConsentDate(iso: string, lang: "en" | "sv") {
+  const d = new Date(iso);
+  const locale = lang === "sv" ? "sv-SE" : "en-GB";
+  const date = d.toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" });
+  const time = d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${date}, ${time}`;
+}
+
 function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
