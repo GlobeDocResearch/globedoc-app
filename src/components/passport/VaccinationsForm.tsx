@@ -128,7 +128,7 @@ const T: Record<Lang, Record<string, any>> = {
 
 export default function VaccinationsForm() {
   const { lang } = useI18n();
-  const t = (k: keyof typeof T["en"]) => T[lang][k] ?? T.en[k];
+  const t = (k: string): string => (T[lang][k] ?? T.en[k]) as string;
   const navigate = useNavigate();
 
   const [userId, setUserId] = useState<string | null>(null);
