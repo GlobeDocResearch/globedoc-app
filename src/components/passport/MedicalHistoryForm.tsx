@@ -245,11 +245,18 @@ export default function MedicalHistoryForm() {
       audit("hospital_stays", "delete");
     }
     setStays((s) => s.filter((x) => x.id !== stay.id));
+    clearStayDirty(stay.id);
   };
 
   const saveAll = async () => {
-    if (!userId) return;
+    if (!userId) return false;
     try {
+      // Save any open dirty cards first
+      for (const stay of stays) {
+        if (dirtyStays.has(stay.id)) {
+          await saveStay(stay);
+        }
+      }
       await Promise.all([
         supabase
           .from("medical_conditions")
@@ -274,16 +281,27 @@ export default function MedicalHistoryForm() {
         ),
       ]);
       audit("medical_history", "save_all");
+      setDirty(false);
+      setDirtyStays(new Set());
       toast.success(t("saved"));
-      navigate({ to: "/passport" });
+      return true;
     } catch (e) {
       toast.error(t("saveError"));
+      return false;
     }
   };
+
+  const handleSaveAndExit = async () => {
+    const ok = await saveAll();
+    if (ok) navigate({ to: "/passport" });
+  };
+
+  const resolver = useLeaveGuard(anyDirty);
 
   if (loading) {
     return <div className="min-h-screen bg-white" />;
   }
+
 
   return (
     <div className="min-h-screen bg-white pb-28 text-[#0D1B2A]">
