@@ -238,10 +238,7 @@ function PassportPage() {
             if (year < 1976) toCheck.push("BCG");
             if (year >= 1993) toCheck.push("DTP/DTaP", "Polio (IPV)", "MMR", "Hib");
             for (const v of toCheck) {
-              await supabase.from("standard_vaccines").upsert(
-                { user_id: userId, vaccine_name: v, received: true } as any,
-                { onConflict: "user_id,vaccine_name" } as any
-              );
+              await supabase.from("standard_vaccines").insert({ user_id: userId, vaccine_name: v, received: true } as any);
             }
           }
         }} />
