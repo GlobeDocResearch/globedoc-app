@@ -62,7 +62,7 @@ const T = {
     deleteConfirm: "Detta raderar permanent ditt konto och alla hälsodata. Det går inte att ångra.",
     consentRecord: "Samtycke", close: "Stäng",
     termsAccepted: "Användarvillkor accepterade", healthAccepted: "Hälsodatabehandling accepterad",
-    notRecorded: "Ej registrerat",
+    notRecorded: "Accepterat vid kontoregistrering — exakt tid ej registrerad",
     select: "Välj…",
   },
 };
