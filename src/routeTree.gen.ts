@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as PairingRouteImport } from './routes/pairing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as HomeRouteImport } from './routes/home'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PairingRoute = PairingRouteImport.update({
+  id: '/pairing',
+  path: '/pairing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/pairing': typeof PairingRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/pairing': typeof PairingRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,15 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/pairing': typeof PairingRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/legal' | '/login' | '/signup'
+  fullPaths: '/' | '/home' | '/legal' | '/login' | '/pairing' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/legal' | '/login' | '/signup'
-  id: '__root__' | '/' | '/home' | '/legal' | '/login' | '/signup'
+  to: '/' | '/home' | '/legal' | '/login' | '/pairing' | '/signup'
+  id: '__root__' | '/' | '/home' | '/legal' | '/login' | '/pairing' | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +85,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
+  PairingRoute: typeof PairingRoute
   SignupRoute: typeof SignupRoute
 }
 
@@ -86,6 +96,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pairing': {
+      id: '/pairing'
+      path: '/pairing'
+      fullPath: '/pairing'
+      preLoaderRoute: typeof PairingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -124,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
+  PairingRoute: PairingRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
