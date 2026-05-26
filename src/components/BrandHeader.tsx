@@ -6,7 +6,7 @@ export function BrandHeader({ tagline = true }: { tagline?: boolean }) {
   return (
     <div className="flex flex-col items-center text-center">
       <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card shadow-[var(--shadow-card)]">
-        <img src={logo} alt="GlobeDoc" className="h-14 w-14" />
+        <img src={logo} alt="GlobeDoc" className="h-[4.75rem] w-[4.75rem]" />
       </div>
       <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">GlobeDoc</h1>
       {tagline && (
