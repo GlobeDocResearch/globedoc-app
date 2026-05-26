@@ -327,6 +327,7 @@ export default function MedicationsForm() {
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
                     <Field label={t("f_prescriber")} value={item.prescriber} ph={t("f_prescriber_ph")} onChange={(v) => updateRx(item.id, { prescriber: v })} />
+                    {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveRx(item)} onDiscard={() => discardRx(item)} />}
                     <CardActions onSave={() => saveRx(item)} onDelete={() => deleteRx(item)} saveLabel={t("save_item")} />
                   </div>
                 ))}
