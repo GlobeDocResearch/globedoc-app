@@ -4,7 +4,7 @@ import { Bell, LogOut, Home as HomeIcon, Globe, FileText, Link as LinkIcon, User
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/passport")({
+export const Route = createFileRoute("/passport/")({
   head: () => ({ meta: [{ title: "Health Passport — GlobeDoc" }] }),
   component: PassportPage,
 });

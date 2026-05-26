@@ -10,22 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as PassportRouteImport } from './routes/passport'
 import { Route as PairingRouteImport } from './routes/pairing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PassportIndexRouteImport } from './routes/passport.index'
 import { Route as PassportSectionRouteImport } from './routes/passport.$section'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PassportRoute = PassportRouteImport.update({
-  id: '/passport',
-  path: '/passport',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PairingRoute = PairingRouteImport.update({
@@ -53,10 +48,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PassportIndexRoute = PassportIndexRouteImport.update({
+  id: '/passport/',
+  path: '/passport/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PassportSectionRoute = PassportSectionRouteImport.update({
-  id: '/$section',
-  path: '/$section',
-  getParentRoute: () => PassportRoute,
+  id: '/passport/$section',
+  path: '/passport/$section',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -65,9 +65,9 @@ export interface FileRoutesByFullPath {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
-  '/passport': typeof PassportRouteWithChildren
   '/signup': typeof SignupRoute
   '/passport/$section': typeof PassportSectionRoute
+  '/passport/': typeof PassportIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -75,9 +75,9 @@ export interface FileRoutesByTo {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
-  '/passport': typeof PassportRouteWithChildren
   '/signup': typeof SignupRoute
   '/passport/$section': typeof PassportSectionRoute
+  '/passport': typeof PassportIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,9 +86,9 @@ export interface FileRoutesById {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
-  '/passport': typeof PassportRouteWithChildren
   '/signup': typeof SignupRoute
   '/passport/$section': typeof PassportSectionRoute
+  '/passport/': typeof PassportIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,9 +98,9 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
-    | '/passport'
     | '/signup'
     | '/passport/$section'
+    | '/passport/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -108,9 +108,9 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
-    | '/passport'
     | '/signup'
     | '/passport/$section'
+    | '/passport'
   id:
     | '__root__'
     | '/'
@@ -118,9 +118,9 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
-    | '/passport'
     | '/signup'
     | '/passport/$section'
+    | '/passport/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -129,8 +129,9 @@ export interface RootRouteChildren {
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
   PairingRoute: typeof PairingRoute
-  PassportRoute: typeof PassportRouteWithChildren
   SignupRoute: typeof SignupRoute
+  PassportSectionRoute: typeof PassportSectionRoute
+  PassportIndexRoute: typeof PassportIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,13 +141,6 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/passport': {
-      id: '/passport'
-      path: '/passport'
-      fullPath: '/passport'
-      preLoaderRoute: typeof PassportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pairing': {
@@ -184,27 +178,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/passport/': {
+      id: '/passport/'
+      path: '/passport'
+      fullPath: '/passport/'
+      preLoaderRoute: typeof PassportIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/passport/$section': {
       id: '/passport/$section'
-      path: '/$section'
+      path: '/passport/$section'
       fullPath: '/passport/$section'
       preLoaderRoute: typeof PassportSectionRouteImport
-      parentRoute: typeof PassportRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface PassportRouteChildren {
-  PassportSectionRoute: typeof PassportSectionRoute
-}
-
-const PassportRouteChildren: PassportRouteChildren = {
-  PassportSectionRoute: PassportSectionRoute,
-}
-
-const PassportRouteWithChildren = PassportRoute._addFileChildren(
-  PassportRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -212,19 +201,10 @@ const rootRouteChildren: RootRouteChildren = {
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
   PairingRoute: PairingRoute,
-  PassportRoute: PassportRouteWithChildren,
   SignupRoute: SignupRoute,
+  PassportSectionRoute: PassportSectionRoute,
+  PassportIndexRoute: PassportIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
