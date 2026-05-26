@@ -65,6 +65,33 @@ export type Database = {
         }
         Relationships: []
       }
+      drug_intolerances: {
+        Row: {
+          created_at: string
+          id: string
+          intolerances_text: string | null
+          nothing_to_report: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intolerances_text?: string | null
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intolerances_text?: string | null
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       hospital_stays: {
         Row: {
           created_at: string
@@ -164,6 +191,39 @@ export type Database = {
         }
         Relationships: []
       }
+      otc_supplements: {
+        Row: {
+          created_at: string
+          dose: string | null
+          frequency: string | null
+          id: string
+          product: string | null
+          reason: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dose?: string | null
+          frequency?: string | null
+          id?: string
+          product?: string | null
+          reason?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dose?: string | null
+          frequency?: string | null
+          id?: string
+          product?: string | null
+          reason?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pairing_codes: {
         Row: {
           code: string
@@ -215,6 +275,42 @@ export type Database = {
         }
         Relationships: []
       }
+      prescription_medications: {
+        Row: {
+          brand_name: string | null
+          created_at: string
+          dose_form: string | null
+          drug_generic: string | null
+          frequency: string | null
+          id: string
+          prescriber: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brand_name?: string | null
+          created_at?: string
+          dose_form?: string | null
+          drug_generic?: string | null
+          frequency?: string | null
+          id?: string
+          prescriber?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brand_name?: string | null
+          created_at?: string
+          dose_form?: string | null
+          drug_generic?: string | null
+          frequency?: string | null
+          id?: string
+          prescriber?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -240,6 +336,39 @@ export type Database = {
           id?: string
           language?: string
           last_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stopped_medications: {
+        Row: {
+          created_at: string
+          dose: string | null
+          drug_generic: string | null
+          id: string
+          period: string | null
+          reason_stopped: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dose?: string | null
+          drug_generic?: string | null
+          id?: string
+          period?: string | null
+          reason_stopped?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dose?: string | null
+          drug_generic?: string | null
+          id?: string
+          period?: string | null
+          reason_stopped?: string | null
           updated_at?: string
           user_id?: string
         }
