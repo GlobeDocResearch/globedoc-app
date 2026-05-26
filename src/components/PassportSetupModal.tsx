@@ -123,7 +123,7 @@ export function PassportSetupModal({
             </Field>
           </div>
           <div className="flex flex-col items-center gap-2 pt-2">
-            <button onClick={save} disabled={saving} className="w-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60">
+            <button onClick={save} disabled={!canSubmit} className="w-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50">
               {t.submit}
             </button>
             <button onClick={skip} className="text-xs text-gray-500 underline">{t.skip}</button>
