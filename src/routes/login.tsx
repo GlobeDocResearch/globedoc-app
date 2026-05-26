@@ -46,7 +46,7 @@ function LoginPage() {
       toast.error(error.message);
       return;
     }
-    navigate({ to: "/" });
+    navigate({ to: "/home" });
   };
 
   return (

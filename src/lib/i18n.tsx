@@ -15,6 +15,16 @@ const en = {
   "login.create": "Create an account",
   "login.legal": "Privacy Policy & Terms of Service",
 
+  "home.welcome": "Welcome back, {name}!",
+  "home.passportTitle": "Health Passport",
+  "home.passportSubtitle": "Create your global health passport",
+  "home.passportCta": "Create Your Health Passport",
+  "nav.home": "Home",
+  "nav.passport": "Passport",
+  "nav.records": "Records",
+  "nav.pairing": "Pairing",
+  "nav.profile": "Profile",
+
   "signup.title": "Create your account",
   "signup.step1": "Your details",
   "signup.firstName": "First name",
@@ -158,6 +168,16 @@ const sv: Record<keyof typeof en, string> = {
   "login.new": "Ny på GlobeDoc?",
   "login.create": "Skapa ett konto",
   "login.legal": "Integritetspolicy & Användarvillkor",
+
+  "home.welcome": "Välkommen tillbaka, {name}!",
+  "home.passportTitle": "Health Passport",
+  "home.passportSubtitle": "Skapa ditt globala hälsopass",
+  "home.passportCta": "Skapa ditt Health Passport",
+  "nav.home": "Hem",
+  "nav.passport": "Pass",
+  "nav.records": "Journaler",
+  "nav.pairing": "Parkoppling",
+  "nav.profile": "Profil",
 
   "signup.title": "Skapa ditt konto",
   "signup.step1": "Dina uppgifter",

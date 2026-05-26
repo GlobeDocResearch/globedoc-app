@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, FileText, Link as LinkIcon, User } from "lucide-react";
 
