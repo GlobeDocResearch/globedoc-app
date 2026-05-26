@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Bell, LogOut, Home as HomeIcon, Globe, FileText, Link as LinkIcon, User, ChevronRight, Check } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
+import { PassportSetupModal } from "@/components/PassportSetupModal";
 
 export const Route = createFileRoute("/passport/")({
   head: () => ({ meta: [{ title: "Health Passport — GlobeDoc" }] }),
