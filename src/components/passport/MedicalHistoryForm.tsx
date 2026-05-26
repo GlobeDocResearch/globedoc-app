@@ -390,6 +390,9 @@ export default function MedicalHistoryForm() {
                       <Field label={t("f_year")} value={stay.year} ph={t("f_year_ph")} onChange={(v) => updateStay(stay.id, { year: v })} />
                       <Field label={t("f_hosp")} value={stay.hospital_country} ph={t("f_hosp_ph")} onChange={(v) => updateStay(stay.id, { hospital_country: v })} />
                       <Field label={t("f_notes")} value={stay.notes} ph={t("f_notes_ph")} onChange={(v) => updateStay(stay.id, { notes: v })} />
+                      {dirtyStays.has(stay.id) && (
+                        <CardUnsavedBanner onSave={() => saveStay(stay)} onDiscard={() => discardStay(stay)} />
+                      )}
                       <div className="flex justify-end gap-2 pt-1">
                         <button type="button" onClick={() => deleteStay(stay)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
                           <Trash2 className="h-4 w-4" />
