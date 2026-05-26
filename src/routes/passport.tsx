@@ -158,8 +158,9 @@ function PassportPage() {
               <p className="text-xs text-gray-400">{s.subtitle}</p>
             </div>
             <span className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-600">
-              {false && <Check className="h-4 w-4 text-green-400" />}
+              {done[s.key] && <Check className="h-4 w-4 text-green-400" />}
             </span>
+
           </button>
         ))}
 
