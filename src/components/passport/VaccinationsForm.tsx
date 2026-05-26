@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { X, Pencil, Trash2, Plus, Check, ChevronDown } from "lucide-react";
+import { X, Pencil, Trash2, Plus, Check, ChevronDown, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
@@ -10,12 +10,30 @@ import { toast } from "sonner";
 const ACCENT = "#9B7FD4";
 const ACCENT_2 = "#7B5FB4";
 
-const STANDARD_VACCINES = [
-  "DTP / DTaP", "Polio (IPV)", "MMR", "Hib", "Pneumococcal (PCV/PPV)",
-  "Rotavirus", "Hepatitis B", "Hepatitis A", "Meningococcal ACWY / B",
-  "Varicella", "HPV", "Influenza", "Covid-19 primary series",
-  "Covid-19 booster(s)", "Yellow fever", "Typhoid", "Japanese encephalitis",
-  "Rabies (pre-exposure)", "Cholera (Dukoral)", "TBE", "BCG", "Other",
+type VaxDef = { name: string; descEn: string; descSv: string };
+const STANDARD_VACCINES: VaxDef[] = [
+  { name: "DTP / DTaP", descEn: "Diphtheria, tetanus & whooping cough", descSv: "Difteri, stelkramp & kikhosta" },
+  { name: "Polio (IPV)", descEn: "Inactivated polio vaccine", descSv: "Inaktiverat poliovaccin" },
+  { name: "MMR", descEn: "Measles, mumps & rubella", descSv: "Mässling, påssjuka & röda hund" },
+  { name: "Hib", descEn: "Haemophilus influenzae type b", descSv: "Haemophilus influenzae typ b" },
+  { name: "Pneumococcal (PCV/PPV)", descEn: "Pneumonia & invasive pneumococcal disease", descSv: "Lunginflammation & invasiv pneumokocksjukdom" },
+  { name: "Rotavirus", descEn: "Protects against severe diarrhoea in infants", descSv: "Skyddar mot svår diarré hos spädbarn" },
+  { name: "Hepatitis B", descEn: "Liver infection caused by hepatitis B virus", descSv: "Leverinfektion orsakad av hepatit B-virus" },
+  { name: "Hepatitis A", descEn: "Liver infection, often travel-related", descSv: "Leverinfektion, ofta reseberoende" },
+  { name: "Meningococcal ACWY / B", descEn: "Bacterial meningitis", descSv: "Bakteriell hjärnhinneinflammation" },
+  { name: "Varicella", descEn: "Chickenpox", descSv: "Vattkoppor" },
+  { name: "HPV", descEn: "Human papillomavirus — protects against cervical & other cancers", descSv: "Humant papillomvirus — skyddar mot livmoderhals- och andra cancerformer" },
+  { name: "Influenza", descEn: "Seasonal flu", descSv: "Säsongsinfluensa" },
+  { name: "Covid-19 primary series", descEn: "Initial COVID-19 vaccination", descSv: "Inledande covid-19-vaccination" },
+  { name: "Covid-19 booster(s)", descEn: "Follow-up COVID-19 doses", descSv: "Uppföljande covid-19-doser" },
+  { name: "Yellow fever", descEn: "Required for entry to some countries", descSv: "Krävs för inresa till vissa länder" },
+  { name: "Typhoid", descEn: "Common in parts of Asia, Africa & Latin America", descSv: "Vanlig i delar av Asien, Afrika & Latinamerika" },
+  { name: "Japanese encephalitis", descEn: "Mosquito-borne, risk in rural Asia", descSv: "Myggburen, risk på landsbygden i Asien" },
+  { name: "Rabies (pre-exposure)", descEn: "For travellers to high-risk areas", descSv: "För resenärer till högriskområden" },
+  { name: "Cholera (Dukoral)", descEn: "Also protects against traveller's diarrhoea", descSv: "Skyddar även mot turistdiarré" },
+  { name: "TBE", descEn: "Tick-borne encephalitis", descSv: "Fästingburen hjärninflammation" },
+  { name: "BCG", descEn: "Tuberculosis", descSv: "Tuberkulos" },
+  { name: "Other", descEn: "specify in text field", descSv: "ange i textfältet" },
 ];
 
 type Record_ = { id: string; vaccine: string; date: string; batch_number: string; provider: string; collapsed: boolean; persisted: boolean };
@@ -29,7 +47,6 @@ const T: Record<Lang, Record<string, string>> = {
     info: "Gather all vaccines in one place — childhood records, travel vaccines, employer requirements and boosters. Check your vaccination book, 1177 or your GP record.",
     s1: "Vaccination record",
     s2: "Standard vaccines — tick those received",
-    s2_help: "Based on Swedish vaccination programme. Tick what you have received — adjust if you grew up in another country.",
     s3: "Travel vaccines",
     s4: "Certificates & contraindications",
     add_vax: "Add vaccination",
@@ -59,6 +76,11 @@ const T: Record<Lang, Record<string, string>> = {
     saved: "Saved",
     saveError: "Could not save",
     valid_until_prefix: "Valid until",
+    other_ph: "Please specify…",
+    autofilled: "Auto-filled from your profile",
+    help_sweden: (y: string) => `Based on the Swedish vaccination programme for someone born in ${y}. Pre-checked vaccines reflect what was standard when you were born — adjust if needed.`,
+    help_other: "Tick the vaccines you have received. We don't have pre-selections for your country of origin — please check your vaccination records.",
+    help_none: "Complete your profile to get personalised vaccine suggestions.",
   },
   sv: {
     title: "Vaccinationer",
@@ -67,7 +89,6 @@ const T: Record<Lang, Record<string, string>> = {
     info: "Samla alla vaccin på ett ställe — barnvaccin, resevaccin, arbetsgivarkrav och boosters. Kolla din vaccinationsbok, 1177 eller din vårdcentral.",
     s1: "Vaccinationsregister",
     s2: "Standardvaccin — bocka i de du fått",
-    s2_help: "Baserat på svenska vaccinationsprogrammet. Bocka i det du fått — justera om du växt upp i ett annat land.",
     s3: "Resevaccin",
     s4: "Intyg & kontraindikationer",
     add_vax: "Lägg till vaccination",
@@ -97,6 +118,11 @@ const T: Record<Lang, Record<string, string>> = {
     saved: "Sparat",
     saveError: "Kunde inte spara",
     valid_until_prefix: "Giltigt till",
+    other_ph: "Vänligen specificera…",
+    autofilled: "Automatiskt ifyllt från din profil",
+    help_sweden: (y: string) => `Baserat på svenska vaccinationsprogrammet för någon född ${y}. Förkryssade vaccin speglar det som var standard när du föddes — justera vid behov.`,
+    help_other: "Bocka i de vaccin du fått. Vi har inga förval för ditt ursprungsland — kontrollera dina vaccinationsuppgifter.",
+    help_none: "Komplettera din profil för att få personliga vaccinförslag.",
   },
 };
 
@@ -114,9 +140,13 @@ export default function VaccinationsForm() {
   const [travel, setTravel] = useState<Travel[]>([]);
   const [ihr, setIhr] = useState<string>("");
   const [contra, setContra] = useState("");
+  const [otherText, setOtherText] = useState("");
 
   const [travelOpen, setTravelOpen] = useState(false);
   const [certsOpen, setCertsOpen] = useState(false);
+
+  const [nationality, setNationality] = useState<string | null>(null);
+  const [birthYear, setBirthYear] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -127,11 +157,12 @@ export default function VaccinationsForm() {
       }
       setUserId(user.id);
       const sb = supabase as any;
-      const [vr, sv, tv, vc] = await Promise.all([
+      const [vr, sv, tv, vc, prof] = await Promise.all([
         sb.from("vaccination_records").select("*").eq("user_id", user.id).order("created_at"),
         sb.from("standard_vaccines").select("*").eq("user_id", user.id),
         sb.from("travel_vaccines").select("*").eq("user_id", user.id).order("created_at"),
         sb.from("vaccination_certificates").select("*").eq("user_id", user.id).maybeSingle(),
+        sb.from("profiles").select("nationality,date_of_birth").eq("user_id", user.id).maybeSingle(),
       ]);
       if (vr.data) setRecords(vr.data.map((r: any) => ({
         id: r.id, vaccine: r.vaccine ?? "", date: r.date ?? "", batch_number: r.batch_number ?? "",
@@ -150,6 +181,13 @@ export default function VaccinationsForm() {
         setIhr(vc.data.ihr_card ?? "");
         setContra(vc.data.contraindication_notes ?? "");
         setNothing(!!vc.data.nothing_to_report);
+        setOtherText(vc.data.other_vaccine_text ?? "");
+      }
+      if (prof.data) {
+        setNationality(prof.data.nationality ?? null);
+        if (prof.data.date_of_birth) {
+          setBirthYear(String(prof.data.date_of_birth).slice(0, 4));
+        }
       }
       setLoading(false);
     })();
@@ -161,10 +199,10 @@ export default function VaccinationsForm() {
     sb.from("audit_log").insert({ user_id: userId, table_name: table, action });
   };
 
-  const upsertCert = async (patch: Partial<{ ihr_card: string; contraindication_notes: string; nothing_to_report: boolean }>) => {
+  const upsertCert = async (patch: Partial<{ ihr_card: string; contraindication_notes: string; nothing_to_report: boolean; other_vaccine_text: string }>) => {
     if (!userId) return;
     await sb.from("vaccination_certificates").upsert(
-      { user_id: userId, ihr_card: ihr, contraindication_notes: contra, nothing_to_report: nothing, ...patch },
+      { user_id: userId, ihr_card: ihr, contraindication_notes: contra, nothing_to_report: nothing, other_vaccine_text: otherText, ...patch },
       { onConflict: "user_id" },
     );
     audit("vaccination_certificates", "upsert");
@@ -229,6 +267,15 @@ export default function VaccinationsForm() {
     } catch { toast.error(t("saveError")); }
   };
 
+  const isSweden = (nationality ?? "").trim().toLowerCase() === "sweden" || (nationality ?? "").trim().toLowerCase() === "sverige";
+  const helpText = useMemo(() => {
+    if (!nationality && !birthYear) return T[lang].help_none as string;
+    if (isSweden && birthYear) return (T[lang].help_sweden as (y: string) => string)(birthYear);
+    return T[lang].help_other as string;
+  }, [lang, nationality, birthYear, isSweden]);
+
+  const anyPrechecked = Object.values(standard).some(Boolean);
+
   if (loading) return <div className="min-h-screen bg-white" />;
 
   return (
@@ -287,18 +334,45 @@ export default function VaccinationsForm() {
 
             {/* Section 2 — Standard vaccines */}
             <section>
-              <h2 className="mb-1 text-sm font-bold text-[#0D1B2A]">{t("s2")}</h2>
-              <p className="mb-3 text-xs text-gray-600">{t("s2_help")}</p>
+              <div className="mb-1 flex flex-wrap items-center gap-2">
+                <h2 className="text-sm font-bold text-[#0D1B2A]">{t("s2")}</h2>
+                {anyPrechecked && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#E0EBFB] px-2 py-0.5 text-[11px] font-medium text-[#1D4ED8]">
+                    <Sparkles className="h-3 w-3" />
+                    {t("autofilled")}
+                  </span>
+                )}
+              </div>
+              <p className="mb-3 text-xs text-gray-600">{helpText}</p>
               <div className="space-y-1 rounded-xl bg-[#F8F9FA] p-3">
-                {STANDARD_VACCINES.map((name) => (
-                  <label key={name} className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 hover:bg-white">
-                    <Checkbox
-                      checked={!!standard[name]}
-                      onCheckedChange={(v) => toggleStandard(name, !!v)}
-                    />
-                    <span className="text-sm text-[#0D1B2A]">{name}</span>
-                  </label>
-                ))}
+                {STANDARD_VACCINES.map(({ name, descEn, descSv }) => {
+                  const isOther = name === "Other";
+                  const checked = !!standard[name];
+                  return (
+                    <div key={name} className="rounded-lg px-2 py-2 hover:bg-white">
+                      <label className="flex cursor-pointer items-start gap-3">
+                        <Checkbox
+                          className="mt-0.5"
+                          checked={checked}
+                          onCheckedChange={(v) => toggleStandard(name, !!v)}
+                        />
+                        <span className="flex-1">
+                          <span className="block text-sm text-[#0D1B2A]">{name}</span>
+                          <span className="block text-xs text-gray-500">{lang === "sv" ? descSv : descEn}</span>
+                        </span>
+                      </label>
+                      {isOther && checked && (
+                        <input
+                          value={otherText}
+                          onChange={(e) => setOtherText(e.target.value)}
+                          onBlur={() => upsertCert({ other_vaccine_text: otherText })}
+                          placeholder={t("other_ph")}
+                          className="mt-2 ml-7 w-[calc(100%-1.75rem)] rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#9B7FD4] focus:outline-none"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
