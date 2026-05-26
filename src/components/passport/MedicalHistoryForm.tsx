@@ -185,54 +185,59 @@ export default function MedicalHistoryForm() {
   };
 
   const addStay = () => {
+    const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      {
-        id: crypto.randomUUID(),
-        event: "",
-        year: "",
-        hospital_country: "",
-        notes: "",
-        collapsed: false,
-        persisted: false,
-      },
+      { id, event: "", year: "", hospital_country: "", notes: "", collapsed: false, persisted: false },
     ]);
+    markStayDirty(id);
   };
 
-  const updateStay = (id: string, patch: Partial<Stay>) =>
+  const updateStay = (id: string, patch: Partial<Stay>, dirty = true) => {
     setStays((s) => s.map((x) => (x.id === id ? { ...x, ...patch } : x)));
+    if (dirty) markStayDirty(id);
+  };
 
   const saveStay = async (stay: Stay) => {
     if (!userId) return;
     if (stay.persisted) {
       await supabase
         .from("hospital_stays")
-        .update({
-          event: stay.event,
-          year: stay.year,
-          hospital_country: stay.hospital_country,
-          notes: stay.notes,
-        })
+        .update({ event: stay.event, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
         .eq("id", stay.id);
       audit("hospital_stays", "update");
+      updateStay(stay.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase
         .from("hospital_stays")
-        .insert({
-          user_id: userId,
-          event: stay.event,
-          year: stay.year,
-          hospital_country: stay.hospital_country,
-          notes: stay.notes,
-        })
+        .insert({ user_id: userId, event: stay.event, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
         .select()
         .single();
       audit("hospital_stays", "insert");
-      if (data) updateStay(stay.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateStay(stay.id, { id: data.id, persisted: true, collapsed: true }, false);
+    }
+    clearStayDirty(stay.id);
+  };
+
+  const discardStay = async (stay: Stay) => {
+    if (!stay.persisted) {
+      setStays((s) => s.filter((x) => x.id !== stay.id));
+      clearStayDirty(stay.id);
       return;
     }
-    updateStay(stay.id, { collapsed: true });
+    const { data } = await supabase.from("hospital_stays").select("*").eq("id", stay.id).maybeSingle();
+    if (data) {
+      updateStay(stay.id, {
+        event: data.event ?? "",
+        year: data.year ?? "",
+        hospital_country: data.hospital_country ?? "",
+        notes: data.notes ?? "",
+        collapsed: true,
+      }, false);
+    }
+    clearStayDirty(stay.id);
   };
+
 
   const deleteStay = async (stay: Stay) => {
     if (stay.persisted) {
