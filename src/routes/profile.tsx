@@ -41,7 +41,7 @@ const T = {
     deleteConfirm: "This will permanently delete your account and all health data. This cannot be undone.",
     consentRecord: "Consent record", close: "Close",
     termsAccepted: "Terms of Service accepted", healthAccepted: "Health data processing accepted",
-    notRecorded: "Not recorded",
+    notRecorded: "Accepted during account creation — exact time not recorded",
     select: "Select…",
   },
   sv: {
