@@ -53,13 +53,18 @@ function PassportPage() {
         navigate({ to: "/login" });
         return;
       }
-      const [mc, hs, pm, ot, sm, di] = await Promise.all([
+      const sb = supabase as any;
+      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc] = await Promise.all([
         supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
         supabase.from("prescription_medications").select("id").eq("user_id", user.id).limit(1),
         supabase.from("otc_supplements").select("id").eq("user_id", user.id).limit(1),
         supabase.from("stopped_medications").select("id").eq("user_id", user.id).limit(1),
         supabase.from("drug_intolerances").select("intolerances_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        sb.from("vaccination_records").select("id").eq("user_id", user.id).limit(1),
+        sb.from("standard_vaccines").select("id").eq("user_id", user.id).eq("received", true).limit(1),
+        sb.from("travel_vaccines").select("id").eq("user_id", user.id).limit(1),
+        sb.from("vaccination_certificates").select("ihr_card, contraindication_notes, nothing_to_report").eq("user_id", user.id).maybeSingle(),
       ]);
       const mhDone =
         !!mc.data?.nothing_to_report ||
@@ -71,7 +76,14 @@ function PassportPage() {
         !!(pm.data && pm.data.length > 0) ||
         !!(ot.data && ot.data.length > 0) ||
         !!(sm.data && sm.data.length > 0);
-      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone }));
+      const vaxDone =
+        !!vc.data?.nothing_to_report ||
+        !!(vr.data && vr.data.length > 0) ||
+        !!(sv.data && sv.data.length > 0) ||
+        !!(tv.data && tv.data.length > 0) ||
+        !!vc.data?.ihr_card ||
+        !!(vc.data?.contraindication_notes && vc.data.contraindication_notes.trim().length > 0);
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone }));
     })();
   }, [navigate]);
 
