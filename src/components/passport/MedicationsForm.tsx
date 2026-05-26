@@ -383,8 +383,8 @@ export default function MedicationsForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s4")}</h2>
               <textarea
                 value={intolerances}
-                onChange={(e) => setIntolerances(e.target.value)}
-                onBlur={saveIntolerances}
+                onChange={(e) => { setIntolerances(e.target.value); setDirty(true); }}
+                onBlur={() => { saveIntolerances(); setDirty(false); }}
                 placeholder={t("intolerances_ph")}
                 rows={4}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#6BBF8E] focus:outline-none"
@@ -397,13 +397,14 @@ export default function MedicationsForm() {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E5E7EB] bg-white p-4">
         <button
           type="button"
-          onClick={saveAll}
+          onClick={handleSaveAndExit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6BBF8E] to-[#4DA070] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
           <Check className="h-4 w-4" />
           {t("save")}
         </button>
       </div>
+      <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
     </div>
   );
 }
