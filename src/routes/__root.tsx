@@ -122,6 +122,7 @@ function RootComponent() {
       <I18nProvider>
         <AuthSync />
         <Outlet />
+        <Toaster />
       </I18nProvider>
     </QueryClientProvider>
   );
