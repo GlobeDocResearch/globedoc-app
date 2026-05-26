@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      consents: {
+        Row: {
+          created_at: string
+          health_data_accepted_at: string | null
+          id: string
+          ip_address: string | null
+          terms_accepted_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          health_data_accepted_at?: string | null
+          id?: string
+          ip_address?: string | null
+          terms_accepted_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          health_data_accepted_at?: string | null
+          id?: string
+          ip_address?: string | null
+          terms_accepted_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: string
+          language: string
+          last_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          language?: string
+          last_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          language?: string
+          last_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
