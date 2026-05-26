@@ -79,10 +79,9 @@ export function PassportSetupModal({
     onDone();
   };
 
-  const skip = async () => {
-    await supabase.from("profiles").update({ setup_dismissed_at: new Date().toISOString() } as any).eq("user_id", userId);
-    onDone();
-  };
+  const skip = () => { onDone(); };
+
+  const canSubmit = !!f.date_of_birth && !!f.biological_sex && !saving;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
