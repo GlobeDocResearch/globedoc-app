@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      additional_vaccines: {
+        Row: {
+          category: string
+          created_at: string
+          date: string | null
+          id: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+          vaccine_name: string | null
+          year: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          date?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+          vaccine_name?: string | null
+          year?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          date?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+          vaccine_name?: string | null
+          year?: string | null
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -368,6 +404,7 @@ export type Database = {
       standard_vaccines: {
         Row: {
           created_at: string
+          date: string | null
           id: string
           received: boolean
           updated_at: string
@@ -376,6 +413,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          date?: string | null
           id?: string
           received?: boolean
           updated_at?: string
@@ -384,6 +422,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          date?: string | null
           id?: string
           received?: boolean
           updated_at?: string
