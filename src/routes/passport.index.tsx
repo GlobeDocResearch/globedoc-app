@@ -222,9 +222,30 @@ function PassportPage() {
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" active />
           <NavTab icon={<FileText className="h-5 w-5" />} label="Records" />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
-          <NavTab icon={<User className="h-5 w-5" />} label="Profile" />
+          <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" />
         </ul>
       </nav>
+
+      {showSetup && userId && (
+        <PassportSetupModal userId={userId} initial={setupInitial} onDone={async () => {
+          setShowSetup(false);
+          // Apply Sweden/birth-year pre-checks for standard vaccines
+          const { data: p } = await supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle();
+          const prof: any = p;
+          if (prof?.nationality === "Sweden" && prof?.date_of_birth) {
+            const year = new Date(prof.date_of_birth).getFullYear();
+            const toCheck: string[] = [];
+            if (year < 1976) toCheck.push("BCG");
+            if (year >= 1993) toCheck.push("DTP/DTaP", "Polio (IPV)", "MMR", "Hib");
+            for (const v of toCheck) {
+              await supabase.from("standard_vaccines").upsert(
+                { user_id: userId, vaccine_name: v, received: true } as any,
+                { onConflict: "user_id,vaccine_name" } as any
+              );
+            }
+          }
+        }} />
+      )}
     </div>
   );
 }
