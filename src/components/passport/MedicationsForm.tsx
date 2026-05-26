@@ -116,6 +116,12 @@ export default function MedicationsForm() {
   const [otcOpen, setOtcOpen] = useState(false);
   const [stoppedOpen, setStoppedOpen] = useState(false);
 
+  const [dirty, setDirty] = useState(false);
+  const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
+  const markDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.add(id); return n; });
+  const clearDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.delete(id); return n; });
+  const anyDirty = dirty || dirtyIds.size > 0;
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
