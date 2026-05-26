@@ -301,6 +301,7 @@ export default function MedicationsForm() {
             checked={nothing}
             onCheckedChange={(v) => {
               setNothing(v);
+              setDirty(true);
               if (userId) {
                 supabase.from("drug_intolerances").upsert(
                   { user_id: userId, intolerances_text: intolerances, nothing_to_report: v },
