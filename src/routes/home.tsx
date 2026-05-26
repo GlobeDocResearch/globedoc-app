@@ -52,8 +52,8 @@ function HomePage() {
     <div className="min-h-screen bg-[#F8F9FA] pb-24">
       {/* Top bar */}
       <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2">
-          <img src={logo} alt="GlobeDoc" className="h-8 w-8" />
+        <div className="flex items-center gap-2.5">
+          <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
           <span className="text-lg font-bold text-[#0D1B2A]">GlobeDoc</span>
         </div>
         <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ function HomePage() {
         <section className="flex items-center gap-4">
           <div className="relative">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-100">
-              <img src={logo} alt="" className="h-11 w-11" />
+              <img src={logo} alt="" className="h-14 w-14" />
             </div>
             <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
           </div>
