@@ -39,7 +39,7 @@ const STANDARD_VACCINES: VaxDef[] = [
 type Record_ = { id: string; vaccine: string; date: string; batch_number: string; provider: string; collapsed: boolean; persisted: boolean };
 type Travel = { id: string; vaccine: string; date: string; destination: string; valid_until: string; collapsed: boolean; persisted: boolean };
 
-const T: Record<Lang, Record<string, string>> = {
+const T: Record<Lang, Record<string, any>> = {
   en: {
     title: "Vaccinations",
     subtitle: "Complete immunisation record",
