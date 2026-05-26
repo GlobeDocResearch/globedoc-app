@@ -1,0 +1,1 @@
+ALTER TABLE public.vaccination_certificates ADD COLUMN IF NOT EXISTS other_vaccine_text text;
