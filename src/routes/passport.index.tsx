@@ -268,7 +268,7 @@ function Hex({ children, bg, style, onClick }: { children: React.ReactNode; bg: 
   );
 }
 
-function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/pairing" }) {
+function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/pairing" | "/profile" }) {
   const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
     active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
   }`;
