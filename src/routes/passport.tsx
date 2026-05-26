@@ -176,7 +176,7 @@ function Hex({ children, bg, style, onClick }: { children: React.ReactNode; bg: 
     <button
       type="button"
       onClick={onClick}
-      className="absolute flex h-[100px] w-[100px] flex-col items-center justify-center p-2 text-center transition-transform duration-200 hover:scale-[1.08] active:scale-[1.08]"
+      className="absolute flex h-[116px] w-[100px] flex-col items-center justify-center p-2 text-center transition-transform duration-200 hover:scale-[1.06] active:scale-[1.06]"
       style={{
         ...style,
         background: bg,
