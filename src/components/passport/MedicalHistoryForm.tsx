@@ -355,8 +355,8 @@ export default function MedicalHistoryForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <textarea
                 value={conditions}
-                onChange={(e) => setConditions(e.target.value)}
-                onBlur={saveConditions}
+                onChange={(e) => { setConditions(e.target.value); setDirty(true); }}
+                onBlur={() => { saveConditions(); setDirty(false); }}
                 placeholder={t("s1ph")}
                 rows={4}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
