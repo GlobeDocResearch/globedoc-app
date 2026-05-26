@@ -1,5 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
+type NavTo = "/home" | "/pairing";
 import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, FileText, Link as LinkIcon, User } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
@@ -116,10 +118,10 @@ function HomePage() {
       {/* Bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
-          <NavTab icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} active />
+          <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} active />
           <NavTab icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
           <NavTab icon={<FileText className="h-5 w-5" />} label={t("nav.records")} />
-          <NavTab icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
+          <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
           <NavTab icon={<User className="h-5 w-5" />} label={t("nav.profile")} />
         </ul>
       </nav>
@@ -127,18 +129,23 @@ function HomePage() {
   );
 }
 
-function NavTab({ icon, label, active }: { icon: React.ReactNode; label: string; active?: boolean }) {
+function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: NavTo }) {
+  const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
+    active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
+  }`;
   return (
     <li>
-      <button
-        type="button"
-        className={`flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
-          active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
-        }`}
-      >
-        {icon}
-        <span>{label}</span>
-      </button>
+      {to ? (
+        <Link to={to} className={className}>
+          {icon}
+          <span>{label}</span>
+        </Link>
+      ) : (
+        <button type="button" className={className}>
+          {icon}
+          <span>{label}</span>
+        </button>
+      )}
     </li>
   );
 }
