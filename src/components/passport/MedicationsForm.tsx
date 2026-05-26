@@ -174,75 +174,106 @@ export default function MedicationsForm() {
   };
 
   // Generic helpers per list
-  const addRx = () => setRx((s) => [...s, { id: crypto.randomUUID(), drug_generic: "", brand_name: "", dose_form: "", frequency: "", prescriber: "", collapsed: false, persisted: false }]);
-  const updateRx = (id: string, p: Partial<Rx>) => setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const updateRx = (id: string, p: Partial<Rx>, d = true) => { setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveRx = async (item: Rx) => {
     if (!userId) return;
     const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, prescriber: item.prescriber };
     if (item.persisted) {
       await supabase.from("prescription_medications").update(payload).eq("id", item.id);
       audit("prescription_medications", "update");
-      updateRx(item.id, { collapsed: true });
+      updateRx(item.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase.from("prescription_medications").insert({ user_id: userId, ...payload }).select().single();
       audit("prescription_medications", "insert");
-      if (data) updateRx(item.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateRx(item.id, { id: data.id, persisted: true, collapsed: true }, false);
     }
+    clearDirty(item.id);
   };
   const deleteRx = async (item: Rx) => {
     if (item.persisted) { await supabase.from("prescription_medications").delete().eq("id", item.id); audit("prescription_medications", "delete"); }
     setRx((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(item.id);
+  };
+  const discardRx = async (item: Rx) => {
+    if (!item.persisted) { setRx((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
+    const { data } = await supabase.from("prescription_medications").select("*").eq("id", item.id).maybeSingle();
+    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
+    clearDirty(item.id);
   };
 
-  const addOtc = () => setOtc((s) => [...s, { id: crypto.randomUUID(), product: "", dose: "", frequency: "", reason: "", collapsed: false, persisted: false }]);
-  const updateOtc = (id: string, p: Partial<Otc>) => setOtc((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const addOtc = () => { const id = crypto.randomUUID(); setOtc((s) => [...s, { id, product: "", dose: "", frequency: "", reason: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const updateOtc = (id: string, p: Partial<Otc>, d = true) => { setOtc((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveOtc = async (item: Otc) => {
     if (!userId) return;
     const payload = { product: item.product, dose: item.dose, frequency: item.frequency, reason: item.reason };
     if (item.persisted) {
       await supabase.from("otc_supplements").update(payload).eq("id", item.id);
       audit("otc_supplements", "update");
-      updateOtc(item.id, { collapsed: true });
+      updateOtc(item.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase.from("otc_supplements").insert({ user_id: userId, ...payload }).select().single();
       audit("otc_supplements", "insert");
-      if (data) updateOtc(item.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateOtc(item.id, { id: data.id, persisted: true, collapsed: true }, false);
     }
+    clearDirty(item.id);
   };
   const deleteOtc = async (item: Otc) => {
     if (item.persisted) { await supabase.from("otc_supplements").delete().eq("id", item.id); audit("otc_supplements", "delete"); }
     setOtc((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(item.id);
+  };
+  const discardOtc = async (item: Otc) => {
+    if (!item.persisted) { setOtc((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
+    const { data } = await supabase.from("otc_supplements").select("*").eq("id", item.id).maybeSingle();
+    if (data) updateOtc(item.id, { product: data.product ?? "", dose: data.dose ?? "", frequency: data.frequency ?? "", reason: data.reason ?? "", collapsed: true }, false);
+    clearDirty(item.id);
   };
 
-  const addStopped = () => setStopped((s) => [...s, { id: crypto.randomUUID(), drug_generic: "", dose: "", period: "", reason_stopped: "", collapsed: false, persisted: false }]);
-  const updateStopped = (id: string, p: Partial<Stopped>) => setStopped((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const addStopped = () => { const id = crypto.randomUUID(); setStopped((s) => [...s, { id, drug_generic: "", dose: "", period: "", reason_stopped: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const updateStopped = (id: string, p: Partial<Stopped>, d = true) => { setStopped((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveStopped = async (item: Stopped) => {
     if (!userId) return;
     const payload = { drug_generic: item.drug_generic, dose: item.dose, period: item.period, reason_stopped: item.reason_stopped };
     if (item.persisted) {
       await supabase.from("stopped_medications").update(payload).eq("id", item.id);
       audit("stopped_medications", "update");
-      updateStopped(item.id, { collapsed: true });
+      updateStopped(item.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase.from("stopped_medications").insert({ user_id: userId, ...payload }).select().single();
       audit("stopped_medications", "insert");
-      if (data) updateStopped(item.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateStopped(item.id, { id: data.id, persisted: true, collapsed: true }, false);
     }
+    clearDirty(item.id);
   };
   const deleteStopped = async (item: Stopped) => {
     if (item.persisted) { await supabase.from("stopped_medications").delete().eq("id", item.id); audit("stopped_medications", "delete"); }
     setStopped((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(item.id);
+  };
+  const discardStopped = async (item: Stopped) => {
+    if (!item.persisted) { setStopped((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
+    const { data } = await supabase.from("stopped_medications").select("*").eq("id", item.id).maybeSingle();
+    if (data) updateStopped(item.id, { drug_generic: data.drug_generic ?? "", dose: data.dose ?? "", period: data.period ?? "", reason_stopped: data.reason_stopped ?? "", collapsed: true }, false);
+    clearDirty(item.id);
   };
 
-  const saveAll = async () => {
-    if (!userId) return;
+  const saveAll = async (): Promise<boolean> => {
+    if (!userId) return false;
     try {
+      for (const item of rx) if (dirtyIds.has(item.id)) await saveRx(item);
+      for (const item of otc) if (dirtyIds.has(item.id)) await saveOtc(item);
+      for (const item of stopped) if (dirtyIds.has(item.id)) await saveStopped(item);
       await saveIntolerances();
       audit("medications", "save_all");
+      setDirty(false);
+      setDirtyIds(new Set());
       toast.success(t("saved"));
-      navigate({ to: "/passport" });
-    } catch { toast.error(t("saveError")); }
+      return true;
+    } catch { toast.error(t("saveError")); return false; }
   };
+  const handleSaveAndExit = async () => { if (await saveAll()) navigate({ to: "/passport" }); };
+  const resolver = useLeaveGuard(anyDirty);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
