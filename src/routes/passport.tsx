@@ -34,14 +34,34 @@ const SECTIONS: {
 
 function PassportPage() {
   const navigate = useNavigate();
-  const completed = 0;
+  const [done, setDone] = useState<Record<SectionKey, boolean>>({
+    "medical-history": false,
+    "medications": false,
+    "allergies": false,
+    "vaccinations": false,
+    "heredity": false,
+    "lifestyle": false,
+  });
+  const completed = Object.values(done).filter(Boolean).length;
   const total = SECTIONS.length;
   const percent = Math.round((completed / total) * 100);
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) navigate({ to: "/login" });
+      if (!user) {
+        navigate({ to: "/login" });
+        return;
+      }
+      const [mc, hs] = await Promise.all([
+        supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
+      ]);
+      const mhDone =
+        !!mc.data?.nothing_to_report ||
+        !!(mc.data?.conditions_text && mc.data.conditions_text.trim().length > 0) ||
+        !!(hs.data && hs.data.length > 0);
+      setDone((d) => ({ ...d, "medical-history": mhDone }));
     })();
   }, [navigate]);
 
@@ -51,6 +71,7 @@ function PassportPage() {
   };
 
   const goSection = (key: SectionKey) => navigate({ to: "/passport/$section", params: { section: key } });
+
 
   return (
     <div className="min-h-screen bg-[#0D1B2A] pb-24">
