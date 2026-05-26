@@ -57,6 +57,12 @@ function PassportPage() {
         navigate({ to: "/login" });
         return;
       }
+      setUserId(user.id);
+      const { data: prof } = await supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
+      if (prof && !(prof as any).date_of_birth && !(prof as any).setup_dismissed_at) {
+        setSetupInitial(prof);
+        setShowSetup(true);
+      }
       const sb = supabase as any;
       const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc] = await Promise.all([
         supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
