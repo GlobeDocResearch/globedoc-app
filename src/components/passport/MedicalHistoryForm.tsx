@@ -481,13 +481,14 @@ export default function MedicalHistoryForm() {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E5E7EB] bg-white p-4">
         <button
           type="button"
-          onClick={saveAll}
+          onClick={handleSaveAndExit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5B6BD4] to-[#7B8BE4] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
           <Check className="h-4 w-4" />
           {t("save")}
         </button>
       </div>
+      <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
     </div>
   );
 }
