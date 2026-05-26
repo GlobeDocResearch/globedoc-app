@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
@@ -115,6 +116,12 @@ export default function MedicationsForm() {
   const [otcOpen, setOtcOpen] = useState(false);
   const [stoppedOpen, setStoppedOpen] = useState(false);
 
+  const [dirty, setDirty] = useState(false);
+  const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
+  const markDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.add(id); return n; });
+  const clearDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.delete(id); return n; });
+  const anyDirty = dirty || dirtyIds.size > 0;
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -167,75 +174,106 @@ export default function MedicationsForm() {
   };
 
   // Generic helpers per list
-  const addRx = () => setRx((s) => [...s, { id: crypto.randomUUID(), drug_generic: "", brand_name: "", dose_form: "", frequency: "", prescriber: "", collapsed: false, persisted: false }]);
-  const updateRx = (id: string, p: Partial<Rx>) => setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const updateRx = (id: string, p: Partial<Rx>, d = true) => { setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveRx = async (item: Rx) => {
     if (!userId) return;
     const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, prescriber: item.prescriber };
     if (item.persisted) {
       await supabase.from("prescription_medications").update(payload).eq("id", item.id);
       audit("prescription_medications", "update");
-      updateRx(item.id, { collapsed: true });
+      updateRx(item.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase.from("prescription_medications").insert({ user_id: userId, ...payload }).select().single();
       audit("prescription_medications", "insert");
-      if (data) updateRx(item.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateRx(item.id, { id: data.id, persisted: true, collapsed: true }, false);
     }
+    clearDirty(item.id);
   };
   const deleteRx = async (item: Rx) => {
     if (item.persisted) { await supabase.from("prescription_medications").delete().eq("id", item.id); audit("prescription_medications", "delete"); }
     setRx((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(item.id);
+  };
+  const discardRx = async (item: Rx) => {
+    if (!item.persisted) { setRx((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
+    const { data } = await supabase.from("prescription_medications").select("*").eq("id", item.id).maybeSingle();
+    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
+    clearDirty(item.id);
   };
 
-  const addOtc = () => setOtc((s) => [...s, { id: crypto.randomUUID(), product: "", dose: "", frequency: "", reason: "", collapsed: false, persisted: false }]);
-  const updateOtc = (id: string, p: Partial<Otc>) => setOtc((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const addOtc = () => { const id = crypto.randomUUID(); setOtc((s) => [...s, { id, product: "", dose: "", frequency: "", reason: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const updateOtc = (id: string, p: Partial<Otc>, d = true) => { setOtc((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveOtc = async (item: Otc) => {
     if (!userId) return;
     const payload = { product: item.product, dose: item.dose, frequency: item.frequency, reason: item.reason };
     if (item.persisted) {
       await supabase.from("otc_supplements").update(payload).eq("id", item.id);
       audit("otc_supplements", "update");
-      updateOtc(item.id, { collapsed: true });
+      updateOtc(item.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase.from("otc_supplements").insert({ user_id: userId, ...payload }).select().single();
       audit("otc_supplements", "insert");
-      if (data) updateOtc(item.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateOtc(item.id, { id: data.id, persisted: true, collapsed: true }, false);
     }
+    clearDirty(item.id);
   };
   const deleteOtc = async (item: Otc) => {
     if (item.persisted) { await supabase.from("otc_supplements").delete().eq("id", item.id); audit("otc_supplements", "delete"); }
     setOtc((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(item.id);
+  };
+  const discardOtc = async (item: Otc) => {
+    if (!item.persisted) { setOtc((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
+    const { data } = await supabase.from("otc_supplements").select("*").eq("id", item.id).maybeSingle();
+    if (data) updateOtc(item.id, { product: data.product ?? "", dose: data.dose ?? "", frequency: data.frequency ?? "", reason: data.reason ?? "", collapsed: true }, false);
+    clearDirty(item.id);
   };
 
-  const addStopped = () => setStopped((s) => [...s, { id: crypto.randomUUID(), drug_generic: "", dose: "", period: "", reason_stopped: "", collapsed: false, persisted: false }]);
-  const updateStopped = (id: string, p: Partial<Stopped>) => setStopped((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const addStopped = () => { const id = crypto.randomUUID(); setStopped((s) => [...s, { id, drug_generic: "", dose: "", period: "", reason_stopped: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const updateStopped = (id: string, p: Partial<Stopped>, d = true) => { setStopped((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveStopped = async (item: Stopped) => {
     if (!userId) return;
     const payload = { drug_generic: item.drug_generic, dose: item.dose, period: item.period, reason_stopped: item.reason_stopped };
     if (item.persisted) {
       await supabase.from("stopped_medications").update(payload).eq("id", item.id);
       audit("stopped_medications", "update");
-      updateStopped(item.id, { collapsed: true });
+      updateStopped(item.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase.from("stopped_medications").insert({ user_id: userId, ...payload }).select().single();
       audit("stopped_medications", "insert");
-      if (data) updateStopped(item.id, { id: data.id, persisted: true, collapsed: true });
+      if (data) updateStopped(item.id, { id: data.id, persisted: true, collapsed: true }, false);
     }
+    clearDirty(item.id);
   };
   const deleteStopped = async (item: Stopped) => {
     if (item.persisted) { await supabase.from("stopped_medications").delete().eq("id", item.id); audit("stopped_medications", "delete"); }
     setStopped((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(item.id);
+  };
+  const discardStopped = async (item: Stopped) => {
+    if (!item.persisted) { setStopped((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
+    const { data } = await supabase.from("stopped_medications").select("*").eq("id", item.id).maybeSingle();
+    if (data) updateStopped(item.id, { drug_generic: data.drug_generic ?? "", dose: data.dose ?? "", period: data.period ?? "", reason_stopped: data.reason_stopped ?? "", collapsed: true }, false);
+    clearDirty(item.id);
   };
 
-  const saveAll = async () => {
-    if (!userId) return;
+  const saveAll = async (): Promise<boolean> => {
+    if (!userId) return false;
     try {
+      for (const item of rx) if (dirtyIds.has(item.id)) await saveRx(item);
+      for (const item of otc) if (dirtyIds.has(item.id)) await saveOtc(item);
+      for (const item of stopped) if (dirtyIds.has(item.id)) await saveStopped(item);
       await saveIntolerances();
       audit("medications", "save_all");
+      setDirty(false);
+      setDirtyIds(new Set());
       toast.success(t("saved"));
-      navigate({ to: "/passport" });
-    } catch { toast.error(t("saveError")); }
+      return true;
+    } catch { toast.error(t("saveError")); return false; }
   };
+  const handleSaveAndExit = async () => { if (await saveAll()) navigate({ to: "/passport" }); };
+  const resolver = useLeaveGuard(anyDirty);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
@@ -263,6 +301,7 @@ export default function MedicationsForm() {
             checked={nothing}
             onCheckedChange={(v) => {
               setNothing(v);
+              setDirty(true);
               if (userId) {
                 supabase.from("drug_intolerances").upsert(
                   { user_id: userId, intolerances_text: intolerances, nothing_to_report: v },
@@ -288,6 +327,7 @@ export default function MedicationsForm() {
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
                     <Field label={t("f_prescriber")} value={item.prescriber} ph={t("f_prescriber_ph")} onChange={(v) => updateRx(item.id, { prescriber: v })} />
+                    {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveRx(item)} onDiscard={() => discardRx(item)} />}
                     <CardActions onSave={() => saveRx(item)} onDelete={() => deleteRx(item)} saveLabel={t("save_item")} />
                   </div>
                 ))}
@@ -306,6 +346,7 @@ export default function MedicationsForm() {
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_ph")} onChange={(v) => updateOtc(item.id, { dose: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_otc_ph")} onChange={(v) => updateOtc(item.id, { frequency: v })} />
                     <Field label={t("f_reason")} value={item.reason} ph={t("f_reason_ph")} onChange={(v) => updateOtc(item.id, { reason: v })} />
+                    {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveOtc(item)} onDiscard={() => discardOtc(item)} />}
                     <CardActions onSave={() => saveOtc(item)} onDelete={() => deleteOtc(item)} saveLabel={t("save_item")} />
                   </div>
                 ))}
@@ -329,6 +370,7 @@ export default function MedicationsForm() {
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
+                    {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveStopped(item)} onDiscard={() => discardStopped(item)} />}
                     <CardActions onSave={() => saveStopped(item)} onDelete={() => deleteStopped(item)} saveLabel={t("save_item")} />
                   </div>
                 ))}
@@ -341,8 +383,8 @@ export default function MedicationsForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s4")}</h2>
               <textarea
                 value={intolerances}
-                onChange={(e) => setIntolerances(e.target.value)}
-                onBlur={saveIntolerances}
+                onChange={(e) => { setIntolerances(e.target.value); setDirty(true); }}
+                onBlur={() => { saveIntolerances(); setDirty(false); }}
                 placeholder={t("intolerances_ph")}
                 rows={4}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#6BBF8E] focus:outline-none"
@@ -355,13 +397,14 @@ export default function MedicationsForm() {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E5E7EB] bg-white p-4">
         <button
           type="button"
-          onClick={saveAll}
+          onClick={handleSaveAndExit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6BBF8E] to-[#4DA070] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
           <Check className="h-4 w-4" />
           {t("save")}
         </button>
       </div>
+      <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
     </div>
   );
 }
