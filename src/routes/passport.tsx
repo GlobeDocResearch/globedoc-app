@@ -114,7 +114,9 @@ function PassportPage() {
           <Hex style={{ left: 50, top: 0 }} bg={SECTIONS[0].color} onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
             <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Medical<br/>History</span>
+            {done["medical-history"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
+
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} bg={SECTIONS[1].color} onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
