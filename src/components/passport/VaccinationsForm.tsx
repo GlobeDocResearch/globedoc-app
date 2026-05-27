@@ -119,7 +119,7 @@ const T: Record<Lang, Record<string, any>> = {
     autofilled: "Auto-filled from your profile",
     help_sweden: (y: string) => `Based on the Swedish vaccination programme for someone born in ${y}. Pre-checked vaccines reflect what was standard when you were born — adjust if needed.`,
     help_other: "Tick the vaccines you have received. We don't have pre-selections for your country of origin — please check your vaccination records.",
-    help_none: "Complete your profile to get personalised vaccine suggestions.",
+    
     covid_primary: "Covid-19 primary series",
     covid_primary_desc: "Initial COVID-19 vaccination",
     covid_primary_date: "Primary series date",
@@ -177,7 +177,7 @@ const T: Record<Lang, Record<string, any>> = {
     autofilled: "Automatiskt ifyllt från din profil",
     help_sweden: (y: string) => `Baserat på svenska vaccinationsprogrammet för någon född ${y}. Förkryssade vaccin speglar det som var standard när du föddes — justera vid behov.`,
     help_other: "Bocka i de vaccin du fått. Vi har inga förval för ditt ursprungsland — kontrollera dina vaccinationsuppgifter.",
-    help_none: "Komplettera din profil för att få personliga vaccinförslag.",
+    
     covid_primary: "Covid-19 grundvaccination",
     covid_primary_desc: "Inledande covid-19-vaccination",
     covid_primary_date: "Datum för grundvaccination",
@@ -557,10 +557,9 @@ export default function VaccinationsForm() {
 
   const isSweden = (nationality ?? "").trim().toLowerCase() === "sweden" || (nationality ?? "").trim().toLowerCase() === "sverige";
   const helpText = useMemo(() => {
-    if (!nationality && !birthYear) return T[lang].help_none as string;
     if (isSweden && birthYear) return (T[lang].help_sweden as (y: string) => string)(birthYear);
     return T[lang].help_other as string;
-  }, [lang, nationality, birthYear, isSweden]);
+  }, [lang, birthYear, isSweden]);
 
   const anyPrechecked = Object.values(standard).some(Boolean);
 

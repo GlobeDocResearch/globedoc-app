@@ -28,6 +28,7 @@ const T = {
     submit: "Get started", skip: "Skip for now",
     select: "Select…",
     saved: "Profile saved",
+    required_hint: "Date of birth, biological sex and country of origin are required to continue.",
   },
   sv: {
     title: "Konfigurera ditt Health Passport",
@@ -41,6 +42,7 @@ const T = {
     submit: "Kom igång", skip: "Hoppa över",
     select: "Välj…",
     saved: "Profil sparad",
+    required_hint: "Födelsedatum, biologiskt kön och ursprungsland krävs för att fortsätta.",
   },
 };
 
@@ -81,7 +83,7 @@ export function PassportSetupModal({
 
   const skip = () => { onDone(); };
 
-  const canSubmit = !!f.date_of_birth && !!f.biological_sex && !saving;
+  const canSubmit = !!f.date_of_birth && !!f.biological_sex && !!f.nationality && !saving;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
@@ -109,7 +111,7 @@ export function PassportSetupModal({
                 <option value="other">{t.other}</option>
               </select>
             </Field>
-            <Field label={t.origin}>
+            <Field label={`${t.origin} *`}>
               <CountrySelect value={f.nationality ?? ""} onChange={(v) => update("nationality", v)} placeholder={t.select} />
             </Field>
             <Field label={t.residence}>
@@ -126,6 +128,9 @@ export function PassportSetupModal({
             <button onClick={save} disabled={!canSubmit} className="w-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50">
               {t.submit}
             </button>
+            {!canSubmit && !saving && (
+              <p className="text-center text-xs text-gray-500">{t.required_hint}</p>
+            )}
             <button onClick={skip} className="text-xs text-gray-500 underline">{t.skip}</button>
           </div>
         </div>
