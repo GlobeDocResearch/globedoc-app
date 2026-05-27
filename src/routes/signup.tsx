@@ -35,6 +35,16 @@ const detailsSchema = z
 
 type Details = z.infer<typeof detailsSchema>;
 
+const STABLE_PREVIEW_ORIGIN =
+  "https://project--b5e5e8e5-3e24-4f41-ac2c-04cca968157b-dev.lovable.app";
+
+function getEmailVerificationRedirectUrl() {
+  const currentUrl = new URL(window.location.href);
+  const host = currentUrl.hostname.toLowerCase();
+  const origin = host.startsWith("id-preview--") ? STABLE_PREVIEW_ORIGIN : currentUrl.origin;
+  return `${origin}/verified`;
+}
+
 function SignupPage() {
   const { t } = useI18n();
   const [step, setStep] = useState<1 | 2>(1);
@@ -273,7 +283,7 @@ function ConsentStep({ details, onBack }: { details: Details; onBack: () => void
   const onCreate = async () => {
     if (!canSubmit) return;
     setSubmitting(true);
-    const redirectUrl = `${window.location.origin}/verified`;
+    const redirectUrl = getEmailVerificationRedirectUrl();
     const { error } = await supabase.auth.signUp({
       email: details.email,
       password: details.password,
