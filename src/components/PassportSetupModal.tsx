@@ -42,6 +42,7 @@ const T = {
     submit: "Kom igång", skip: "Hoppa över",
     select: "Välj…",
     saved: "Profil sparad",
+    required_hint: "Födelsedatum, biologiskt kön och ursprungsland krävs för att fortsätta.",
   },
 };
 
