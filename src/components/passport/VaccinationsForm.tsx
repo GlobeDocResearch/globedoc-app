@@ -177,7 +177,7 @@ const T: Record<Lang, Record<string, any>> = {
     autofilled: "Automatiskt ifyllt från din profil",
     help_sweden: (y: string) => `Baserat på svenska vaccinationsprogrammet för någon född ${y}. Förkryssade vaccin speglar det som var standard när du föddes — justera vid behov.`,
     help_other: "Bocka i de vaccin du fått. Vi har inga förval för ditt ursprungsland — kontrollera dina vaccinationsuppgifter.",
-    help_none: "Komplettera din profil för att få personliga vaccinförslag.",
+    
     covid_primary: "Covid-19 grundvaccination",
     covid_primary_desc: "Inledande covid-19-vaccination",
     covid_primary_date: "Datum för grundvaccination",
