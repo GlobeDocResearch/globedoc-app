@@ -550,39 +550,43 @@ export default function LifestyleForm() {
                 options={[
                   { v: "never", l: t("alc_never") },
                   { v: "occasionally", l: t("alc_occ") },
+                  { v: "monthly", l: t("alc_monthly") },
                   { v: "weekly", l: t("alc_weekly") },
-                  { v: "daily", l: t("alc_daily") },
                 ]}
               />
               {showAlcoholExtra && (
                 <div className="mt-3 space-y-3">
-                  <div>
-                    <Lbl>{t("alc_drinks")}</Lbl>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={s.alcohol_drinks_per_week}
-                      onChange={(e) => set("alcohol_drinks_per_week", e.target.value)}
-                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#5BB8A8] focus:outline-none"
-                    />
-                  </div>
+                  {(s.alcohol_frequency === "monthly" || s.alcohol_frequency === "weekly") && (
+                    <div>
+                      <Lbl>{t("alc_drinks")}</Lbl>
+                      <input
+                        type="number"
+                        min={1}
+                        max={100}
+                        placeholder={t("alc_drinks_ph")}
+                        value={s.alcohol_drinks_per_week}
+                        onChange={(e) => set("alcohol_drinks_per_week", e.target.value)}
+                        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#5BB8A8] focus:outline-none"
+                      />
+                    </div>
+                  )}
                   <div>
                     <Lbl>{t("alc_type")}</Lbl>
-                    <Sel
-                      value={s.alcohol_type}
-                      onChange={(v) => set("alcohol_type", v)}
+                    <Chips
+                      values={s.alcohol_type}
+                      onToggle={(v) => toggleArr("alcohol_type", v)}
                       options={[
                         { v: "beer", l: t("alc_beer") },
                         { v: "wine", l: t("alc_wine") },
                         { v: "spirits", l: t("alc_spirits") },
-                        { v: "mixed", l: t("alc_mixed") },
+                        { v: "other", l: t("other") },
                       ]}
                     />
                   </div>
                 </div>
               )}
             </Section>
+
 
             {/* HEIGHT & WEIGHT */}
             <Section title={t("s_hw")}>
@@ -736,6 +740,8 @@ export default function LifestyleForm() {
                     values={s.sleep_issues}
                     onToggle={(v) => toggleArr("sleep_issues", v)}
                     options={[
+                      { v: "dfa", l: t("sleep_dfa") },
+                      { v: "fnw", l: t("sleep_fnw") },
                       { v: "insomnia", l: t("sleep_insomnia") },
                       { v: "apnoea", l: t("sleep_apnoea") },
                       { v: "rls", l: t("sleep_rls") },
@@ -743,6 +749,13 @@ export default function LifestyleForm() {
                       { v: "other", l: t("other") },
                     ]}
                   />
+                  {s.sleep_issues.includes("other") && (
+                    <Txt
+                      value={s.sleep_other}
+                      onChange={(v) => set("sleep_other", v)}
+                      placeholder={t("please_describe")}
+                    />
+                  )}
                   {s.sleep_issues.includes("apnoea") && (
                     <div className="rounded-xl bg-[#F8F9FA] p-3">
                       <YesNo
