@@ -743,20 +743,24 @@ export default function VaccinationsForm() {
                     <SummaryRow key={item.id} text={[item.vaccine_name, item.date].filter(Boolean).join(" · ")} onEdit={() => updateOther(item.id, { collapsed: false })} onDelete={() => deleteOther(item)} />
                   ) : (
                     <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                      <Field label={t("other_name")} value={item.vaccine_name} ph={t("other_name_ph")} onChange={(v) => updateOther(item.id, { vaccine_name: v })} />
-                      <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => updateOther(item.id, { date: v })} />
+                      <Field label={t("other_name")} value={item.vaccine_name} ph={t("other_name_ph")} onChange={(v) => editOther(item.id, { vaccine_name: v })} />
+                      <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => editOther(item.id, { date: v })} />
                       <div>
                         <label className="block text-xs text-gray-600">{t("notes")}</label>
                         <textarea
                           value={item.notes}
-                          onChange={(e) => updateOther(item.id, { notes: e.target.value })}
+                          onChange={(e) => editOther(item.id, { notes: e.target.value })}
                           placeholder={t("notes_ph")}
                           rows={2}
                           className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:border-[#9B7FD4] focus:outline-none"
                         />
                       </div>
+                      {dirtyIds.has(`oth:${item.id}`) && (
+                        <CardUnsavedBanner onSave={() => saveOther(item)} onDiscard={() => discardOther(item)} />
+                      )}
                       <CardActions onSave={() => saveOther(item)} onDelete={() => deleteOther(item)} saveLabel={t("save_item")} />
                     </div>
+
                   ))}
                 </div>
                 <AddBtn label={t("add_other")} onClick={addOther} />
