@@ -20,7 +20,7 @@ type State = {
   tobacco_year_stopped: string;
   alcohol_frequency: string;
   alcohol_drinks_per_week: string;
-  alcohol_type: string;
+  alcohol_type: string[];
   height_cm: string;
   weight_kg: string;
   exercise_frequency: string;
@@ -31,6 +31,7 @@ type State = {
   diet_other: string;
   sleep_status: string;
   sleep_issues: string[];
+  sleep_other: string;
   uses_cpap: boolean | null;
   mental_health_treated: boolean | null;
   mental_health_conditions: string[];
@@ -50,7 +51,7 @@ const initialState: State = {
   tobacco_year_stopped: "",
   alcohol_frequency: "",
   alcohol_drinks_per_week: "",
-  alcohol_type: "",
+  alcohol_type: [],
   height_cm: "",
   weight_kg: "",
   exercise_frequency: "",
@@ -61,6 +62,7 @@ const initialState: State = {
   diet_other: "",
   sleep_status: "",
   sleep_issues: [],
+  sleep_other: "",
   uses_cpap: null,
   mental_health_treated: null,
   mental_health_conditions: [],
@@ -97,15 +99,15 @@ const T: Record<Lang, Record<string, string>> = {
     amt_gt20: "More than 20/day",
     s_alcohol: "Alcohol use",
     alc_never: "Never",
-    alc_occ: "Occasionally",
+    alc_occ: "Occasionally (less than monthly)",
+    alc_monthly: "Monthly",
     alc_weekly: "Weekly",
-    alc_daily: "Daily",
-    alc_drinks: "Standard drinks per week",
+    alc_drinks: "Drinks per occasion",
+    alc_drinks_ph: "E.g. 2",
     alc_type: "Type",
     alc_beer: "Beer",
     alc_wine: "Wine",
     alc_spirits: "Spirits",
-    alc_mixed: "Mixed",
     s_hw: "Height & Weight",
     height: "Height (cm)",
     weight: "Weight (kg)",
@@ -150,6 +152,8 @@ const T: Record<Lang, Record<string, string>> = {
     sleep_none: "No issues",
     sleep_occ: "Occasional issues",
     sleep_sig: "Significant issues",
+    sleep_dfa: "Difficulty falling asleep",
+    sleep_fnw: "Frequent night wakings",
     sleep_insomnia: "Insomnia",
     sleep_apnoea: "Sleep apnoea",
     sleep_rls: "Restless legs syndrome",
@@ -203,15 +207,16 @@ const T: Record<Lang, Record<string, string>> = {
     amt_gt20: "Mer än 20/dag",
     s_alcohol: "Alkoholbruk",
     alc_never: "Aldrig",
-    alc_occ: "Ibland",
+    alc_occ: "Ibland (mindre än månadsvis)",
+    alc_monthly: "Månadsvis",
     alc_weekly: "Varje vecka",
-    alc_daily: "Dagligen",
-    alc_drinks: "Standardglas per vecka",
+    alc_drinks: "Glas per tillfälle",
+    alc_drinks_ph: "T.ex. 2",
     alc_type: "Typ",
     alc_beer: "Öl",
     alc_wine: "Vin",
     alc_spirits: "Sprit",
-    alc_mixed: "Blandat",
+    
     s_hw: "Längd & Vikt",
     height: "Längd (cm)",
     weight: "Vikt (kg)",
@@ -256,6 +261,8 @@ const T: Record<Lang, Record<string, string>> = {
     sleep_none: "Inga problem",
     sleep_occ: "Tillfälliga problem",
     sleep_sig: "Betydande problem",
+    sleep_dfa: "Svårt att somna",
+    sleep_fnw: "Vaknar ofta på natten",
     sleep_insomnia: "Sömnlöshet",
     sleep_apnoea: "Sömnapné",
     sleep_rls: "Restless legs",
@@ -333,7 +340,7 @@ export default function LifestyleForm() {
           alcohol_frequency: data.alcohol_frequency ?? "",
           alcohol_drinks_per_week:
             data.alcohol_drinks_per_week != null ? String(data.alcohol_drinks_per_week) : "",
-          alcohol_type: data.alcohol_type ?? "",
+          alcohol_type: Array.isArray(data.alcohol_type) ? data.alcohol_type : (data.alcohol_type ? [data.alcohol_type] : []),
           height_cm: data.height_cm != null ? String(data.height_cm) : "",
           weight_kg: data.weight_kg != null ? String(data.weight_kg) : "",
           exercise_frequency: data.exercise_frequency ?? "",
@@ -344,6 +351,7 @@ export default function LifestyleForm() {
           diet_other: data.diet_other ?? "",
           sleep_status: data.sleep_status ?? "",
           sleep_issues: data.sleep_issues ?? [],
+          sleep_other: data.sleep_other ?? "",
           uses_cpap: data.uses_cpap,
           mental_health_treated: data.mental_health_treated,
           mental_health_conditions: data.mental_health_conditions ?? [],
@@ -396,7 +404,7 @@ export default function LifestyleForm() {
           s.nothing || !s.alcohol_drinks_per_week
             ? null
             : parseInt(s.alcohol_drinks_per_week, 10),
-        alcohol_type: s.nothing ? null : s.alcohol_type || null,
+        alcohol_type: s.nothing ? null : s.alcohol_type,
         height_cm: s.nothing || !s.height_cm ? null : parseFloat(s.height_cm),
         weight_kg: s.nothing || !s.weight_kg ? null : parseFloat(s.weight_kg),
         exercise_frequency: s.nothing ? null : s.exercise_frequency || null,
@@ -407,6 +415,7 @@ export default function LifestyleForm() {
         diet_other: s.nothing ? null : s.diet_other || null,
         sleep_status: s.nothing ? null : s.sleep_status || null,
         sleep_issues: s.nothing ? null : s.sleep_issues,
+        sleep_other: s.nothing ? null : s.sleep_other || null,
         uses_cpap: s.nothing ? null : s.uses_cpap,
         mental_health_treated: s.nothing ? null : s.mental_health_treated,
         mental_health_conditions: s.nothing ? null : s.mental_health_conditions,
@@ -541,39 +550,43 @@ export default function LifestyleForm() {
                 options={[
                   { v: "never", l: t("alc_never") },
                   { v: "occasionally", l: t("alc_occ") },
+                  { v: "monthly", l: t("alc_monthly") },
                   { v: "weekly", l: t("alc_weekly") },
-                  { v: "daily", l: t("alc_daily") },
                 ]}
               />
               {showAlcoholExtra && (
                 <div className="mt-3 space-y-3">
-                  <div>
-                    <Lbl>{t("alc_drinks")}</Lbl>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={s.alcohol_drinks_per_week}
-                      onChange={(e) => set("alcohol_drinks_per_week", e.target.value)}
-                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#5BB8A8] focus:outline-none"
-                    />
-                  </div>
+                  {(s.alcohol_frequency === "monthly" || s.alcohol_frequency === "weekly") && (
+                    <div>
+                      <Lbl>{t("alc_drinks")}</Lbl>
+                      <input
+                        type="number"
+                        min={1}
+                        max={100}
+                        placeholder={t("alc_drinks_ph")}
+                        value={s.alcohol_drinks_per_week}
+                        onChange={(e) => set("alcohol_drinks_per_week", e.target.value)}
+                        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#5BB8A8] focus:outline-none"
+                      />
+                    </div>
+                  )}
                   <div>
                     <Lbl>{t("alc_type")}</Lbl>
-                    <Sel
-                      value={s.alcohol_type}
-                      onChange={(v) => set("alcohol_type", v)}
+                    <Chips
+                      values={s.alcohol_type}
+                      onToggle={(v) => toggleArr("alcohol_type", v)}
                       options={[
                         { v: "beer", l: t("alc_beer") },
                         { v: "wine", l: t("alc_wine") },
                         { v: "spirits", l: t("alc_spirits") },
-                        { v: "mixed", l: t("alc_mixed") },
+                        { v: "other", l: t("other") },
                       ]}
                     />
                   </div>
                 </div>
               )}
             </Section>
+
 
             {/* HEIGHT & WEIGHT */}
             <Section title={t("s_hw")}>
@@ -727,6 +740,8 @@ export default function LifestyleForm() {
                     values={s.sleep_issues}
                     onToggle={(v) => toggleArr("sleep_issues", v)}
                     options={[
+                      { v: "dfa", l: t("sleep_dfa") },
+                      { v: "fnw", l: t("sleep_fnw") },
                       { v: "insomnia", l: t("sleep_insomnia") },
                       { v: "apnoea", l: t("sleep_apnoea") },
                       { v: "rls", l: t("sleep_rls") },
@@ -734,6 +749,13 @@ export default function LifestyleForm() {
                       { v: "other", l: t("other") },
                     ]}
                   />
+                  {s.sleep_issues.includes("other") && (
+                    <Txt
+                      value={s.sleep_other}
+                      onChange={(v) => set("sleep_other", v)}
+                      placeholder={t("please_describe")}
+                    />
+                  )}
                   {s.sleep_issues.includes("apnoea") && (
                     <div className="rounded-xl bg-[#F8F9FA] p-3">
                       <YesNo
