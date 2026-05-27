@@ -917,6 +917,7 @@ export default function VaccinationsForm() {
           {t("save")}
         </button>
       </div>
+      <LeaveDialog resolver={resolver} onSaveAndLeave={saveAllDirty} />
     </div>
   );
 }
