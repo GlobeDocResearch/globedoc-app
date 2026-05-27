@@ -243,9 +243,9 @@ function ProfilePage() {
               edit={<input className={input} value={view?.first_name ?? ""} onChange={(e) => updateDraft("first_name", e.target.value)} />} />
             <FieldRow label={t.lastName} editing={editing} value={view?.last_name}
               edit={<input className={input} value={view?.last_name ?? ""} onChange={(e) => updateDraft("last_name", e.target.value)} />} />
-            <FieldRow label={t.dob} editing={editing} value={view?.date_of_birth}
+            <FieldRow label={t.dob} required editing={editing} value={view?.date_of_birth}
               edit={<input type="date" className={input} value={view?.date_of_birth ?? ""} onChange={(e) => updateDraft("date_of_birth", e.target.value)} />} />
-            <FieldRow label={t.sex} editing={editing} value={sexLabel(view?.biological_sex)}
+            <FieldRow label={t.sex} required editing={editing} value={sexLabel(view?.biological_sex)}
               edit={
                 <select className={input} value={view?.biological_sex ?? ""} onChange={(e) => updateDraft("biological_sex", e.target.value)}>
                   <option value="">{t.select}</option>
@@ -254,7 +254,7 @@ function ProfilePage() {
                   <option value="other">{t.other}</option>
                 </select>
               } />
-            <FieldRow label={t.nationality} editing={editing} value={view?.nationality}
+            <FieldRow label={t.nationality} required editing={editing} value={view?.nationality}
               edit={<CountrySelect value={view?.nationality ?? ""} onChange={(v) => updateDraft("nationality", v)} placeholder={t.select} />} />
             <FieldRow label={t.residence} editing={editing} value={view?.country_of_residence}
               edit={<CountrySelect value={view?.country_of_residence ?? ""} onChange={(v) => updateDraft("country_of_residence", v)} placeholder={t.select} />} />
