@@ -128,6 +128,162 @@ export type Database = {
         }
         Relationships: []
       }
+      heredity_conditions: {
+        Row: {
+          condition_name: string
+          created_at: string
+          id: string
+          other_specify: string | null
+          updated_at: string
+          user_id: string
+          which_relative: string | null
+        }
+        Insert: {
+          condition_name: string
+          created_at?: string
+          id?: string
+          other_specify?: string | null
+          updated_at?: string
+          user_id: string
+          which_relative?: string | null
+        }
+        Update: {
+          condition_name?: string
+          created_at?: string
+          id?: string
+          other_specify?: string | null
+          updated_at?: string
+          user_id?: string
+          which_relative?: string | null
+        }
+        Relationships: []
+      }
+      heredity_genetic_testing: {
+        Row: {
+          created_at: string
+          findings: string | null
+          id: string
+          tested: boolean | null
+          under_counselling: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          findings?: string | null
+          id?: string
+          tested?: boolean | null
+          under_counselling?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          findings?: string | null
+          id?: string
+          tested?: boolean | null
+          under_counselling?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      heredity_parents: {
+        Row: {
+          age_at_death: number | null
+          cause_of_death: string | null
+          created_at: string
+          current_age: number | null
+          id: string
+          known_conditions: string | null
+          living_status: string | null
+          parent_type: string
+          unknown: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_at_death?: number | null
+          cause_of_death?: string | null
+          created_at?: string
+          current_age?: number | null
+          id?: string
+          known_conditions?: string | null
+          living_status?: string | null
+          parent_type: string
+          unknown?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_at_death?: number | null
+          cause_of_death?: string | null
+          created_at?: string
+          current_age?: number | null
+          id?: string
+          known_conditions?: string | null
+          living_status?: string | null
+          parent_type?: string
+          unknown?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      heredity_siblings: {
+        Row: {
+          created_at: string
+          has_siblings: boolean | null
+          id: string
+          sibling_conditions: string | null
+          sibling_count: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          has_siblings?: boolean | null
+          id?: string
+          sibling_conditions?: string | null
+          sibling_count?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          has_siblings?: boolean | null
+          id?: string
+          sibling_conditions?: string | null
+          sibling_count?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      heredity_summary: {
+        Row: {
+          created_at: string
+          id: string
+          nothing_to_report: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       hospital_stays: {
         Row: {
           created_at: string
