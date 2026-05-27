@@ -335,7 +335,7 @@ export default function LifestyleForm() {
           alcohol_frequency: data.alcohol_frequency ?? "",
           alcohol_drinks_per_week:
             data.alcohol_drinks_per_week != null ? String(data.alcohol_drinks_per_week) : "",
-          alcohol_type: data.alcohol_type ?? "",
+          alcohol_type: Array.isArray(data.alcohol_type) ? data.alcohol_type : (data.alcohol_type ? [data.alcohol_type] : []),
           height_cm: data.height_cm != null ? String(data.height_cm) : "",
           weight_kg: data.weight_kg != null ? String(data.weight_kg) : "",
           exercise_frequency: data.exercise_frequency ?? "",
@@ -346,6 +346,7 @@ export default function LifestyleForm() {
           diet_other: data.diet_other ?? "",
           sleep_status: data.sleep_status ?? "",
           sleep_issues: data.sleep_issues ?? [],
+          sleep_other: data.sleep_other ?? "",
           uses_cpap: data.uses_cpap,
           mental_health_treated: data.mental_health_treated,
           mental_health_conditions: data.mental_health_conditions ?? [],
@@ -398,7 +399,7 @@ export default function LifestyleForm() {
           s.nothing || !s.alcohol_drinks_per_week
             ? null
             : parseInt(s.alcohol_drinks_per_week, 10),
-        alcohol_type: s.nothing ? null : s.alcohol_type || null,
+        alcohol_type: s.nothing ? null : s.alcohol_type,
         height_cm: s.nothing || !s.height_cm ? null : parseFloat(s.height_cm),
         weight_kg: s.nothing || !s.weight_kg ? null : parseFloat(s.weight_kg),
         exercise_frequency: s.nothing ? null : s.exercise_frequency || null,
@@ -409,6 +410,7 @@ export default function LifestyleForm() {
         diet_other: s.nothing ? null : s.diet_other || null,
         sleep_status: s.nothing ? null : s.sleep_status || null,
         sleep_issues: s.nothing ? null : s.sleep_issues,
+        sleep_other: s.nothing ? null : s.sleep_other || null,
         uses_cpap: s.nothing ? null : s.uses_cpap,
         mental_health_treated: s.nothing ? null : s.mental_health_treated,
         mental_health_conditions: s.nothing ? null : s.mental_health_conditions,
