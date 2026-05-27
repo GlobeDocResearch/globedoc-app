@@ -8,6 +8,7 @@ import { CountrySelect, profileInput as input } from "@/components/PassportSetup
 import { BLOOD_GROUPS } from "@/lib/countries";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
+import { deleteMyAccount } from "@/lib/account.functions";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc" }] }),
