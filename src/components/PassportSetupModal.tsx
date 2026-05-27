@@ -128,6 +128,9 @@ export function PassportSetupModal({
             <button onClick={save} disabled={!canSubmit} className="w-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50">
               {t.submit}
             </button>
+            {!canSubmit && !saving && (
+              <p className="text-center text-xs text-gray-500">{t.required_hint}</p>
+            )}
             <button onClick={skip} className="text-xs text-gray-500 underline">{t.skip}</button>
           </div>
         </div>
