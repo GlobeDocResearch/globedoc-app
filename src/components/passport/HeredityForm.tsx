@@ -1,0 +1,755 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { X, ChevronDown } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useI18n, type Lang } from "@/lib/i18n";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
+import { useLeaveGuard, LeaveDialog } from "./unsaved";
+
+const ACCENT = "#E0A066";
+const ACCENT_2 = "#C4854A";
+
+type ParentState = {
+  unknown: boolean;
+  living: string; // "yes" | "no" | "unknown" | ""
+  current_age: string;
+  age_at_death: string;
+  cause_of_death: string;
+  known_conditions: string;
+};
+
+const emptyParent: ParentState = {
+  unknown: false,
+  living: "",
+  current_age: "",
+  age_at_death: "",
+  cause_of_death: "",
+  known_conditions: "",
+};
+
+type State = {
+  nothing: boolean;
+  father: ParentState;
+  mother: ParentState;
+  conditions: Record<string, string>; // condition key -> which_relative
+  conditionsChecked: Record<string, boolean>;
+  other_specify: string;
+  has_siblings: boolean | null;
+  sibling_count: string;
+  sibling_conditions: string;
+  tested: boolean | null;
+  findings: string;
+  under_counselling: boolean | null;
+};
+
+const CONDITIONS: { v: string; l_en: string; l_sv: string }[] = [
+  { v: "cardio_early", l_en: "Cardiovascular disease (early onset)", l_sv: "Hjärt-kärlsjukdom (tidig debut)" },
+  { v: "stroke", l_en: "Stroke", l_sv: "Stroke" },
+  { v: "diabetes_t1", l_en: "Diabetes type 1", l_sv: "Diabetes typ 1" },
+  { v: "diabetes_t2", l_en: "Diabetes type 2", l_sv: "Diabetes typ 2" },
+  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer" },
+  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer" },
+  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer" },
+  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer" },
+  { v: "alzheimer", l_en: "Alzheimer's / dementia", l_sv: "Alzheimers / demens" },
+  { v: "parkinson", l_en: "Parkinson's disease", l_sv: "Parkinsons sjukdom" },
+  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom" },
+  { v: "autoimmune", l_en: "Autoimmune disease", l_sv: "Autoimmun sjukdom" },
+  { v: "kidney", l_en: "Kidney disease", l_sv: "Njursjukdom" },
+  { v: "haemophilia", l_en: "Haemophilia / clotting disorder", l_sv: "Blödarsjuka / koagulationsrubbning" },
+  { v: "sudden_cardiac", l_en: "Sudden cardiac death (young)", l_sv: "Plötslig hjärtdöd (ung)" },
+  { v: "familial_chol", l_en: "Familial hypercholesterolaemia", l_sv: "Familjär hyperkolesterolemi" },
+  { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros" },
+  { v: "other", l_en: "Other genetic condition", l_sv: "Annat genetiskt tillstånd" },
+];
+
+const initialState: State = {
+  nothing: false,
+  father: { ...emptyParent },
+  mother: { ...emptyParent },
+  conditions: {},
+  conditionsChecked: {},
+  other_specify: "",
+  has_siblings: null,
+  sibling_count: "",
+  sibling_conditions: "",
+  tested: null,
+  findings: "",
+  under_counselling: null,
+};
+
+const T: Record<Lang, Record<string, string>> = {
+  en: {
+    title: "Heredity",
+    subtitle: "Family medical history & genetic conditions",
+    nothing: "Nothing to report",
+    yes: "Yes",
+    no: "No",
+    unknown: "Unknown",
+    save: "Save",
+    saved: "Saved",
+    saveError: "Could not save",
+    s_father: "Biological Father",
+    s_mother: "Biological Mother",
+    dont_know_father: "I don't know my biological father",
+    dont_know_mother: "I don't know my biological mother",
+    living: "Living?",
+    age_at_death: "Age at death",
+    cause_of_death: "Cause of death",
+    cause_ph: "E.g. Heart attack, cancer…",
+    current_age: "Current age",
+    current_age_ph: "E.g. 72",
+    known_conditions: "Known medical conditions",
+    known_conditions_ph: "E.g. Type 2 diabetes, hypertension, heart disease…",
+    s_conditions: "Hereditary conditions — tick all that apply in your close family",
+    close_family_note: "Close family = parents, siblings, grandparents, aunts & uncles",
+    which_relative: "Which relative?",
+    which_relative_ph: "E.g. Father, paternal grandfather",
+    please_specify: "Please specify…",
+    s_siblings: "Siblings",
+    has_siblings_q: "Do you have biological siblings?",
+    num_siblings: "Number of siblings",
+    sibling_conditions_q: "Any known genetic or hereditary conditions among your siblings?",
+    sibling_conditions_ph: "E.g. Brother has Type 1 diabetes, sister has breast cancer…",
+    s_genetic: "Genetic testing",
+    tested_q: "Have you or any close family member undergone genetic testing?",
+    findings_q: "What was tested and what were the findings?",
+    findings_ph: "E.g. BRCA1 gene test — negative. Father tested positive for Huntington's gene.",
+    counselling_q: "Are you currently under genetic counselling?",
+  },
+  sv: {
+    title: "Ärftlighet",
+    subtitle: "Familjehistoria & genetiska tillstånd",
+    nothing: "Inget att rapportera",
+    yes: "Ja",
+    no: "Nej",
+    unknown: "Vet ej",
+    save: "Spara",
+    saved: "Sparat",
+    saveError: "Kunde inte spara",
+    s_father: "Biologisk far",
+    s_mother: "Biologisk mor",
+    dont_know_father: "Jag känner inte min biologiska far",
+    dont_know_mother: "Jag känner inte min biologiska mor",
+    living: "Lever?",
+    age_at_death: "Ålder vid död",
+    cause_of_death: "Dödsorsak",
+    cause_ph: "T.ex. Hjärtinfarkt, cancer…",
+    current_age: "Nuvarande ålder",
+    current_age_ph: "T.ex. 72",
+    known_conditions: "Kända medicinska tillstånd",
+    known_conditions_ph: "T.ex. Diabetes typ 2, högt blodtryck, hjärtsjukdom…",
+    s_conditions: "Ärftliga tillstånd — kryssa i allt som gäller i din nära familj",
+    close_family_note: "Nära familj = föräldrar, syskon, mor- och farföräldrar, mostrar/morbröder/fastrar/farbröder",
+    which_relative: "Vilken släkting?",
+    which_relative_ph: "T.ex. Far, farfar",
+    please_specify: "Vänligen specificera…",
+    s_siblings: "Syskon",
+    has_siblings_q: "Har du biologiska syskon?",
+    num_siblings: "Antal syskon",
+    sibling_conditions_q: "Några kända genetiska eller ärftliga tillstånd bland dina syskon?",
+    sibling_conditions_ph: "T.ex. Bror har diabetes typ 1, syster har bröstcancer…",
+    s_genetic: "Genetisk testning",
+    tested_q: "Har du eller någon nära familjemedlem genomgått genetisk testning?",
+    findings_q: "Vad testades och vad blev resultatet?",
+    findings_ph: "T.ex. BRCA1-gentest — negativt. Far testade positivt för Huntingtons gen.",
+    counselling_q: "Får du genetisk rådgivning just nu?",
+  },
+};
+
+export default function HeredityForm() {
+  const { lang } = useI18n();
+  const t = (k: keyof typeof T["en"]) => T[lang][k] ?? T.en[k];
+  const navigate = useNavigate();
+
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [s, setS] = useState<State>(initialState);
+  const [dirty, setDirty] = useState(false);
+  const [openSiblings, setOpenSiblings] = useState(false);
+  const [openGenetic, setOpenGenetic] = useState(false);
+
+  const setField = <K extends keyof State>(k: K, v: State[K]) => {
+    setS((p) => ({ ...p, [k]: v }));
+    setDirty(true);
+  };
+  const setParent = (which: "father" | "mother", patch: Partial<ParentState>) => {
+    setS((p) => ({ ...p, [which]: { ...p[which], ...patch } }));
+    setDirty(true);
+  };
+  const toggleCondition = (v: string) => {
+    setS((p) => ({
+      ...p,
+      conditionsChecked: { ...p.conditionsChecked, [v]: !p.conditionsChecked[v] },
+    }));
+    setDirty(true);
+  };
+  const setConditionRelative = (v: string, txt: string) => {
+    setS((p) => ({ ...p, conditions: { ...p.conditions, [v]: txt } }));
+    setDirty(true);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate({ to: "/login" });
+        return;
+      }
+      setUserId(user.id);
+      const sb = supabase as any;
+      const [sum, parents, conds, sibs, gen] = await Promise.all([
+        sb.from("heredity_summary").select("*").eq("user_id", user.id).maybeSingle(),
+        sb.from("heredity_parents").select("*").eq("user_id", user.id),
+        sb.from("heredity_conditions").select("*").eq("user_id", user.id),
+        sb.from("heredity_siblings").select("*").eq("user_id", user.id).maybeSingle(),
+        sb.from("heredity_genetic_testing").select("*").eq("user_id", user.id).maybeSingle(),
+      ]);
+      const next: State = { ...initialState };
+      next.nothing = sum.data?.nothing_to_report ?? false;
+      for (const row of parents.data ?? []) {
+        const ps: ParentState = {
+          unknown: row.unknown ?? false,
+          living: row.living_status ?? "",
+          current_age: row.current_age != null ? String(row.current_age) : "",
+          age_at_death: row.age_at_death != null ? String(row.age_at_death) : "",
+          cause_of_death: row.cause_of_death ?? "",
+          known_conditions: row.known_conditions ?? "",
+        };
+        if (row.parent_type === "father") next.father = ps;
+        if (row.parent_type === "mother") next.mother = ps;
+      }
+      for (const row of conds.data ?? []) {
+        next.conditionsChecked[row.condition_name] = true;
+        if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
+        if (row.condition_name === "other" && row.other_specify) next.other_specify = row.other_specify;
+      }
+      if (sibs.data) {
+        next.has_siblings = sibs.data.has_siblings;
+        next.sibling_count = sibs.data.sibling_count != null ? String(sibs.data.sibling_count) : "";
+        next.sibling_conditions = sibs.data.sibling_conditions ?? "";
+      }
+      if (gen.data) {
+        next.tested = gen.data.tested;
+        next.findings = gen.data.findings ?? "";
+        next.under_counselling = gen.data.under_counselling;
+      }
+      setS(next);
+      setLoading(false);
+    })();
+  }, [navigate]);
+
+  const audit = (table: string, action: string) => {
+    if (!userId) return;
+    supabase.from("audit_log").insert({ user_id: userId, table_name: table, action });
+  };
+
+  const saveAll = async () => {
+    if (!userId) return false;
+    try {
+      const sb = supabase as any;
+      // Summary
+      await sb
+        .from("heredity_summary")
+        .upsert({ user_id: userId, nothing_to_report: s.nothing }, { onConflict: "user_id" });
+
+      if (s.nothing) {
+        // Wipe child rows when nothing to report
+        await Promise.all([
+          sb.from("heredity_parents").delete().eq("user_id", userId),
+          sb.from("heredity_conditions").delete().eq("user_id", userId),
+          sb.from("heredity_siblings").delete().eq("user_id", userId),
+          sb.from("heredity_genetic_testing").delete().eq("user_id", userId),
+        ]);
+      } else {
+        // Parents
+        const parentRows = (["father", "mother"] as const).map((pt) => {
+          const ps = s[pt];
+          return {
+            user_id: userId,
+            parent_type: pt,
+            unknown: ps.unknown,
+            living_status: ps.unknown ? null : ps.living || null,
+            current_age:
+              !ps.unknown && (ps.living === "yes" || ps.living === "unknown") && ps.current_age
+                ? parseInt(ps.current_age, 10)
+                : null,
+            age_at_death:
+              !ps.unknown && ps.living === "no" && ps.age_at_death
+                ? parseInt(ps.age_at_death, 10)
+                : null,
+            cause_of_death:
+              !ps.unknown && ps.living === "no" ? ps.cause_of_death || null : null,
+            known_conditions: ps.unknown ? null : ps.known_conditions || null,
+            updated_at: new Date().toISOString(),
+          };
+        });
+        await sb.from("heredity_parents").upsert(parentRows, { onConflict: "user_id,parent_type" });
+
+        // Conditions: delete unchecked, upsert checked
+        const checked = Object.entries(s.conditionsChecked)
+          .filter(([, v]) => v)
+          .map(([k]) => k);
+        await sb.from("heredity_conditions").delete().eq("user_id", userId);
+        if (checked.length > 0) {
+          const condRows = checked.map((k) => ({
+            user_id: userId,
+            condition_name: k,
+            which_relative: s.conditions[k] || null,
+            other_specify: k === "other" ? s.other_specify || null : null,
+          }));
+          await sb.from("heredity_conditions").insert(condRows);
+        }
+
+        // Siblings
+        await sb.from("heredity_siblings").upsert(
+          {
+            user_id: userId,
+            has_siblings: s.has_siblings,
+            sibling_count:
+              s.has_siblings && s.sibling_count ? parseInt(s.sibling_count, 10) : null,
+            sibling_conditions: s.has_siblings ? s.sibling_conditions || null : null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+
+        // Genetic testing
+        await sb.from("heredity_genetic_testing").upsert(
+          {
+            user_id: userId,
+            tested: s.tested,
+            findings: s.tested ? s.findings || null : null,
+            under_counselling: s.tested ? s.under_counselling : null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+      }
+
+      audit("heredity_summary", "upsert");
+      audit("heredity_parents", "upsert");
+      audit("heredity_conditions", "upsert");
+      audit("heredity_siblings", "upsert");
+      audit("heredity_genetic_testing", "upsert");
+
+      setDirty(false);
+      toast.success(t("saved"));
+      return true;
+    } catch {
+      toast.error(t("saveError"));
+      return false;
+    }
+  };
+
+  const resolver = useLeaveGuard(dirty);
+
+  if (loading) return <div className="min-h-screen bg-white" />;
+
+  return (
+    <div className="min-h-screen bg-white pb-28 text-[#0D1B2A]">
+      <header
+        className="px-5 pt-6 pb-7"
+        style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl leading-none">🧬</span>
+            <div>
+              <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+              <p className="mt-1 text-sm text-white/85">{t("subtitle")}</p>
+            </div>
+          </div>
+          <Link
+            to="/passport"
+            aria-label="Close"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30"
+          >
+            <X className="h-5 w-5" />
+          </Link>
+        </div>
+      </header>
+
+      <div className="space-y-6 px-5 pt-5">
+        <div className="flex items-center justify-between rounded-2xl bg-[#F8F9FA] p-4">
+          <span className="text-sm font-medium text-[#0D1B2A]">{t("nothing")}</span>
+          <Switch checked={s.nothing} onCheckedChange={(v) => setField("nothing", v)} />
+        </div>
+
+        {!s.nothing && (
+          <>
+            <ParentSection
+              t={t}
+              title={t("s_father")}
+              dontKnowLabel={t("dont_know_father")}
+              value={s.father}
+              onChange={(patch) => setParent("father", patch)}
+            />
+            <ParentSection
+              t={t}
+              title={t("s_mother")}
+              dontKnowLabel={t("dont_know_mother")}
+              value={s.mother}
+              onChange={(patch) => setParent("mother", patch)}
+            />
+
+            {/* Hereditary conditions */}
+            <Section title={t("s_conditions")}>
+              <p className="mb-3 text-xs text-gray-600">{t("close_family_note")}</p>
+              <div className="space-y-2">
+                {CONDITIONS.map((c) => {
+                  const checked = !!s.conditionsChecked[c.v];
+                  return (
+                    <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-white p-3">
+                      <label className="flex cursor-pointer items-center gap-3 text-sm text-[#0D1B2A]">
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={() => toggleCondition(c.v)}
+                        />
+                        {lang === "sv" ? c.l_sv : c.l_en}
+                      </label>
+                      {checked && (
+                        <div className="mt-2 space-y-2">
+                          <Txt
+                            value={s.conditions[c.v] ?? ""}
+                            onChange={(v) => setConditionRelative(c.v, v)}
+                            placeholder={t("which_relative_ph")}
+                            label={t("which_relative")}
+                          />
+                          {c.v === "other" && (
+                            <Txt
+                              value={s.other_specify}
+                              onChange={(v) => setField("other_specify", v)}
+                              placeholder={t("please_specify")}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </Section>
+
+            {/* Siblings */}
+            <Accordion
+              title={t("s_siblings")}
+              open={openSiblings}
+              onToggle={() => setOpenSiblings((o) => !o)}
+            >
+              <YesNo
+                label={t("has_siblings_q")}
+                value={s.has_siblings}
+                onChange={(v) => setField("has_siblings", v)}
+                yes={t("yes")}
+                no={t("no")}
+              />
+              {s.has_siblings && (
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <Lbl>{t("num_siblings")}</Lbl>
+                    <input
+                      type="number"
+                      min={1}
+                      max={20}
+                      value={s.sibling_count}
+                      onChange={(e) => setField("sibling_count", e.target.value)}
+                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <Lbl>{t("sibling_conditions_q")}</Lbl>
+                    <textarea
+                      value={s.sibling_conditions}
+                      onChange={(e) => setField("sibling_conditions", e.target.value)}
+                      placeholder={t("sibling_conditions_ph")}
+                      rows={3}
+                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+            </Accordion>
+
+            {/* Genetic testing */}
+            <Accordion
+              title={t("s_genetic")}
+              open={openGenetic}
+              onToggle={() => setOpenGenetic((o) => !o)}
+            >
+              <YesNo
+                label={t("tested_q")}
+                value={s.tested}
+                onChange={(v) => setField("tested", v)}
+                yes={t("yes")}
+                no={t("no")}
+              />
+              {s.tested && (
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <Lbl>{t("findings_q")}</Lbl>
+                    <textarea
+                      value={s.findings}
+                      onChange={(e) => setField("findings", e.target.value)}
+                      placeholder={t("findings_ph")}
+                      rows={3}
+                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                    />
+                  </div>
+                  <YesNo
+                    label={t("counselling_q")}
+                    value={s.under_counselling}
+                    onChange={(v) => setField("under_counselling", v)}
+                    yes={t("yes")}
+                    no={t("no")}
+                  />
+                </div>
+              )}
+            </Accordion>
+          </>
+        )}
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white p-4">
+        <button
+          type="button"
+          onClick={saveAll}
+          className="w-full rounded-xl py-3 text-sm font-semibold text-white shadow hover:opacity-95"
+          style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
+        >
+          {t("save")}
+        </button>
+      </div>
+
+      <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
+    </div>
+  );
+}
+
+function ParentSection({
+  t,
+  title,
+  dontKnowLabel,
+  value,
+  onChange,
+}: {
+  t: (k: any) => string;
+  title: string;
+  dontKnowLabel: string;
+  value: ParentState;
+  onChange: (patch: Partial<ParentState>) => void;
+}) {
+  return (
+    <Section title={title}>
+      <label className="mb-3 flex cursor-pointer items-center gap-3 text-sm text-[#0D1B2A]">
+        <Checkbox
+          checked={value.unknown}
+          onCheckedChange={(v) => onChange({ unknown: !!v })}
+        />
+        {dontKnowLabel}
+      </label>
+      {!value.unknown && (
+        <div className="space-y-3">
+          <div>
+            <Lbl>{t("living")}</Lbl>
+            <Pills
+              value={value.living}
+              onChange={(v) => onChange({ living: v })}
+              options={[
+                { v: "yes", l: t("yes") },
+                { v: "no", l: t("no") },
+                { v: "unknown", l: t("unknown") },
+              ]}
+            />
+          </div>
+          {value.living === "no" && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Lbl>{t("age_at_death")}</Lbl>
+                <input
+                  type="number"
+                  value={value.age_at_death}
+                  onChange={(e) => onChange({ age_at_death: e.target.value })}
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                />
+              </div>
+              <div>
+                <Lbl>{t("cause_of_death")}</Lbl>
+                <input
+                  type="text"
+                  value={value.cause_of_death}
+                  onChange={(e) => onChange({ cause_of_death: e.target.value })}
+                  placeholder={t("cause_ph")}
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                />
+              </div>
+            </div>
+          )}
+          {(value.living === "yes" || value.living === "unknown") && (
+            <div>
+              <Lbl>{t("current_age")}</Lbl>
+              <input
+                type="number"
+                value={value.current_age}
+                onChange={(e) => onChange({ current_age: e.target.value })}
+                placeholder={t("current_age_ph")}
+                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+              />
+            </div>
+          )}
+          <div>
+            <Lbl>{t("known_conditions")}</Lbl>
+            <textarea
+              value={value.known_conditions}
+              onChange={(e) => onChange({ known_conditions: e.target.value })}
+              placeholder={t("known_conditions_ph")}
+              rows={3}
+              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+            />
+          </div>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="mb-3 text-sm font-bold text-[#0D1B2A]">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Accordion({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-[#E5E7EB] bg-white">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between p-4 text-left"
+      >
+        <span className="text-sm font-bold text-[#0D1B2A]">{title}</span>
+        <ChevronDown
+          className={`h-4 w-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && <div className="border-t border-[#E5E7EB] p-4">{children}</div>}
+    </section>
+  );
+}
+
+function Lbl({ children }: { children: React.ReactNode }) {
+  return <label className="mb-1 block text-xs text-gray-600">{children}</label>;
+}
+
+function Txt({
+  value,
+  onChange,
+  placeholder,
+  label,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  label?: string;
+}) {
+  return (
+    <div>
+      {label && <Lbl>{label}</Lbl>}
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+      />
+    </div>
+  );
+}
+
+function Pills({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { v: string; l: string }[];
+}) {
+  return (
+    <div className="flex gap-2">
+      {options.map((o) => (
+        <button
+          key={o.v}
+          type="button"
+          onClick={() => onChange(o.v)}
+          className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
+            value === o.v
+              ? "border-[#E0A066] bg-[#E0A066] text-white"
+              : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
+          }`}
+        >
+          {o.l}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function YesNo({
+  label,
+  value,
+  onChange,
+  yes,
+  no,
+}: {
+  label: string;
+  value: boolean | null;
+  onChange: (v: boolean) => void;
+  yes: string;
+  no: string;
+}) {
+  return (
+    <div>
+      <Lbl>{label}</Lbl>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => onChange(true)}
+          className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
+            value === true
+              ? "border-[#E0A066] bg-[#E0A066] text-white"
+              : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
+          }`}
+        >
+          {yes}
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange(false)}
+          className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
+            value === false
+              ? "border-[#E0A066] bg-[#E0A066] text-white"
+              : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
+          }`}
+        >
+          {no}
+        </button>
+      </div>
+    </div>
+  );
+}
