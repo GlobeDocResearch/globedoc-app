@@ -273,7 +273,7 @@ function ConsentStep({ details, onBack }: { details: Details; onBack: () => void
   const onCreate = async () => {
     if (!canSubmit) return;
     setSubmitting(true);
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/login`;
     const { error } = await supabase.auth.signUp({
       email: details.email,
       password: details.password,
