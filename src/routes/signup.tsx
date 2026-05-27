@@ -35,17 +35,11 @@ const detailsSchema = z
 
 type Details = z.infer<typeof detailsSchema>;
 
-const PUBLIC_APP_ORIGIN = "https://project--b5e5e8e5-3e24-4f41-ac2c-04cca968157b.lovable.app";
-
 function getEmailVerificationRedirectUrl() {
-  const currentUrl = new URL(window.location.href);
-  const host = currentUrl.hostname.toLowerCase();
-  const isPrivateLovablePreview =
-    host.startsWith("id-preview--") ||
-    host.endsWith(".lovableproject.com") ||
-    host.includes("-dev.lovable.app");
-  const origin = isPrivateLovablePreview ? PUBLIC_APP_ORIGIN : currentUrl.origin;
-  return `${origin}/verified`;
+  // Note: Supabase will only honour this URL if it matches the project's
+  // Site URL / allowed redirect list. On Lovable Cloud the Site URL is set
+  // to the project's public app URL, so just use the current origin here.
+  return `${window.location.origin}/verified`;
 }
 
 function SignupPage() {
