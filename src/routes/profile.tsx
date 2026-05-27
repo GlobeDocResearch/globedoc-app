@@ -360,10 +360,13 @@ function Card({ children }: { children: React.ReactNode }) {
   return <section className="rounded-2xl bg-white p-5 shadow-sm">{children}</section>;
 }
 
-function FieldRow({ label, value, editing, edit }: { label: string; value?: string | null; editing: boolean; edit: React.ReactNode }) {
+function FieldRow({ label, value, editing, edit, required }: { label: string; value?: string | null; editing: boolean; edit: React.ReactNode; required?: boolean }) {
   return (
     <div>
-      <p className="mb-1 text-xs font-medium text-gray-500">{label}</p>
+      <p className="mb-1 text-xs font-medium text-gray-500">
+        {label}
+        {required && <span className="ml-0.5 text-red-500" aria-hidden="true">*</span>}
+      </p>
       {editing ? edit : <p className="text-sm text-[#0D1B2A]">{value || "—"}</p>}
     </div>
   );
