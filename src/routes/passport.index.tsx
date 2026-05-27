@@ -182,6 +182,7 @@ function PassportPage() {
           <Hex style={{ left: 150, top: 173 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
             <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Lifestyle<br/>& Risk</span>
+            {done["lifestyle"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
