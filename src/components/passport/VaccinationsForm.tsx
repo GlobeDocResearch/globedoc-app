@@ -236,6 +236,12 @@ export default function VaccinationsForm() {
   const [nationality, setNationality] = useState<string | null>(null);
   const [birthYear, setBirthYear] = useState<string | null>(null);
 
+  // Dirty tracking — keys: `rec:<id>`, `oth:<id>`, `trv:<key>`
+  const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
+  const markDirty = (k: string) => setDirtyIds((s) => { const n = new Set(s); n.add(k); return n; });
+  const clearDirty = (k: string) => setDirtyIds((s) => { const n = new Set(s); n.delete(k); return n; });
+  const resolver = useLeaveGuard(dirtyIds.size > 0);
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
