@@ -216,7 +216,7 @@ const T: Record<Lang, Record<string, string>> = {
     alc_beer: "Öl",
     alc_wine: "Vin",
     alc_spirits: "Sprit",
-    alc_mixed: "Blandat",
+    
     s_hw: "Längd & Vikt",
     height: "Längd (cm)",
     weight: "Vikt (kg)",
@@ -261,6 +261,8 @@ const T: Record<Lang, Record<string, string>> = {
     sleep_none: "Inga problem",
     sleep_occ: "Tillfälliga problem",
     sleep_sig: "Betydande problem",
+    sleep_dfa: "Svårt att somna",
+    sleep_fnw: "Vaknar ofta på natten",
     sleep_insomnia: "Sömnlöshet",
     sleep_apnoea: "Sömnapné",
     sleep_rls: "Restless legs",
