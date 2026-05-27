@@ -14,7 +14,7 @@ const ACCENT_2 = "#C4854A";
 type ParentState = {
   unknown: boolean;
   living: string; // "yes" | "no" | "unknown" | ""
-  current_age: string;
+  year_born: string;
   age_at_death: string;
   cause_of_death: string;
   known_conditions: string;
@@ -23,7 +23,7 @@ type ParentState = {
 const emptyParent: ParentState = {
   unknown: false,
   living: "",
-  current_age: "",
+  year_born: "",
   age_at_death: "",
   cause_of_death: "",
   known_conditions: "",
@@ -35,7 +35,8 @@ type State = {
   mother: ParentState;
   conditions: Record<string, string>; // condition key -> which_relative
   conditionsChecked: Record<string, boolean>;
-  other_specify: string;
+  specifyByCondition: Record<string, string>; // condition key -> which_condition / specify
+  noneOfAbove: boolean;
   has_siblings: boolean | null;
   sibling_count: string;
   sibling_conditions: string;
@@ -44,25 +45,25 @@ type State = {
   under_counselling: boolean | null;
 };
 
-const CONDITIONS: { v: string; l_en: string; l_sv: string }[] = [
+const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolean }[] = [
   { v: "cardio_early", l_en: "Cardiovascular disease (early onset)", l_sv: "Hjärt-kärlsjukdom (tidig debut)" },
   { v: "stroke", l_en: "Stroke", l_sv: "Stroke" },
   { v: "diabetes_t1", l_en: "Diabetes type 1", l_sv: "Diabetes typ 1" },
   { v: "diabetes_t2", l_en: "Diabetes type 2", l_sv: "Diabetes typ 2" },
-  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer" },
-  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer" },
-  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer" },
-  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer" },
+  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer", needsSpecify: true },
+  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer", needsSpecify: true },
+  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer", needsSpecify: true },
+  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer", needsSpecify: true },
   { v: "alzheimer", l_en: "Alzheimer's / dementia", l_sv: "Alzheimers / demens" },
   { v: "parkinson", l_en: "Parkinson's disease", l_sv: "Parkinsons sjukdom" },
-  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom" },
-  { v: "autoimmune", l_en: "Autoimmune disease", l_sv: "Autoimmun sjukdom" },
-  { v: "kidney", l_en: "Kidney disease", l_sv: "Njursjukdom" },
+  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom", needsSpecify: true },
+  { v: "autoimmune", l_en: "Autoimmune disease", l_sv: "Autoimmun sjukdom", needsSpecify: true },
+  { v: "kidney", l_en: "Kidney disease", l_sv: "Njursjukdom", needsSpecify: true },
   { v: "haemophilia", l_en: "Haemophilia / clotting disorder", l_sv: "Blödarsjuka / koagulationsrubbning" },
   { v: "sudden_cardiac", l_en: "Sudden cardiac death (young)", l_sv: "Plötslig hjärtdöd (ung)" },
   { v: "familial_chol", l_en: "Familial hypercholesterolaemia", l_sv: "Familjär hyperkolesterolemi" },
   { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros" },
-  { v: "other", l_en: "Other genetic condition", l_sv: "Annat genetiskt tillstånd" },
+  { v: "other", l_en: "Other genetic condition", l_sv: "Annat genetiskt tillstånd", needsSpecify: true },
 ];
 
 const initialState: State = {
@@ -71,7 +72,8 @@ const initialState: State = {
   mother: { ...emptyParent },
   conditions: {},
   conditionsChecked: {},
-  other_specify: "",
+  specifyByCondition: {},
+  noneOfAbove: false,
   has_siblings: null,
   sibling_count: "",
   sibling_conditions: "",
@@ -99,15 +101,18 @@ const T: Record<Lang, Record<string, string>> = {
     age_at_death: "Age at death",
     cause_of_death: "Cause of death",
     cause_ph: "E.g. Heart attack, cancer…",
-    current_age: "Current age",
-    current_age_ph: "E.g. 72",
+    year_born: "Year born",
+    year_born_ph: "E.g. 1948",
     known_conditions: "Known medical conditions",
     known_conditions_ph: "E.g. Type 2 diabetes, hypertension, heart disease…",
     s_conditions: "Hereditary conditions — tick all that apply in your close family",
     close_family_note: "Close family = parents, siblings, grandparents, aunts & uncles",
     which_relative: "Which relative?",
     which_relative_ph: "E.g. Father, paternal grandfather",
+    which_condition: "Which condition?",
+    which_condition_ph: "E.g. Chronic kidney disease, polycystic kidney disease…",
     please_specify: "Please specify…",
+    none_of_above: "None of the above",
     s_siblings: "Siblings",
     has_siblings_q: "Do you have biological siblings?",
     num_siblings: "Number of siblings",
@@ -137,15 +142,18 @@ const T: Record<Lang, Record<string, string>> = {
     age_at_death: "Ålder vid död",
     cause_of_death: "Dödsorsak",
     cause_ph: "T.ex. Hjärtinfarkt, cancer…",
-    current_age: "Nuvarande ålder",
-    current_age_ph: "T.ex. 72",
+    year_born: "Födelseår",
+    year_born_ph: "T.ex. 1948",
     known_conditions: "Kända medicinska tillstånd",
     known_conditions_ph: "T.ex. Diabetes typ 2, högt blodtryck, hjärtsjukdom…",
     s_conditions: "Ärftliga tillstånd — kryssa i allt som gäller i din nära familj",
     close_family_note: "Nära familj = föräldrar, syskon, mor- och farföräldrar, mostrar/morbröder/fastrar/farbröder",
     which_relative: "Vilken släkting?",
     which_relative_ph: "T.ex. Far, farfar",
+    which_condition: "Vilket tillstånd?",
+    which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
     please_specify: "Vänligen specificera…",
+    none_of_above: "Inget av ovanstående",
     s_siblings: "Syskon",
     has_siblings_q: "Har du biologiska syskon?",
     num_siblings: "Antal syskon",
@@ -180,14 +188,35 @@ export default function HeredityForm() {
     setDirty(true);
   };
   const toggleCondition = (v: string) => {
-    setS((p) => ({
-      ...p,
-      conditionsChecked: { ...p.conditionsChecked, [v]: !p.conditionsChecked[v] },
-    }));
+    setS((p) => {
+      const next = !p.conditionsChecked[v];
+      return {
+        ...p,
+        conditionsChecked: { ...p.conditionsChecked, [v]: next },
+        // Checking any condition clears "none of the above"
+        noneOfAbove: next ? false : p.noneOfAbove,
+      };
+    });
+    setDirty(true);
+  };
+  const toggleNoneOfAbove = () => {
+    setS((p) => {
+      const next = !p.noneOfAbove;
+      return {
+        ...p,
+        noneOfAbove: next,
+        // Toggling on "none" clears all condition checks
+        conditionsChecked: next ? {} : p.conditionsChecked,
+      };
+    });
     setDirty(true);
   };
   const setConditionRelative = (v: string, txt: string) => {
     setS((p) => ({ ...p, conditions: { ...p.conditions, [v]: txt } }));
+    setDirty(true);
+  };
+  const setConditionSpecify = (v: string, txt: string) => {
+    setS((p) => ({ ...p, specifyByCondition: { ...p.specifyByCondition, [v]: txt } }));
     setDirty(true);
   };
 
@@ -207,13 +236,21 @@ export default function HeredityForm() {
         sb.from("heredity_siblings").select("*").eq("user_id", user.id).maybeSingle(),
         sb.from("heredity_genetic_testing").select("*").eq("user_id", user.id).maybeSingle(),
       ]);
-      const next: State = { ...initialState };
+      const next: State = {
+        ...initialState,
+        father: { ...emptyParent },
+        mother: { ...emptyParent },
+        conditions: {},
+        conditionsChecked: {},
+        specifyByCondition: {},
+      };
       next.nothing = sum.data?.nothing_to_report ?? false;
       for (const row of parents.data ?? []) {
         const ps: ParentState = {
           unknown: row.unknown ?? false,
           living: row.living_status ?? "",
-          current_age: row.current_age != null ? String(row.current_age) : "",
+          // current_age column repurposed to store year born
+          year_born: row.current_age != null ? String(row.current_age) : "",
           age_at_death: row.age_at_death != null ? String(row.age_at_death) : "",
           cause_of_death: row.cause_of_death ?? "",
           known_conditions: row.known_conditions ?? "",
@@ -224,7 +261,7 @@ export default function HeredityForm() {
       for (const row of conds.data ?? []) {
         next.conditionsChecked[row.condition_name] = true;
         if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
-        if (row.condition_name === "other" && row.other_specify) next.other_specify = row.other_specify;
+        if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
       }
       if (sibs.data) {
         next.has_siblings = sibs.data.has_siblings;
@@ -256,7 +293,6 @@ export default function HeredityForm() {
         .upsert({ user_id: userId, nothing_to_report: s.nothing }, { onConflict: "user_id" });
 
       if (s.nothing) {
-        // Wipe child rows when nothing to report
         await Promise.all([
           sb.from("heredity_parents").delete().eq("user_id", userId),
           sb.from("heredity_conditions").delete().eq("user_id", userId),
@@ -272,9 +308,10 @@ export default function HeredityForm() {
             parent_type: pt,
             unknown: ps.unknown,
             living_status: ps.unknown ? null : ps.living || null,
+            // year_born is stored in the current_age integer column
             current_age:
-              !ps.unknown && (ps.living === "yes" || ps.living === "unknown") && ps.current_age
-                ? parseInt(ps.current_age, 10)
+              !ps.unknown && (ps.living === "yes" || ps.living === "unknown") && ps.year_born
+                ? parseInt(ps.year_born, 10)
                 : null,
             age_at_death:
               !ps.unknown && ps.living === "no" && ps.age_at_death
@@ -288,7 +325,7 @@ export default function HeredityForm() {
         });
         await sb.from("heredity_parents").upsert(parentRows, { onConflict: "user_id,parent_type" });
 
-        // Conditions: delete unchecked, upsert checked
+        // Conditions: delete then re-insert checked
         const checked = Object.entries(s.conditionsChecked)
           .filter(([, v]) => v)
           .map(([k]) => k);
@@ -298,7 +335,7 @@ export default function HeredityForm() {
             user_id: userId,
             condition_name: k,
             which_relative: s.conditions[k] || null,
-            other_specify: k === "other" ? s.other_specify || null : null,
+            other_specify: s.specifyByCondition[k] || null,
           }));
           await sb.from("heredity_conditions").insert(condRows);
         }
@@ -398,11 +435,17 @@ export default function HeredityForm() {
             {/* Hereditary conditions */}
             <Section title={t("s_conditions")}>
               <p className="mb-3 text-xs text-gray-600">{t("close_family_note")}</p>
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {CONDITIONS.map((c) => {
                   const checked = !!s.conditionsChecked[c.v];
+                  const dimmed = s.noneOfAbove;
                   return (
-                    <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-white p-3">
+                    <div
+                      key={c.v}
+                      className={`rounded-xl border border-[#E5E7EB] bg-white p-3 transition-opacity ${
+                        dimmed ? "pointer-events-none opacity-40" : ""
+                      }`}
+                    >
                       <label className="flex cursor-pointer items-center gap-3 text-sm text-[#0D1B2A]">
                         <Checkbox
                           checked={checked}
@@ -418,11 +461,12 @@ export default function HeredityForm() {
                             placeholder={t("which_relative_ph")}
                             label={t("which_relative")}
                           />
-                          {c.v === "other" && (
+                          {c.needsSpecify && (
                             <Txt
-                              value={s.other_specify}
-                              onChange={(v) => setField("other_specify", v)}
-                              placeholder={t("please_specify")}
+                              value={s.specifyByCondition[c.v] ?? ""}
+                              onChange={(v) => setConditionSpecify(c.v, v)}
+                              placeholder={c.v === "other" ? t("please_specify") : t("which_condition_ph")}
+                              label={t("which_condition")}
                             />
                           )}
                         </div>
@@ -430,6 +474,17 @@ export default function HeredityForm() {
                     </div>
                   );
                 })}
+                {/* None of the above */}
+                <div
+                  className={`rounded-xl border p-3 sm:col-span-2 ${
+                    s.noneOfAbove ? "border-[#E0A066] bg-[#FFF7EE]" : "border-[#E5E7EB] bg-white"
+                  }`}
+                >
+                  <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-[#0D1B2A]">
+                    <Checkbox checked={s.noneOfAbove} onCheckedChange={toggleNoneOfAbove} />
+                    {t("none_of_above")}
+                  </label>
+                </div>
               </div>
             </Section>
 
@@ -589,12 +644,12 @@ function ParentSection({
           )}
           {(value.living === "yes" || value.living === "unknown") && (
             <div>
-              <Lbl>{t("current_age")}</Lbl>
+              <Lbl>{t("year_born")}</Lbl>
               <input
                 type="number"
-                value={value.current_age}
-                onChange={(e) => onChange({ current_age: e.target.value })}
-                placeholder={t("current_age_ph")}
+                value={value.year_born}
+                onChange={(e) => onChange({ year_born: e.target.value })}
+                placeholder={t("year_born_ph")}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
               />
             </div>
