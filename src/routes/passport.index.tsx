@@ -64,7 +64,7 @@ function PassportPage() {
         setShowSetup(true);
       }
       const sb = supabase as any;
-      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc, lr] = await Promise.all([
+      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc, lr, hsum, hp, hc, hsib, hgt] = await Promise.all([
         supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
         supabase.from("prescription_medications").select("id").eq("user_id", user.id).limit(1),
@@ -76,6 +76,11 @@ function PassportPage() {
         sb.from("travel_vaccines").select("id").eq("user_id", user.id).limit(1),
         sb.from("vaccination_certificates").select("ihr_card, contraindication_notes, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         sb.from("lifestyle_risk").select("*").eq("user_id", user.id).maybeSingle(),
+        sb.from("heredity_summary").select("nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        sb.from("heredity_parents").select("id").eq("user_id", user.id).limit(1),
+        sb.from("heredity_conditions").select("id").eq("user_id", user.id).limit(1),
+        sb.from("heredity_siblings").select("has_siblings").eq("user_id", user.id).maybeSingle(),
+        sb.from("heredity_genetic_testing").select("tested").eq("user_id", user.id).maybeSingle(),
       ]);
       const mhDone =
         !!mc.data?.nothing_to_report ||
@@ -110,7 +115,13 @@ function PassportPage() {
           (d.substances && d.substances.length)
         );
       })();
-      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone }));
+      const heredityDone =
+        !!hsum.data?.nothing_to_report ||
+        !!(hp.data && hp.data.length > 0) ||
+        !!(hc.data && hc.data.length > 0) ||
+        hsib.data?.has_siblings != null ||
+        hgt.data?.tested != null;
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone, heredity: heredityDone }));
     })();
   }, [navigate]);
 
@@ -188,6 +199,7 @@ function PassportPage() {
           <Hex style={{ left: 50, top: 173 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
             <span className="mt-1 text-[11px] font-bold text-white">Heredity</span>
+            {done["heredity"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>

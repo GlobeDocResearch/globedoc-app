@@ -4,6 +4,7 @@ import MedicalHistoryForm from "@/components/passport/MedicalHistoryForm";
 import MedicationsForm from "@/components/passport/MedicationsForm";
 import VaccinationsForm from "@/components/passport/VaccinationsForm";
 import LifestyleForm from "@/components/passport/LifestyleForm";
+import HeredityForm from "@/components/passport/HeredityForm";
 
 export const Route = createFileRoute("/passport/$section")({
   head: () => ({ meta: [{ title: "Passport Section — GlobeDoc" }] }),
@@ -26,6 +27,7 @@ function SectionPage() {
   if (section === "medications") return <MedicationsForm />;
   if (section === "vaccinations") return <VaccinationsForm />;
   if (section === "lifestyle") return <LifestyleForm />;
+  if (section === "heredity") return <HeredityForm />;
 
   const title = TITLES[section] ?? "Section";
   return (
