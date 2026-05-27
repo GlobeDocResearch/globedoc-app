@@ -501,8 +501,13 @@ export default function VaccinationsForm() {
   };
 
   // Other vaccines
-  const addOther = () => setOthers((s) => [...s, { id: crypto.randomUUID(), vaccine_name: "", date: "", notes: "", collapsed: false, persisted: false }]);
+  const addOther = () => {
+    const id = crypto.randomUUID();
+    setOthers((s) => [...s, { id, vaccine_name: "", date: "", notes: "", collapsed: false, persisted: false }]);
+    markDirty(`oth:${id}`);
+  };
   const updateOther = (id: string, p: Partial<OtherVax>) => setOthers((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const editOther = (id: string, p: Partial<OtherVax>) => { updateOther(id, p); markDirty(`oth:${id}`); };
   const saveOther = async (item: OtherVax) => {
     if (!userId) return;
     const payload = { vaccine_name: item.vaccine_name, date: item.date, notes: item.notes };
@@ -515,20 +520,40 @@ export default function VaccinationsForm() {
       audit("additional_vaccines", "insert");
       if (data) updateOther(item.id, { id: data.id, persisted: true, collapsed: true });
     }
+    clearDirty(`oth:${item.id}`);
+  };
+  const discardOther = async (item: OtherVax) => {
+    if (!item.persisted) {
+      setOthers((s) => s.filter((x) => x.id !== item.id));
+    } else {
+      const { data } = await sb.from("additional_vaccines").select("*").eq("id", item.id).maybeSingle();
+      if (data) updateOther(item.id, { vaccine_name: data.vaccine_name ?? "", date: data.date ?? "", notes: data.notes ?? "", collapsed: true });
+    }
+    clearDirty(`oth:${item.id}`);
   };
   const deleteOther = async (item: OtherVax) => {
     if (item.persisted) { await sb.from("additional_vaccines").delete().eq("id", item.id); audit("additional_vaccines", "delete"); }
     setOthers((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(`oth:${item.id}`);
+  };
+
+  // Save all dirty open cards (used by LeaveDialog)
+  const saveAllDirty = async () => {
+    for (const item of records) if (dirtyIds.has(`rec:${item.id}`)) await saveRecord(item);
+    for (const item of others) if (dirtyIds.has(`oth:${item.id}`)) await saveOther(item);
+    for (const g of travelGroups) if (dirtyIds.has(`trv:${g.key}`)) clearDirty(`trv:${g.key}`);
   };
 
   const saveAll = async () => {
     try {
+      await saveAllDirty();
       await upsertCert({});
       audit("vaccinations", "save_all");
       toast.success(t("saved"));
       navigate({ to: "/passport" });
     } catch { toast.error(t("saveError")); }
   };
+
 
   const isSweden = (nationality ?? "").trim().toLowerCase() === "sweden" || (nationality ?? "").trim().toLowerCase() === "sverige";
   const helpText = useMemo(() => {
