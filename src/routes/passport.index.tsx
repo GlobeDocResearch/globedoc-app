@@ -64,7 +64,7 @@ function PassportPage() {
         setShowSetup(true);
       }
       const sb = supabase as any;
-      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc] = await Promise.all([
+      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc, lr] = await Promise.all([
         supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
         supabase.from("prescription_medications").select("id").eq("user_id", user.id).limit(1),
@@ -75,6 +75,7 @@ function PassportPage() {
         sb.from("standard_vaccines").select("id").eq("user_id", user.id).eq("received", true).limit(1),
         sb.from("travel_vaccines").select("id").eq("user_id", user.id).limit(1),
         sb.from("vaccination_certificates").select("ihr_card, contraindication_notes, nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        sb.from("lifestyle_risk").select("*").eq("user_id", user.id).maybeSingle(),
       ]);
       const mhDone =
         !!mc.data?.nothing_to_report ||
@@ -93,7 +94,23 @@ function PassportPage() {
         !!(tv.data && tv.data.length > 0) ||
         !!vc.data?.ihr_card ||
         !!(vc.data?.contraindication_notes && vc.data.contraindication_notes.trim().length > 0);
-      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone }));
+      const lifestyleDone = (() => {
+        const d = lr.data;
+        if (!d) return false;
+        if (d.nothing_to_report) return true;
+        return !!(
+          d.tobacco_status ||
+          d.alcohol_frequency ||
+          d.height_cm ||
+          d.weight_kg ||
+          d.exercise_frequency ||
+          (d.diet_restrictions && d.diet_restrictions.length) ||
+          d.sleep_status ||
+          d.mental_health_treated != null ||
+          (d.substances && d.substances.length)
+        );
+      })();
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone }));
     })();
   }, [navigate]);
 
@@ -165,6 +182,7 @@ function PassportPage() {
           <Hex style={{ left: 150, top: 173 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
             <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Lifestyle<br/>& Risk</span>
+            {done["lifestyle"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
