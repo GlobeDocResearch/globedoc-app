@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PairingRouteImport } from './routes/pairing'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PassportIndexRouteImport } from './routes/passport.index'
 import { Route as PassportSectionRouteImport } from './routes/passport.$section'
 
+const VerifiedRoute = VerifiedRouteImport.update({
+  id: '/verified',
+  path: '/verified',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport': typeof PassportIndexRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/pairing'
     | '/profile'
     | '/signup'
+    | '/verified'
     | '/passport/$section'
     | '/passport/'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/pairing'
     | '/profile'
     | '/signup'
+    | '/verified'
     | '/passport/$section'
     | '/passport'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/pairing'
     | '/profile'
     | '/signup'
+    | '/verified'
     | '/passport/$section'
     | '/passport/'
   fileRoutesById: FileRoutesById
@@ -143,12 +155,20 @@ export interface RootRouteChildren {
   PairingRoute: typeof PairingRoute
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
+  VerifiedRoute: typeof VerifiedRoute
   PassportSectionRoute: typeof PassportSectionRoute
   PassportIndexRoute: typeof PassportIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verified': {
+      id: '/verified'
+      path: '/verified'
+      fullPath: '/verified'
+      preLoaderRoute: typeof VerifiedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -223,9 +243,20 @@ const rootRouteChildren: RootRouteChildren = {
   PairingRoute: PairingRoute,
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
+  VerifiedRoute: VerifiedRoute,
   PassportSectionRoute: PassportSectionRoute,
   PassportIndexRoute: PassportIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
