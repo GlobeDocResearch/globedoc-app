@@ -27,10 +27,10 @@ const SECTIONS: {
 }[] = [
   { key: "medical-history", emoji: "🏥", title: "Medical History", subtitle: "Diagnoses, hospitalisations & operations", color: "#6B9FD4" },
   { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#6BBF8E" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#E07B6B" },
   { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#9B7FD4" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#E0A066" },
   { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risk", subtitle: "Habits that matter clinically", color: "#5BB8A8" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#E0A066" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#E07B6B" },
 ];
 
 function PassportPage() {
@@ -155,26 +155,26 @@ function PassportPage() {
             <span className="mt-1 text-[11px] font-bold text-white">Medications</span>
             {done["medications"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
-          {/* Left: Allergies */}
-          <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[2].color} onClick={() => goSection(SECTIONS[2].key)}>
-            <span className="text-xl">{SECTIONS[2].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">Allergies</span>
-          </Hex>
           {/* Right: Vaccinations */}
-          <Hex style={{ left: 200, top: 86 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
-            <span className="text-xl">{SECTIONS[3].emoji}</span>
+          <Hex style={{ left: 200, top: 86 }} bg={SECTIONS[2].color} onClick={() => goSection(SECTIONS[2].key)}>
+            <span className="text-xl">{SECTIONS[2].emoji}</span>
             <span className="mt-1 text-[11px] font-bold text-white">Vaccinations</span>
             {done["vaccinations"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+          </Hex>
+          {/* Bottom-right: Lifestyle & Risk */}
+          <Hex style={{ left: 150, top: 173 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
+            <span className="text-xl">{SECTIONS[3].emoji}</span>
+            <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Lifestyle<br/>& Risk</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
             <span className="mt-1 text-[11px] font-bold text-white">Heredity</span>
           </Hex>
-          {/* Bottom-right: Lifestyle & Risk */}
-          <Hex style={{ left: 150, top: 173 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>
+          {/* Left: Allergies */}
+          <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>
             <span className="text-xl">{SECTIONS[5].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Lifestyle<br/>& Risk</span>
+            <span className="mt-1 text-[11px] font-bold text-white">Allergies</span>
           </Hex>
         </div>
       </section>
