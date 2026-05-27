@@ -6,6 +6,7 @@ import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "@/components/passport/unsaved";
 
 const ACCENT = "#9B7FD4";
 const ACCENT_2 = "#7B5FB4";
@@ -235,6 +236,12 @@ export default function VaccinationsForm() {
   const [nationality, setNationality] = useState<string | null>(null);
   const [birthYear, setBirthYear] = useState<string | null>(null);
 
+  // Dirty tracking — keys: `rec:<id>`, `oth:<id>`, `trv:<key>`
+  const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
+  const markDirty = (k: string) => setDirtyIds((s) => { const n = new Set(s); n.add(k); return n; });
+  const clearDirty = (k: string) => setDirtyIds((s) => { const n = new Set(s); n.delete(k); return n; });
+  const resolver = useLeaveGuard(dirtyIds.size > 0);
+
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -338,8 +345,13 @@ export default function VaccinationsForm() {
   };
 
   // Vaccination records
-  const addRecord = () => setRecords((s) => [...s, { id: crypto.randomUUID(), vaccine: "", date: "", batch_number: "", provider: "", collapsed: false, persisted: false }]);
+  const addRecord = () => {
+    const id = crypto.randomUUID();
+    setRecords((s) => [...s, { id, vaccine: "", date: "", batch_number: "", provider: "", collapsed: false, persisted: false }]);
+    markDirty(`rec:${id}`);
+  };
   const updateRecord = (id: string, p: Partial<Record_>) => setRecords((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const editRecord = (id: string, p: Partial<Record_>) => { updateRecord(id, p); markDirty(`rec:${id}`); };
   const saveRecord = async (item: Record_) => {
     if (!userId) return;
     const payload = { vaccine: item.vaccine, date: item.date, batch_number: item.batch_number, provider: item.provider };
@@ -352,10 +364,21 @@ export default function VaccinationsForm() {
       audit("vaccination_records", "insert");
       if (data) updateRecord(item.id, { id: data.id, persisted: true, collapsed: true });
     }
+    clearDirty(`rec:${item.id}`);
+  };
+  const discardRecord = async (item: Record_) => {
+    if (!item.persisted) {
+      setRecords((s) => s.filter((x) => x.id !== item.id));
+    } else {
+      const { data } = await sb.from("vaccination_records").select("*").eq("id", item.id).maybeSingle();
+      if (data) updateRecord(item.id, { vaccine: data.vaccine ?? "", date: data.date ?? "", batch_number: data.batch_number ?? "", provider: data.provider ?? "", collapsed: true });
+    }
+    clearDirty(`rec:${item.id}`);
   };
   const deleteRecord = async (item: Record_) => {
     if (item.persisted) { await sb.from("vaccination_records").delete().eq("id", item.id); audit("vaccination_records", "delete"); }
     setRecords((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(`rec:${item.id}`);
   };
 
   // Travel groups
@@ -478,8 +501,13 @@ export default function VaccinationsForm() {
   };
 
   // Other vaccines
-  const addOther = () => setOthers((s) => [...s, { id: crypto.randomUUID(), vaccine_name: "", date: "", notes: "", collapsed: false, persisted: false }]);
+  const addOther = () => {
+    const id = crypto.randomUUID();
+    setOthers((s) => [...s, { id, vaccine_name: "", date: "", notes: "", collapsed: false, persisted: false }]);
+    markDirty(`oth:${id}`);
+  };
   const updateOther = (id: string, p: Partial<OtherVax>) => setOthers((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const editOther = (id: string, p: Partial<OtherVax>) => { updateOther(id, p); markDirty(`oth:${id}`); };
   const saveOther = async (item: OtherVax) => {
     if (!userId) return;
     const payload = { vaccine_name: item.vaccine_name, date: item.date, notes: item.notes };
@@ -492,20 +520,40 @@ export default function VaccinationsForm() {
       audit("additional_vaccines", "insert");
       if (data) updateOther(item.id, { id: data.id, persisted: true, collapsed: true });
     }
+    clearDirty(`oth:${item.id}`);
+  };
+  const discardOther = async (item: OtherVax) => {
+    if (!item.persisted) {
+      setOthers((s) => s.filter((x) => x.id !== item.id));
+    } else {
+      const { data } = await sb.from("additional_vaccines").select("*").eq("id", item.id).maybeSingle();
+      if (data) updateOther(item.id, { vaccine_name: data.vaccine_name ?? "", date: data.date ?? "", notes: data.notes ?? "", collapsed: true });
+    }
+    clearDirty(`oth:${item.id}`);
   };
   const deleteOther = async (item: OtherVax) => {
     if (item.persisted) { await sb.from("additional_vaccines").delete().eq("id", item.id); audit("additional_vaccines", "delete"); }
     setOthers((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(`oth:${item.id}`);
+  };
+
+  // Save all dirty open cards (used by LeaveDialog)
+  const saveAllDirty = async () => {
+    for (const item of records) if (dirtyIds.has(`rec:${item.id}`)) await saveRecord(item);
+    for (const item of others) if (dirtyIds.has(`oth:${item.id}`)) await saveOther(item);
+    for (const g of travelGroups) if (dirtyIds.has(`trv:${g.key}`)) clearDirty(`trv:${g.key}`);
   };
 
   const saveAll = async () => {
     try {
+      await saveAllDirty();
       await upsertCert({});
       audit("vaccinations", "save_all");
       toast.success(t("saved"));
       navigate({ to: "/passport" });
     } catch { toast.error(t("saveError")); }
   };
+
 
   const isSweden = (nationality ?? "").trim().toLowerCase() === "sweden" || (nationality ?? "").trim().toLowerCase() === "sverige";
   const helpText = useMemo(() => {
@@ -561,12 +609,16 @@ export default function VaccinationsForm() {
                   <SummaryRow key={item.id} text={[item.vaccine, item.date, item.provider].filter(Boolean).join(" · ")} onEdit={() => updateRecord(item.id, { collapsed: false })} onDelete={() => deleteRecord(item)} />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_vaccine")} value={item.vaccine} ph={t("f_vaccine_ph")} onChange={(v) => updateRecord(item.id, { vaccine: v })} />
-                    <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => updateRecord(item.id, { date: v })} />
-                    <Field label={t("f_batch")} value={item.batch_number} ph={t("f_batch_ph")} onChange={(v) => updateRecord(item.id, { batch_number: v })} />
-                    <Field label={t("f_provider")} value={item.provider} ph={t("f_provider_ph")} onChange={(v) => updateRecord(item.id, { provider: v })} />
+                    <Field label={t("f_vaccine")} value={item.vaccine} ph={t("f_vaccine_ph")} onChange={(v) => editRecord(item.id, { vaccine: v })} />
+                    <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => editRecord(item.id, { date: v })} />
+                    <Field label={t("f_batch")} value={item.batch_number} ph={t("f_batch_ph")} onChange={(v) => editRecord(item.id, { batch_number: v })} />
+                    <Field label={t("f_provider")} value={item.provider} ph={t("f_provider_ph")} onChange={(v) => editRecord(item.id, { provider: v })} />
+                    {dirtyIds.has(`rec:${item.id}`) && (
+                      <CardUnsavedBanner onSave={() => saveRecord(item)} onDiscard={() => discardRecord(item)} />
+                    )}
                     <CardActions onSave={() => saveRecord(item)} onDelete={() => deleteRecord(item)} saveLabel={t("save_item")} />
                   </div>
+
                 ))}
               </div>
               <AddBtn label={t("add_vax")} onClick={addRecord} />
@@ -691,20 +743,24 @@ export default function VaccinationsForm() {
                     <SummaryRow key={item.id} text={[item.vaccine_name, item.date].filter(Boolean).join(" · ")} onEdit={() => updateOther(item.id, { collapsed: false })} onDelete={() => deleteOther(item)} />
                   ) : (
                     <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                      <Field label={t("other_name")} value={item.vaccine_name} ph={t("other_name_ph")} onChange={(v) => updateOther(item.id, { vaccine_name: v })} />
-                      <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => updateOther(item.id, { date: v })} />
+                      <Field label={t("other_name")} value={item.vaccine_name} ph={t("other_name_ph")} onChange={(v) => editOther(item.id, { vaccine_name: v })} />
+                      <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => editOther(item.id, { date: v })} />
                       <div>
                         <label className="block text-xs text-gray-600">{t("notes")}</label>
                         <textarea
                           value={item.notes}
-                          onChange={(e) => updateOther(item.id, { notes: e.target.value })}
+                          onChange={(e) => editOther(item.id, { notes: e.target.value })}
                           placeholder={t("notes_ph")}
                           rows={2}
                           className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:border-[#9B7FD4] focus:outline-none"
                         />
                       </div>
+                      {dirtyIds.has(`oth:${item.id}`) && (
+                        <CardUnsavedBanner onSave={() => saveOther(item)} onDiscard={() => discardOther(item)} />
+                      )}
                       <CardActions onSave={() => saveOther(item)} onDelete={() => deleteOther(item)} saveLabel={t("save_item")} />
                     </div>
+
                   ))}
                 </div>
                 <AddBtn label={t("add_other")} onClick={addOther} />
@@ -861,6 +917,7 @@ export default function VaccinationsForm() {
           {t("save")}
         </button>
       </div>
+      <LeaveDialog resolver={resolver} onSaveAndLeave={saveAllDirty} />
     </div>
   );
 }
