@@ -20,7 +20,7 @@ type State = {
   tobacco_year_stopped: string;
   alcohol_frequency: string;
   alcohol_drinks_per_week: string;
-  alcohol_type: string;
+  alcohol_type: string[];
   height_cm: string;
   weight_kg: string;
   exercise_frequency: string;
@@ -31,6 +31,7 @@ type State = {
   diet_other: string;
   sleep_status: string;
   sleep_issues: string[];
+  sleep_other: string;
   uses_cpap: boolean | null;
   mental_health_treated: boolean | null;
   mental_health_conditions: string[];
@@ -50,7 +51,7 @@ const initialState: State = {
   tobacco_year_stopped: "",
   alcohol_frequency: "",
   alcohol_drinks_per_week: "",
-  alcohol_type: "",
+  alcohol_type: [],
   height_cm: "",
   weight_kg: "",
   exercise_frequency: "",
@@ -61,6 +62,7 @@ const initialState: State = {
   diet_other: "",
   sleep_status: "",
   sleep_issues: [],
+  sleep_other: "",
   uses_cpap: null,
   mental_health_treated: null,
   mental_health_conditions: [],
