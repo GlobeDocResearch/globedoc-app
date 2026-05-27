@@ -119,7 +119,7 @@ const T: Record<Lang, Record<string, any>> = {
     autofilled: "Auto-filled from your profile",
     help_sweden: (y: string) => `Based on the Swedish vaccination programme for someone born in ${y}. Pre-checked vaccines reflect what was standard when you were born — adjust if needed.`,
     help_other: "Tick the vaccines you have received. We don't have pre-selections for your country of origin — please check your vaccination records.",
-    help_none: "Complete your profile to get personalised vaccine suggestions.",
+    
     covid_primary: "Covid-19 primary series",
     covid_primary_desc: "Initial COVID-19 vaccination",
     covid_primary_date: "Primary series date",
