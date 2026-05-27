@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import MedicalHistoryForm from "@/components/passport/MedicalHistoryForm";
 import MedicationsForm from "@/components/passport/MedicationsForm";
 import VaccinationsForm from "@/components/passport/VaccinationsForm";
+import LifestyleForm from "@/components/passport/LifestyleForm";
 
 export const Route = createFileRoute("/passport/$section")({
   head: () => ({ meta: [{ title: "Passport Section — GlobeDoc" }] }),
@@ -24,6 +25,7 @@ function SectionPage() {
   if (section === "medical-history") return <MedicalHistoryForm />;
   if (section === "medications") return <MedicationsForm />;
   if (section === "vaccinations") return <VaccinationsForm />;
+  if (section === "lifestyle") return <LifestyleForm />;
 
   const title = TITLES[section] ?? "Section";
   return (
