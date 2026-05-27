@@ -27,10 +27,10 @@ const SECTIONS: {
 }[] = [
   { key: "medical-history", emoji: "🏥", title: "Medical History", subtitle: "Diagnoses, hospitalisations & operations", color: "#6B9FD4" },
   { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#6BBF8E" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#E07B6B" },
   { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#9B7FD4" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#E0A066" },
   { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risk", subtitle: "Habits that matter clinically", color: "#5BB8A8" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#E0A066" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#E07B6B" },
 ];
 
 function PassportPage() {
