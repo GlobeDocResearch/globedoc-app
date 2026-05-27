@@ -191,12 +191,13 @@ function ProfilePage() {
   };
 
   const deleteAccount = async () => {
-    const tables = ["medical_conditions","hospital_stays","prescription_medications","otc_supplements","stopped_medications","drug_intolerances","vaccination_records","standard_vaccines","travel_vaccines","vaccination_certificates","consents","pairing_codes","profiles"] as const;
-    for (const tbl of tables) {
-      await supabase.from(tbl as any).delete().eq("user_id", userId);
+    try {
+      await deleteMyAccount();
+      await supabase.auth.signOut();
+      navigate({ to: "/login" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not delete account");
     }
-    await supabase.auth.signOut();
-    navigate({ to: "/login" });
   };
 
   const handleSignOut = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
