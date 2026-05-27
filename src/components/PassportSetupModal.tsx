@@ -81,7 +81,7 @@ export function PassportSetupModal({
 
   const skip = () => { onDone(); };
 
-  const canSubmit = !!f.date_of_birth && !!f.biological_sex && !saving;
+  const canSubmit = !!f.date_of_birth && !!f.biological_sex && !!f.nationality && !saving;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
