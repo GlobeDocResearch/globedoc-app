@@ -115,7 +115,13 @@ function PassportPage() {
           (d.substances && d.substances.length)
         );
       })();
-      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone }));
+      const heredityDone =
+        !!hsum.data?.nothing_to_report ||
+        !!(hp.data && hp.data.length > 0) ||
+        !!(hc.data && hc.data.length > 0) ||
+        hsib.data?.has_siblings != null ||
+        hgt.data?.tested != null;
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone, heredity: heredityDone }));
     })();
   }, [navigate]);
 
