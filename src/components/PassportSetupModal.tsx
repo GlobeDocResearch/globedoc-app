@@ -28,6 +28,7 @@ const T = {
     submit: "Get started", skip: "Skip for now",
     select: "Select…",
     saved: "Profile saved",
+    required_hint: "Date of birth, biological sex and country of origin are required to continue.",
   },
   sv: {
     title: "Konfigurera ditt Health Passport",
