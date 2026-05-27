@@ -1,0 +1,2 @@
+ALTER TABLE public.lifestyle_risk ADD COLUMN IF NOT EXISTS sleep_other text;
+ALTER TABLE public.lifestyle_risk ALTER COLUMN alcohol_type TYPE text[] USING CASE WHEN alcohol_type IS NULL OR alcohol_type = '' THEN NULL ELSE ARRAY[alcohol_type] END;

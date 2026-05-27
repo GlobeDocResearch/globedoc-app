@@ -165,7 +165,7 @@ export type Database = {
         Row: {
           alcohol_drinks_per_week: number | null
           alcohol_frequency: string | null
-          alcohol_type: string | null
+          alcohol_type: string[] | null
           created_at: string
           currently_in_treatment: boolean | null
           diet_other: string | null
@@ -181,6 +181,7 @@ export type Database = {
           mental_health_treated: boolean | null
           nothing_to_report: boolean
           sleep_issues: string[] | null
+          sleep_other: string | null
           sleep_status: string | null
           substances: string[] | null
           substances_other: string | null
@@ -198,7 +199,7 @@ export type Database = {
         Insert: {
           alcohol_drinks_per_week?: number | null
           alcohol_frequency?: string | null
-          alcohol_type?: string | null
+          alcohol_type?: string[] | null
           created_at?: string
           currently_in_treatment?: boolean | null
           diet_other?: string | null
@@ -214,6 +215,7 @@ export type Database = {
           mental_health_treated?: boolean | null
           nothing_to_report?: boolean
           sleep_issues?: string[] | null
+          sleep_other?: string | null
           sleep_status?: string | null
           substances?: string[] | null
           substances_other?: string | null
@@ -231,7 +233,7 @@ export type Database = {
         Update: {
           alcohol_drinks_per_week?: number | null
           alcohol_frequency?: string | null
-          alcohol_type?: string | null
+          alcohol_type?: string[] | null
           created_at?: string
           currently_in_treatment?: boolean | null
           diet_other?: string | null
@@ -247,6 +249,7 @@ export type Database = {
           mental_health_treated?: boolean | null
           nothing_to_report?: boolean
           sleep_issues?: string[] | null
+          sleep_other?: string | null
           sleep_status?: string | null
           substances?: string[] | null
           substances_other?: string | null
