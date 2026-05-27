@@ -345,8 +345,13 @@ export default function VaccinationsForm() {
   };
 
   // Vaccination records
-  const addRecord = () => setRecords((s) => [...s, { id: crypto.randomUUID(), vaccine: "", date: "", batch_number: "", provider: "", collapsed: false, persisted: false }]);
+  const addRecord = () => {
+    const id = crypto.randomUUID();
+    setRecords((s) => [...s, { id, vaccine: "", date: "", batch_number: "", provider: "", collapsed: false, persisted: false }]);
+    markDirty(`rec:${id}`);
+  };
   const updateRecord = (id: string, p: Partial<Record_>) => setRecords((s) => s.map((x) => x.id === id ? { ...x, ...p } : x));
+  const editRecord = (id: string, p: Partial<Record_>) => { updateRecord(id, p); markDirty(`rec:${id}`); };
   const saveRecord = async (item: Record_) => {
     if (!userId) return;
     const payload = { vaccine: item.vaccine, date: item.date, batch_number: item.batch_number, provider: item.provider };
@@ -359,10 +364,21 @@ export default function VaccinationsForm() {
       audit("vaccination_records", "insert");
       if (data) updateRecord(item.id, { id: data.id, persisted: true, collapsed: true });
     }
+    clearDirty(`rec:${item.id}`);
+  };
+  const discardRecord = async (item: Record_) => {
+    if (!item.persisted) {
+      setRecords((s) => s.filter((x) => x.id !== item.id));
+    } else {
+      const { data } = await sb.from("vaccination_records").select("*").eq("id", item.id).maybeSingle();
+      if (data) updateRecord(item.id, { vaccine: data.vaccine ?? "", date: data.date ?? "", batch_number: data.batch_number ?? "", provider: data.provider ?? "", collapsed: true });
+    }
+    clearDirty(`rec:${item.id}`);
   };
   const deleteRecord = async (item: Record_) => {
     if (item.persisted) { await sb.from("vaccination_records").delete().eq("id", item.id); audit("vaccination_records", "delete"); }
     setRecords((s) => s.filter((x) => x.id !== item.id));
+    clearDirty(`rec:${item.id}`);
   };
 
   // Travel groups
