@@ -609,12 +609,16 @@ export default function VaccinationsForm() {
                   <SummaryRow key={item.id} text={[item.vaccine, item.date, item.provider].filter(Boolean).join(" · ")} onEdit={() => updateRecord(item.id, { collapsed: false })} onDelete={() => deleteRecord(item)} />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_vaccine")} value={item.vaccine} ph={t("f_vaccine_ph")} onChange={(v) => updateRecord(item.id, { vaccine: v })} />
-                    <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => updateRecord(item.id, { date: v })} />
-                    <Field label={t("f_batch")} value={item.batch_number} ph={t("f_batch_ph")} onChange={(v) => updateRecord(item.id, { batch_number: v })} />
-                    <Field label={t("f_provider")} value={item.provider} ph={t("f_provider_ph")} onChange={(v) => updateRecord(item.id, { provider: v })} />
+                    <Field label={t("f_vaccine")} value={item.vaccine} ph={t("f_vaccine_ph")} onChange={(v) => editRecord(item.id, { vaccine: v })} />
+                    <Field label={t("f_date")} value={item.date} ph={t("f_date_ph")} onChange={(v) => editRecord(item.id, { date: v })} />
+                    <Field label={t("f_batch")} value={item.batch_number} ph={t("f_batch_ph")} onChange={(v) => editRecord(item.id, { batch_number: v })} />
+                    <Field label={t("f_provider")} value={item.provider} ph={t("f_provider_ph")} onChange={(v) => editRecord(item.id, { provider: v })} />
+                    {dirtyIds.has(`rec:${item.id}`) && (
+                      <CardUnsavedBanner onSave={() => saveRecord(item)} onDiscard={() => discardRecord(item)} />
+                    )}
                     <CardActions onSave={() => saveRecord(item)} onDelete={() => deleteRecord(item)} saveLabel={t("save_item")} />
                   </div>
+
                 ))}
               </div>
               <AddBtn label={t("add_vax")} onClick={addRecord} />
