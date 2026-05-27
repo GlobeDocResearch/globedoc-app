@@ -109,7 +109,7 @@ export function PassportSetupModal({
                 <option value="other">{t.other}</option>
               </select>
             </Field>
-            <Field label={t.origin}>
+            <Field label={`${t.origin} *`}>
               <CountrySelect value={f.nationality ?? ""} onChange={(v) => update("nationality", v)} placeholder={t.select} />
             </Field>
             <Field label={t.residence}>
