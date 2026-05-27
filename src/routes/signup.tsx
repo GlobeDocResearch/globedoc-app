@@ -35,13 +35,16 @@ const detailsSchema = z
 
 type Details = z.infer<typeof detailsSchema>;
 
-const STABLE_PREVIEW_ORIGIN =
-  "https://project--b5e5e8e5-3e24-4f41-ac2c-04cca968157b-dev.lovable.app";
+const PUBLIC_APP_ORIGIN = "https://project--b5e5e8e5-3e24-4f41-ac2c-04cca968157b.lovable.app";
 
 function getEmailVerificationRedirectUrl() {
   const currentUrl = new URL(window.location.href);
   const host = currentUrl.hostname.toLowerCase();
-  const origin = host.startsWith("id-preview--") ? STABLE_PREVIEW_ORIGIN : currentUrl.origin;
+  const isPrivateLovablePreview =
+    host.startsWith("id-preview--") ||
+    host.endsWith(".lovableproject.com") ||
+    host.includes("-dev.lovable.app");
+  const origin = isPrivateLovablePreview ? PUBLIC_APP_ORIGIN : currentUrl.origin;
   return `${origin}/verified`;
 }
 
