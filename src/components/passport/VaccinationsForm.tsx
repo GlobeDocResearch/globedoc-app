@@ -557,10 +557,9 @@ export default function VaccinationsForm() {
 
   const isSweden = (nationality ?? "").trim().toLowerCase() === "sweden" || (nationality ?? "").trim().toLowerCase() === "sverige";
   const helpText = useMemo(() => {
-    if (!nationality && !birthYear) return T[lang].help_none as string;
     if (isSweden && birthYear) return (T[lang].help_sweden as (y: string) => string)(birthYear);
     return T[lang].help_other as string;
-  }, [lang, nationality, birthYear, isSweden]);
+  }, [lang, birthYear, isSweden]);
 
   const anyPrechecked = Object.values(standard).some(Boolean);
 
