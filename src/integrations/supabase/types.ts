@@ -161,6 +161,108 @@ export type Database = {
         }
         Relationships: []
       }
+      lifestyle_risk: {
+        Row: {
+          alcohol_drinks_per_week: number | null
+          alcohol_frequency: string | null
+          alcohol_type: string | null
+          created_at: string
+          currently_in_treatment: boolean | null
+          diet_other: string | null
+          diet_restrictions: string[] | null
+          exercise_duration: string | null
+          exercise_frequency: string | null
+          exercise_other: string | null
+          exercise_types: string[] | null
+          height_cm: number | null
+          id: string
+          mental_health_conditions: string[] | null
+          mental_health_other: string | null
+          mental_health_treated: boolean | null
+          nothing_to_report: boolean
+          sleep_issues: string[] | null
+          sleep_status: string | null
+          substances: string[] | null
+          substances_other: string | null
+          tobacco_amount: string | null
+          tobacco_duration: string | null
+          tobacco_products: string[] | null
+          tobacco_status: string | null
+          tobacco_year_stopped: string | null
+          treatment_type: string[] | null
+          updated_at: string
+          user_id: string
+          uses_cpap: boolean | null
+          weight_kg: number | null
+        }
+        Insert: {
+          alcohol_drinks_per_week?: number | null
+          alcohol_frequency?: string | null
+          alcohol_type?: string | null
+          created_at?: string
+          currently_in_treatment?: boolean | null
+          diet_other?: string | null
+          diet_restrictions?: string[] | null
+          exercise_duration?: string | null
+          exercise_frequency?: string | null
+          exercise_other?: string | null
+          exercise_types?: string[] | null
+          height_cm?: number | null
+          id?: string
+          mental_health_conditions?: string[] | null
+          mental_health_other?: string | null
+          mental_health_treated?: boolean | null
+          nothing_to_report?: boolean
+          sleep_issues?: string[] | null
+          sleep_status?: string | null
+          substances?: string[] | null
+          substances_other?: string | null
+          tobacco_amount?: string | null
+          tobacco_duration?: string | null
+          tobacco_products?: string[] | null
+          tobacco_status?: string | null
+          tobacco_year_stopped?: string | null
+          treatment_type?: string[] | null
+          updated_at?: string
+          user_id: string
+          uses_cpap?: boolean | null
+          weight_kg?: number | null
+        }
+        Update: {
+          alcohol_drinks_per_week?: number | null
+          alcohol_frequency?: string | null
+          alcohol_type?: string | null
+          created_at?: string
+          currently_in_treatment?: boolean | null
+          diet_other?: string | null
+          diet_restrictions?: string[] | null
+          exercise_duration?: string | null
+          exercise_frequency?: string | null
+          exercise_other?: string | null
+          exercise_types?: string[] | null
+          height_cm?: number | null
+          id?: string
+          mental_health_conditions?: string[] | null
+          mental_health_other?: string | null
+          mental_health_treated?: boolean | null
+          nothing_to_report?: boolean
+          sleep_issues?: string[] | null
+          sleep_status?: string | null
+          substances?: string[] | null
+          substances_other?: string | null
+          tobacco_amount?: string | null
+          tobacco_duration?: string | null
+          tobacco_products?: string[] | null
+          tobacco_status?: string | null
+          tobacco_year_stopped?: string | null
+          treatment_type?: string[] | null
+          updated_at?: string
+          user_id?: string
+          uses_cpap?: boolean | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
       medical_conditions: {
         Row: {
           conditions_text: string | null
