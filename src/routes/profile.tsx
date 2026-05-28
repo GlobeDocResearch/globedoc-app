@@ -126,7 +126,7 @@ function ProfilePage() {
   };
 
   const exportJSON = async () => {
-    const tables = ["profiles","medical_conditions","hospital_stays","prescription_medications","otc_supplements","stopped_medications","drug_intolerances","vaccination_records","standard_vaccines","travel_vaccines","vaccination_certificates","consents"] as const;
+    const tables = ["profiles","medical_conditions","hospital_stays","prescription_medications","otc_supplements","stopped_medications","drug_intolerances","childhood_vaccines","travel_vaccines","other_vaccines","vaccination_contraindications","consents"] as const;
     const out: Record<string, any> = {};
     for (const tbl of tables) {
       const { data } = await supabase.from(tbl as any).select("*").eq("user_id", userId);
