@@ -419,29 +419,44 @@ export default function VaccinationsForm() {
 
         {!nothing && (
           <>
-            {/* SECTION 1 */}
+            {/* SECTION 1 — chip pill design, only show likely-received vaccines */}
             <section className="rounded-2xl border border-gray-200 p-4">
               <h2 className="text-base font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
-              <div className="mt-3 space-y-2">
-                {childhood.map((c, idx) => (
-                  <ChildhoodCard
-                    key={c.name}
-                    lang={lang}
-                    vax={c}
-                    t={t}
-                    onStatus={(s) => {
-                      setChildhood((arr) => arr.map((x, i) => (i === idx ? { ...x, status: s } : x)));
-                      markDirty();
-                    }}
-                    onYear={(y) => {
-                      setChildhood((arr) => arr.map((x, i) => (i === idx ? { ...x, year_received: y } : x)));
-                      markDirty();
-                    }}
-                  />
-                ))}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {childhood
+                  .filter((c) => c.status === "likely_received")
+                  .map((c) => (
+                    <button
+                      key={c.name}
+                      type="button"
+                      onClick={() => {
+                        setChildhood((arr) => arr.map((x) => x.name === c.name ? { ...x, status: "unsure" } : x));
+                        markDirty();
+                      }}
+                      className="rounded-full border border-[#9B7FD4] bg-[#9B7FD4] px-3 py-1.5 text-xs font-medium text-white"
+                    >
+                      {c.name}
+                    </button>
+                  ))}
+                {childhood
+                  .filter((c) => c.status !== "likely_received")
+                  .map((c) => (
+                    <button
+                      key={c.name}
+                      type="button"
+                      onClick={() => {
+                        setChildhood((arr) => arr.map((x) => x.name === c.name ? { ...x, status: "likely_received" } : x));
+                        markDirty();
+                      }}
+                      className="rounded-full border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-medium text-[#0D1B2A] hover:bg-gray-50"
+                    >
+                      {c.name}
+                    </button>
+                  ))}
               </div>
             </section>
+
 
             {/* SECTION 2 */}
             <section className="rounded-2xl border border-gray-200 p-4">
