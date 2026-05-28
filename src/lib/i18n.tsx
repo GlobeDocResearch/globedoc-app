@@ -20,7 +20,7 @@ const en = {
   "home.passportSubtitle": "Create your global health passport",
   "home.passportCta": "Create Your Health Passport",
   "nav.home": "Home",
-  "nav.passport": "Passport",
+  "nav.passport": "Health Pass",
   "nav.records": "Records",
   "nav.pairing": "Pairing",
   "nav.profile": "Profile",
