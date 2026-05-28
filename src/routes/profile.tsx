@@ -169,7 +169,7 @@ function ProfilePage() {
       fetchAll("vaccination_records"), fetchAll("standard_vaccines"), fetchAll("travel_vaccines"), fetchAll("vaccination_certificates"),
     ]);
     section("Medical Conditions");
-    mc.forEach((r: any) => add("•", r.conditions_text));
+    mc.forEach((r: any) => add(r.is_resolved ? "• (resolved)" : "•", `${r.condition_name ?? ""}${r.year ? ` (${r.year})` : ""}`));
     section("Hospital Stays");
     hs.forEach((r: any) => add("•", `${r.year ?? ""} ${r.event ?? ""} ${r.hospital_country ?? ""}`));
     section("Prescription Medications");
