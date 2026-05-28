@@ -76,6 +76,7 @@ const initialState: State = {
   conditions: {},
   conditionsChecked: {},
   specifyByCondition: {},
+  customConditions: [],
   noneOfAbove: false,
   has_siblings: null,
   sibling_count: "",
