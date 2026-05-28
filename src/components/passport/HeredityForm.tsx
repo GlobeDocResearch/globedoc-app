@@ -266,10 +266,15 @@ export default function HeredityForm() {
         if (row.parent_type === "father") next.father = ps;
         if (row.parent_type === "mother") next.mother = ps;
       }
+      const presetKeys = new Set(CONDITIONS.map((c) => c.v));
       for (const row of conds.data ?? []) {
-        next.conditionsChecked[row.condition_name] = true;
-        if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
-        if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
+        if (presetKeys.has(row.condition_name)) {
+          next.conditionsChecked[row.condition_name] = true;
+          if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
+          if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
+        } else {
+          next.customConditions.push({ id: row.id, name: row.condition_name });
+        }
       }
       if (sibs.data) {
         next.has_siblings = sibs.data.has_siblings;
