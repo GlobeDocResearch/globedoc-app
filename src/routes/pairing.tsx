@@ -1,4 +1,3 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, FileText, User } from "lucide-react";
