@@ -177,9 +177,11 @@ function PassportPage() {
         <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
           <Hex style={{ left: 100, top: 86 }} color="#F8F9FA" filled pageBg="#F8F9FA">
-            <img src={logo} alt="" className="h-14 w-14" />
-            <span className="mt-1 text-[9px] font-bold leading-tight text-[#0D1B2A] text-center">GlobeDoc<br/>Health Passport</span>
-            <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
+            <div className="flex flex-col items-center -mt-2">
+              <img src={logo} alt="" className="h-14 w-14" />
+              <span className="mt-0.5 text-[11px] font-bold leading-tight text-[#0D1B2A] text-center">GlobeDoc<br/>Health Passport</span>
+              <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
+            </div>
           </Hex>
           {/* Top-left: Medical History */}
           <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
