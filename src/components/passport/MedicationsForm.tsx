@@ -367,7 +367,7 @@ export default function MedicationsForm() {
                   />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_stopped_ph")} onChange={(v) => updateStopped(item.id, { drug_generic: v })} />
+                    <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_stopped_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateStopped(item.id, { drug_generic: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
