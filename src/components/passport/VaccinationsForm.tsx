@@ -972,14 +972,7 @@ function OtherCard({
         {t("add_booster")}
       </button>
 
-      <div className="mt-3 flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => onChange({ collapsed: true })}
-          className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-semibold"
-        >
-          {t("save")}
-        </button>
+      <div className="mt-3 flex justify-end">
         <button
           type="button"
           onClick={onDelete}
