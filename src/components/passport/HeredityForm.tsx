@@ -160,6 +160,8 @@ const T: Record<Lang, Record<string, string>> = {
     which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
     please_specify: "Vänligen specificera…",
     none_of_above: "Inget av ovanstående",
+    add_other_condition: "Lägg till annat tillstånd",
+    other_condition_ph: "Skriv ett tillstånd…",
     s_siblings: "Syskon",
     has_siblings_q: "Har du biologiska syskon?",
     num_siblings: "Antal syskon",
