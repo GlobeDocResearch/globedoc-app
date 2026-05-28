@@ -876,3 +876,55 @@ function YesNo({
     </div>
   );
 }
+
+function AddOtherCondition({
+  placeholder,
+  buttonLabel,
+  disabled,
+  onAdd,
+}: {
+  placeholder: string;
+  buttonLabel: string;
+  disabled: boolean;
+  onAdd: (name: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [val, setVal] = useState("");
+  if (!open) {
+    return (
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen(true)}
+        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#C4854A] hover:underline disabled:opacity-40"
+      >
+        + {buttonLabel}
+      </button>
+    );
+  }
+  const commit = () => {
+    const v = val.trim();
+    if (v) onAdd(v);
+    setVal("");
+    setOpen(false);
+  };
+  return (
+    <div className="mt-3 flex gap-2">
+      <input
+        autoFocus
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") { setVal(""); setOpen(false); } }}
+        placeholder={placeholder}
+        className="flex-1 rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+      />
+      <button
+        type="button"
+        onClick={commit}
+        className="rounded-xl bg-[#E0A066] px-3 text-xs font-semibold text-white hover:bg-[#C4854A]"
+      >
+        Add
+      </button>
+    </div>
+  );
+}
