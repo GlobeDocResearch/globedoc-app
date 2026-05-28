@@ -6,6 +6,7 @@ import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
+import { AutocompleteInput, COMMON_MEDICATIONS, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
@@ -322,7 +323,7 @@ export default function MedicationsForm() {
                   <SummaryRow key={item.id} text={[item.drug_generic, item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_ph")} onChange={(v) => updateRx(item.id, { drug_generic: v })} />
+                    <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateRx(item.id, { drug_generic: v })} />
                     <Field label={t("f_brand")} value={item.brand_name} ph={t("f_brand_ph")} onChange={(v) => updateRx(item.id, { brand_name: v })} />
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
@@ -342,7 +343,7 @@ export default function MedicationsForm() {
                   <SummaryRow key={item.id} text={[item.product, item.dose, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateOtc(item.id, { collapsed: false })} onDelete={() => deleteOtc(item)} />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_product")} value={item.product} ph={t("f_product_ph")} onChange={(v) => updateOtc(item.id, { product: v })} />
+                    <FieldAuto label={t("f_product")} value={item.product} ph={t("f_product_ph")} suggestions={COMMON_SUPPLEMENTS} onChange={(v) => updateOtc(item.id, { product: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_ph")} onChange={(v) => updateOtc(item.id, { dose: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_otc_ph")} onChange={(v) => updateOtc(item.id, { frequency: v })} />
                     <Field label={t("f_reason")} value={item.reason} ph={t("f_reason_ph")} onChange={(v) => updateOtc(item.id, { reason: v })} />
@@ -366,7 +367,7 @@ export default function MedicationsForm() {
                   />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_stopped_ph")} onChange={(v) => updateStopped(item.id, { drug_generic: v })} />
+                    <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_stopped_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateStopped(item.id, { drug_generic: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
@@ -419,6 +420,15 @@ function Field({ label, value, ph, onChange }: { label: string; value: string; p
         placeholder={ph}
         className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#6BBF8E] focus:outline-none"
       />
+    </div>
+  );
+}
+
+function FieldAuto({ label, value, ph, suggestions, onChange }: { label: string; value: string; ph: string; suggestions: string[]; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <AutocompleteInput value={value} onChange={onChange} placeholder={ph} suggestions={suggestions} />
     </div>
   );
 }
