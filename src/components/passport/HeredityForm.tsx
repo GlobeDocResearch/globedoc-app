@@ -455,61 +455,106 @@ export default function HeredityForm() {
               onChange={(patch) => setParent("mother", patch)}
             />
 
-            {/* Hereditary conditions */}
+            {/* Hereditary conditions — chip toggle design */}
             <Section title={t("s_conditions")}>
               <p className="mb-3 text-xs text-gray-600">{t("close_family_note")}</p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <div className={`flex flex-wrap gap-2 ${s.noneOfAbove ? "pointer-events-none opacity-40" : ""}`}>
                 {CONDITIONS.map((c) => {
-                  const checked = !!s.conditionsChecked[c.v];
-                  const dimmed = s.noneOfAbove;
+                  const on = !!s.conditionsChecked[c.v];
                   return (
-                    <div
+                    <button
                       key={c.v}
-                      className={`rounded-xl border border-[#E5E7EB] bg-white p-3 transition-opacity ${
-                        dimmed ? "pointer-events-none opacity-40" : ""
+                      type="button"
+                      onClick={() => toggleCondition(c.v)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                        on
+                          ? "border-[#E0A066] bg-[#E0A066] text-white"
+                          : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                       }`}
                     >
-                      <label className="flex cursor-pointer items-center gap-3 text-sm text-[#0D1B2A]">
-                        <Checkbox
-                          checked={checked}
-                          onCheckedChange={() => toggleCondition(c.v)}
-                        />
+                      {lang === "sv" ? c.l_sv : c.l_en}
+                    </button>
+                  );
+                })}
+                {s.customConditions.map((cc) => (
+                  <span
+                    key={cc.id}
+                    className="inline-flex items-center gap-1 rounded-full border border-[#E0A066] bg-[#E0A066] px-3 py-1.5 text-xs font-medium text-white"
+                  >
+                    {cc.name}
+                    <button
+                      type="button"
+                      aria-label="Remove"
+                      onClick={() => {
+                        setS((p) => ({ ...p, customConditions: p.customConditions.filter((x) => x.id !== cc.id) }));
+                        setDirty(true);
+                      }}
+                      className="ml-1 rounded-full hover:bg-white/20"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+
+              <AddOtherCondition
+                placeholder={t("other_condition_ph")}
+                buttonLabel={t("add_other_condition")}
+                disabled={s.noneOfAbove}
+                onAdd={(name) => {
+                  setS((p) => ({
+                    ...p,
+                    customConditions: [...p.customConditions, { id: crypto.randomUUID(), name }],
+                    noneOfAbove: false,
+                  }));
+                  setDirty(true);
+                }}
+              />
+
+              {/* Optional "which relative" for checked preset conditions */}
+              {!s.noneOfAbove && CONDITIONS.some((c) => s.conditionsChecked[c.v]) && (
+                <div className="mt-4 space-y-3">
+                  {CONDITIONS.filter((c) => s.conditionsChecked[c.v]).map((c) => (
+                    <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+                      <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
                         {lang === "sv" ? c.l_sv : c.l_en}
-                      </label>
-                      {checked && (
-                        <div className="mt-2 space-y-2">
+                      </div>
+                      <Txt
+                        value={s.conditions[c.v] ?? ""}
+                        onChange={(v) => setConditionRelative(c.v, v)}
+                        placeholder={t("which_relative_ph")}
+                        label={t("which_relative")}
+                      />
+                      {c.needsSpecify && (
+                        <div className="mt-2">
                           <Txt
-                            value={s.conditions[c.v] ?? ""}
-                            onChange={(v) => setConditionRelative(c.v, v)}
-                            placeholder={t("which_relative_ph")}
-                            label={t("which_relative")}
+                            value={s.specifyByCondition[c.v] ?? ""}
+                            onChange={(v) => setConditionSpecify(c.v, v)}
+                            placeholder={c.v === "other" ? t("please_specify") : t("which_condition_ph")}
+                            label={t("which_condition")}
                           />
-                          {c.needsSpecify && (
-                            <Txt
-                              value={s.specifyByCondition[c.v] ?? ""}
-                              onChange={(v) => setConditionSpecify(c.v, v)}
-                              placeholder={c.v === "other" ? t("please_specify") : t("which_condition_ph")}
-                              label={t("which_condition")}
-                            />
-                          )}
                         </div>
                       )}
                     </div>
-                  );
-                })}
-                {/* None of the above */}
-                <div
-                  className={`rounded-xl border p-3 sm:col-span-2 ${
-                    s.noneOfAbove ? "border-[#E0A066] bg-[#FFF7EE]" : "border-[#E5E7EB] bg-white"
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={toggleNoneOfAbove}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                    s.noneOfAbove
+                      ? "border-[#E0A066] bg-[#FFF7EE] text-[#8a5a20]"
+                      : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                   }`}
                 >
-                  <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-[#0D1B2A]">
-                    <Checkbox checked={s.noneOfAbove} onCheckedChange={toggleNoneOfAbove} />
-                    {t("none_of_above")}
-                  </label>
-                </div>
+                  {t("none_of_above")}
+                </button>
               </div>
             </Section>
+
 
             {/* Siblings */}
             <Accordion
