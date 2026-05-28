@@ -343,7 +343,7 @@ export default function MedicationsForm() {
                   <SummaryRow key={item.id} text={[item.product, item.dose, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateOtc(item.id, { collapsed: false })} onDelete={() => deleteOtc(item)} />
                 ) : (
                   <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                    <Field label={t("f_product")} value={item.product} ph={t("f_product_ph")} onChange={(v) => updateOtc(item.id, { product: v })} />
+                    <FieldAuto label={t("f_product")} value={item.product} ph={t("f_product_ph")} suggestions={COMMON_SUPPLEMENTS} onChange={(v) => updateOtc(item.id, { product: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_ph")} onChange={(v) => updateOtc(item.id, { dose: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_otc_ph")} onChange={(v) => updateOtc(item.id, { frequency: v })} />
                     <Field label={t("f_reason")} value={item.reason} ph={t("f_reason_ph")} onChange={(v) => updateOtc(item.id, { reason: v })} />
