@@ -499,7 +499,7 @@ export default function AllergiesForm() {
       <div className="fixed inset-x-0 bottom-0 z-20 bg-white/95 px-5 py-3 backdrop-blur border-t border-gray-100">
         <button
           type="button"
-          onClick={saveAll}
+          onClick={saveAndExit}
           className="block w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
         >
