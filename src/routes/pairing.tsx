@@ -70,18 +70,10 @@ function PairingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="min-h-screen bg-[#F8F9FA] pb-24">
       {/* Top section */}
-      <header className="bg-[#0D1B2A] px-5 pt-4 pb-6 text-white">
-        <button
-          type="button"
-          onClick={() => navigate({ to: "/home" })}
-          className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Passport
-        </button>
-        <h1 className="mt-4 text-2xl font-bold">Pairing Code</h1>
+      <header className="bg-[#0D1B2A] px-5 pt-6 pb-6 text-white">
+        <h1 className="text-2xl font-bold">Pairing Code</h1>
         <p className="mt-1 text-sm text-gray-400">
           Share your Health Passport with a clinician
         </p>
