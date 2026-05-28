@@ -322,14 +322,18 @@ export default function MedicationsForm() {
                 {rx.map((item) => item.collapsed ? (
                   <SummaryRow key={item.id} text={[item.drug_generic, item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
                 ) : (
-                  <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                  <div
+                    key={item.id}
+                    className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveRx(item); } }}
+                  >
                     <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateRx(item.id, { drug_generic: v })} />
                     <Field label={t("f_brand")} value={item.brand_name} ph={t("f_brand_ph")} onChange={(v) => updateRx(item.id, { brand_name: v })} />
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
                     <Field label={t("f_prescriber")} value={item.prescriber} ph={t("f_prescriber_ph")} onChange={(v) => updateRx(item.id, { prescriber: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveRx(item)} onDiscard={() => discardRx(item)} />}
-                    <CardActions onSave={() => saveRx(item)} onDelete={() => deleteRx(item)} saveLabel={t("save_item")} />
+                    <CardActions onDelete={() => deleteRx(item)} />
                   </div>
                 ))}
               </div>
@@ -342,13 +346,17 @@ export default function MedicationsForm() {
                 {otc.map((item) => item.collapsed ? (
                   <SummaryRow key={item.id} text={[item.product, item.dose, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateOtc(item.id, { collapsed: false })} onDelete={() => deleteOtc(item)} />
                 ) : (
-                  <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                  <div
+                    key={item.id}
+                    className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveOtc(item); } }}
+                  >
                     <FieldAuto label={t("f_product")} value={item.product} ph={t("f_product_ph")} suggestions={COMMON_SUPPLEMENTS} onChange={(v) => updateOtc(item.id, { product: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_ph")} onChange={(v) => updateOtc(item.id, { dose: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_otc_ph")} onChange={(v) => updateOtc(item.id, { frequency: v })} />
                     <Field label={t("f_reason")} value={item.reason} ph={t("f_reason_ph")} onChange={(v) => updateOtc(item.id, { reason: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveOtc(item)} onDiscard={() => discardOtc(item)} />}
-                    <CardActions onSave={() => saveOtc(item)} onDelete={() => deleteOtc(item)} saveLabel={t("save_item")} />
+                    <CardActions onDelete={() => deleteOtc(item)} />
                   </div>
                 ))}
               </div>
@@ -366,13 +374,17 @@ export default function MedicationsForm() {
                     onDelete={() => deleteStopped(item)}
                   />
                 ) : (
-                  <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                  <div
+                    key={item.id}
+                    className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveStopped(item); } }}
+                  >
                     <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_stopped_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateStopped(item.id, { drug_generic: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveStopped(item)} onDiscard={() => discardStopped(item)} />}
-                    <CardActions onSave={() => saveStopped(item)} onDelete={() => deleteStopped(item)} saveLabel={t("save_item")} />
+                    <CardActions onDelete={() => deleteStopped(item)} />
                   </div>
                 ))}
               </div>
@@ -449,14 +461,11 @@ function SummaryRow({ text, onEdit, onDelete }: { text: string; onEdit: () => vo
   );
 }
 
-function CardActions({ onSave, onDelete, saveLabel }: { onSave: () => void; onDelete: () => void; saveLabel: string }) {
+function CardActions({ onDelete }: { onDelete: () => void }) {
   return (
     <div className="flex justify-end gap-2 pt-1">
       <button type="button" onClick={onDelete} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
         <Trash2 className="h-4 w-4" />
-      </button>
-      <button type="button" onClick={onSave} className="rounded-md bg-[#4DA070] px-4 py-2 text-xs font-medium text-white hover:bg-[#3D8F60]">
-        {saveLabel}
       </button>
     </div>
   );
