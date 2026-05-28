@@ -816,6 +816,17 @@ function TravelCard({
             <Input
               value={entry.customDraft}
               onChange={(e) => onChange({ customDraft: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const v = entry.customDraft.trim();
+                  if (!v) return;
+                  onChange({
+                    vaccines: [...entry.vaccines, { name: v, checked: true, date: "", boosters: [] }],
+                    customDraft: "",
+                  });
+                }
+              }}
               placeholder={t("custom_vax_ph")}
               className="h-8 text-xs"
             />
@@ -836,14 +847,7 @@ function TravelCard({
             </button>
           </div>
 
-          <div className="mt-3 flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => onChange({ collapsed: true })}
-              className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-semibold"
-            >
-              {t("save")}
-            </button>
+          <div className="mt-3 flex justify-end">
             <button
               type="button"
               onClick={onDelete}
