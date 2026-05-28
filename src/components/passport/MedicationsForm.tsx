@@ -424,6 +424,15 @@ function Field({ label, value, ph, onChange }: { label: string; value: string; p
   );
 }
 
+function FieldAuto({ label, value, ph, suggestions, onChange }: { label: string; value: string; ph: string; suggestions: string[]; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <AutocompleteInput value={value} onChange={onChange} placeholder={ph} suggestions={suggestions} />
+    </div>
+  );
+}
+
 function SummaryRow({ text, onEdit, onDelete }: { text: string; onEdit: () => void; onDelete: () => void }) {
   return (
     <div className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3">
