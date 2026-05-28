@@ -19,14 +19,13 @@ type SectionKey =
   | "lifestyle";
 
 const SECTIONS: {
-  key: SectionKey;
-  emoji: string;
-  title: string;
-  subtitle: string;
-  color: string;
-}[] = [
-  { key: "medical-history", emoji: "🏥", title: "Medical History", subtitle: "Diagnoses, hospitalisations & operations", color: "#6B9FD4" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#6BBF8E" },
+  { key: "medical-history", emoji: "🏥", title: "Medical History", subtitle: "Diagnoses, hospitalisations & operations", color: "#EAF3FB" },
+  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#E6F6E8" },
+  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#EEEAF7" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risk", subtitle: "Habits that matter clinically", color: "#BFE6E2" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#F2D6BC" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#FADDD7" },
+];
   { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#9B7FD4" },
   { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risk", subtitle: "Habits that matter clinically", color: "#5BB8A8" },
   { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#E0A066" },
