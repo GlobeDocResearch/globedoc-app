@@ -343,13 +343,23 @@ export default function HeredityForm() {
           .filter(([, v]) => v)
           .map(([k]) => k);
         await sb.from("heredity_conditions").delete().eq("user_id", userId);
-        if (checked.length > 0) {
-          const condRows = checked.map((k) => ({
+        const condRows = [
+          ...checked.map((k) => ({
             user_id: userId,
             condition_name: k,
             which_relative: s.conditions[k] || null,
             other_specify: s.specifyByCondition[k] || null,
-          }));
+          })),
+          ...s.customConditions
+            .filter((c) => c.name.trim().length > 0)
+            .map((c) => ({
+              user_id: userId,
+              condition_name: c.name.trim(),
+              which_relative: null,
+              other_specify: null,
+            })),
+        ];
+        if (condRows.length > 0) {
           await sb.from("heredity_conditions").insert(condRows);
         }
 
