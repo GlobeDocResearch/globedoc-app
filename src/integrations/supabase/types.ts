@@ -568,7 +568,36 @@ export type Database = {
       }
       medical_conditions: {
         Row: {
-          conditions_text: string | null
+          condition_name: string
+          created_at: string
+          id: string
+          is_resolved: boolean
+          updated_at: string
+          user_id: string
+          year: string | null
+        }
+        Insert: {
+          condition_name: string
+          created_at?: string
+          id?: string
+          is_resolved?: boolean
+          updated_at?: string
+          user_id: string
+          year?: string | null
+        }
+        Update: {
+          condition_name?: string
+          created_at?: string
+          id?: string
+          is_resolved?: boolean
+          updated_at?: string
+          user_id?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      medical_conditions_summary: {
+        Row: {
           created_at: string
           id: string
           nothing_to_report: boolean
@@ -576,7 +605,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          conditions_text?: string | null
           created_at?: string
           id?: string
           nothing_to_report?: boolean
@@ -584,7 +612,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          conditions_text?: string | null
           created_at?: string
           id?: string
           nothing_to_report?: boolean
@@ -688,30 +715,6 @@ export type Database = {
           expires_at?: string
           id?: string
           used?: boolean
-          user_id?: string
-        }
-        Relationships: []
-      }
-      past_conditions: {
-        Row: {
-          conditions_text: string | null
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          conditions_text?: string | null
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          conditions_text?: string | null
-          created_at?: string
-          id?: string
-          updated_at?: string
           user_id?: string
         }
         Relationships: []
