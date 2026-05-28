@@ -64,7 +64,7 @@ function PassportPage() {
         setShowSetup(true);
       }
       const sb = supabase as any;
-      const [mc, mcs, hs, pm, ot, sm, di, vr, sv, tv, vc, lr, hsum, hp, hc, hsib, hgt, asum, da, fa, ea, adi] = await Promise.all([
+      const [mc, mcs, hs, pm, ot, sm, di, cv, tv, ov, vco, lr, hsum, hp, hc, hsib, hgt, asum, da, fa, ea, adi] = await Promise.all([
         supabase.from("medical_conditions").select("id").eq("user_id", user.id).limit(1),
         supabase.from("medical_conditions_summary").select("nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
@@ -72,10 +72,10 @@ function PassportPage() {
         supabase.from("otc_supplements").select("id").eq("user_id", user.id).limit(1),
         supabase.from("stopped_medications").select("id").eq("user_id", user.id).limit(1),
         supabase.from("drug_intolerances").select("intolerances_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
-        sb.from("vaccination_records").select("id").eq("user_id", user.id).limit(1),
-        sb.from("standard_vaccines").select("id").eq("user_id", user.id).eq("received", true).limit(1),
+        sb.from("childhood_vaccines").select("id, status").eq("user_id", user.id),
         sb.from("travel_vaccines").select("id").eq("user_id", user.id).limit(1),
-        sb.from("vaccination_certificates").select("ihr_card, contraindication_notes, nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        sb.from("other_vaccines").select("id").eq("user_id", user.id).limit(1),
+        sb.from("vaccination_contraindications").select("contraindication_notes, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         sb.from("lifestyle_risk").select("*").eq("user_id", user.id).maybeSingle(),
         sb.from("heredity_summary").select("nothing_to_report").eq("user_id", user.id).maybeSingle(),
         sb.from("heredity_parents").select("id").eq("user_id", user.id).limit(1),
@@ -99,12 +99,11 @@ function PassportPage() {
         !!(ot.data && ot.data.length > 0) ||
         !!(sm.data && sm.data.length > 0);
       const vaxDone =
-        !!vc.data?.nothing_to_report ||
-        !!(vr.data && vr.data.length > 0) ||
-        !!(sv.data && sv.data.length > 0) ||
+        !!vco.data?.nothing_to_report ||
+        !!(cv.data && cv.data.length > 0) ||
         !!(tv.data && tv.data.length > 0) ||
-        !!vc.data?.ihr_card ||
-        !!(vc.data?.contraindication_notes && vc.data.contraindication_notes.trim().length > 0);
+        !!(ov.data && ov.data.length > 0) ||
+        !!(vco.data?.contraindication_notes && vco.data.contraindication_notes.trim().length > 0);
       const lifestyleDone = (() => {
         const d = lr.data;
         if (!d) return false;
@@ -272,19 +271,8 @@ function PassportPage() {
       {showSetup && userId && (
         <PassportSetupModal userId={userId} initial={setupInitial} onDone={async () => {
           setShowSetup(false);
-          // Apply Sweden/birth-year pre-checks for standard vaccines
-          const { data: p } = await supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle();
-          const prof: any = p;
-          if (prof?.nationality === "Sweden" && prof?.date_of_birth) {
-            const year = new Date(prof.date_of_birth).getFullYear();
-            const toCheck: string[] = [];
-            if (year < 1976) toCheck.push("BCG");
-            if (year >= 1975 && year <= 2023) toCheck.push("DTP / DTaP");
-            if (year >= 1993) toCheck.push("Polio (IPV)", "MMR", "Hib");
-            for (const v of toCheck) {
-              await supabase.from("standard_vaccines").insert({ user_id: userId, vaccine_name: v, received: true } as any);
-            }
-          }
+          // Childhood vaccine pre-selections are handled inside VaccinationsForm
+          // based on country of origin and birth year.
         }} />
       )}
     </div>

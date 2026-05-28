@@ -14,42 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      additional_vaccines: {
-        Row: {
-          category: string
-          created_at: string
-          date: string | null
-          id: string
-          notes: string | null
-          updated_at: string
-          user_id: string
-          vaccine_name: string | null
-          year: string | null
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          date?: string | null
-          id?: string
-          notes?: string | null
-          updated_at?: string
-          user_id: string
-          vaccine_name?: string | null
-          year?: string | null
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          date?: string | null
-          id?: string
-          notes?: string | null
-          updated_at?: string
-          user_id?: string
-          vaccine_name?: string | null
-          year?: string | null
-        }
-        Relationships: []
-      }
       allergies_summary: {
         Row: {
           created_at: string
@@ -125,6 +89,36 @@ export type Database = {
           id?: string
           table_name?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      childhood_vaccines: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+          vaccine_name: string
+          year_received: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          vaccine_name: string
+          year_received?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          vaccine_name?: string
+          year_received?: string | null
         }
         Relationships: []
       }
@@ -692,6 +686,36 @@ export type Database = {
         }
         Relationships: []
       }
+      other_vaccines: {
+        Row: {
+          booster_dates: Json
+          created_at: string
+          date_received: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          vaccine_name: string
+        }
+        Insert: {
+          booster_dates?: Json
+          created_at?: string
+          date_received?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          vaccine_name: string
+        }
+        Update: {
+          booster_dates?: Json
+          created_at?: string
+          date_received?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          vaccine_name?: string
+        }
+        Relationships: []
+      }
       pairing_codes: {
         Row: {
           code: string
@@ -809,36 +833,6 @@ export type Database = {
         }
         Relationships: []
       }
-      standard_vaccines: {
-        Row: {
-          created_at: string
-          date: string | null
-          id: string
-          received: boolean
-          updated_at: string
-          user_id: string
-          vaccine_name: string
-        }
-        Insert: {
-          created_at?: string
-          date?: string | null
-          id?: string
-          received?: boolean
-          updated_at?: string
-          user_id: string
-          vaccine_name: string
-        }
-        Update: {
-          created_at?: string
-          date?: string | null
-          id?: string
-          received?: boolean
-          updated_at?: string
-          user_id?: string
-          vaccine_name?: string
-        }
-        Relationships: []
-      }
       stopped_medications: {
         Row: {
           created_at: string
@@ -874,45 +868,43 @@ export type Database = {
       }
       travel_vaccines: {
         Row: {
+          booster_dates: Json
           created_at: string
-          date: string | null
-          destination: string | null
+          date_received: string | null
+          destination: string
           id: string
           updated_at: string
           user_id: string
-          vaccine: string | null
-          valid_until: string | null
+          vaccine_name: string
         }
         Insert: {
+          booster_dates?: Json
           created_at?: string
-          date?: string | null
-          destination?: string | null
+          date_received?: string | null
+          destination: string
           id?: string
           updated_at?: string
           user_id: string
-          vaccine?: string | null
-          valid_until?: string | null
+          vaccine_name: string
         }
         Update: {
+          booster_dates?: Json
           created_at?: string
-          date?: string | null
-          destination?: string | null
+          date_received?: string | null
+          destination?: string
           id?: string
           updated_at?: string
           user_id?: string
-          vaccine?: string | null
-          valid_until?: string | null
+          vaccine_name?: string
         }
         Relationships: []
       }
-      vaccination_certificates: {
+      vaccination_contraindications: {
         Row: {
           contraindication_notes: string | null
           created_at: string
           id: string
-          ihr_card: string | null
           nothing_to_report: boolean
-          other_vaccine_text: string | null
           updated_at: string
           user_id: string
         }
@@ -920,9 +912,7 @@ export type Database = {
           contraindication_notes?: string | null
           created_at?: string
           id?: string
-          ihr_card?: string | null
           nothing_to_report?: boolean
-          other_vaccine_text?: string | null
           updated_at?: string
           user_id: string
         }
@@ -930,44 +920,9 @@ export type Database = {
           contraindication_notes?: string | null
           created_at?: string
           id?: string
-          ihr_card?: string | null
           nothing_to_report?: boolean
-          other_vaccine_text?: string | null
           updated_at?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      vaccination_records: {
-        Row: {
-          batch_number: string | null
-          created_at: string
-          date: string | null
-          id: string
-          provider: string | null
-          updated_at: string
-          user_id: string
-          vaccine: string | null
-        }
-        Insert: {
-          batch_number?: string | null
-          created_at?: string
-          date?: string | null
-          id?: string
-          provider?: string | null
-          updated_at?: string
-          user_id: string
-          vaccine?: string | null
-        }
-        Update: {
-          batch_number?: string | null
-          created_at?: string
-          date?: string | null
-          id?: string
-          provider?: string | null
-          updated_at?: string
-          user_id?: string
-          vaccine?: string | null
         }
         Relationships: []
       }

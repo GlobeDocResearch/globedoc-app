@@ -126,7 +126,7 @@ function ProfilePage() {
   };
 
   const exportJSON = async () => {
-    const tables = ["profiles","medical_conditions","hospital_stays","prescription_medications","otc_supplements","stopped_medications","drug_intolerances","vaccination_records","standard_vaccines","travel_vaccines","vaccination_certificates","consents"] as const;
+    const tables = ["profiles","medical_conditions","hospital_stays","prescription_medications","otc_supplements","stopped_medications","drug_intolerances","childhood_vaccines","travel_vaccines","other_vaccines","vaccination_contraindications","consents"] as const;
     const out: Record<string, any> = {};
     for (const tbl of tables) {
       const { data } = await supabase.from(tbl as any).select("*").eq("user_id", userId);
@@ -162,11 +162,11 @@ function ProfilePage() {
     add("Blood group", profile?.blood_group);
 
     const fetchAll = async (tbl: string) => (await supabase.from(tbl as any).select("*").eq("user_id", userId)).data ?? [];
-    const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc] = await Promise.all([
+    const [mc, hs, pm, ot, sm, di, cv, tv, ov, vco] = await Promise.all([
       fetchAll("medical_conditions"), fetchAll("hospital_stays"),
       fetchAll("prescription_medications"), fetchAll("otc_supplements"), fetchAll("stopped_medications"),
       fetchAll("drug_intolerances"),
-      fetchAll("vaccination_records"), fetchAll("standard_vaccines"), fetchAll("travel_vaccines"), fetchAll("vaccination_certificates"),
+      fetchAll("childhood_vaccines"), fetchAll("travel_vaccines"), fetchAll("other_vaccines"), fetchAll("vaccination_contraindications"),
     ]);
     section("Medical Conditions");
     mc.forEach((r: any) => add(r.is_resolved ? "• (resolved)" : "•", `${r.condition_name ?? ""}${r.year ? ` (${r.year})` : ""}`));
@@ -181,10 +181,10 @@ function ProfilePage() {
     section("Drug Intolerances");
     di.forEach((r: any) => add("•", r.intolerances_text));
     section("Vaccinations");
-    vr.forEach((r: any) => add("•", `${r.vaccine ?? ""} ${r.date ?? ""}`));
-    sv.filter((r: any) => r.received).forEach((r: any) => add("•", r.vaccine_name));
-    tv.forEach((r: any) => add("Travel", `${r.vaccine ?? ""} → ${r.destination ?? ""} ${r.date ?? ""}`));
-    vc.forEach((r: any) => add("IHR", r.ihr_card));
+    cv.filter((r: any) => r.status === "likely_received").forEach((r: any) => add("•", `${r.vaccine_name}${r.year_received ? ` (${r.year_received})` : ""}`));
+    tv.forEach((r: any) => add("Travel", `${r.destination ?? ""} · ${r.vaccine_name ?? ""} ${r.date_received ?? ""}`));
+    ov.forEach((r: any) => add("Other", `${r.vaccine_name ?? ""} ${r.date_received ?? ""}`));
+    vco.forEach((r: any) => add("Contraindication", r.contraindication_notes));
 
     doc.save(`globedoc-passport-${Date.now()}.pdf`);
     await supabase.from("audit_log").insert({ user_id: userId, table_name: "profiles", action: "export_pdf" });
