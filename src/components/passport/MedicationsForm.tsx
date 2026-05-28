@@ -322,14 +322,18 @@ export default function MedicationsForm() {
                 {rx.map((item) => item.collapsed ? (
                   <SummaryRow key={item.id} text={[item.drug_generic, item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
                 ) : (
-                  <div key={item.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                  <div
+                    key={item.id}
+                    className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveRx(item); } }}
+                  >
                     <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateRx(item.id, { drug_generic: v })} />
                     <Field label={t("f_brand")} value={item.brand_name} ph={t("f_brand_ph")} onChange={(v) => updateRx(item.id, { brand_name: v })} />
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
                     <Field label={t("f_prescriber")} value={item.prescriber} ph={t("f_prescriber_ph")} onChange={(v) => updateRx(item.id, { prescriber: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveRx(item)} onDiscard={() => discardRx(item)} />}
-                    <CardActions onSave={() => saveRx(item)} onDelete={() => deleteRx(item)} saveLabel={t("save_item")} />
+                    <CardActions onDelete={() => deleteRx(item)} />
                   </div>
                 ))}
               </div>
