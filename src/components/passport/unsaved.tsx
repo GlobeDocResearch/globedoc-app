@@ -8,7 +8,7 @@ const TR: Record<Lang, Record<string, string>> = {
     discard: "Discard",
     leave_title: "Unsaved changes",
     leave_msg: "You have unsaved changes. If you leave now your changes will be lost.",
-    stay_save: "Stay and save",
+    stay_save: "Leave and save",
     leave: "Leave without saving",
   },
   sv: {
@@ -17,7 +17,7 @@ const TR: Record<Lang, Record<string, string>> = {
     discard: "Avfärda",
     leave_title: "Osparade ändringar",
     leave_msg: "Du har osparade ändringar. Om du lämnar nu förlorar du dina ändringar.",
-    stay_save: "Stanna och spara",
+    stay_save: "Lämna och spara",
     leave: "Lämna utan att spara",
   },
 };
