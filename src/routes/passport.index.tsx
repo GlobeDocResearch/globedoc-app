@@ -145,7 +145,7 @@ function PassportPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#0D1B2A] pb-24">
+    <div className="min-h-screen bg-[#F8F9FA] pb-24">
       {/* Top bar */}
       <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
@@ -164,9 +164,9 @@ function PassportPage() {
 
       {/* Section 1 — Progress */}
       <section className="px-5 pt-6">
-        <h1 className="text-2xl font-bold text-white">Health Passport</h1>
-        <p className="mt-1 text-sm text-gray-400">My Passport · {completed}/{total} sections</p>
-        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-[#1A2B3C]">
+        <h1 className="text-2xl font-bold text-[#0D1B2A]">Health Passport</h1>
+        <p className="mt-1 text-sm text-gray-500">My Passport · {completed}/{total} sections</p>
+        <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
           <div className="h-full rounded-full bg-[#3B82F6] transition-all" style={{ width: `${percent}%` }} />
         </div>
         <p className="mt-2 text-xs text-gray-500">{percent}% complete</p>
@@ -176,71 +176,67 @@ function PassportPage() {
       <section className="mt-6 px-4">
         <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
-          <Hex style={{ left: 100, top: 86 }} bg="#1A2B3C" onClick={() => {}}>
+          <Hex style={{ left: 100, top: 86 }} color="#1A2B3C" filled pageBg="#F8F9FA">
             <img src={logo} alt="" className="h-7 w-7" />
             <span className="mt-1 text-[9px] font-bold leading-tight text-white text-center">GlobeDoc<br/>Health Passport</span>
             <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
           </Hex>
           {/* Top-left: Medical History */}
-          <Hex style={{ left: 50, top: 0 }} bg={SECTIONS[0].color} onClick={() => goSection(SECTIONS[0].key)}>
+          <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Medical<br/>History</span>
-            {done["medical-history"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+            <span className="mt-1 text-[10px] font-bold leading-tight text-[#0D1B2A] text-center">Medical<br/>History</span>
           </Hex>
-
           {/* Top-right: Medications */}
-          <Hex style={{ left: 150, top: 0 }} bg={SECTIONS[1].color} onClick={() => goSection(SECTIONS[1].key)}>
+          <Hex style={{ left: 150, top: 0 }} color={SECTIONS[1].color} filled={done["medications"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">Medications</span>
-            {done["medications"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Medications</span>
           </Hex>
           {/* Right: Vaccinations */}
-          <Hex style={{ left: 200, top: 86 }} bg={SECTIONS[2].color} onClick={() => goSection(SECTIONS[2].key)}>
+          <Hex style={{ left: 200, top: 86 }} color={SECTIONS[2].color} filled={done["vaccinations"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[2].key)}>
             <span className="text-xl">{SECTIONS[2].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">Vaccinations</span>
-            {done["vaccinations"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Vaccinations</span>
           </Hex>
           {/* Bottom-right: Lifestyle & Risk */}
-          <Hex style={{ left: 150, top: 173 }} bg={SECTIONS[3].color} onClick={() => goSection(SECTIONS[3].key)}>
+          <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-white text-center">Lifestyle<br/>& Risk</span>
-            {done["lifestyle"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+            <span className="mt-1 text-[10px] font-bold leading-tight text-[#0D1B2A] text-center">Lifestyle<br/>& Risk</span>
           </Hex>
           {/* Bottom-left: Heredity */}
-          <Hex style={{ left: 50, top: 173 }} bg={SECTIONS[4].color} onClick={() => goSection(SECTIONS[4].key)}>
+          <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">Heredity</span>
-            {done["heredity"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Heredity</span>
           </Hex>
           {/* Left: Allergies */}
-          <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>
+          <Hex style={{ left: 0, top: 86 }} color={SECTIONS[5].color} filled={done["allergies"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[5].key)}>
             <span className="text-xl">{SECTIONS[5].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-white">Allergies</span>
-            {done["allergies"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Allergies</span>
           </Hex>
         </div>
       </section>
 
       {/* Section 3 — List */}
       <section className="mt-6 space-y-3 px-5">
-        {SECTIONS.map((s) => (
-          <button
-            key={s.key}
-            type="button"
-            onClick={() => goSection(s.key)}
-            className="flex w-full items-center gap-4 rounded-2xl bg-[#1A2B3C] p-4 text-left transition-colors hover:bg-[#22364a]"
-          >
-            <span className="text-2xl">{s.emoji}</span>
-            <div className="flex-1">
-              <h3 className="text-sm font-bold text-white">{s.title}</h3>
-              <p className="text-xs text-gray-400">{s.subtitle}</p>
-            </div>
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-600">
-              {done[s.key] && <Check className="h-4 w-4 text-green-400" />}
-            </span>
-
-          </button>
-        ))}
+        {SECTIONS.map((s) => {
+          const isDone = done[s.key];
+          return (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => goSection(s.key)}
+              className="flex w-full items-center gap-4 rounded-2xl p-4 text-left transition-transform duration-200 hover:scale-[1.02]"
+              style={{
+                backgroundColor: isDone ? s.color : "transparent",
+                border: `2px solid ${s.color}`,
+              }}
+            >
+              <span className="text-2xl">{s.emoji}</span>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-[#0D1B2A]">{s.title}</h3>
+                <p className="text-xs text-gray-600">{s.subtitle}</p>
+              </div>
+            </button>
+          );
+        })}
 
         <Link
           to="/pairing"
@@ -261,7 +257,7 @@ function PassportPage() {
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
-          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" active />
+          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Health Pass" active />
           <NavTab icon={<FileText className="h-5 w-5" />} label="Records" />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
           <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" />
@@ -271,11 +267,35 @@ function PassportPage() {
       {showSetup && userId && (
         <PassportSetupModal userId={userId} initial={setupInitial} onDone={async () => {
           setShowSetup(false);
-          // Childhood vaccine pre-selections are handled inside VaccinationsForm
-          // based on country of origin and birth year.
         }} />
       )}
     </div>
+  );
+}
+
+function Hex({ children, color, filled = true, pageBg, style, onClick }: { children: React.ReactNode; color: string; filled?: boolean; pageBg: string; style: React.CSSProperties; onClick?: () => void }) {
+  const hexClip = "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="absolute h-[116px] w-[100px] p-0 transition-transform duration-200 hover:scale-[1.06] active:scale-[1.06]"
+      style={{ ...style, background: "transparent", border: "none" }}
+    >
+      <span
+        className="absolute inset-0 block"
+        style={{ background: color, clipPath: hexClip }}
+      />
+      {!filled && (
+        <span
+          className="absolute block"
+          style={{ inset: 3, background: pageBg, clipPath: hexClip }}
+        />
+      )}
+      <span className="relative flex h-full w-full flex-col items-center justify-center p-2 text-center">
+        {children}
+      </span>
+    </button>
   );
 }
 
