@@ -126,7 +126,13 @@ function PassportPage() {
         !!(hc.data && hc.data.length > 0) ||
         hsib.data?.has_siblings != null ||
         hgt.data?.tested != null;
-      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone, heredity: heredityDone }));
+      const allergiesDone =
+        !!asum.data?.nothing_to_report ||
+        !!(da.data && da.data.length > 0) ||
+        !!(fa.data && fa.data.length > 0) ||
+        !!(ea.data && ea.data.length > 0) ||
+        !!(adi.data && adi.data.length > 0);
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone, heredity: heredityDone, allergies: allergiesDone }));
     })();
   }, [navigate]);
 
