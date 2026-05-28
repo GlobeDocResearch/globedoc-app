@@ -421,7 +421,7 @@ function BottomNav() {
     <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
       <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
         <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
-        <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" />
+        <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Health Pass" />
         <NavTab icon={<FileText className="h-5 w-5" />} label="Records" />
         <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
         <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" active />
