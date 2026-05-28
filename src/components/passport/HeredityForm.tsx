@@ -29,6 +29,8 @@ const emptyParent: ParentState = {
   known_conditions: "",
 };
 
+type CustomCondition = { id: string; name: string };
+
 type State = {
   nothing: boolean;
   father: ParentState;
@@ -36,6 +38,7 @@ type State = {
   conditions: Record<string, string>; // condition key -> which_relative
   conditionsChecked: Record<string, boolean>;
   specifyByCondition: Record<string, string>; // condition key -> which_condition / specify
+  customConditions: CustomCondition[];
   noneOfAbove: boolean;
   has_siblings: boolean | null;
   sibling_count: string;
