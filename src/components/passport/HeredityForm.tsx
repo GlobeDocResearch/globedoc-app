@@ -117,6 +117,8 @@ const T: Record<Lang, Record<string, string>> = {
     which_condition_ph: "E.g. Chronic kidney disease, polycystic kidney disease…",
     please_specify: "Please specify…",
     none_of_above: "None of the above",
+    add_other_condition: "Add other condition",
+    other_condition_ph: "Type a condition…",
     s_siblings: "Siblings",
     has_siblings_q: "Do you have biological siblings?",
     num_siblings: "Number of siblings",
