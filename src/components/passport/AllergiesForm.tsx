@@ -317,6 +317,12 @@ export default function AllergiesForm() {
     supabase.from("audit_log").insert({ user_id: userId, table_name: table, action });
   };
 
+  const saveAndExit = async () => {
+    const ok = await saveAll();
+    if (ok) navigate({ to: "/passport" });
+    return ok;
+  };
+
   const saveAll = async () => {
     if (!userId) return false;
     try {
