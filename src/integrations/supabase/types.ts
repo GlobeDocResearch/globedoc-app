@@ -50,6 +50,60 @@ export type Database = {
         }
         Relationships: []
       }
+      allergies_summary: {
+        Row: {
+          created_at: string
+          id: string
+          nothing_to_report: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nothing_to_report?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      allergy_drug_intolerances: {
+        Row: {
+          created_at: string
+          drug_name: string
+          id: string
+          is_preset: boolean
+          symptom: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          drug_name: string
+          id?: string
+          is_preset?: boolean
+          symptom?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          drug_name?: string
+          id?: string
+          is_preset?: boolean
+          symptom?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -101,6 +155,36 @@ export type Database = {
         }
         Relationships: []
       }
+      drug_allergies: {
+        Row: {
+          created_at: string
+          drug_name: string
+          id: string
+          is_preset: boolean
+          reaction: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          drug_name: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          drug_name?: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       drug_intolerances: {
         Row: {
           created_at: string
@@ -123,6 +207,66 @@ export type Database = {
           id?: string
           intolerances_text?: string | null
           nothing_to_report?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      environmental_allergies: {
+        Row: {
+          allergen: string
+          created_at: string
+          id: string
+          is_preset: boolean
+          reaction: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allergen: string
+          created_at?: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allergen?: string
+          created_at?: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      food_allergies: {
+        Row: {
+          created_at: string
+          food_item: string
+          id: string
+          is_preset: boolean
+          reaction: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          food_item: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          food_item?: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
           updated_at?: string
           user_id?: string
         }

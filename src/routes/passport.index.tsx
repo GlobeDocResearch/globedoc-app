@@ -64,7 +64,7 @@ function PassportPage() {
         setShowSetup(true);
       }
       const sb = supabase as any;
-      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc, lr, hsum, hp, hc, hsib, hgt] = await Promise.all([
+      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc, lr, hsum, hp, hc, hsib, hgt, asum, da, fa, ea, adi] = await Promise.all([
         supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
         supabase.from("prescription_medications").select("id").eq("user_id", user.id).limit(1),
@@ -81,6 +81,11 @@ function PassportPage() {
         sb.from("heredity_conditions").select("id").eq("user_id", user.id).limit(1),
         sb.from("heredity_siblings").select("has_siblings").eq("user_id", user.id).maybeSingle(),
         sb.from("heredity_genetic_testing").select("tested").eq("user_id", user.id).maybeSingle(),
+        sb.from("allergies_summary").select("nothing_to_report").eq("user_id", user.id).maybeSingle(),
+        sb.from("drug_allergies").select("id").eq("user_id", user.id).limit(1),
+        sb.from("food_allergies").select("id").eq("user_id", user.id).limit(1),
+        sb.from("environmental_allergies").select("id").eq("user_id", user.id).limit(1),
+        sb.from("allergy_drug_intolerances").select("id").eq("user_id", user.id).limit(1),
       ]);
       const mhDone =
         !!mc.data?.nothing_to_report ||
@@ -121,7 +126,13 @@ function PassportPage() {
         !!(hc.data && hc.data.length > 0) ||
         hsib.data?.has_siblings != null ||
         hgt.data?.tested != null;
-      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone, heredity: heredityDone }));
+      const allergiesDone =
+        !!asum.data?.nothing_to_report ||
+        !!(da.data && da.data.length > 0) ||
+        !!(fa.data && fa.data.length > 0) ||
+        !!(ea.data && ea.data.length > 0) ||
+        !!(adi.data && adi.data.length > 0);
+      setDone((d) => ({ ...d, "medical-history": mhDone, medications: medsDone, vaccinations: vaxDone, lifestyle: lifestyleDone, heredity: heredityDone, allergies: allergiesDone }));
     })();
   }, [navigate]);
 
@@ -205,6 +216,7 @@ function PassportPage() {
           <Hex style={{ left: 0, top: 86 }} bg={SECTIONS[5].color} onClick={() => goSection(SECTIONS[5].key)}>
             <span className="text-xl">{SECTIONS[5].emoji}</span>
             <span className="mt-1 text-[11px] font-bold text-white">Allergies</span>
+            {done["allergies"] && <Check className="mt-0.5 h-3.5 w-3.5 text-green-300" />}
           </Hex>
         </div>
       </section>
