@@ -64,8 +64,9 @@ function PassportPage() {
         setShowSetup(true);
       }
       const sb = supabase as any;
-      const [mc, hs, pm, ot, sm, di, vr, sv, tv, vc, lr, hsum, hp, hc, hsib, hgt, asum, da, fa, ea, adi] = await Promise.all([
-        supabase.from("medical_conditions").select("conditions_text, nothing_to_report").eq("user_id", user.id).maybeSingle(),
+      const [mc, mcs, hs, pm, ot, sm, di, vr, sv, tv, vc, lr, hsum, hp, hc, hsib, hgt, asum, da, fa, ea, adi] = await Promise.all([
+        supabase.from("medical_conditions").select("id").eq("user_id", user.id).limit(1),
+        supabase.from("medical_conditions_summary").select("nothing_to_report").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id").eq("user_id", user.id).limit(1),
         supabase.from("prescription_medications").select("id").eq("user_id", user.id).limit(1),
         supabase.from("otc_supplements").select("id").eq("user_id", user.id).limit(1),
@@ -88,8 +89,8 @@ function PassportPage() {
         sb.from("allergy_drug_intolerances").select("id").eq("user_id", user.id).limit(1),
       ]);
       const mhDone =
-        !!mc.data?.nothing_to_report ||
-        !!(mc.data?.conditions_text && mc.data.conditions_text.trim().length > 0) ||
+        !!mcs.data?.nothing_to_report ||
+        !!(mc.data && mc.data.length > 0) ||
         !!(hs.data && hs.data.length > 0);
       const medsDone =
         !!di.data?.nothing_to_report ||
