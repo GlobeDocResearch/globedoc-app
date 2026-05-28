@@ -299,23 +299,6 @@ function Hex({ children, color, filled = true, pageBg, style, onClick }: { child
   );
 }
 
-function Hex({ children, bg, style, onClick }: { children: React.ReactNode; bg: string; style: React.CSSProperties; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="absolute flex h-[116px] w-[100px] flex-col items-center justify-center p-2 text-center transition-transform duration-200 hover:scale-[1.06] active:scale-[1.06]"
-      style={{
-        ...style,
-        background: bg,
-        clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-        filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.3))",
-      }}
-    >
-      {children}
-    </button>
-  );
-}
 
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/pairing" | "/profile" }) {
   const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
