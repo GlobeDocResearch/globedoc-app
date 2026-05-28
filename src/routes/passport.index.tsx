@@ -176,9 +176,9 @@ function PassportPage() {
       <section className="mt-6 px-4">
         <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
-          <Hex style={{ left: 100, top: 86 }} color="#1A2B3C" filled pageBg="#F8F9FA">
-            <img src={logo} alt="" className="h-7 w-7" />
-            <span className="mt-1 text-[9px] font-bold leading-tight text-white text-center">GlobeDoc<br/>Health Passport</span>
+          <Hex style={{ left: 100, top: 86 }} color="#F8F9FA" filled pageBg="#F8F9FA">
+            <img src={logo} alt="" className="h-14 w-14" />
+            <span className="mt-1 text-[9px] font-bold leading-tight text-[#0D1B2A] text-center">GlobeDoc<br/>Health Passport</span>
             <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
           </Hex>
           {/* Top-left: Medical History */}
