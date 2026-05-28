@@ -860,7 +860,7 @@ export default function LifestyleForm() {
       <div className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white p-4">
         <button
           type="button"
-          onClick={saveAll}
+          onClick={async () => { if (await saveAll()) navigate({ to: "/passport" }); }}
           className="w-full rounded-xl py-3 text-sm font-semibold text-white shadow hover:opacity-95"
           style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
         >
