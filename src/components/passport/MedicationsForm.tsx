@@ -449,14 +449,11 @@ function SummaryRow({ text, onEdit, onDelete }: { text: string; onEdit: () => vo
   );
 }
 
-function CardActions({ onSave, onDelete, saveLabel }: { onSave: () => void; onDelete: () => void; saveLabel: string }) {
+function CardActions({ onDelete }: { onDelete: () => void }) {
   return (
     <div className="flex justify-end gap-2 pt-1">
       <button type="button" onClick={onDelete} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
         <Trash2 className="h-4 w-4" />
-      </button>
-      <button type="button" onClick={onSave} className="rounded-md bg-[#4DA070] px-4 py-2 text-xs font-medium text-white hover:bg-[#3D8F60]">
-        {saveLabel}
       </button>
     </div>
   );
