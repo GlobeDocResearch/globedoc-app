@@ -6,6 +6,7 @@ import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
+import { AutocompleteInput, COMMON_MEDICATIONS, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
