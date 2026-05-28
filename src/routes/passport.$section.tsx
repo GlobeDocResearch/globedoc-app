@@ -29,6 +29,7 @@ function SectionPage() {
   if (section === "vaccinations") return <VaccinationsForm />;
   if (section === "lifestyle") return <LifestyleForm />;
   if (section === "heredity") return <HeredityForm />;
+  if (section === "allergies") return <AllergiesForm />;
 
   const title = TITLES[section] ?? "Section";
   return (
