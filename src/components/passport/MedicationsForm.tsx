@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Pencil, Trash2, Plus, Check, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -122,6 +122,7 @@ export default function MedicationsForm() {
   const markDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.add(id); return n; });
   const clearDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.delete(id); return n; });
   const anyDirty = dirty || dirtyIds.size > 0;
+  const bypassGuardRef = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -273,8 +274,14 @@ export default function MedicationsForm() {
       return true;
     } catch { toast.error(t("saveError")); return false; }
   };
-  const handleSaveAndExit = async () => { if (await saveAll()) navigate({ to: "/passport" }); };
-  const resolver = useLeaveGuard(anyDirty);
+  const handleSaveAndExit = async () => {
+    bypassGuardRef.current = true;
+    const ok = await saveAll();
+    if (ok) navigate({ to: "/passport" });
+    else bypassGuardRef.current = false;
+  };
+  const resolver = useLeaveGuard(() => anyDirty && !bypassGuardRef.current);
+
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
