@@ -504,13 +504,16 @@ export default function HeredityForm() {
               </div>
 
               <AddOtherCondition
-                placeholder={t("other_condition_ph")}
+                whichRelativeLabel={t("which_relative")}
+                whichRelativePh={t("which_relative_ph")}
+                whichConditionLabel={t("which_condition")}
+                whichConditionPh={t("please_specify")}
                 buttonLabel={t("add_other_condition")}
                 disabled={s.noneOfAbove}
-                onAdd={(name) => {
+                onAdd={(name, relative) => {
                   setS((p) => ({
                     ...p,
-                    customConditions: [...p.customConditions, { id: crypto.randomUUID(), name }],
+                    customConditions: [...p.customConditions, { id: crypto.randomUUID(), name, relative }],
                     noneOfAbove: false,
                   }));
                   setDirty(true);
@@ -531,18 +534,32 @@ export default function HeredityForm() {
                         placeholder={t("which_relative_ph")}
                         label={t("which_relative")}
                       />
+                      {c.ageKind && (
+                        <div className="mt-2">
+                          <Lbl>{c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset")}</Lbl>
+                          <input
+                            type="number"
+                            min={0}
+                            max={120}
+                            value={s.specifyByCondition[c.v] ?? ""}
+                            onChange={(e) => setConditionSpecify(c.v, e.target.value)}
+                            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                          />
+                        </div>
+                      )}
                       {c.needsSpecify && (
                         <div className="mt-2">
                           <Txt
                             value={s.specifyByCondition[c.v] ?? ""}
                             onChange={(v) => setConditionSpecify(c.v, v)}
-                            placeholder={c.v === "other" ? t("please_specify") : t("which_condition_ph")}
+                            placeholder={t("which_condition_ph")}
                             label={t("which_condition")}
                           />
                         </div>
                       )}
                     </div>
                   ))}
+
                 </div>
               )}
 
