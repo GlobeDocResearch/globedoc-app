@@ -224,18 +224,8 @@ export default function HeredityForm() {
     });
     setDirty(true);
   };
-    });
-    setDirty(true);
-  };
   const confirmCondition = (v: string) => {
     setS((p) => ({ ...p, conditionsConfirmed: { ...p.conditionsConfirmed, [v]: true } }));
-  };
-  const unconfirmCondition = (v: string) => {
-    setS((p) => {
-      const nc = { ...p.conditionsConfirmed };
-      delete nc[v];
-      return { ...p, conditionsConfirmed: nc };
-    });
   };
   const confirmParent = (which: "father" | "mother") => {
     setS((p) => ({ ...p, [`${which}Confirmed`]: true } as State));
