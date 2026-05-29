@@ -122,6 +122,7 @@ export default function MedicationsForm() {
   const markDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.add(id); return n; });
   const clearDirty = (id: string) => setDirtyIds((s) => { const n = new Set(s); n.delete(id); return n; });
   const anyDirty = dirty || dirtyIds.size > 0;
+  const bypassGuardRef = useRef(false);
 
   useEffect(() => {
     (async () => {
