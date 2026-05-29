@@ -7,6 +7,8 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
+import { AutocompleteInput, COMMON_MEDICATIONS } from "./AutocompleteInput";
+
 
 const ACCENT = "#E07B6B";
 const ACCENT_2 = "#C45A4A";
