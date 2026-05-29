@@ -917,7 +917,16 @@ function OtherCard({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 p-3">
+    <div
+      className="rounded-xl border border-gray-200 p-3"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.defaultPrevented) {
+          e.preventDefault();
+          if (entry.vaccine_name.trim()) onSave();
+        }
+      }}
+    >
+
       <label className="text-xs font-semibold text-gray-700">{t("vaccine_name")}</label>
       <div className="relative">
         <Input
