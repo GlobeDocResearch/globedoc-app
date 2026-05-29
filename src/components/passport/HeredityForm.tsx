@@ -198,7 +198,7 @@ export default function HeredityForm() {
   const [openSiblings, setOpenSiblings] = useState(false);
   const [openGenetic, setOpenGenetic] = useState(false);
   const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
-  const [addingCustom, setAddingCustom] = useState(false);
+  
 
   const setField = <K extends keyof State>(k: K, v: State[K]) => {
     setS((p) => ({ ...p, [k]: v }));
