@@ -50,7 +50,7 @@ function TravelPage() {
     ? COUNTRIES.filter((c) => c.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
     : [];
 
-  const recs = country ? recommendedFor(country) : [];
+  const recs = country ? recommendedFor(country, trip) : [];
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-24">
