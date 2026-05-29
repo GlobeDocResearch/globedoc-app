@@ -278,7 +278,8 @@ export default function HeredityForm() {
           if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
           if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
         } else {
-          next.customConditions.push({ id: row.id, name: row.condition_name });
+          next.customConditions.push({ id: row.id, name: row.condition_name, relative: row.which_relative ?? "" });
+
         }
       }
       if (sibs.data) {
