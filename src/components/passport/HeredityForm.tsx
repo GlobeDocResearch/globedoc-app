@@ -161,7 +161,10 @@ const T: Record<Lang, Record<string, string>> = {
     which_condition: "Vilket tillstånd?",
     which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
     please_specify: "Vänligen specificera…",
-    none_of_above: "Inget av ovanstående",
+    which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
+    age_at_first_stroke: "Ålder vid första stroke?",
+    age_at_onset: "Ålder vid debut?",
+
     add_other_condition: "Lägg till annat tillstånd",
     other_condition_ph: "Skriv ett tillstånd…",
     s_siblings: "Syskon",
