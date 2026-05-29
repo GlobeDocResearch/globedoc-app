@@ -317,11 +317,15 @@ export default function AllergiesForm() {
     supabase.from("audit_log").insert({ user_id: userId, table_name: table, action });
   };
 
+  const bypassGuardRef = useRef(false);
   const saveAndExit = async () => {
+    bypassGuardRef.current = true;
     const ok = await saveAll();
     if (ok) navigate({ to: "/passport" });
+    else bypassGuardRef.current = false;
     return ok;
   };
+
 
   const saveAll = async () => {
     if (!userId) return false;
