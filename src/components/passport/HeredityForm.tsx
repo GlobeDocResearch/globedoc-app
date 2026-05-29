@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { X, ChevronDown } from "lucide-react";
+import { X, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
@@ -35,8 +35,11 @@ type State = {
   nothing: boolean;
   father: ParentState;
   mother: ParentState;
+  fatherConfirmed: boolean;
+  motherConfirmed: boolean;
   conditions: Record<string, string>; // condition key -> which_relative
   conditionsChecked: Record<string, boolean>;
+  conditionsConfirmed: Record<string, boolean>;
   specifyByCondition: Record<string, string>; // condition key -> which_condition / age / specify
   customConditions: CustomCondition[];
   noneOfAbove: boolean;
@@ -74,8 +77,11 @@ const initialState: State = {
   nothing: false,
   father: { ...emptyParent },
   mother: { ...emptyParent },
+  fatherConfirmed: false,
+  motherConfirmed: false,
   conditions: {},
   conditionsChecked: {},
+  conditionsConfirmed: {},
   specifyByCondition: {},
   customConditions: [],
   noneOfAbove: false,
@@ -202,14 +208,36 @@ export default function HeredityForm() {
   };
   const toggleCondition = (v: string) => {
     setS((p) => {
-      const next = !p.conditionsChecked[v];
+      const checked = !!p.conditionsChecked[v];
+      const confirmed = !!p.conditionsConfirmed[v];
+      // Confirmed chip → unconfirm to re-edit (keep checked)
+      if (checked && confirmed) {
+        const nc = { ...p.conditionsConfirmed };
+        delete nc[v];
+        return { ...p, conditionsConfirmed: nc };
+      }
+      // Unconfirmed checked chip → uncheck
+      // Unchecked chip → check (will show edit form)
+      const next = !checked;
       return {
         ...p,
         conditionsChecked: { ...p.conditionsChecked, [v]: next },
-        // Checking any condition clears "none of the above"
         noneOfAbove: next ? false : p.noneOfAbove,
       };
     });
+    setDirty(true);
+  };
+  const confirmCondition = (v: string) => {
+    setS((p) => ({ ...p, conditionsConfirmed: { ...p.conditionsConfirmed, [v]: true } }));
+  };
+  const confirmParent = (which: "father" | "mother") => {
+    setS((p) => ({ ...p, [`${which}Confirmed`]: true } as State));
+  };
+  const editParent = (which: "father" | "mother") => {
+    setS((p) => ({ ...p, [`${which}Confirmed`]: false } as State));
+  };
+  const deleteParent = (which: "father" | "mother") => {
+    setS((p) => ({ ...p, [which]: { ...emptyParent }, [`${which}Confirmed`]: false } as State));
     setDirty(true);
   };
   const toggleNoneOfAbove = () => {
@@ -255,7 +283,9 @@ export default function HeredityForm() {
         mother: { ...emptyParent },
         conditions: {},
         conditionsChecked: {},
+        conditionsConfirmed: {},
         specifyByCondition: {},
+        customConditions: [],
       };
       next.nothing = sum.data?.nothing_to_report ?? false;
       for (const row of parents.data ?? []) {
@@ -268,18 +298,26 @@ export default function HeredityForm() {
           cause_of_death: row.cause_of_death ?? "",
           known_conditions: row.known_conditions ?? "",
         };
-        if (row.parent_type === "father") next.father = ps;
-        if (row.parent_type === "mother") next.mother = ps;
+        const hasData =
+          ps.unknown || ps.living || ps.year_born || ps.age_at_death || ps.cause_of_death || ps.known_conditions;
+        if (row.parent_type === "father") {
+          next.father = ps;
+          if (hasData) next.fatherConfirmed = true;
+        }
+        if (row.parent_type === "mother") {
+          next.mother = ps;
+          if (hasData) next.motherConfirmed = true;
+        }
       }
       const presetKeys = new Set(CONDITIONS.map((c) => c.v));
       for (const row of conds.data ?? []) {
         if (presetKeys.has(row.condition_name)) {
           next.conditionsChecked[row.condition_name] = true;
+          next.conditionsConfirmed[row.condition_name] = true;
           if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
           if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
         } else {
           next.customConditions.push({ id: row.id, name: row.condition_name, relative: row.which_relative ?? "" });
-
         }
       }
       if (sibs.data) {
@@ -452,15 +490,24 @@ export default function HeredityForm() {
               title={t("s_father")}
               dontKnowLabel={t("dont_know_father")}
               value={s.father}
+              confirmed={s.fatherConfirmed}
               onChange={(patch) => setParent("father", patch)}
+              onConfirm={() => confirmParent("father")}
+              onEdit={() => editParent("father")}
+              onDelete={() => deleteParent("father")}
             />
             <ParentSection
               t={t}
               title={t("s_mother")}
               dontKnowLabel={t("dont_know_mother")}
               value={s.mother}
+              confirmed={s.motherConfirmed}
               onChange={(patch) => setParent("mother", patch)}
+              onConfirm={() => confirmParent("mother")}
+              onEdit={() => editParent("mother")}
+              onDelete={() => deleteParent("mother")}
             />
+
 
             {/* Hereditary conditions — chip toggle design */}
             <Section title={t("s_conditions")}>
@@ -521,48 +568,59 @@ export default function HeredityForm() {
                 }}
               />
 
-              {/* Optional "which relative" for checked preset conditions */}
-              {!s.noneOfAbove && CONDITIONS.some((c) => s.conditionsChecked[c.v]) && (
+              {/* Optional "which relative" for checked preset conditions — hidden once confirmed */}
+              {!s.noneOfAbove && CONDITIONS.some((c) => s.conditionsChecked[c.v] && !s.conditionsConfirmed[c.v]) && (
                 <div className="mt-4 space-y-3">
-                  {CONDITIONS.filter((c) => s.conditionsChecked[c.v]).map((c) => (
-                    <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
-                      <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
-                        {lang === "sv" ? c.l_sv : c.l_en}
+                  {CONDITIONS.filter((c) => s.conditionsChecked[c.v] && !s.conditionsConfirmed[c.v]).map((c) => {
+                    const onEnter = (e: React.KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        confirmCondition(c.v);
+                      }
+                    };
+                    return (
+                      <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+                        <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
+                          {lang === "sv" ? c.l_sv : c.l_en}
+                        </div>
+                        <Txt
+                          value={s.conditions[c.v] ?? ""}
+                          onChange={(v) => setConditionRelative(c.v, v)}
+                          placeholder={t("which_relative_ph")}
+                          label={t("which_relative")}
+                          onKeyDown={onEnter}
+                        />
+                        {c.ageKind && (
+                          <div className="mt-2">
+                            <Lbl>{c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset")}</Lbl>
+                            <input
+                              type="number"
+                              min={0}
+                              max={120}
+                              value={s.specifyByCondition[c.v] ?? ""}
+                              onChange={(e) => setConditionSpecify(c.v, e.target.value)}
+                              onKeyDown={onEnter}
+                              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                            />
+                          </div>
+                        )}
+                        {c.needsSpecify && (
+                          <div className="mt-2">
+                            <Txt
+                              value={s.specifyByCondition[c.v] ?? ""}
+                              onChange={(v) => setConditionSpecify(c.v, v)}
+                              placeholder={t("which_condition_ph")}
+                              label={t("which_condition")}
+                              onKeyDown={onEnter}
+                            />
+                          </div>
+                        )}
                       </div>
-                      <Txt
-                        value={s.conditions[c.v] ?? ""}
-                        onChange={(v) => setConditionRelative(c.v, v)}
-                        placeholder={t("which_relative_ph")}
-                        label={t("which_relative")}
-                      />
-                      {c.ageKind && (
-                        <div className="mt-2">
-                          <Lbl>{c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset")}</Lbl>
-                          <input
-                            type="number"
-                            min={0}
-                            max={120}
-                            value={s.specifyByCondition[c.v] ?? ""}
-                            onChange={(e) => setConditionSpecify(c.v, e.target.value)}
-                            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
-                          />
-                        </div>
-                      )}
-                      {c.needsSpecify && (
-                        <div className="mt-2">
-                          <Txt
-                            value={s.specifyByCondition[c.v] ?? ""}
-                            onChange={(v) => setConditionSpecify(c.v, v)}
-                            placeholder={t("which_condition_ph")}
-                            label={t("which_condition")}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
+                    );
+                  })}
                 </div>
               )}
+
 
               <div className="mt-4">
                 <button
@@ -680,14 +738,66 @@ function ParentSection({
   title,
   dontKnowLabel,
   value,
+  confirmed,
   onChange,
+  onConfirm,
+  onEdit,
+  onDelete,
 }: {
   t: (k: any) => string;
   title: string;
   dontKnowLabel: string;
   value: ParentState;
+  confirmed: boolean;
   onChange: (patch: Partial<ParentState>) => void;
+  onConfirm: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
+  const onEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onConfirm();
+    }
+  };
+
+  if (confirmed) {
+    const bits: string[] = [];
+    if (value.unknown) bits.push(dontKnowLabel);
+    else {
+      if (value.year_born) bits.push(`${t("year_born")}: ${value.year_born}`);
+      if (value.living === "no" && value.age_at_death) bits.push(`${t("age_at_death")}: ${value.age_at_death}`);
+      if (value.living === "no" && value.cause_of_death) bits.push(value.cause_of_death);
+      if (value.known_conditions) bits.push(value.known_conditions);
+    }
+    const summary = bits.join(" · ") || "—";
+    return (
+      <Section title={title}>
+        <div className="flex items-start justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+          <div className="min-w-0 flex-1 text-sm text-[#0D1B2A]">{summary}</div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              aria-label="Edit"
+              onClick={onEdit}
+              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Delete"
+              onClick={onDelete}
+              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </Section>
+    );
+  }
+
   return (
     <Section title={title}>
       <label className="mb-3 flex cursor-pointer items-center gap-3 text-sm text-[#0D1B2A]">
@@ -719,6 +829,7 @@ function ParentSection({
                   type="number"
                   value={value.age_at_death}
                   onChange={(e) => onChange({ age_at_death: e.target.value })}
+                  onKeyDown={onEnter}
                   className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
                 />
               </div>
@@ -728,6 +839,7 @@ function ParentSection({
                   type="text"
                   value={value.cause_of_death}
                   onChange={(e) => onChange({ cause_of_death: e.target.value })}
+                  onKeyDown={onEnter}
                   placeholder={t("cause_ph")}
                   className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
                 />
@@ -741,6 +853,7 @@ function ParentSection({
                 type="number"
                 value={value.year_born}
                 onChange={(e) => onChange({ year_born: e.target.value })}
+                onKeyDown={onEnter}
                 placeholder={t("year_born_ph")}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
               />
@@ -751,6 +864,7 @@ function ParentSection({
             <textarea
               value={value.known_conditions}
               onChange={(e) => onChange({ known_conditions: e.target.value })}
+              onKeyDown={onEnter}
               placeholder={t("known_conditions_ph")}
               rows={3}
               className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
@@ -808,11 +922,13 @@ function Txt({
   onChange,
   placeholder,
   label,
+  onKeyDown,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   label?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div>
@@ -821,6 +937,7 @@ function Txt({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
       />
