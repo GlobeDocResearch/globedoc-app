@@ -867,11 +867,13 @@ function Txt({
   onChange,
   placeholder,
   label,
+  onKeyDown,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   label?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div>
@@ -880,6 +882,7 @@ function Txt({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
       />
