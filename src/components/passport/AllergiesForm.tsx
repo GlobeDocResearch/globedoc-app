@@ -548,6 +548,7 @@ function AllergySection({
   onAdd,
   onUpdate,
   onRemove,
+  nameSuggestions,
 }: {
   title: string;
   note?: string;
@@ -565,6 +566,7 @@ function AllergySection({
   onAdd: () => void;
   onUpdate: (id: string, patch: Partial<Entry>) => void;
   onRemove: (id: string) => void;
+  nameSuggestions?: string[];
 }) {
   const toneOn = useMemo(() => {
     if (chipTone === "red") return "bg-[#E07B6B] text-white border-[#E07B6B]";
@@ -596,24 +598,48 @@ function AllergySection({
       </div>
 
       <div className="mt-3 space-y-2">
-        {state.customs.map((e) => (
+        {state.customs.map((e) => {
+          const commit = () => {
+            if (e.name.trim().length > 0) onUpdate(e.id, { editing: false });
+          };
+          const onKey = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+            if (ev.key === "Enter") {
+              ev.preventDefault();
+              commit();
+            }
+          };
+          return (
           <div key={e.id} className="rounded-xl border border-[#E5E7EB] bg-white p-3">
             {e.editing ? (
               <div className="space-y-2">
                 <div>
                   <label className="text-xs font-medium text-gray-700">{nameLabel}</label>
-                  <Input
-                    value={e.name}
-                    onChange={(ev) => onUpdate(e.id, { name: ev.target.value })}
-                    placeholder={namePh}
-                    className="mt-1"
-                  />
+                  {nameSuggestions ? (
+                    <AutocompleteInput
+                      value={e.name}
+                      onChange={(v) => onUpdate(e.id, { name: v })}
+                      placeholder={namePh}
+                      suggestions={nameSuggestions}
+                      onKeyDown={onKey}
+                      autoFocus
+                    />
+                  ) : (
+                    <Input
+                      value={e.name}
+                      onChange={(ev) => onUpdate(e.id, { name: ev.target.value })}
+                      onKeyDown={onKey}
+                      placeholder={namePh}
+                      className="mt-1"
+                      autoFocus
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="text-xs font-medium text-gray-700">{reactionLabel}</label>
                   <Input
                     value={e.reaction}
                     onChange={(ev) => onUpdate(e.id, { reaction: ev.target.value })}
+                    onKeyDown={onKey}
                     placeholder={reactionPh}
                     className="mt-1"
                   />
@@ -626,16 +652,9 @@ function AllergySection({
                   >
                     {t("cancel")}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => onUpdate(e.id, { editing: false })}
-                    disabled={e.name.trim().length === 0}
-                    className="rounded-md bg-[#0D1B2A] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
-                  >
-                    {t("save_entry")}
-                  </button>
                 </div>
               </div>
+
             ) : (
               <div className="flex items-center justify-between gap-2">
                 <span className="text-sm text-[#0D1B2A]">
