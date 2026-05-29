@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Pencil, Trash2, Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -189,6 +189,8 @@ export default function VaccinationsForm() {
   const [nationality, setNationality] = useState<string | null>(null);
   const [birthYear, setBirthYear] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  const bypassGuardRef = useRef(false);
+
 
   const [nothing, setNothing] = useState(false);
   const [childhood, setChildhood] = useState<ChildhoodVax[]>([]);
@@ -377,7 +379,7 @@ export default function VaccinationsForm() {
     }
   };
 
-  const resolver = useLeaveGuard(dirty);
+  const resolver = useLeaveGuard(dirty && !bypassGuardRef.current);
 
   const infoText = useMemo(() => {
     if (!birthYear) return t("info_no_year");
@@ -583,7 +585,16 @@ export default function VaccinationsForm() {
       <div className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white p-4">
         <button
           type="button"
-          onClick={async () => { if (await saveAll()) navigate({ to: "/passport" }); }}
+          onClick={async () => {
+            bypassGuardRef.current = true;
+            const ok = await saveAll();
+            if (ok) {
+              navigate({ to: "/passport" });
+            } else {
+              bypassGuardRef.current = false;
+            }
+          }}
+
           className="w-full rounded-xl py-3 text-sm font-semibold text-white shadow hover:opacity-95"
           style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
         >
