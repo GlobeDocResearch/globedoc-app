@@ -1,17 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, X, MapPin, Check, Syringe, Download } from "lucide-react";
+import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, X, MapPin, Check, Syringe, Download, Info } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
 import { recommendedFor, userHasVaccine, TRIP_LENGTHS, type TripLength } from "@/lib/travelVaccines";
+import { computeBoosterStatus, type BoosterStatus } from "@/lib/boosterIntervals";
 
 export const Route = createFileRoute("/travel")({
   head: () => ({ meta: [{ title: "Travel — GlobeDoc" }] }),
   component: TravelPage,
 });
 
-type VRow = { vaccine_name: string; year_received?: string | null; date_received?: string | null; status?: string | null };
+type VRow = { vaccine_name: string; year_received?: string | null; date_received?: string | null; status?: string | null; booster_dates?: string[] | null };
 
 function TravelPage() {
   const navigate = useNavigate();
@@ -29,9 +30,9 @@ function TravelPage() {
       if (!user) { navigate({ to: "/login" }); return; }
       const sb = supabase as any;
       const [cv, tv, ov] = await Promise.all([
-        sb.from("childhood_vaccines").select("vaccine_name, year_received, status").eq("user_id", user.id),
-        sb.from("travel_vaccines").select("vaccine_name, date_received").eq("user_id", user.id),
-        sb.from("other_vaccines").select("vaccine_name, date_received").eq("user_id", user.id),
+        sb.from("childhood_vaccines").select("vaccine_name, year_received, status, booster_dates").eq("user_id", user.id),
+        sb.from("travel_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", user.id),
+        sb.from("other_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", user.id),
       ]);
       setChildhood((cv.data ?? []).filter((r: any) => r.status === "likely_received"));
       setTravel(tv.data ?? []);
@@ -208,9 +209,9 @@ function TravelPage() {
             </div>
           </div>
 
-          <VaxGroup title="Childhood vaccines" rows={childhood.map((r) => ({ name: r.vaccine_name, year: r.year_received ?? "" }))} />
-          <VaxGroup title="Travel vaccines" rows={travel.map((r) => ({ name: r.vaccine_name, year: yearOf(r.date_received) }))} />
-          <VaxGroup title="Other vaccines" rows={other.map((r) => ({ name: r.vaccine_name, year: yearOf(r.date_received) }))} />
+          <VaxGroup title="Childhood vaccines" rows={childhood} />
+          <VaxGroup title="Travel vaccines" rows={travel} />
+          <VaxGroup title="Other vaccines" rows={other} />
 
           <button
             type="button"
@@ -230,7 +231,7 @@ function TravelPage() {
   );
 }
 
-function VaxGroup({ title, rows }: { title: string; rows: { name: string; year: string }[] }) {
+function VaxGroup({ title, rows }: { title: string; rows: VRow[] }) {
   return (
     <div className="mt-4">
       <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">{title}</h3>
@@ -238,18 +239,66 @@ function VaxGroup({ title, rows }: { title: string; rows: { name: string; year: 
         <p className="mt-2 text-xs text-gray-400">No entries</p>
       ) : (
         <ul className="mt-2 space-y-1.5">
-          {rows.map((r, i) => (
-            <li key={`${r.name}-${i}`} className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
-              <span className="text-sm text-[#0D1B2A]">
-                {r.name}{r.year ? <span className="text-gray-500"> · {r.year}</span> : null}
-              </span>
-              <Check className="h-4 w-4" style={{ color: "#7AB648" }} />
-            </li>
-          ))}
+          {rows.map((r, i) => {
+            const primaryYearStr = yearOf(r.year_received ?? r.date_received);
+            const boosterYearStrs = (r.booster_dates ?? []).map(yearOf).filter(Boolean);
+            const allYears = [primaryYearStr, ...boosterYearStrs].filter(Boolean).map((y) => parseInt(y, 10)).filter((n) => !Number.isNaN(n));
+            const lastYear = allYears.length ? Math.max(...allYears) : null;
+            const status = computeBoosterStatus(r.vaccine_name, lastYear);
+            const styles = statusStyles(status);
+            return (
+              <li key={`${r.vaccine_name}-${i}`} className="flex items-start justify-between gap-2 rounded-md bg-gray-50 px-3 py-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm text-[#0D1B2A]">
+                      {r.vaccine_name}
+                      {primaryYearStr ? <span className="text-gray-500"> · {primaryYearStr}</span> : null}
+                    </span>
+                    {status.kind !== "no_data" && "note" in status && (
+                      <span title={status.note} className="cursor-help text-gray-400" aria-label={status.note}>
+                        <Info className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </div>
+                  {styles.line && (
+                    <div className="mt-0.5 flex items-center gap-1.5 text-xs" style={{ color: styles.fg }}>
+                      {styles.dot && <span className="h-2 w-2 rounded-full" style={{ background: styles.fg }} />}
+                      {styles.check && <Check className="h-3.5 w-3.5" style={{ color: styles.fg }} />}
+                      <span>{styles.line}</span>
+                    </div>
+                  )}
+                </div>
+                <span
+                  className="mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold"
+                  style={{ background: styles.bg, color: styles.fg }}
+                >
+                  {styles.badge}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
   );
+}
+
+function statusStyles(s: BoosterStatus): { bg: string; fg: string; badge: string; line: string; dot: boolean; check: boolean } {
+  switch (s.kind) {
+    case "lifelong":
+      return { bg: "#E6F6E8", fg: "#3B6D11", badge: "Up to date", line: "Lifelong protection", dot: false, check: true };
+    case "ok":
+      return { bg: "#E6F6E8", fg: "#3B6D11", badge: "Up to date", line: `Next booster ${s.nextYear}`, dot: false, check: true };
+    case "due_soon":
+      return { bg: "#F2D6BC", fg: "#8A5A1F", badge: "Due soon", line: `Booster due ${s.nextYear}`, dot: true, check: false };
+    case "overdue":
+      return { bg: "#FADDD7", fg: "#9B3A28", badge: "Overdue", line: `Booster overdue since ${s.nextYear}`, dot: true, check: false };
+    case "unknown_year":
+      return { bg: "#F1F1F1", fg: "#5C5C5C", badge: "Check", line: "Year unknown — check with your clinic", dot: true, check: false };
+    case "no_data":
+    default:
+      return { bg: "#E6F6E8", fg: "#3B6D11", badge: "Saved", line: "", dot: false, check: true };
+  }
 }
 
 function yearOf(s?: string | null): string {
