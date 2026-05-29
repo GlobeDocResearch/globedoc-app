@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-type NavTo = "/home" | "/pairing" | "/passport" | "/profile";
-import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, FileText, Link as LinkIcon, User } from "lucide-react";
+type NavTo = "/home" | "/pairing" | "/passport" | "/profile" | "/travel";
+import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
@@ -120,7 +120,7 @@ function HomePage() {
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} active />
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
-          <NavTab icon={<FileText className="h-5 w-5" />} label={t("nav.records")} />
+          <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label={t("nav.records")} />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
           <NavTab to="/profile" icon={<User className="h-5 w-5" />} label={t("nav.profile")} />
         </ul>
