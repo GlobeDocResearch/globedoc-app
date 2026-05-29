@@ -478,8 +478,10 @@ export default function VaccinationsForm() {
                       setTravel((arr) => arr.filter((_, i) => i !== gIdx));
                       markDirty();
                     }}
+                    onSave={saveAll}
                   />
                 ))}
+
               </div>
               <button
                 type="button"
@@ -525,8 +527,10 @@ export default function VaccinationsForm() {
                       setOthers((arr) => arr.filter((_, i) => i !== idx));
                       markDirty();
                     }}
+                    onSave={saveAll}
                   />
                 ))}
+
               </div>
               <button
                 type="button"
