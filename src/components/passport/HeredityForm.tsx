@@ -987,5 +987,3 @@ function AddOtherCondition({
     </div>
   );
 }
-
-}
