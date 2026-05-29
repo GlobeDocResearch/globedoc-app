@@ -30,9 +30,9 @@ function TravelPage() {
       if (!user) { navigate({ to: "/login" }); return; }
       const sb = supabase as any;
       const [cv, tv, ov] = await Promise.all([
-        sb.from("childhood_vaccines").select("vaccine_name, year_received, status").eq("user_id", user.id),
-        sb.from("travel_vaccines").select("vaccine_name, date_received").eq("user_id", user.id),
-        sb.from("other_vaccines").select("vaccine_name, date_received").eq("user_id", user.id),
+        sb.from("childhood_vaccines").select("vaccine_name, year_received, status, booster_dates").eq("user_id", user.id),
+        sb.from("travel_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", user.id),
+        sb.from("other_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", user.id),
       ]);
       setChildhood((cv.data ?? []).filter((r: any) => r.status === "likely_received"));
       setTravel(tv.data ?? []);
