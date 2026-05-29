@@ -491,15 +491,24 @@ export default function HeredityForm() {
               title={t("s_father")}
               dontKnowLabel={t("dont_know_father")}
               value={s.father}
+              confirmed={s.fatherConfirmed}
               onChange={(patch) => setParent("father", patch)}
+              onConfirm={() => confirmParent("father")}
+              onEdit={() => editParent("father")}
+              onDelete={() => deleteParent("father")}
             />
             <ParentSection
               t={t}
               title={t("s_mother")}
               dontKnowLabel={t("dont_know_mother")}
               value={s.mother}
+              confirmed={s.motherConfirmed}
               onChange={(patch) => setParent("mother", patch)}
+              onConfirm={() => confirmParent("mother")}
+              onEdit={() => editParent("mother")}
+              onDelete={() => deleteParent("mother")}
             />
+
 
             {/* Hereditary conditions — chip toggle design */}
             <Section title={t("s_conditions")}>
