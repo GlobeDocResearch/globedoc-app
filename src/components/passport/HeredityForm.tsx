@@ -1206,7 +1206,7 @@ function AddOtherCondition({
           autoFocus
           value={relative}
           onChange={(e) => setRelative(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Escape") cancel(); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") cancel(); }}
           placeholder={whichRelativePh}
           className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
         />
