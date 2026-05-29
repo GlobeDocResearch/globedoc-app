@@ -33,7 +33,7 @@ function TravelPage() {
         sb.from("travel_vaccines").select("vaccine_name, date_received").eq("user_id", user.id),
         sb.from("other_vaccines").select("vaccine_name, date_received").eq("user_id", user.id),
       ]);
-      setChildhood((cv.data ?? []).filter((r: any) => r.status !== "no"));
+      setChildhood((cv.data ?? []).filter((r: any) => r.status === "likely_received"));
       setTravel(tv.data ?? []);
       setOther(ov.data ?? []);
     })();
