@@ -654,14 +654,16 @@ function StatusPill({
       className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${tones[tone]}`}
     >
       {children}
-    </button>
-  );
-}
-
 function TravelCard({
-  entry, t, onChange, onDelete,
+  entry, t, onChange, onDelete, onSave,
 }: {
   entry: TravelEntry;
+  t: (k: string) => string;
+  onChange: (patch: Partial<TravelEntry>) => void;
+  onDelete: () => void;
+  onSave: () => Promise<boolean> | void;
+}) {
+
   t: (k: string) => string;
   onChange: (patch: Partial<TravelEntry>) => void;
   onDelete: () => void;
@@ -862,14 +864,16 @@ function TravelCard({
           </div>
         </>
       )}
-    </div>
-  );
-}
-
 function OtherCard({
-  entry, t, onChange, onDelete,
+  entry, t, onChange, onDelete, onSave,
 }: {
   entry: OtherEntry;
+  t: (k: string) => string;
+  onChange: (patch: Partial<OtherEntry>) => void;
+  onDelete: () => void;
+  onSave: () => Promise<boolean> | void;
+}) {
+
   t: (k: string) => string;
   onChange: (patch: Partial<OtherEntry>) => void;
   onDelete: () => void;
