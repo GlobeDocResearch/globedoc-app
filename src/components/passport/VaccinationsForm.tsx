@@ -923,12 +923,8 @@ function OtherCard({
       <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold text-[#0D1B2A]">
-            {entry.vaccine_name}
-            {entry.date && <span className="ml-1 font-normal text-gray-600">· {entry.date}</span>}
+            {formatVaxSummary(entry.vaccine_name, entry.date, entry.boosters)}
           </div>
-          {entry.boosters.length > 0 && (
-            <div className="truncate text-xs text-gray-500">{t("add_booster")}: {entry.boosters.filter(Boolean).join(", ")}</div>
-          )}
         </div>
         <div className="flex gap-1">
           <button type="button" onClick={() => onChange({ collapsed: false })} className="rounded-md p-1.5 text-gray-500 hover:bg-gray-200" aria-label="Edit">
