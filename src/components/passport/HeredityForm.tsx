@@ -35,8 +35,11 @@ type State = {
   nothing: boolean;
   father: ParentState;
   mother: ParentState;
+  fatherConfirmed: boolean;
+  motherConfirmed: boolean;
   conditions: Record<string, string>; // condition key -> which_relative
   conditionsChecked: Record<string, boolean>;
+  conditionsConfirmed: Record<string, boolean>;
   specifyByCondition: Record<string, string>; // condition key -> which_condition / age / specify
   customConditions: CustomCondition[];
   noneOfAbove: boolean;
