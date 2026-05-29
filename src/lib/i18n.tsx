@@ -21,7 +21,7 @@ const en = {
   "home.passportCta": "Create Your Health Passport",
   "nav.home": "Home",
   "nav.passport": "Health Pass",
-  "nav.records": "Records",
+  "nav.records": "Travel",
   "nav.pairing": "Pairing",
   "nav.profile": "Profile",
 
