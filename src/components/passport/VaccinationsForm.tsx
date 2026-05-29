@@ -14,6 +14,21 @@ import { COUNTRIES } from "@/lib/countries";
 const ACCENT = "#9B7FD4";
 const ACCENT_2 = "#7B5FB4";
 
+function yearOf(s?: string | null): string {
+  if (!s) return "";
+  const m = String(s).match(/\d{4}/);
+  return m ? m[0] : String(s);
+}
+
+function formatVaxSummary(name: string, date?: string | null, boosters?: string[]): string {
+  let out = name;
+  const y = yearOf(date);
+  if (y) out += ` · ${y}`;
+  const bYears = (boosters ?? []).map(yearOf).filter(Boolean);
+  if (bYears.length > 0) out += ` · Booster: ${bYears.join(", ")}`;
+  return out;
+}
+
 type Status = "likely_received" | "not_received" | "unsure";
 
 type ChildhoodVax = {
