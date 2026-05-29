@@ -25,19 +25,39 @@ function TravelPage() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { navigate({ to: "/login" }); return; }
+    let cancelled = false;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const load = async (userId: string) => {
       const sb = supabase as any;
       const [cv, tv, ov] = await Promise.all([
-        sb.from("childhood_vaccines").select("vaccine_name, year_received, status, booster_dates").eq("user_id", user.id),
-        sb.from("travel_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", user.id),
-        sb.from("other_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", user.id),
+        sb.from("childhood_vaccines").select("vaccine_name, year_received, status").eq("user_id", userId),
+        sb.from("travel_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", userId),
+        sb.from("other_vaccines").select("vaccine_name, date_received, booster_dates").eq("user_id", userId),
       ]);
+      if (cancelled) return;
       setChildhood((cv.data ?? []).filter((r: any) => r.status === "likely_received"));
       setTravel(tv.data ?? []);
       setOther(ov.data ?? []);
+    };
+
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { navigate({ to: "/login" }); return; }
+      await load(user.id);
+
+      channel = supabase
+        .channel(`vax-card-${user.id}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "childhood_vaccines", filter: `user_id=eq.${user.id}` }, () => load(user.id))
+        .on("postgres_changes", { event: "*", schema: "public", table: "travel_vaccines", filter: `user_id=eq.${user.id}` }, () => load(user.id))
+        .on("postgres_changes", { event: "*", schema: "public", table: "other_vaccines", filter: `user_id=eq.${user.id}` }, () => load(user.id))
+        .subscribe();
     })();
+
+    return () => {
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [navigate]);
 
   const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
