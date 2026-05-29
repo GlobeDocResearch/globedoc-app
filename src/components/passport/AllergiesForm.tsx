@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Pencil, Trash2, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -317,11 +317,15 @@ export default function AllergiesForm() {
     supabase.from("audit_log").insert({ user_id: userId, table_name: table, action });
   };
 
+  const bypassGuardRef = useRef(false);
   const saveAndExit = async () => {
+    bypassGuardRef.current = true;
     const ok = await saveAll();
     if (ok) navigate({ to: "/passport" });
+    else bypassGuardRef.current = false;
     return ok;
   };
+
 
   const saveAll = async () => {
     if (!userId) return false;
@@ -380,7 +384,7 @@ export default function AllergiesForm() {
     }
   };
 
-  const resolver = useLeaveGuard(dirty);
+  const resolver = useLeaveGuard(dirty && !bypassGuardRef.current);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
