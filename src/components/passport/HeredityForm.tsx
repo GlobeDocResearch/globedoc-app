@@ -209,13 +209,36 @@ export default function HeredityForm() {
   const toggleCondition = (v: string) => {
     setS((p) => {
       const next = !p.conditionsChecked[v];
+      const nextConfirmed = { ...p.conditionsConfirmed };
+      if (!next) delete nextConfirmed[v];
       return {
         ...p,
         conditionsChecked: { ...p.conditionsChecked, [v]: next },
+        conditionsConfirmed: nextConfirmed,
         // Checking any condition clears "none of the above"
         noneOfAbove: next ? false : p.noneOfAbove,
       };
     });
+    setDirty(true);
+  };
+  const confirmCondition = (v: string) => {
+    setS((p) => ({ ...p, conditionsConfirmed: { ...p.conditionsConfirmed, [v]: true } }));
+  };
+  const unconfirmCondition = (v: string) => {
+    setS((p) => {
+      const nc = { ...p.conditionsConfirmed };
+      delete nc[v];
+      return { ...p, conditionsConfirmed: nc };
+    });
+  };
+  const confirmParent = (which: "father" | "mother") => {
+    setS((p) => ({ ...p, [`${which}Confirmed`]: true } as State));
+  };
+  const editParent = (which: "father" | "mother") => {
+    setS((p) => ({ ...p, [`${which}Confirmed`]: false } as State));
+  };
+  const deleteParent = (which: "father" | "mother") => {
+    setS((p) => ({ ...p, [which]: { ...emptyParent }, [`${which}Confirmed`]: false } as State));
     setDirty(true);
   };
   const toggleNoneOfAbove = () => {
