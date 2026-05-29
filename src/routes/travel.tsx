@@ -120,7 +120,7 @@ function TravelPage() {
           </div>
 
           {country && (
-            <div className="mt-3">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <span
                 className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
                 style={{ background: "#EAF3FB", color: "#4472B8" }}
@@ -134,22 +134,47 @@ function TravelPage() {
           )}
 
           {country && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {TRIP_LENGTHS.map((t) => {
+                const active = trip === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTrip(t.id)}
+                    className="rounded-full px-3 py-1 text-xs font-semibold transition-opacity"
+                    style={{
+                      background: "#EAF3FB",
+                      color: "#4472B8",
+                      opacity: active ? 1 : 0.55,
+                      outline: active ? "2px solid #4472B8" : "none",
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {country && (
             <ul className="mt-4 space-y-2">
               {recs.length === 0 && (
                 <li className="text-xs text-gray-500">No specific travel vaccines required beyond your routine schedule.</li>
               )}
               {recs.map((v) => {
-                const have = userHasVaccine(v, userVaccineNames);
-                const status = have ? "have" : "missing";
-                const dot = status === "have" ? "#3B6D11" : "#9B3A28";
+                const have = userHasVaccine(v.label, userVaccineNames);
+                const required = v.mark === "K";
+                const status = required ? "required" : have ? "have" : "missing";
+                const dot = status === "have" ? "#3B6D11" : status === "required" ? "#9B3A28" : "#9B3A28";
                 const badgeBg = status === "have" ? "#E6F6E8" : "#FADDD7";
                 const badgeFg = status === "have" ? "#3B6D11" : "#9B3A28";
-                const label = status === "have" ? "Already have" : "Missing";
+                const label = status === "have" ? "Already have" : status === "required" ? "Required for entry" : "Missing";
                 return (
-                  <li key={v} className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 px-3 py-2">
+                  <li key={v.key} className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 px-3 py-2">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: dot }} />
-                      <span className="truncate text-sm text-[#0D1B2A]">{v}</span>
+                      <span className="truncate text-sm text-[#0D1B2A]">{v.label}</span>
                     </div>
                     <span className="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold" style={{ background: badgeBg, color: badgeFg }}>
                       {label}
