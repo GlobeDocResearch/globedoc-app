@@ -6,12 +6,16 @@ export function AutocompleteInput({
   placeholder,
   suggestions,
   className,
+  onKeyDown,
+  autoFocus,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   suggestions: string[];
   className?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  autoFocus?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const filtered = value
@@ -21,10 +25,12 @@ export function AutocompleteInput({
     <div className="relative">
       <input
         value={value}
+        autoFocus={autoFocus}
         onChange={(e) => {
           onChange(e.target.value);
           setOpen(true);
         }}
+        onKeyDown={onKeyDown}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         placeholder={placeholder}
@@ -33,6 +39,7 @@ export function AutocompleteInput({
           "mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#6BBF8E] focus:outline-none"
         }
       />
+
       {open && filtered.length > 0 && filtered[0].toLowerCase() !== value.toLowerCase() && (
         <ul className="absolute z-20 mt-1 max-h-48 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-md">
           {filtered.map((s) => (
