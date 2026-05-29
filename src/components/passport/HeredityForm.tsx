@@ -297,18 +297,26 @@ export default function HeredityForm() {
           cause_of_death: row.cause_of_death ?? "",
           known_conditions: row.known_conditions ?? "",
         };
-        if (row.parent_type === "father") next.father = ps;
-        if (row.parent_type === "mother") next.mother = ps;
+        const hasData =
+          ps.unknown || ps.living || ps.year_born || ps.age_at_death || ps.cause_of_death || ps.known_conditions;
+        if (row.parent_type === "father") {
+          next.father = ps;
+          if (hasData) next.fatherConfirmed = true;
+        }
+        if (row.parent_type === "mother") {
+          next.mother = ps;
+          if (hasData) next.motherConfirmed = true;
+        }
       }
       const presetKeys = new Set(CONDITIONS.map((c) => c.v));
       for (const row of conds.data ?? []) {
         if (presetKeys.has(row.condition_name)) {
           next.conditionsChecked[row.condition_name] = true;
+          next.conditionsConfirmed[row.condition_name] = true;
           if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
           if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
         } else {
           next.customConditions.push({ id: row.id, name: row.condition_name, relative: row.which_relative ?? "" });
-
         }
       }
       if (sibs.data) {
