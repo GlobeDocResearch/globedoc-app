@@ -1148,6 +1148,10 @@ function AddOtherCondition({
   buttonLabel,
   disabled,
   onAdd,
+  initialName = "",
+  initialRelative = "",
+  startOpen = false,
+  onCancel,
 }: {
   whichRelativeLabel: string;
   whichRelativePh: string;
@@ -1156,10 +1160,14 @@ function AddOtherCondition({
   buttonLabel: string;
   disabled: boolean;
   onAdd: (name: string, relative: string) => void;
+  initialName?: string;
+  initialRelative?: string;
+  startOpen?: boolean;
+  onCancel?: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [relative, setRelative] = useState("");
+  const [open, setOpen] = useState(startOpen);
+  const [name, setName] = useState(initialName);
+  const [relative, setRelative] = useState(initialRelative);
   if (!open) {
     return (
       <button
@@ -1175,11 +1183,17 @@ function AddOtherCondition({
   const commit = () => {
     const n = name.trim();
     if (n) onAdd(n, relative.trim());
-    setName("");
-    setRelative("");
-    setOpen(false);
+    if (!startOpen) {
+      setName("");
+      setRelative("");
+      setOpen(false);
+    }
   };
   const cancel = () => {
+    if (onCancel) {
+      onCancel();
+      return;
+    }
     setName("");
     setRelative("");
     setOpen(false);
