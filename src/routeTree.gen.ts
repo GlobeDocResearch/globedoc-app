@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PairingRouteImport } from './routes/pairing'
 import { Route as LoginRouteImport } from './routes/login'
@@ -34,6 +35,11 @@ const TravelRoute = TravelRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pairing'
     | '/profile'
+    | '/reset-password'
     | '/signup'
     | '/travel'
     | '/verified'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pairing'
     | '/profile'
+    | '/reset-password'
     | '/signup'
     | '/travel'
     | '/verified'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pairing'
     | '/profile'
+    | '/reset-password'
     | '/signup'
     | '/travel'
     | '/verified'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PairingRoute: typeof PairingRoute
   ProfileRoute: typeof ProfileRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   TravelRoute: typeof TravelRoute
   VerifiedRoute: typeof VerifiedRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PairingRoute: PairingRoute,
   ProfileRoute: ProfileRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   TravelRoute: TravelRoute,
   VerifiedRoute: VerifiedRoute,
