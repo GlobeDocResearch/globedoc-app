@@ -697,12 +697,22 @@ function TravelCard({
   const [showSuggest, setShowSuggest] = useState(false);
 
   if (entry.collapsed && entry.destination) {
-    const checkedNames = entry.vaccines.filter((v) => v.checked).map((v) => v.name);
+    const checkedVax = entry.vaccines.filter((v) => v.checked);
     return (
       <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-[#0D1B2A]">{entry.destination}</div>
-          <div className="truncate text-xs text-gray-600">{checkedNames.join(", ") || "—"}</div>
+          {checkedVax.length === 0 ? (
+            <div className="truncate text-xs text-gray-600">—</div>
+          ) : (
+            <ul className="mt-0.5 space-y-0.5">
+              {checkedVax.map((v, i) => (
+                <li key={`${v.name}-${i}`} className="truncate text-xs text-gray-600">
+                  {formatVaxSummary(v.name, v.date, v.boosters)}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="flex gap-1">
           <button type="button" onClick={() => onChange({ collapsed: false })} className="rounded-md p-1.5 text-gray-500 hover:bg-gray-200" aria-label="Edit">
