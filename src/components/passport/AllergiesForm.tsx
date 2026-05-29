@@ -682,7 +682,9 @@ function AllergySection({
               </div>
             )}
           </div>
-        ))}
+          );
+        })}
+
       </div>
 
       <button
