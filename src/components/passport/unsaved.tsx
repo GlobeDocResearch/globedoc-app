@@ -31,10 +31,12 @@ export function useUnsavedText() {
  * Page-level navigation guard. Blocks router navigations when `dirty` is true.
  * Also wires browser beforeunload.
  */
-export function useLeaveGuard(dirty: boolean) {
+export function useLeaveGuard(dirty: boolean | (() => boolean)) {
+  const shouldBlock = () => (typeof dirty === "function" ? dirty() : dirty);
+
   return useBlocker({
-    shouldBlockFn: () => dirty,
-    enableBeforeUnload: () => dirty,
+    shouldBlockFn: shouldBlock,
+    enableBeforeUnload: shouldBlock,
     withResolver: true,
   });
 }
