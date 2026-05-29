@@ -4,7 +4,7 @@ import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, X
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
-import { recommendedFor, userHasVaccine, TRIP_LENGTHS, type TripLength, COUNTRY_VACCINE_DATA } from "@/lib/travelVaccines";
+import { recommendedFor, userHasVaccine, TRIP_LENGTHS, type TripLength } from "@/lib/travelVaccines";
 
 export const Route = createFileRoute("/travel")({
   head: () => ({ meta: [{ title: "Travel — GlobeDoc" }] }),
