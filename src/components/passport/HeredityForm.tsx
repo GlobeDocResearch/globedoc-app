@@ -902,18 +902,25 @@ function YesNo({
 }
 
 function AddOtherCondition({
-  placeholder,
+  whichRelativeLabel,
+  whichRelativePh,
+  whichConditionLabel,
+  whichConditionPh,
   buttonLabel,
   disabled,
   onAdd,
 }: {
-  placeholder: string;
+  whichRelativeLabel: string;
+  whichRelativePh: string;
+  whichConditionLabel: string;
+  whichConditionPh: string;
   buttonLabel: string;
   disabled: boolean;
-  onAdd: (name: string) => void;
+  onAdd: (name: string, relative: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [val, setVal] = useState("");
+  const [name, setName] = useState("");
+  const [relative, setRelative] = useState("");
   if (!open) {
     return (
       <button
@@ -927,28 +934,58 @@ function AddOtherCondition({
     );
   }
   const commit = () => {
-    const v = val.trim();
-    if (v) onAdd(v);
-    setVal("");
+    const n = name.trim();
+    if (n) onAdd(n, relative.trim());
+    setName("");
+    setRelative("");
+    setOpen(false);
+  };
+  const cancel = () => {
+    setName("");
+    setRelative("");
     setOpen(false);
   };
   return (
-    <div className="mt-3 flex gap-2">
-      <input
-        autoFocus
-        value={val}
-        onChange={(e) => setVal(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") { setVal(""); setOpen(false); } }}
-        placeholder={placeholder}
-        className="flex-1 rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
-      />
-      <button
-        type="button"
-        onClick={commit}
-        className="rounded-xl bg-[#E0A066] px-3 text-xs font-semibold text-white hover:bg-[#C4854A]"
-      >
-        Add
-      </button>
+    <div className="mt-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3 space-y-2">
+      <div>
+        <label className="mb-1 block text-xs text-gray-600">{whichRelativeLabel}</label>
+        <input
+          autoFocus
+          value={relative}
+          onChange={(e) => setRelative(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Escape") cancel(); }}
+          placeholder={whichRelativePh}
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-gray-600">{whichConditionLabel}</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") cancel(); }}
+          placeholder={whichConditionPh}
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={commit}
+          className="rounded-xl bg-[#E0A066] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#C4854A]"
+        >
+          Add
+        </button>
+        <button
+          type="button"
+          onClick={cancel}
+          className="rounded-xl border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-semibold text-[#0D1B2A] hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
+}
+
 }
