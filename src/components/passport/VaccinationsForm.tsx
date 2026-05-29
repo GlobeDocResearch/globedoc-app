@@ -379,7 +379,7 @@ export default function VaccinationsForm() {
     }
   };
 
-  const resolver = useLeaveGuard(dirty && !bypassGuardRef.current);
+  const resolver = useLeaveGuard(() => dirty && !bypassGuardRef.current);
 
   const infoText = useMemo(() => {
     if (!birthYear) return t("info_no_year");
