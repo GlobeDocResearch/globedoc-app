@@ -113,8 +113,11 @@ const T: Record<Lang, Record<string, string>> = {
     s_conditions: "Hereditary conditions — tick all that apply in your close family",
     close_family_note: "Close family = parents, siblings, grandparents, aunts & uncles",
     which_relative: "Which relative?",
-    which_relative_ph: "E.g. Father, paternal grandfather",
     which_condition: "Which condition?",
+    which_condition_ph: "E.g. Chronic kidney disease, polycystic kidney disease…",
+    age_at_first_stroke: "Age at first stroke?",
+    age_at_onset: "Age at onset?",
+
     which_condition_ph: "E.g. Chronic kidney disease, polycystic kidney disease…",
     please_specify: "Please specify…",
     none_of_above: "None of the above",
