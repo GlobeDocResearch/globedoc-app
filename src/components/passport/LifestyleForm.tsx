@@ -439,7 +439,8 @@ export default function LifestyleForm() {
     }
   };
 
-  const resolver = useLeaveGuard(dirty);
+  const bypassGuardRef = useRef(false);
+  const resolver = useLeaveGuard(dirty && !bypassGuardRef.current);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
