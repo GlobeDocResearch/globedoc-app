@@ -12,7 +12,7 @@ export const Route = createFileRoute("/travel")({
   component: TravelPage,
 });
 
-type VRow = { vaccine_name: string; year_received?: string | null; date_received?: string | null; status?: string | null };
+type VRow = { vaccine_name: string; year_received?: string | null; date_received?: string | null; status?: string | null; booster_dates?: string[] | null };
 
 function TravelPage() {
   const navigate = useNavigate();
