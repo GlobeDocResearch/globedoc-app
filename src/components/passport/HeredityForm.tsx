@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -198,7 +198,8 @@ export default function HeredityForm() {
   const [openSiblings, setOpenSiblings] = useState(false);
   const [openGenetic, setOpenGenetic] = useState(false);
   const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
-  
+  const bypassGuardRef = useRef(false);
+
 
   const setField = <K extends keyof State>(k: K, v: State[K]) => {
     setS((p) => ({ ...p, [k]: v }));
@@ -451,7 +452,7 @@ export default function HeredityForm() {
     }
   };
 
-  const resolver = useLeaveGuard(dirty);
+  const resolver = useLeaveGuard(dirty && !bypassGuardRef.current);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
@@ -842,7 +843,12 @@ export default function HeredityForm() {
       <div className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white p-4">
         <button
           type="button"
-          onClick={async () => { if (await saveAll()) navigate({ to: "/passport" }); }}
+          onClick={async () => {
+            bypassGuardRef.current = true;
+            const ok = await saveAll();
+            if (ok) navigate({ to: "/passport" });
+            else bypassGuardRef.current = false;
+          }}
           className="w-full rounded-xl py-3 text-sm font-semibold text-white shadow hover:opacity-95"
           style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
         >
