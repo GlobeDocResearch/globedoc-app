@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifiedRouteImport } from './routes/verified'
+import { Route as TravelRouteImport } from './routes/travel'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PairingRouteImport } from './routes/pairing'
@@ -23,6 +24,11 @@ import { Route as PassportSectionRouteImport } from './routes/passport.$section'
 const VerifiedRoute = VerifiedRouteImport.update({
   id: '/verified',
   path: '/verified',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TravelRoute = TravelRouteImport.update({
+  id: '/travel',
+  path: '/travel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport': typeof PassportIndexRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/pairing': typeof PairingRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/pairing'
     | '/profile'
     | '/signup'
+    | '/travel'
     | '/verified'
     | '/passport/$section'
     | '/passport/'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/pairing'
     | '/profile'
     | '/signup'
+    | '/travel'
     | '/verified'
     | '/passport/$section'
     | '/passport'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/pairing'
     | '/profile'
     | '/signup'
+    | '/travel'
     | '/verified'
     | '/passport/$section'
     | '/passport/'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   PairingRoute: typeof PairingRoute
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
+  TravelRoute: typeof TravelRoute
   VerifiedRoute: typeof VerifiedRoute
   PassportSectionRoute: typeof PassportSectionRoute
   PassportIndexRoute: typeof PassportIndexRoute
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/verified'
       fullPath: '/verified'
       preLoaderRoute: typeof VerifiedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/travel': {
+      id: '/travel'
+      path: '/travel'
+      fullPath: '/travel'
+      preLoaderRoute: typeof TravelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   PairingRoute: PairingRoute,
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
+  TravelRoute: TravelRoute,
   VerifiedRoute: VerifiedRoute,
   PassportSectionRoute: PassportSectionRoute,
   PassportIndexRoute: PassportIndexRoute,
