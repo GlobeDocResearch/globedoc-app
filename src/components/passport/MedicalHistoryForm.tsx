@@ -386,12 +386,15 @@ export default function MedicalHistoryForm() {
     }
   };
 
+  const bypassGuardRef = useRef(false);
   const handleSaveAndExit = async () => {
+    bypassGuardRef.current = true;
     const ok = await saveAll();
     if (ok) navigate({ to: "/passport" });
+    else bypassGuardRef.current = false;
   };
 
-  const resolver = useLeaveGuard(anyDirty);
+  const resolver = useLeaveGuard(() => anyDirty && !bypassGuardRef.current);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
