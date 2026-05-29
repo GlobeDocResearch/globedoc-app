@@ -197,6 +197,8 @@ export default function HeredityForm() {
   const [dirty, setDirty] = useState(false);
   const [openSiblings, setOpenSiblings] = useState(false);
   const [openGenetic, setOpenGenetic] = useState(false);
+  const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
+  
 
   const setField = <K extends keyof State>(k: K, v: State[K]) => {
     setS((p) => ({ ...p, [k]: v }));
@@ -530,26 +532,146 @@ export default function HeredityForm() {
                     </button>
                   );
                 })}
-                {s.customConditions.map((cc) => (
-                  <span
-                    key={cc.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-[#E0A066] bg-[#E0A066] px-3 py-1.5 text-xs font-medium text-white"
-                  >
-                    {cc.name}
-                    <button
-                      type="button"
-                      aria-label="Remove"
-                      onClick={() => {
-                        setS((p) => ({ ...p, customConditions: p.customConditions.filter((x) => x.id !== cc.id) }));
-                        setDirty(true);
-                      }}
-                      className="ml-1 rounded-full hover:bg-white/20"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
               </div>
+
+              {/* Saved entries list — confirmed preset conditions + custom conditions */}
+              {!s.noneOfAbove &&
+                (CONDITIONS.some((c) => s.conditionsChecked[c.v] && s.conditionsConfirmed[c.v]) ||
+                  s.customConditions.length > 0) && (
+                  <div className="mt-4 space-y-2">
+                    {CONDITIONS.filter((c) => s.conditionsChecked[c.v] && s.conditionsConfirmed[c.v]).map((c) => {
+                      const label = lang === "sv" ? c.l_sv : c.l_en;
+                      const rel = s.conditions[c.v];
+                      const spec = s.specifyByCondition[c.v];
+                      const ageLabel = c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset");
+                      const parts: string[] = [];
+                      if (rel) parts.push(`${t("which_relative")} ${rel}`);
+                      if (c.ageKind && spec) parts.push(`${ageLabel} ${spec}`);
+                      if (c.needsSpecify && spec) parts.push(`${t("which_condition")} ${spec}`);
+                      return (
+                        <div
+                          key={c.v}
+                          className="flex items-start justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3"
+                        >
+                          <div className="min-w-0 flex-1 text-sm text-[#0D1B2A]">
+                            <div className="font-medium">{label}</div>
+                            {parts.length > 0 && (
+                              <div className="mt-0.5 text-xs text-gray-600">{parts.join(" · ")}</div>
+                            )}
+                          </div>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <button
+                              type="button"
+                              aria-label="Edit"
+                              onClick={() => {
+                                setS((p) => {
+                                  const nc = { ...p.conditionsConfirmed };
+                                  delete nc[c.v];
+                                  return { ...p, conditionsConfirmed: nc };
+                                });
+                              }}
+                              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Delete"
+                              onClick={() => {
+                                setS((p) => {
+                                  const nChecked = { ...p.conditionsChecked };
+                                  delete nChecked[c.v];
+                                  const nConfirmed = { ...p.conditionsConfirmed };
+                                  delete nConfirmed[c.v];
+                                  const nRel = { ...p.conditions };
+                                  delete nRel[c.v];
+                                  const nSpec = { ...p.specifyByCondition };
+                                  delete nSpec[c.v];
+                                  return {
+                                    ...p,
+                                    conditionsChecked: nChecked,
+                                    conditionsConfirmed: nConfirmed,
+                                    conditions: nRel,
+                                    specifyByCondition: nSpec,
+                                  };
+                                });
+                                setDirty(true);
+                              }}
+                              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {s.customConditions.map((cc) =>
+                      editingCustomId === cc.id ? (
+                        <AddOtherCondition
+                          key={cc.id}
+                          whichRelativeLabel={t("which_relative")}
+                          whichRelativePh={t("which_relative_ph")}
+                          whichConditionLabel={t("which_condition")}
+                          whichConditionPh={t("please_specify")}
+                          buttonLabel={t("add_other_condition")}
+                          disabled={false}
+                          initialName={cc.name}
+                          initialRelative={cc.relative}
+                          startOpen
+                          onCancel={() => setEditingCustomId(null)}
+                          onAdd={(name, relative) => {
+                            setS((p) => ({
+                              ...p,
+                              customConditions: p.customConditions.map((x) =>
+                                x.id === cc.id ? { ...x, name, relative } : x,
+                              ),
+                            }));
+                            setDirty(true);
+                            setEditingCustomId(null);
+                          }}
+                        />
+                      ) : (
+                        <div
+                          key={cc.id}
+                          className="flex items-start justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3"
+                        >
+                          <div className="min-w-0 flex-1 text-sm text-[#0D1B2A]">
+                            <div className="font-medium">{cc.name}</div>
+                            {cc.relative && (
+                              <div className="mt-0.5 text-xs text-gray-600">
+                                {t("which_relative")} {cc.relative}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <button
+                              type="button"
+                              aria-label="Edit"
+                              onClick={() => setEditingCustomId(cc.id)}
+                              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Delete"
+                              onClick={() => {
+                                setS((p) => ({
+                                  ...p,
+                                  customConditions: p.customConditions.filter((x) => x.id !== cc.id),
+                                }));
+                                setDirty(true);
+                              }}
+                              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                )}
 
               <AddOtherCondition
                 whichRelativeLabel={t("which_relative")}
@@ -1026,6 +1148,10 @@ function AddOtherCondition({
   buttonLabel,
   disabled,
   onAdd,
+  initialName = "",
+  initialRelative = "",
+  startOpen = false,
+  onCancel,
 }: {
   whichRelativeLabel: string;
   whichRelativePh: string;
@@ -1034,10 +1160,14 @@ function AddOtherCondition({
   buttonLabel: string;
   disabled: boolean;
   onAdd: (name: string, relative: string) => void;
+  initialName?: string;
+  initialRelative?: string;
+  startOpen?: boolean;
+  onCancel?: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [relative, setRelative] = useState("");
+  const [open, setOpen] = useState(startOpen);
+  const [name, setName] = useState(initialName);
+  const [relative, setRelative] = useState(initialRelative);
   if (!open) {
     return (
       <button
@@ -1053,11 +1183,17 @@ function AddOtherCondition({
   const commit = () => {
     const n = name.trim();
     if (n) onAdd(n, relative.trim());
-    setName("");
-    setRelative("");
-    setOpen(false);
+    if (!startOpen) {
+      setName("");
+      setRelative("");
+      setOpen(false);
+    }
   };
   const cancel = () => {
+    if (onCancel) {
+      onCancel();
+      return;
+    }
     setName("");
     setRelative("");
     setOpen(false);
@@ -1070,7 +1206,7 @@ function AddOtherCondition({
           autoFocus
           value={relative}
           onChange={(e) => setRelative(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Escape") cancel(); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") cancel(); }}
           placeholder={whichRelativePh}
           className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
         />
