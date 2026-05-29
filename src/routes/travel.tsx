@@ -20,6 +20,7 @@ function TravelPage() {
   const [other, setOther] = useState<VRow[]>([]);
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState<string>("");
+  const [trip, setTrip] = useState<TripLength>("short");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
