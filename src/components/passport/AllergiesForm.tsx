@@ -445,6 +445,8 @@ export default function AllergiesForm() {
               onAdd={() => addCustom("drug")}
               onUpdate={(id, patch) => updateCustom("drug", id, patch)}
               onRemove={(id) => removeCustom("drug", id)}
+              nameSuggestions={COMMON_MEDICATIONS}
+
             />
             <AllergySection
               title={t("s_food")}
