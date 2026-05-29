@@ -29,7 +29,7 @@ const emptyParent: ParentState = {
   known_conditions: "",
 };
 
-type CustomCondition = { id: string; name: string };
+type CustomCondition = { id: string; name: string; relative: string };
 
 type State = {
   nothing: boolean;
@@ -37,7 +37,7 @@ type State = {
   mother: ParentState;
   conditions: Record<string, string>; // condition key -> which_relative
   conditionsChecked: Record<string, boolean>;
-  specifyByCondition: Record<string, string>; // condition key -> which_condition / specify
+  specifyByCondition: Record<string, string>; // condition key -> which_condition / age / specify
   customConditions: CustomCondition[];
   noneOfAbove: boolean;
   has_siblings: boolean | null;
@@ -48,26 +48,27 @@ type State = {
   under_counselling: boolean | null;
 };
 
-const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolean }[] = [
+type AgeKind = "stroke" | "onset";
+const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolean; ageKind?: AgeKind }[] = [
   { v: "cardio_early", l_en: "Cardiovascular disease (early onset)", l_sv: "Hjärt-kärlsjukdom (tidig debut)" },
-  { v: "stroke", l_en: "Stroke", l_sv: "Stroke" },
+  { v: "stroke", l_en: "Stroke", l_sv: "Stroke", ageKind: "stroke" },
   { v: "diabetes_t1", l_en: "Diabetes type 1", l_sv: "Diabetes typ 1" },
   { v: "diabetes_t2", l_en: "Diabetes type 2", l_sv: "Diabetes typ 2" },
-  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer", needsSpecify: true },
-  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer", needsSpecify: true },
-  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer", needsSpecify: true },
-  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer", needsSpecify: true },
-  { v: "alzheimer", l_en: "Alzheimer's / dementia", l_sv: "Alzheimers / demens" },
-  { v: "parkinson", l_en: "Parkinson's disease", l_sv: "Parkinsons sjukdom" },
-  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom", needsSpecify: true },
+  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer" },
+  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer" },
+  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer" },
+  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer" },
+  { v: "alzheimer", l_en: "Alzheimer's / dementia", l_sv: "Alzheimers / demens", ageKind: "onset" },
+  { v: "parkinson", l_en: "Parkinson's disease", l_sv: "Parkinsons sjukdom", ageKind: "onset" },
+  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom" },
   { v: "autoimmune", l_en: "Autoimmune disease", l_sv: "Autoimmun sjukdom", needsSpecify: true },
   { v: "kidney", l_en: "Kidney disease", l_sv: "Njursjukdom", needsSpecify: true },
   { v: "haemophilia", l_en: "Haemophilia / clotting disorder", l_sv: "Blödarsjuka / koagulationsrubbning" },
   { v: "sudden_cardiac", l_en: "Sudden cardiac death (young)", l_sv: "Plötslig hjärtdöd (ung)" },
   { v: "familial_chol", l_en: "Familial hypercholesterolaemia", l_sv: "Familjär hyperkolesterolemi" },
-  { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros" },
-  { v: "other", l_en: "Other genetic condition", l_sv: "Annat genetiskt tillstånd", needsSpecify: true },
+  { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros", ageKind: "onset" },
 ];
+
 
 const initialState: State = {
   nothing: false,
@@ -112,9 +113,10 @@ const T: Record<Lang, Record<string, string>> = {
     s_conditions: "Hereditary conditions — tick all that apply in your close family",
     close_family_note: "Close family = parents, siblings, grandparents, aunts & uncles",
     which_relative: "Which relative?",
-    which_relative_ph: "E.g. Father, paternal grandfather",
     which_condition: "Which condition?",
     which_condition_ph: "E.g. Chronic kidney disease, polycystic kidney disease…",
+    age_at_first_stroke: "Age at first stroke?",
+    age_at_onset: "Age at onset?",
     please_specify: "Please specify…",
     none_of_above: "None of the above",
     add_other_condition: "Add other condition",
@@ -159,7 +161,10 @@ const T: Record<Lang, Record<string, string>> = {
     which_condition: "Vilket tillstånd?",
     which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
     please_specify: "Vänligen specificera…",
+    age_at_first_stroke: "Ålder vid första stroke?",
+    age_at_onset: "Ålder vid debut?",
     none_of_above: "Inget av ovanstående",
+
     add_other_condition: "Lägg till annat tillstånd",
     other_condition_ph: "Skriv ett tillstånd…",
     s_siblings: "Syskon",
@@ -273,7 +278,8 @@ export default function HeredityForm() {
           if (row.which_relative) next.conditions[row.condition_name] = row.which_relative;
           if (row.other_specify) next.specifyByCondition[row.condition_name] = row.other_specify;
         } else {
-          next.customConditions.push({ id: row.id, name: row.condition_name });
+          next.customConditions.push({ id: row.id, name: row.condition_name, relative: row.which_relative ?? "" });
+
         }
       }
       if (sibs.data) {
@@ -355,7 +361,8 @@ export default function HeredityForm() {
             .map((c) => ({
               user_id: userId,
               condition_name: c.name.trim(),
-              which_relative: null,
+              which_relative: c.relative.trim() || null,
+
               other_specify: null,
             })),
         ];
@@ -498,13 +505,16 @@ export default function HeredityForm() {
               </div>
 
               <AddOtherCondition
-                placeholder={t("other_condition_ph")}
+                whichRelativeLabel={t("which_relative")}
+                whichRelativePh={t("which_relative_ph")}
+                whichConditionLabel={t("which_condition")}
+                whichConditionPh={t("please_specify")}
                 buttonLabel={t("add_other_condition")}
                 disabled={s.noneOfAbove}
-                onAdd={(name) => {
+                onAdd={(name, relative) => {
                   setS((p) => ({
                     ...p,
-                    customConditions: [...p.customConditions, { id: crypto.randomUUID(), name }],
+                    customConditions: [...p.customConditions, { id: crypto.randomUUID(), name, relative }],
                     noneOfAbove: false,
                   }));
                   setDirty(true);
@@ -525,18 +535,32 @@ export default function HeredityForm() {
                         placeholder={t("which_relative_ph")}
                         label={t("which_relative")}
                       />
+                      {c.ageKind && (
+                        <div className="mt-2">
+                          <Lbl>{c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset")}</Lbl>
+                          <input
+                            type="number"
+                            min={0}
+                            max={120}
+                            value={s.specifyByCondition[c.v] ?? ""}
+                            onChange={(e) => setConditionSpecify(c.v, e.target.value)}
+                            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                          />
+                        </div>
+                      )}
                       {c.needsSpecify && (
                         <div className="mt-2">
                           <Txt
                             value={s.specifyByCondition[c.v] ?? ""}
                             onChange={(v) => setConditionSpecify(c.v, v)}
-                            placeholder={c.v === "other" ? t("please_specify") : t("which_condition_ph")}
+                            placeholder={t("which_condition_ph")}
                             label={t("which_condition")}
                           />
                         </div>
                       )}
                     </div>
                   ))}
+
                 </div>
               )}
 
@@ -878,18 +902,25 @@ function YesNo({
 }
 
 function AddOtherCondition({
-  placeholder,
+  whichRelativeLabel,
+  whichRelativePh,
+  whichConditionLabel,
+  whichConditionPh,
   buttonLabel,
   disabled,
   onAdd,
 }: {
-  placeholder: string;
+  whichRelativeLabel: string;
+  whichRelativePh: string;
+  whichConditionLabel: string;
+  whichConditionPh: string;
   buttonLabel: string;
   disabled: boolean;
-  onAdd: (name: string) => void;
+  onAdd: (name: string, relative: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [val, setVal] = useState("");
+  const [name, setName] = useState("");
+  const [relative, setRelative] = useState("");
   if (!open) {
     return (
       <button
@@ -903,28 +934,56 @@ function AddOtherCondition({
     );
   }
   const commit = () => {
-    const v = val.trim();
-    if (v) onAdd(v);
-    setVal("");
+    const n = name.trim();
+    if (n) onAdd(n, relative.trim());
+    setName("");
+    setRelative("");
+    setOpen(false);
+  };
+  const cancel = () => {
+    setName("");
+    setRelative("");
     setOpen(false);
   };
   return (
-    <div className="mt-3 flex gap-2">
-      <input
-        autoFocus
-        value={val}
-        onChange={(e) => setVal(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") { setVal(""); setOpen(false); } }}
-        placeholder={placeholder}
-        className="flex-1 rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
-      />
-      <button
-        type="button"
-        onClick={commit}
-        className="rounded-xl bg-[#E0A066] px-3 text-xs font-semibold text-white hover:bg-[#C4854A]"
-      >
-        Add
-      </button>
+    <div className="mt-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3 space-y-2">
+      <div>
+        <label className="mb-1 block text-xs text-gray-600">{whichRelativeLabel}</label>
+        <input
+          autoFocus
+          value={relative}
+          onChange={(e) => setRelative(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Escape") cancel(); }}
+          placeholder={whichRelativePh}
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-gray-600">{whichConditionLabel}</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") cancel(); }}
+          placeholder={whichConditionPh}
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={commit}
+          className="rounded-xl bg-[#E0A066] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#C4854A]"
+        >
+          Add
+        </button>
+        <button
+          type="button"
+          onClick={cancel}
+          className="rounded-xl border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-semibold text-[#0D1B2A] hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
