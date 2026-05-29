@@ -203,6 +203,9 @@ export default function HeredityForm() {
     setDirty(true);
   };
   const setParent = (which: "father" | "mother", patch: Partial<ParentState>) => {
+    setS((p) => ({ ...p, [which]: { ...p[which], ...patch } }));
+    setDirty(true);
+  };
   const toggleCondition = (v: string) => {
     setS((p) => {
       const checked = !!p.conditionsChecked[v];
