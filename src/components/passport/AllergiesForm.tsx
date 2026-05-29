@@ -384,7 +384,7 @@ export default function AllergiesForm() {
     }
   };
 
-  const resolver = useLeaveGuard(dirty);
+  const resolver = useLeaveGuard(dirty && !bypassGuardRef.current);
 
   if (loading) return <div className="min-h-screen bg-white" />;
 
