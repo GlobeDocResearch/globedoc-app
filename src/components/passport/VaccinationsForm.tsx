@@ -695,7 +695,16 @@ function TravelCard({
     : [];
 
   return (
-    <div className="rounded-xl border border-gray-200 p-3">
+    <div
+      className="rounded-xl border border-gray-200 p-3"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.defaultPrevented) {
+          e.preventDefault();
+          if (entry.destination) onSave();
+        }
+      }}
+    >
+
       <div className="relative">
         <Input
           value={entry.countryQuery}
