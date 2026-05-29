@@ -332,7 +332,8 @@ export default function MedicationsForm() {
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
                     <Field label={t("f_prescriber")} value={item.prescriber} ph={t("f_prescriber_ph")} onChange={(v) => updateRx(item.id, { prescriber: v })} />
-                    {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveRx(item)} onDiscard={() => discardRx(item)} />}
+                    
+
                     <CardActions onDelete={() => deleteRx(item)} />
                   </div>
                 ))}
@@ -353,7 +354,8 @@ export default function MedicationsForm() {
                   >
                     <FieldAuto label={t("f_product")} value={item.product} ph={t("f_product_ph")} suggestions={COMMON_SUPPLEMENTS} onChange={(v) => updateOtc(item.id, { product: v })} />
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_ph")} onChange={(v) => updateOtc(item.id, { dose: v })} />
-                    <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_otc_ph")} onChange={(v) => updateOtc(item.id, { frequency: v })} />
+                    
+
                     <Field label={t("f_reason")} value={item.reason} ph={t("f_reason_ph")} onChange={(v) => updateOtc(item.id, { reason: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveOtc(item)} onDiscard={() => discardOtc(item)} />}
                     <CardActions onDelete={() => deleteOtc(item)} />
@@ -379,7 +381,8 @@ export default function MedicationsForm() {
                     className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveStopped(item); } }}
                   >
-                    <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_stopped_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateStopped(item.id, { drug_generic: v })} />
+                    
+
                     <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
