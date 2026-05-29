@@ -569,48 +569,59 @@ export default function HeredityForm() {
                 }}
               />
 
-              {/* Optional "which relative" for checked preset conditions */}
-              {!s.noneOfAbove && CONDITIONS.some((c) => s.conditionsChecked[c.v]) && (
+              {/* Optional "which relative" for checked preset conditions — hidden once confirmed */}
+              {!s.noneOfAbove && CONDITIONS.some((c) => s.conditionsChecked[c.v] && !s.conditionsConfirmed[c.v]) && (
                 <div className="mt-4 space-y-3">
-                  {CONDITIONS.filter((c) => s.conditionsChecked[c.v]).map((c) => (
-                    <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
-                      <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
-                        {lang === "sv" ? c.l_sv : c.l_en}
+                  {CONDITIONS.filter((c) => s.conditionsChecked[c.v] && !s.conditionsConfirmed[c.v]).map((c) => {
+                    const onEnter = (e: React.KeyboardEvent) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        confirmCondition(c.v);
+                      }
+                    };
+                    return (
+                      <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+                        <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
+                          {lang === "sv" ? c.l_sv : c.l_en}
+                        </div>
+                        <Txt
+                          value={s.conditions[c.v] ?? ""}
+                          onChange={(v) => setConditionRelative(c.v, v)}
+                          placeholder={t("which_relative_ph")}
+                          label={t("which_relative")}
+                          onKeyDown={onEnter}
+                        />
+                        {c.ageKind && (
+                          <div className="mt-2">
+                            <Lbl>{c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset")}</Lbl>
+                            <input
+                              type="number"
+                              min={0}
+                              max={120}
+                              value={s.specifyByCondition[c.v] ?? ""}
+                              onChange={(e) => setConditionSpecify(c.v, e.target.value)}
+                              onKeyDown={onEnter}
+                              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                            />
+                          </div>
+                        )}
+                        {c.needsSpecify && (
+                          <div className="mt-2">
+                            <Txt
+                              value={s.specifyByCondition[c.v] ?? ""}
+                              onChange={(v) => setConditionSpecify(c.v, v)}
+                              placeholder={t("which_condition_ph")}
+                              label={t("which_condition")}
+                              onKeyDown={onEnter}
+                            />
+                          </div>
+                        )}
                       </div>
-                      <Txt
-                        value={s.conditions[c.v] ?? ""}
-                        onChange={(v) => setConditionRelative(c.v, v)}
-                        placeholder={t("which_relative_ph")}
-                        label={t("which_relative")}
-                      />
-                      {c.ageKind && (
-                        <div className="mt-2">
-                          <Lbl>{c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset")}</Lbl>
-                          <input
-                            type="number"
-                            min={0}
-                            max={120}
-                            value={s.specifyByCondition[c.v] ?? ""}
-                            onChange={(e) => setConditionSpecify(c.v, e.target.value)}
-                            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
-                          />
-                        </div>
-                      )}
-                      {c.needsSpecify && (
-                        <div className="mt-2">
-                          <Txt
-                            value={s.specifyByCondition[c.v] ?? ""}
-                            onChange={(v) => setConditionSpecify(c.v, v)}
-                            placeholder={t("which_condition_ph")}
-                            label={t("which_condition")}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
+                    );
+                  })}
                 </div>
               )}
+
 
               <div className="mt-4">
                 <button
