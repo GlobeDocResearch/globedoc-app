@@ -864,6 +864,10 @@ function TravelCard({
           </div>
         </>
       )}
+    </div>
+  );
+}
+
 function OtherCard({
   entry, t, onChange, onDelete, onSave,
 }: {
@@ -874,10 +878,6 @@ function OtherCard({
   onSave: () => Promise<boolean> | void;
 }) {
 
-  t: (k: string) => string;
-  onChange: (patch: Partial<OtherEntry>) => void;
-  onDelete: () => void;
-}) {
   const [showSuggest, setShowSuggest] = useState(false);
   const filtered = entry.vaccine_name
     ? OTHER_VAX_SUGGESTIONS.filter((s) => s.toLowerCase().includes(entry.vaccine_name.toLowerCase())).slice(0, 8)
