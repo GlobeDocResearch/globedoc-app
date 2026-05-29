@@ -284,7 +284,9 @@ export default function HeredityForm() {
         mother: { ...emptyParent },
         conditions: {},
         conditionsChecked: {},
+        conditionsConfirmed: {},
         specifyByCondition: {},
+        customConditions: [],
       };
       next.nothing = sum.data?.nothing_to_report ?? false;
       for (const row of parents.data ?? []) {
