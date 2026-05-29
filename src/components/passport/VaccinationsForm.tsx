@@ -478,8 +478,10 @@ export default function VaccinationsForm() {
                       setTravel((arr) => arr.filter((_, i) => i !== gIdx));
                       markDirty();
                     }}
+                    onSave={saveAll}
                   />
                 ))}
+
               </div>
               <button
                 type="button"
@@ -525,8 +527,10 @@ export default function VaccinationsForm() {
                       setOthers((arr) => arr.filter((_, i) => i !== idx));
                       markDirty();
                     }}
+                    onSave={saveAll}
                   />
                 ))}
+
               </div>
               <button
                 type="button"
@@ -655,13 +659,15 @@ function StatusPill({
 }
 
 function TravelCard({
-  entry, t, onChange, onDelete,
+  entry, t, onChange, onDelete, onSave,
 }: {
   entry: TravelEntry;
   t: (k: string) => string;
   onChange: (patch: Partial<TravelEntry>) => void;
   onDelete: () => void;
+  onSave: () => Promise<boolean> | void;
 }) {
+
   const [showSuggest, setShowSuggest] = useState(false);
 
   if (entry.collapsed && entry.destination) {
@@ -689,7 +695,16 @@ function TravelCard({
     : [];
 
   return (
-    <div className="rounded-xl border border-gray-200 p-3">
+    <div
+      className="rounded-xl border border-gray-200 p-3"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.defaultPrevented) {
+          e.preventDefault();
+          if (entry.destination) onSave();
+        }
+      }}
+    >
+
       <div className="relative">
         <Input
           value={entry.countryQuery}
@@ -863,13 +878,15 @@ function TravelCard({
 }
 
 function OtherCard({
-  entry, t, onChange, onDelete,
+  entry, t, onChange, onDelete, onSave,
 }: {
   entry: OtherEntry;
   t: (k: string) => string;
   onChange: (patch: Partial<OtherEntry>) => void;
   onDelete: () => void;
+  onSave: () => Promise<boolean> | void;
 }) {
+
   const [showSuggest, setShowSuggest] = useState(false);
   const filtered = entry.vaccine_name
     ? OTHER_VAX_SUGGESTIONS.filter((s) => s.toLowerCase().includes(entry.vaccine_name.toLowerCase())).slice(0, 8)
@@ -900,7 +917,16 @@ function OtherCard({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 p-3">
+    <div
+      className="rounded-xl border border-gray-200 p-3"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.defaultPrevented) {
+          e.preventDefault();
+          if (entry.vaccine_name.trim()) onSave();
+        }
+      }}
+    >
+
       <label className="text-xs font-semibold text-gray-700">{t("vaccine_name")}</label>
       <div className="relative">
         <Input
