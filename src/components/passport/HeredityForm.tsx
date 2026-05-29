@@ -739,14 +739,66 @@ function ParentSection({
   title,
   dontKnowLabel,
   value,
+  confirmed,
   onChange,
+  onConfirm,
+  onEdit,
+  onDelete,
 }: {
   t: (k: any) => string;
   title: string;
   dontKnowLabel: string;
   value: ParentState;
+  confirmed: boolean;
   onChange: (patch: Partial<ParentState>) => void;
+  onConfirm: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
+  const onEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onConfirm();
+    }
+  };
+
+  if (confirmed) {
+    const bits: string[] = [];
+    if (value.unknown) bits.push(dontKnowLabel);
+    else {
+      if (value.year_born) bits.push(`${t("year_born")}: ${value.year_born}`);
+      if (value.living === "no" && value.age_at_death) bits.push(`${t("age_at_death")}: ${value.age_at_death}`);
+      if (value.living === "no" && value.cause_of_death) bits.push(value.cause_of_death);
+      if (value.known_conditions) bits.push(value.known_conditions);
+    }
+    const summary = bits.join(" · ") || "—";
+    return (
+      <Section title={title}>
+        <div className="flex items-start justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+          <div className="min-w-0 flex-1 text-sm text-[#0D1B2A]">{summary}</div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              aria-label="Edit"
+              onClick={onEdit}
+              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Delete"
+              onClick={onDelete}
+              className="rounded-md p-1.5 text-gray-600 hover:bg-white"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </Section>
+    );
+  }
+
   return (
     <Section title={title}>
       <label className="mb-3 flex cursor-pointer items-center gap-3 text-sm text-[#0D1B2A]">
@@ -778,6 +830,7 @@ function ParentSection({
                   type="number"
                   value={value.age_at_death}
                   onChange={(e) => onChange({ age_at_death: e.target.value })}
+                  onKeyDown={onEnter}
                   className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
                 />
               </div>
@@ -787,6 +840,7 @@ function ParentSection({
                   type="text"
                   value={value.cause_of_death}
                   onChange={(e) => onChange({ cause_of_death: e.target.value })}
+                  onKeyDown={onEnter}
                   placeholder={t("cause_ph")}
                   className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
                 />
@@ -800,6 +854,7 @@ function ParentSection({
                 type="number"
                 value={value.year_born}
                 onChange={(e) => onChange({ year_born: e.target.value })}
+                onKeyDown={onEnter}
                 placeholder={t("year_born_ph")}
                 className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
               />
@@ -810,6 +865,7 @@ function ParentSection({
             <textarea
               value={value.known_conditions}
               onChange={(e) => onChange({ known_conditions: e.target.value })}
+              onKeyDown={onEnter}
               placeholder={t("known_conditions_ph")}
               rows={3}
               className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
