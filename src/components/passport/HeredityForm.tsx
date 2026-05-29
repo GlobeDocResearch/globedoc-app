@@ -203,21 +203,27 @@ export default function HeredityForm() {
     setDirty(true);
   };
   const setParent = (which: "father" | "mother", patch: Partial<ParentState>) => {
-    setS((p) => ({ ...p, [which]: { ...p[which], ...patch } }));
-    setDirty(true);
-  };
   const toggleCondition = (v: string) => {
     setS((p) => {
-      const next = !p.conditionsChecked[v];
-      const nextConfirmed = { ...p.conditionsConfirmed };
-      if (!next) delete nextConfirmed[v];
+      const checked = !!p.conditionsChecked[v];
+      const confirmed = !!p.conditionsConfirmed[v];
+      // Confirmed chip → unconfirm to re-edit (keep checked)
+      if (checked && confirmed) {
+        const nc = { ...p.conditionsConfirmed };
+        delete nc[v];
+        return { ...p, conditionsConfirmed: nc };
+      }
+      // Unconfirmed checked chip → uncheck
+      // Unchecked chip → check (will show edit form)
+      const next = !checked;
       return {
         ...p,
         conditionsChecked: { ...p.conditionsChecked, [v]: next },
-        conditionsConfirmed: nextConfirmed,
-        // Checking any condition clears "none of the above"
         noneOfAbove: next ? false : p.noneOfAbove,
       };
+    });
+    setDirty(true);
+  };
     });
     setDirty(true);
   };
