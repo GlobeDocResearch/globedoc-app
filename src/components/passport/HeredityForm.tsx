@@ -361,7 +361,8 @@ export default function HeredityForm() {
             .map((c) => ({
               user_id: userId,
               condition_name: c.name.trim(),
-              which_relative: null,
+              which_relative: c.relative.trim() || null,
+
               other_specify: null,
             })),
         ];
