@@ -654,6 +654,10 @@ function StatusPill({
       className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${tones[tone]}`}
     >
       {children}
+    </button>
+  );
+}
+
 function TravelCard({
   entry, t, onChange, onDelete, onSave,
 }: {
@@ -664,10 +668,6 @@ function TravelCard({
   onSave: () => Promise<boolean> | void;
 }) {
 
-  t: (k: string) => string;
-  onChange: (patch: Partial<TravelEntry>) => void;
-  onDelete: () => void;
-}) {
   const [showSuggest, setShowSuggest] = useState(false);
 
   if (entry.collapsed && entry.destination) {
