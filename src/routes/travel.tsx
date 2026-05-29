@@ -209,9 +209,9 @@ function TravelPage() {
             </div>
           </div>
 
-          <VaxGroup title="Childhood vaccines" rows={childhood.map((r) => ({ name: r.vaccine_name, year: r.year_received ?? "" }))} />
-          <VaxGroup title="Travel vaccines" rows={travel.map((r) => ({ name: r.vaccine_name, year: yearOf(r.date_received) }))} />
-          <VaxGroup title="Other vaccines" rows={other.map((r) => ({ name: r.vaccine_name, year: yearOf(r.date_received) }))} />
+          <VaxGroup title="Childhood vaccines" rows={childhood} />
+          <VaxGroup title="Travel vaccines" rows={travel} />
+          <VaxGroup title="Other vaccines" rows={other} />
 
           <button
             type="button"
