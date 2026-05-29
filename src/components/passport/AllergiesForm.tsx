@@ -499,6 +499,8 @@ export default function AllergiesForm() {
               onAdd={() => addCustom("intol")}
               onUpdate={(id, patch) => updateCustom("intol", id, patch)}
               onRemove={(id) => removeCustom("intol", id)}
+              nameSuggestions={COMMON_MEDICATIONS}
+
             />
           </>
         )}
