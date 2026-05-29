@@ -29,7 +29,7 @@ const emptyParent: ParentState = {
   known_conditions: "",
 };
 
-type CustomCondition = { id: string; name: string };
+type CustomCondition = { id: string; name: string; relative: string };
 
 type State = {
   nothing: boolean;
@@ -37,7 +37,7 @@ type State = {
   mother: ParentState;
   conditions: Record<string, string>; // condition key -> which_relative
   conditionsChecked: Record<string, boolean>;
-  specifyByCondition: Record<string, string>; // condition key -> which_condition / specify
+  specifyByCondition: Record<string, string>; // condition key -> which_condition / age / specify
   customConditions: CustomCondition[];
   noneOfAbove: boolean;
   has_siblings: boolean | null;
@@ -48,26 +48,27 @@ type State = {
   under_counselling: boolean | null;
 };
 
-const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolean }[] = [
+type AgeKind = "stroke" | "onset";
+const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolean; ageKind?: AgeKind }[] = [
   { v: "cardio_early", l_en: "Cardiovascular disease (early onset)", l_sv: "Hjärt-kärlsjukdom (tidig debut)" },
-  { v: "stroke", l_en: "Stroke", l_sv: "Stroke" },
+  { v: "stroke", l_en: "Stroke", l_sv: "Stroke", ageKind: "stroke" },
   { v: "diabetes_t1", l_en: "Diabetes type 1", l_sv: "Diabetes typ 1" },
   { v: "diabetes_t2", l_en: "Diabetes type 2", l_sv: "Diabetes typ 2" },
-  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer", needsSpecify: true },
-  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer", needsSpecify: true },
-  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer", needsSpecify: true },
-  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer", needsSpecify: true },
-  { v: "alzheimer", l_en: "Alzheimer's / dementia", l_sv: "Alzheimers / demens" },
-  { v: "parkinson", l_en: "Parkinson's disease", l_sv: "Parkinsons sjukdom" },
-  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom", needsSpecify: true },
+  { v: "breast_cancer", l_en: "Breast cancer", l_sv: "Bröstcancer" },
+  { v: "ovarian_cancer", l_en: "Ovarian cancer", l_sv: "Äggstockscancer" },
+  { v: "colorectal_cancer", l_en: "Colorectal cancer", l_sv: "Tjock- och ändtarmscancer" },
+  { v: "prostate_cancer", l_en: "Prostate cancer", l_sv: "Prostatacancer" },
+  { v: "alzheimer", l_en: "Alzheimer's / dementia", l_sv: "Alzheimers / demens", ageKind: "onset" },
+  { v: "parkinson", l_en: "Parkinson's disease", l_sv: "Parkinsons sjukdom", ageKind: "onset" },
+  { v: "mental_illness", l_en: "Mental illness", l_sv: "Psykisk sjukdom" },
   { v: "autoimmune", l_en: "Autoimmune disease", l_sv: "Autoimmun sjukdom", needsSpecify: true },
   { v: "kidney", l_en: "Kidney disease", l_sv: "Njursjukdom", needsSpecify: true },
   { v: "haemophilia", l_en: "Haemophilia / clotting disorder", l_sv: "Blödarsjuka / koagulationsrubbning" },
   { v: "sudden_cardiac", l_en: "Sudden cardiac death (young)", l_sv: "Plötslig hjärtdöd (ung)" },
   { v: "familial_chol", l_en: "Familial hypercholesterolaemia", l_sv: "Familjär hyperkolesterolemi" },
-  { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros" },
-  { v: "other", l_en: "Other genetic condition", l_sv: "Annat genetiskt tillstånd", needsSpecify: true },
+  { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros", ageKind: "onset" },
 ];
+
 
 const initialState: State = {
   nothing: false,
