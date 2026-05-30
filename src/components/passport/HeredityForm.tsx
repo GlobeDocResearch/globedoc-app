@@ -1237,7 +1237,7 @@ function YesNo({
 
 function AddOtherCondition({
   whichRelativeLabel,
-  whichRelativePh,
+  whichRelativePh: _whichRelativePh,
   whichConditionLabel,
   whichConditionPh,
   buttonLabel,
@@ -1247,6 +1247,7 @@ function AddOtherCondition({
   initialRelative = "",
   startOpen = false,
   onCancel,
+  lang,
 }: {
   whichRelativeLabel: string;
   whichRelativePh: string;
@@ -1259,6 +1260,7 @@ function AddOtherCondition({
   initialRelative?: string;
   startOpen?: boolean;
   onCancel?: () => void;
+  lang: Lang;
 }) {
   const [open, setOpen] = useState(startOpen);
   const [name, setName] = useState(initialName);
