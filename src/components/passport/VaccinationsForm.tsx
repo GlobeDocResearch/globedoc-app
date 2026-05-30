@@ -39,19 +39,44 @@ type ChildhoodVax = {
   year_received: string;
 };
 
-const CHILDHOOD_DEFS: { name: string; descEn: string; descSv: string }[] = [
-  { name: "DTP/DTaP", descEn: "Diphtheria, tetanus & whooping cough", descSv: "Difteri, stelkramp & kikhosta" },
-  { name: "Polio (IPV)", descEn: "Inactivated polio vaccine", descSv: "Inaktiverat poliovaccin" },
-  { name: "MMR", descEn: "Measles, mumps & rubella", descSv: "Mässling, påssjuka & röda hund" },
-  { name: "Hib", descEn: "Haemophilus influenzae type b", descSv: "Haemophilus influenzae typ b" },
-  { name: "Pneumococcal (PCV)", descEn: "Pneumococcal disease", descSv: "Pneumokocksjukdom" },
-  { name: "Hepatitis B", descEn: "Liver infection caused by hepatitis B virus", descSv: "Leverinfektion orsakad av hepatit B-virus" },
-  { name: "BCG", descEn: "Tuberculosis", descSv: "Tuberkulos" },
-  { name: "Varicella", descEn: "Chickenpox", descSv: "Vattkoppor" },
-  { name: "HPV", descEn: "Human papillomavirus", descSv: "Humant papillomvirus" },
+type Programme = {
+  name: string;
+  descEn: string;
+  descSv: string;
+  start: number;
+  end?: number; // last year vaccine was part of the programme (inclusive)
+};
+
+// Swedish national childhood vaccination programme — historical eligibility windows
+const SE_PROGRAMME: Programme[] = [
+  { name: "BCG", descEn: "Tuberculosis", descSv: "Tuberkulos", start: 1940, end: 1975 },
+  { name: "Smallpox", descEn: "Smallpox", descSv: "Smittkoppor", start: 1940, end: 1976 },
+  { name: "Diphtheria", descEn: "Diphtheria", descSv: "Difteri", start: 1940 },
+  { name: "Tetanus", descEn: "Tetanus", descSv: "Stelkramp", start: 1940 },
+  { name: "Pertussis (1953–1979)", descEn: "Whooping cough", descSv: "Kikhosta", start: 1953, end: 1979 },
+  { name: "Pertussis (1996+)", descEn: "Whooping cough", descSv: "Kikhosta", start: 1996 },
+  { name: "Polio (IPV)", descEn: "Inactivated polio vaccine", descSv: "Inaktiverat poliovaccin", start: 1957 },
+  { name: "Measles (single)", descEn: "Measles", descSv: "Mässling", start: 1971, end: 1982 },
+  { name: "MMR", descEn: "Measles, mumps & rubella", descSv: "Mässling, påssjuka & röda hund", start: 1982 },
+  { name: "Hib", descEn: "Haemophilus influenzae type b", descSv: "Haemophilus influenzae typ b", start: 1998 },
+  { name: "Pneumococcal (PCV)", descEn: "Pneumococcal disease", descSv: "Pneumokocksjukdom", start: 2009 },
+  { name: "HPV (girls)", descEn: "Human papillomavirus", descSv: "Humant papillomvirus", start: 2010 },
+  { name: "HPV (boys)", descEn: "Human papillomavirus", descSv: "Humant papillomvirus", start: 2020 },
+  { name: "Rotavirus", descEn: "Rotavirus", descSv: "Rotavirus", start: 2014 },
+  { name: "Hepatitis B", descEn: "Liver infection caused by hepatitis B virus", descSv: "Leverinfektion orsakad av hepatit B-virus", start: 2016 },
+  { name: "Covid-19", descEn: "SARS-CoV-2", descSv: "SARS-CoV-2", start: 2020 },
+  { name: "Varicella", descEn: "Chickenpox", descSv: "Vattkoppor", start: 2027 },
 ];
 
-const SWEDEN_PRESELECTED = new Set(["DTP/DTaP", "Polio (IPV)", "MMR", "Hib"]);
+// Return vaccines that were part of the Swedish programme at any point
+// while the patient was 0–18 years old.
+function programmeForBirthYear(year: number): Programme[] {
+  const lo = year;
+  const hi = year + 18;
+  return SE_PROGRAMME.filter((p) => p.start <= hi && (p.end ?? 9999) >= lo);
+}
+
+
 
 // Country → suggested travel vaccines
 const TRAVEL_SUGGESTIONS: Record<string, string[]> = {
