@@ -982,6 +982,10 @@ export default function LifestyleForm() {
                       { v: "ptsd", l: t("mh_ptsd") },
                       { v: "ocd", l: t("mh_ocd") },
                       { v: "eating", l: t("mh_ed") },
+                      { v: "adhd", l: t("mh_adhd") },
+                      { v: "schizophrenia", l: t("mh_schizo") },
+                      { v: "personality", l: t("mh_pers") },
+                      { v: "sud", l: t("mh_sud") },
                       { v: "other", l: t("other") },
                     ]}
                   />
