@@ -606,6 +606,7 @@ export default function MedicalHistoryForm() {
                   ) : (
                     <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
                       <Field label={t("f_event")} value={stay.event} ph={t("f_event_ph")} onChange={(v) => updateStay(stay.id, { event: v })} />
+                      <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
                       <Field label={t("f_year")} value={stay.year} ph={t("f_year_ph")} onChange={(v) => updateStay(stay.id, { year: v })} />
                       <Field label={t("f_hosp")} value={stay.hospital_country} ph={t("f_hosp_ph")} onChange={(v) => updateStay(stay.id, { hospital_country: v })} />
                       <Field label={t("f_notes")} value={stay.notes} ph={t("f_notes_ph")} onChange={(v) => updateStay(stay.id, { notes: v })} />
