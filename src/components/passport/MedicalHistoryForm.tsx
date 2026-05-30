@@ -458,6 +458,13 @@ export default function MedicalHistoryForm() {
           await saveStay(stay);
         }
       }
+      // Save any open dirty location cards
+      for (const loc of locations) {
+        if (dirtyLocations.has(loc.id) && loc.institution.trim()) {
+          await saveLocation(loc);
+        }
+      }
+
       await Promise.all([
         supabase
           .from("medical_conditions_summary")
