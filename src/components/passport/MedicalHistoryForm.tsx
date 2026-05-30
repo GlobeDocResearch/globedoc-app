@@ -607,6 +607,7 @@ function ConditionTagInput({
   const [open, setOpen] = useState(false);
   const [browseOpen, setBrowseOpen] = useState(false);
   const [browseQ, setBrowseQ] = useState("");
+  const [commonOpen, setCommonOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const used = useMemo(() => new Set(tags.map((t) => t.condition_name.toLowerCase())), [tags]);
