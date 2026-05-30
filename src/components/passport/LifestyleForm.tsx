@@ -921,15 +921,22 @@ export default function LifestyleForm() {
                   <CheckList
                     values={s.sleep_issues}
                     onToggle={(v) => toggleArr("sleep_issues", v)}
-                    options={[
-                      { v: "dfa", l: t("sleep_dfa") },
-                      { v: "fnw", l: t("sleep_fnw") },
-                      { v: "insomnia", l: t("sleep_insomnia") },
-                      { v: "apnoea", l: t("sleep_apnoea") },
-                      { v: "rls", l: t("sleep_rls") },
-                      { v: "eds", l: t("sleep_eds") },
-                      { v: "other", l: t("other") },
-                    ]}
+                    options={
+                      s.sleep_status === "significant"
+                        ? [
+                            { v: "insomnia", l: t("sleep_insomnia") },
+                            { v: "apnoea", l: t("sleep_apnoea") },
+                            { v: "rls", l: t("sleep_rls") },
+                            { v: "narcolepsy", l: t("sleep_narco") },
+                            { v: "shift", l: t("sleep_shift") },
+                            { v: "other", l: t("other") },
+                          ]
+                        : [
+                            { v: "dfa", l: t("sleep_dfa") },
+                            { v: "fnw", l: t("sleep_fnw") },
+                            { v: "other", l: t("other") },
+                          ]
+                    }
                   />
                   {s.sleep_issues.includes("other") && (
                     <Txt
