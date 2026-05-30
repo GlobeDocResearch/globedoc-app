@@ -434,7 +434,13 @@ export default function LifestyleForm() {
           alcohol_frequency: data.alcohol_frequency ?? "",
           alcohol_drinks_per_week:
             data.alcohol_drinks_per_week != null ? String(data.alcohol_drinks_per_week) : "",
+          alcohol_units_per_week: data.alcohol_units_per_week ?? "",
           alcohol_type: Array.isArray(data.alcohol_type) ? data.alcohol_type : (data.alcohol_type ? [data.alcohol_type] : []),
+          narcotics_status: data.narcotics_status ?? "",
+          narcotics_substances: data.narcotics_substances ?? [],
+          narcotics_substances_other: data.narcotics_substances_other ?? "",
+          narcotics_use_status: data.narcotics_use_status ?? "",
+          narcotics_ever_injected: data.narcotics_ever_injected,
           height_cm: data.height_cm != null ? String(data.height_cm) : "",
           weight_kg: data.weight_kg != null ? String(data.weight_kg) : "",
           exercise_frequency: data.exercise_frequency ?? "",
