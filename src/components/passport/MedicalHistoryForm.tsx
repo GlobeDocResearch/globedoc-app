@@ -13,6 +13,7 @@ import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalC
 type Stay = {
   id: string;
   event: string;
+  diagnosis: string;
   year: string;
   hospital_country: string;
   notes: string;
