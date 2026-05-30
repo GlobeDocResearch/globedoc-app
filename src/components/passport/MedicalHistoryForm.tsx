@@ -33,7 +33,7 @@ const SUGGESTIONS = ALL_CONDITIONS;
 const T: Record<Lang, Record<string, string>> = {
   en: {
     title: "Medical History",
-    subtitle: "Diagnoses, hospitalisations & operations",
+    subtitle: "Diagnoses, hospitalisations, operations & record locations",
     nothing: "Nothing to report",
     s1: "Current & chronic conditions",
     s1ph: "Search or type a condition…",
