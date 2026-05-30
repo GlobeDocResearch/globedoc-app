@@ -20,7 +20,13 @@ type State = {
   tobacco_year_stopped: string;
   alcohol_frequency: string;
   alcohol_drinks_per_week: string;
+  alcohol_units_per_week: string;
   alcohol_type: string[];
+  narcotics_status: string;
+  narcotics_substances: string[];
+  narcotics_substances_other: string;
+  narcotics_use_status: string;
+  narcotics_ever_injected: boolean | null;
   height_cm: string;
   weight_kg: string;
   exercise_frequency: string;
@@ -51,7 +57,13 @@ const initialState: State = {
   tobacco_year_stopped: "",
   alcohol_frequency: "",
   alcohol_drinks_per_week: "",
+  alcohol_units_per_week: "",
   alcohol_type: [],
+  narcotics_status: "",
+  narcotics_substances: [],
+  narcotics_substances_other: "",
+  narcotics_use_status: "",
+  narcotics_ever_injected: null,
   height_cm: "",
   weight_kg: "",
   exercise_frequency: "",
