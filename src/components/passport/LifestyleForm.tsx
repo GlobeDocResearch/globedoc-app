@@ -20,7 +20,13 @@ type State = {
   tobacco_year_stopped: string;
   alcohol_frequency: string;
   alcohol_drinks_per_week: string;
+  alcohol_units_per_week: string;
   alcohol_type: string[];
+  narcotics_status: string;
+  narcotics_substances: string[];
+  narcotics_substances_other: string;
+  narcotics_use_status: string;
+  narcotics_ever_injected: boolean | null;
   height_cm: string;
   weight_kg: string;
   exercise_frequency: string;
@@ -51,7 +57,13 @@ const initialState: State = {
   tobacco_year_stopped: "",
   alcohol_frequency: "",
   alcohol_drinks_per_week: "",
+  alcohol_units_per_week: "",
   alcohol_type: [],
+  narcotics_status: "",
+  narcotics_substances: [],
+  narcotics_substances_other: "",
+  narcotics_use_status: "",
+  narcotics_ever_injected: null,
   height_cm: "",
   weight_kg: "",
   exercise_frequency: "",
@@ -83,10 +95,10 @@ const T: Record<Lang, Record<string, string>> = {
     save: "Save",
     saved: "Saved",
     saveError: "Could not save",
-    s_tobacco: "Tobacco use",
+    s_tobacco: "Tobacco & nicotine use",
     tob_never: "Never",
-    tob_former: "Former smoker",
-    tob_current: "Current smoker",
+    tob_former: "Former user",
+    tob_current: "Current user",
     tob_product: "Product",
     tob_amount: "Amount",
     tob_duration: "Duration",
@@ -97,17 +109,47 @@ const T: Record<Lang, Record<string, string>> = {
     amt_5_10: "5–10/day",
     amt_10_20: "10–20/day",
     amt_gt20: "More than 20/day",
+    tob_p_cigarettes: "Cigarettes",
+    tob_p_snus: "Snus",
+    tob_p_vape: "Vape/e-cigarette",
+    tob_p_pipe: "Pipe",
+    tob_p_cigar: "Cigar",
+    tob_p_patches: "Nicotine patches/gum",
     s_alcohol: "Alcohol use",
     alc_never: "Never",
     alc_occ: "Occasionally (less than monthly)",
     alc_monthly: "Monthly",
     alc_weekly: "Weekly",
+    alc_daily: "Daily",
     alc_drinks: "Drinks per occasion",
     alc_drinks_ph: "E.g. 2",
+    alc_units: "Units per week",
+    alc_units_help: "1 unit = 1 standard drink",
+    alc_units_ph: "E.g. 7",
     alc_type: "Type",
     alc_beer: "Beer",
     alc_wine: "Wine",
     alc_spirits: "Spirits",
+    s_narc: "Narcotics & illicit substances",
+    narc_sub: "This information is confidential and helps your clinician provide safe care.",
+    narc_q: "Have you ever used narcotic substances?",
+    narc_yes: "Yes",
+    narc_no: "No",
+    narc_pnts: "Prefer not to say",
+    narc_subs: "Substances",
+    narc_cannabis: "Cannabis",
+    narc_cocaine: "Cocaine / crack cocaine",
+    narc_heroin: "Heroin / opiates",
+    narc_amph: "Amphetamine / methamphetamine",
+    narc_mdma: "MDMA / ecstasy",
+    narc_hallu: "Hallucinogens (LSD, psilocybin, ketamine)",
+    narc_benzo: "Benzodiazepines (non-prescribed)",
+    narc_status: "Status",
+    narc_st_past: "Past use only",
+    narc_st_occ: "Current occasional use",
+    narc_st_reg: "Current regular use",
+    narc_st_rec: "In treatment / recovery",
+    narc_inject: "Ever injected?",
     s_hw: "Height & Weight",
     height: "Height (cm)",
     weight: "Weight (kg)",
@@ -123,10 +165,10 @@ const T: Record<Lang, Record<string, string>> = {
     ex_3_4: "3–4 times/week",
     ex_5p: "5+ times/week",
     ex_types: "Activity type",
-    ex_cardio: "Cardio",
+    ex_cardio: "Cardio / running",
     ex_strength: "Strength training",
     ex_swim: "Swimming",
-    ex_yoga: "Yoga/Pilates",
+    ex_yoga: "Yoga / flexibility",
     ex_climb: "Climbing",
     ex_cycle: "Cycling",
     ex_team: "Team sports",
@@ -156,9 +198,11 @@ const T: Record<Lang, Record<string, string>> = {
     sleep_fnw: "Frequent night wakings",
     sleep_insomnia: "Insomnia",
     sleep_apnoea: "Sleep apnoea",
-    sleep_rls: "Restless legs syndrome",
+    sleep_rls: "Restless legs",
     sleep_eds: "Excessive daytime sleepiness",
-    sleep_cpap: "Do you use CPAP?",
+    sleep_narco: "Narcolepsy",
+    sleep_shift: "Shift work / circadian disorder",
+    sleep_cpap: "CPAP/BiPAP?",
     s_mh: "Mental health",
     mh_note:
       "If you take medication for your mental health, please add it under Medications in your passport.",
@@ -169,6 +213,10 @@ const T: Record<Lang, Record<string, string>> = {
     mh_ptsd: "PTSD",
     mh_ocd: "OCD",
     mh_ed: "Eating disorder",
+    mh_adhd: "ADHD / ADD",
+    mh_schizo: "Schizophrenia / psychosis",
+    mh_pers: "Personality disorder",
+    mh_sud: "Substance use disorder",
     mh_current: "Are you currently under treatment?",
     mh_tt: "Type of treatment",
     mh_med: "Medication",
@@ -177,10 +225,15 @@ const T: Record<Lang, Record<string, string>> = {
     s_sub: "Recreational & self-administered substances",
     sub_q:
       "Do you use any of the following? (This information is confidential and helps your clinician provide safe care)",
+    sub_none: "None of the above",
     sub_test: "Self-administered testosterone",
-    sub_steroids: "Anabolic steroids",
-    sub_cannabis: "Cannabis",
-    sub_stim: "Stimulants (e.g. ADHD medication unprescribed)",
+    sub_steroids: "Anabolic steroids / performance-enhancing drugs",
+    sub_cannabis: "Cannabis (if not already stated under Narcotics)",
+    sub_stim: "Stimulants (unprescribed ADHD medication)",
+    sub_nootropics: "Nootropics / cognitive enhancers",
+    sub_glp1: "GLP-1 agonists (unprescribed, e.g. Ozempic for weight loss)",
+    sub_peptides: "Peptides / growth hormone (unprescribed)",
+    sub_herbal: "Herbal / traditional medicine (regular use)",
   },
   sv: {
     title: "Livsstil & Risk",
@@ -191,10 +244,10 @@ const T: Record<Lang, Record<string, string>> = {
     save: "Spara",
     saved: "Sparat",
     saveError: "Kunde inte spara",
-    s_tobacco: "Tobaksbruk",
+    s_tobacco: "Tobak & nikotin",
     tob_never: "Aldrig",
-    tob_former: "Tidigare rökare",
-    tob_current: "Nuvarande rökare",
+    tob_former: "Tidigare användare",
+    tob_current: "Nuvarande användare",
     tob_product: "Produkt",
     tob_amount: "Mängd",
     tob_duration: "Varaktighet",
@@ -205,18 +258,48 @@ const T: Record<Lang, Record<string, string>> = {
     amt_5_10: "5–10/dag",
     amt_10_20: "10–20/dag",
     amt_gt20: "Mer än 20/dag",
+    tob_p_cigarettes: "Cigaretter",
+    tob_p_snus: "Snus",
+    tob_p_vape: "Vape/e-cigarett",
+    tob_p_pipe: "Pipa",
+    tob_p_cigar: "Cigarr",
+    tob_p_patches: "Nikotinplåster/tuggummi",
     s_alcohol: "Alkoholbruk",
     alc_never: "Aldrig",
     alc_occ: "Ibland (mindre än månadsvis)",
     alc_monthly: "Månadsvis",
     alc_weekly: "Varje vecka",
+    alc_daily: "Dagligen",
     alc_drinks: "Glas per tillfälle",
     alc_drinks_ph: "T.ex. 2",
+    alc_units: "Enheter per vecka",
+    alc_units_help: "1 enhet = 1 standardglas",
+    alc_units_ph: "T.ex. 7",
     alc_type: "Typ",
     alc_beer: "Öl",
     alc_wine: "Vin",
     alc_spirits: "Sprit",
-    
+    s_narc: "Narkotika & illegala substanser",
+    narc_sub: "Denna information är konfidentiell och hjälper din kliniker att ge säker vård.",
+    narc_q: "Har du någonsin använt narkotiska substanser?",
+    narc_yes: "Ja",
+    narc_no: "Nej",
+    narc_pnts: "Vill ej uppge",
+    narc_subs: "Substanser",
+    narc_cannabis: "Cannabis",
+    narc_cocaine: "Kokain / crack",
+    narc_heroin: "Heroin / opiater",
+    narc_amph: "Amfetamin / metamfetamin",
+    narc_mdma: "MDMA / ecstasy",
+    narc_hallu: "Hallucinogener (LSD, psilocybin, ketamin)",
+    narc_benzo: "Bensodiazepiner (utan recept)",
+    narc_status: "Status",
+    narc_st_past: "Endast tidigare bruk",
+    narc_st_occ: "Pågående tillfälligt bruk",
+    narc_st_reg: "Pågående regelbundet bruk",
+    narc_st_rec: "I behandling / återhämtning",
+    narc_inject: "Har du någonsin injicerat?",
+
     s_hw: "Längd & Vikt",
     height: "Längd (cm)",
     weight: "Vikt (kg)",
@@ -232,10 +315,10 @@ const T: Record<Lang, Record<string, string>> = {
     ex_3_4: "3–4 gånger/vecka",
     ex_5p: "5+ gånger/vecka",
     ex_types: "Typ av aktivitet",
-    ex_cardio: "Kondition",
+    ex_cardio: "Kondition / löpning",
     ex_strength: "Styrketräning",
     ex_swim: "Simning",
-    ex_yoga: "Yoga/Pilates",
+    ex_yoga: "Yoga / rörlighet",
     ex_climb: "Klättring",
     ex_cycle: "Cykling",
     ex_team: "Lagsport",
@@ -267,7 +350,9 @@ const T: Record<Lang, Record<string, string>> = {
     sleep_apnoea: "Sömnapné",
     sleep_rls: "Restless legs",
     sleep_eds: "Onormal trötthet dagtid",
-    sleep_cpap: "Använder du CPAP?",
+    sleep_narco: "Narkolepsi",
+    sleep_shift: "Skiftarbete / dygnsrytmstörning",
+    sleep_cpap: "CPAP/BiPAP?",
     s_mh: "Psykisk hälsa",
     mh_note:
       "Om du tar medicin för din psykiska hälsa, lägg till den under Mediciner i ditt pass.",
@@ -278,6 +363,10 @@ const T: Record<Lang, Record<string, string>> = {
     mh_ptsd: "PTSD",
     mh_ocd: "OCD",
     mh_ed: "Ätstörning",
+    mh_adhd: "ADHD / ADD",
+    mh_schizo: "Schizofreni / psykos",
+    mh_pers: "Personlighetsstörning",
+    mh_sud: "Substansbrukssyndrom",
     mh_current: "Får du behandling just nu?",
     mh_tt: "Typ av behandling",
     mh_med: "Medicinering",
@@ -286,10 +375,15 @@ const T: Record<Lang, Record<string, string>> = {
     s_sub: "Rekreations- och självadministrerade substanser",
     sub_q:
       "Använder du något av följande? (Denna information är konfidentiell och hjälper din kliniker att ge säker vård)",
+    sub_none: "Inget av ovanstående",
     sub_test: "Självadministrerat testosteron",
-    sub_steroids: "Anabola steroider",
-    sub_cannabis: "Cannabis",
-    sub_stim: "Stimulantia (t.ex. ADHD-medicin utan recept)",
+    sub_steroids: "Anabola steroider / prestationshöjande preparat",
+    sub_cannabis: "Cannabis (om ej redan angivet under Narkotika)",
+    sub_stim: "Stimulantia (ADHD-medicin utan recept)",
+    sub_nootropics: "Nootropika / kognitiva förstärkare",
+    sub_glp1: "GLP-1-agonister (utan recept, t.ex. Ozempic för viktnedgång)",
+    sub_peptides: "Peptider / tillväxthormon (utan recept)",
+    sub_herbal: "Örter / traditionell medicin (regelbunden användning)",
   },
 };
 
@@ -340,7 +434,13 @@ export default function LifestyleForm() {
           alcohol_frequency: data.alcohol_frequency ?? "",
           alcohol_drinks_per_week:
             data.alcohol_drinks_per_week != null ? String(data.alcohol_drinks_per_week) : "",
+          alcohol_units_per_week: data.alcohol_units_per_week ?? "",
           alcohol_type: Array.isArray(data.alcohol_type) ? data.alcohol_type : (data.alcohol_type ? [data.alcohol_type] : []),
+          narcotics_status: data.narcotics_status ?? "",
+          narcotics_substances: data.narcotics_substances ?? [],
+          narcotics_substances_other: data.narcotics_substances_other ?? "",
+          narcotics_use_status: data.narcotics_use_status ?? "",
+          narcotics_ever_injected: data.narcotics_ever_injected,
           height_cm: data.height_cm != null ? String(data.height_cm) : "",
           weight_kg: data.weight_kg != null ? String(data.weight_kg) : "",
           exercise_frequency: data.exercise_frequency ?? "",
@@ -404,7 +504,13 @@ export default function LifestyleForm() {
           s.nothing || !s.alcohol_drinks_per_week
             ? null
             : parseInt(s.alcohol_drinks_per_week, 10),
+        alcohol_units_per_week: s.nothing ? null : s.alcohol_units_per_week || null,
         alcohol_type: s.nothing ? null : s.alcohol_type,
+        narcotics_status: s.nothing ? null : s.narcotics_status || null,
+        narcotics_substances: s.nothing ? null : s.narcotics_substances,
+        narcotics_substances_other: s.nothing ? null : s.narcotics_substances_other || null,
+        narcotics_use_status: s.nothing ? null : s.narcotics_use_status || null,
+        narcotics_ever_injected: s.nothing ? null : s.narcotics_ever_injected,
         height_cm: s.nothing || !s.height_cm ? null : parseFloat(s.height_cm),
         weight_kg: s.nothing || !s.weight_kg ? null : parseFloat(s.weight_kg),
         exercise_frequency: s.nothing ? null : s.exercise_frequency || null,
@@ -500,11 +606,12 @@ export default function LifestyleForm() {
                       values={s.tobacco_products}
                       onToggle={(v) => toggleArr("tobacco_products", v)}
                       options={[
-                        { v: "cigarettes", l: "Cigarettes" },
-                        { v: "snus", l: "Snus" },
-                        { v: "vape", l: "Vape/e-cigarette" },
-                        { v: "pipe", l: "Pipe" },
-                        { v: "cigar", l: "Cigar" },
+                        { v: "cigarettes", l: t("tob_p_cigarettes") },
+                        { v: "snus", l: t("tob_p_snus") },
+                        { v: "vape", l: t("tob_p_vape") },
+                        { v: "pipe", l: t("tob_p_pipe") },
+                        { v: "cigar", l: t("tob_p_cigar") },
+                        { v: "patches", l: t("tob_p_patches") },
                       ]}
                     />
                   </div>
@@ -553,11 +660,12 @@ export default function LifestyleForm() {
                   { v: "occasionally", l: t("alc_occ") },
                   { v: "monthly", l: t("alc_monthly") },
                   { v: "weekly", l: t("alc_weekly") },
+                  { v: "daily", l: t("alc_daily") },
                 ]}
               />
               {showAlcoholExtra && (
                 <div className="mt-3 space-y-3">
-                  {(s.alcohol_frequency === "monthly" || s.alcohol_frequency === "weekly") && (
+                  {(s.alcohol_frequency === "monthly" || s.alcohol_frequency === "weekly" || s.alcohol_frequency === "daily") && (
                     <div>
                       <Lbl>{t("alc_drinks")}</Lbl>
                       <input
@@ -584,9 +692,84 @@ export default function LifestyleForm() {
                       ]}
                     />
                   </div>
+                  <div>
+                    <Lbl>{t("alc_units")}</Lbl>
+                    <Txt
+                      value={s.alcohol_units_per_week}
+                      onChange={(v) => set("alcohol_units_per_week", v)}
+                      placeholder={t("alc_units_ph")}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">{t("alc_units_help")}</p>
+                  </div>
                 </div>
               )}
             </Section>
+
+            {/* NARCOTICS */}
+            <Section title={t("s_narc")}>
+              <p className="mb-3 text-xs text-gray-600">{t("narc_sub")}</p>
+              <Lbl>{t("narc_q")}</Lbl>
+              <Radios
+                value={s.narcotics_status}
+                onChange={(v) => set("narcotics_status", v)}
+                options={[
+                  { v: "yes", l: t("narc_yes") },
+                  { v: "no", l: t("narc_no") },
+                  { v: "pnts", l: t("narc_pnts") },
+                ]}
+              />
+              {s.narcotics_status === "yes" && (
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <Lbl>{t("narc_subs")}</Lbl>
+                    <CheckList
+                      values={s.narcotics_substances}
+                      onToggle={(v) => toggleArr("narcotics_substances", v)}
+                      options={[
+                        { v: "cannabis", l: t("narc_cannabis") },
+                        { v: "cocaine", l: t("narc_cocaine") },
+                        { v: "heroin", l: t("narc_heroin") },
+                        { v: "amphetamine", l: t("narc_amph") },
+                        { v: "mdma", l: t("narc_mdma") },
+                        { v: "hallucinogens", l: t("narc_hallu") },
+                        { v: "benzo", l: t("narc_benzo") },
+                        { v: "other", l: t("other") },
+                      ]}
+                    />
+                    {s.narcotics_substances.includes("other") && (
+                      <div className="mt-2">
+                        <Txt
+                          value={s.narcotics_substances_other}
+                          onChange={(v) => set("narcotics_substances_other", v)}
+                          placeholder={t("please_specify")}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Lbl>{t("narc_status")}</Lbl>
+                    <Sel
+                      value={s.narcotics_use_status}
+                      onChange={(v) => set("narcotics_use_status", v)}
+                      options={[
+                        { v: "past", l: t("narc_st_past") },
+                        { v: "occasional", l: t("narc_st_occ") },
+                        { v: "regular", l: t("narc_st_reg") },
+                        { v: "recovery", l: t("narc_st_rec") },
+                      ]}
+                    />
+                  </div>
+                  <YesNo
+                    label={t("narc_inject")}
+                    value={s.narcotics_ever_injected}
+                    onChange={(v) => set("narcotics_ever_injected", v)}
+                    yes={t("yes")}
+                    no={t("no")}
+                  />
+                </div>
+              )}
+            </Section>
+
 
 
             {/* HEIGHT & WEIGHT */}
@@ -658,14 +841,12 @@ export default function LifestyleForm() {
                       values={s.exercise_types}
                       onToggle={(v) => toggleArr("exercise_types", v)}
                       options={[
-                        { v: "cardio", l: t("ex_cardio") },
                         { v: "strength", l: t("ex_strength") },
+                        { v: "cardio", l: t("ex_cardio") },
                         { v: "swim", l: t("ex_swim") },
-                        { v: "yoga", l: t("ex_yoga") },
-                        { v: "climb", l: t("ex_climb") },
                         { v: "cycle", l: t("ex_cycle") },
                         { v: "team", l: t("ex_team") },
-                        { v: "walk", l: t("ex_walk") },
+                        { v: "yoga", l: t("ex_yoga") },
                         { v: "other", l: t("other") },
                       ]}
                     />
@@ -740,15 +921,22 @@ export default function LifestyleForm() {
                   <CheckList
                     values={s.sleep_issues}
                     onToggle={(v) => toggleArr("sleep_issues", v)}
-                    options={[
-                      { v: "dfa", l: t("sleep_dfa") },
-                      { v: "fnw", l: t("sleep_fnw") },
-                      { v: "insomnia", l: t("sleep_insomnia") },
-                      { v: "apnoea", l: t("sleep_apnoea") },
-                      { v: "rls", l: t("sleep_rls") },
-                      { v: "eds", l: t("sleep_eds") },
-                      { v: "other", l: t("other") },
-                    ]}
+                    options={
+                      s.sleep_status === "significant"
+                        ? [
+                            { v: "insomnia", l: t("sleep_insomnia") },
+                            { v: "apnoea", l: t("sleep_apnoea") },
+                            { v: "rls", l: t("sleep_rls") },
+                            { v: "narcolepsy", l: t("sleep_narco") },
+                            { v: "shift", l: t("sleep_shift") },
+                            { v: "other", l: t("other") },
+                          ]
+                        : [
+                            { v: "dfa", l: t("sleep_dfa") },
+                            { v: "fnw", l: t("sleep_fnw") },
+                            { v: "other", l: t("other") },
+                          ]
+                    }
                   />
                   {s.sleep_issues.includes("other") && (
                     <Txt
@@ -794,6 +982,10 @@ export default function LifestyleForm() {
                       { v: "ptsd", l: t("mh_ptsd") },
                       { v: "ocd", l: t("mh_ocd") },
                       { v: "eating", l: t("mh_ed") },
+                      { v: "adhd", l: t("mh_adhd") },
+                      { v: "schizophrenia", l: t("mh_schizo") },
+                      { v: "personality", l: t("mh_pers") },
+                      { v: "sud", l: t("mh_sud") },
                       { v: "other", l: t("other") },
                     ]}
                   />
@@ -836,10 +1028,15 @@ export default function LifestyleForm() {
                 values={s.substances}
                 onToggle={(v) => toggleArr("substances", v)}
                 options={[
+                  { v: "none", l: t("sub_none") },
                   { v: "testosterone", l: t("sub_test") },
                   { v: "steroids", l: t("sub_steroids") },
                   { v: "cannabis", l: t("sub_cannabis") },
                   { v: "stimulants", l: t("sub_stim") },
+                  { v: "nootropics", l: t("sub_nootropics") },
+                  { v: "glp1", l: t("sub_glp1") },
+                  { v: "peptides", l: t("sub_peptides") },
+                  { v: "herbal", l: t("sub_herbal") },
                   { v: "other", l: t("other") },
                 ]}
               />
