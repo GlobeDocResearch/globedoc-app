@@ -98,17 +98,17 @@ function PairingPage() {
         </div>
 
         {/* Card */}
-        <div className="mt-4 rounded-2xl bg-white p-8 shadow-sm">
+        <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm">
           {!code || expired ? (
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
-                <LinkIcon className="h-10 w-10 text-gray-400" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                <LinkIcon className="h-6 w-6 text-gray-400" />
               </div>
-              <h3 className="mt-5 text-lg font-bold text-[#0D1B2A]">
+              <h3 className="mt-3 text-base font-bold text-[#0D1B2A]">
                 {expired ? "Code expired" : "No active code"}
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                Generate a code when you're with a clinician
+                Generate a code when you are with a clinician
               </p>
             </div>
           ) : (
@@ -139,7 +139,7 @@ function PairingPage() {
             type="button"
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 px-5 py-3.5 text-sm font-semibold text-[#0D1B2A] shadow-sm hover:bg-gray-200 disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-60"
           >
             <LinkIcon className="h-4 w-4" />
             {loading ? "Generating..." : "Generate pairing code"}

@@ -240,16 +240,16 @@ function PassportPage() {
 
         <Link
           to="/pairing"
-          className="mt-4 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#3B5BDB] to-[#0CA678] p-4 text-white shadow-sm hover:opacity-95"
+          className="mt-4 flex items-center gap-4 rounded-2xl bg-gray-100 p-4 text-[#0D1B2A] shadow-sm hover:bg-gray-200"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-            <LinkIcon className="h-5 w-5" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
+            <LinkIcon className="h-5 w-5 text-[#0D1B2A]" />
           </span>
           <div className="flex-1">
             <h3 className="text-sm font-bold">Pairing Code</h3>
-            <p className="text-xs text-white/80">Share your passport with a clinician</p>
+            <p className="text-xs text-gray-600">Share your passport with a clinician</p>
           </div>
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className="h-5 w-5 text-gray-500" />
         </Link>
       </section>
 
