@@ -766,6 +766,7 @@ export default function HeredityForm() {
                 )}
 
               <AddOtherCondition
+                lang={lang}
                 whichRelativeLabel={t("which_relative")}
                 whichRelativePh={t("which_relative_ph")}
                 whichConditionLabel={t("which_condition")}
