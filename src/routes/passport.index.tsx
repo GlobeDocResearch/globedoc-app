@@ -25,7 +25,7 @@ const SECTIONS: {
   subtitle: string;
   color: string;
 }[] = [
-  { key: "medical-history", emoji: "🏥", title: "Medical History", subtitle: "Diagnoses, hospitalisations & operations", color: "#EAF3FB" },
+  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#EAF3FB" },
   { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#E6F6E8" },
   { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#EEEAF7" },
   { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risk", subtitle: "Habits that matter clinically", color: "#BFE6E2" },
