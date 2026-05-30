@@ -321,14 +321,14 @@ export default function MedicalHistoryForm() {
     if (stay.persisted) {
       await supabase
         .from("hospital_stays")
-        .update({ event: stay.event, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
+        .update({ event: stay.event, diagnosis: stay.diagnosis, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
         .eq("id", stay.id);
       audit("hospital_stays", "update");
       updateStay(stay.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase
         .from("hospital_stays")
-        .insert({ user_id: userId, event: stay.event, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
+        .insert({ user_id: userId, event: stay.event, diagnosis: stay.diagnosis, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
         .select()
         .single();
       audit("hospital_stays", "insert");
