@@ -205,6 +205,7 @@ export default function MedicalHistoryForm() {
         setStays(hs.data.map((r: any) => ({
           id: r.id,
           event: r.event ?? "",
+          diagnosis: r.diagnosis ?? "",
           year: r.year ?? "",
           hospital_country: r.hospital_country ?? "",
           notes: r.notes ?? "",
