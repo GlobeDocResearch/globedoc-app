@@ -713,7 +713,7 @@ export default function MedicalHistoryForm() {
               <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#E5E7EB] bg-[#FFF8E1] p-3 text-xs text-[#0D1B2A]">
                 <span className="text-base leading-none">📎</span>
                 <p>
-                  In the meantime, you can manually upload records, scans and images under{" "}
+                  We will notify you when this feature becomes operational in your area. In the meantime, you can manually upload records, scans and images under{" "}
                   <Link to="/records" className="font-semibold text-[#5B6BD4] underline">
                     Records
                   </Link>{" "}
