@@ -1,0 +1,1 @@
+ALTER TABLE public.hospital_stays ADD COLUMN IF NOT EXISTS diagnosis TEXT;

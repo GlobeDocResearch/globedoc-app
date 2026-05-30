@@ -13,6 +13,7 @@ import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalC
 type Stay = {
   id: string;
   event: string;
+  diagnosis: string;
   year: string;
   hospital_country: string;
   notes: string;
@@ -59,9 +60,11 @@ const T: Record<Lang, Record<string, string>> = {
     s1: "Current & chronic conditions",
     s1ph: "Search or type a condition…",
     s1_year_ph: "Year diagnosed, e.g. 2018",
-    s2: "Hospital stays & operations",
+    s2: "Hospitalisations, Operations & Global Record Locations",
     f_event: "Event / procedure",
     f_event_ph: "E.g. Appendectomy",
+    f_diagnosis: "Diagnosis / condition treated",
+    f_diagnosis_ph: "E.g. Appendicitis, hip fracture",
     f_year: "Year",
     f_year_ph: "E.g. 2019",
     f_hosp: "Hospital & country",
@@ -97,9 +100,11 @@ const T: Record<Lang, Record<string, string>> = {
     s1: "Pågående & kroniska tillstånd",
     s1ph: "Sök eller skriv ett tillstånd…",
     s1_year_ph: "År för diagnos, t.ex. 2018",
-    s2: "Sjukhusvistelser & operationer",
+    s2: "Sjukhusvistelser, operationer & globala journalplatser",
     f_event: "Händelse / ingrepp",
     f_event_ph: "T.ex. Blindtarmsoperation",
+    f_diagnosis: "Diagnos / behandlat tillstånd",
+    f_diagnosis_ph: "T.ex. Blindtarmsinflammation, höftfraktur",
     f_year: "År",
     f_year_ph: "T.ex. 2019",
     f_hosp: "Sjukhus & land",
@@ -204,6 +209,7 @@ export default function MedicalHistoryForm() {
         setStays(hs.data.map((r: any) => ({
           id: r.id,
           event: r.event ?? "",
+          diagnosis: r.diagnosis ?? "",
           year: r.year ?? "",
           hospital_country: r.hospital_country ?? "",
           notes: r.notes ?? "",
@@ -304,7 +310,7 @@ export default function MedicalHistoryForm() {
     const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      { id, event: "", year: "", hospital_country: "", notes: "", collapsed: false, persisted: false },
+      { id, event: "", diagnosis: "", year: "", hospital_country: "", notes: "", collapsed: false, persisted: false },
     ]);
     markStayDirty(id);
   };
@@ -319,14 +325,14 @@ export default function MedicalHistoryForm() {
     if (stay.persisted) {
       await supabase
         .from("hospital_stays")
-        .update({ event: stay.event, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
+        .update({ event: stay.event, diagnosis: stay.diagnosis, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
         .eq("id", stay.id);
       audit("hospital_stays", "update");
       updateStay(stay.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase
         .from("hospital_stays")
-        .insert({ user_id: userId, event: stay.event, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
+        .insert({ user_id: userId, event: stay.event, diagnosis: stay.diagnosis, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
         .select()
         .single();
       audit("hospital_stays", "insert");
@@ -345,6 +351,7 @@ export default function MedicalHistoryForm() {
     if (data) {
       updateStay(stay.id, {
         event: data.event ?? "",
+        diagnosis: (data as any).diagnosis ?? "",
         year: data.year ?? "",
         hospital_country: data.hospital_country ?? "",
         notes: data.notes ?? "",
@@ -599,6 +606,7 @@ export default function MedicalHistoryForm() {
                   ) : (
                     <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
                       <Field label={t("f_event")} value={stay.event} ph={t("f_event_ph")} onChange={(v) => updateStay(stay.id, { event: v })} />
+                      <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
                       <Field label={t("f_year")} value={stay.year} ph={t("f_year_ph")} onChange={(v) => updateStay(stay.id, { year: v })} />
                       <Field label={t("f_hosp")} value={stay.hospital_country} ph={t("f_hosp_ph")} onChange={(v) => updateStay(stay.id, { hospital_country: v })} />
                       <Field label={t("f_notes")} value={stay.notes} ph={t("f_notes_ph")} onChange={(v) => updateStay(stay.id, { notes: v })} />
@@ -628,15 +636,10 @@ export default function MedicalHistoryForm() {
             </section>
 
             <section>
-              <div className="mb-1 flex flex-wrap items-center gap-2">
-                <h2 className="text-sm font-bold text-[#0D1B2A]">Global Health Record Retrieval</h2>
-                <span className="rounded-full bg-[#EEF0FB] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#5B6BD4]">
-                  Coming soon
-                </span>
-              </div>
               <p className="mb-3 text-xs text-gray-600">
-                Tell us where your medical records are held around the world. When automatic retrieval becomes available, we will notify you and fetch them on your behalf.
+                Enter the locations where your health records are held around the world. We will notify you when automated retrieval becomes operational in your region — and retrieve them on your behalf.
               </p>
+
 
               <div className="space-y-3">
                 {locations.map((loc) =>
@@ -710,7 +713,7 @@ export default function MedicalHistoryForm() {
               <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#E5E7EB] bg-[#FFF8E1] p-3 text-xs text-[#0D1B2A]">
                 <span className="text-base leading-none">📎</span>
                 <p>
-                  In the meantime, you can manually upload records, scans and images under{" "}
+                  We will notify you when this feature becomes operational in your area. In the meantime, you can manually upload records, scans and images under{" "}
                   <Link to="/records" className="font-semibold text-[#5B6BD4] underline">
                     Records
                   </Link>{" "}

@@ -503,6 +503,7 @@ export type Database = {
       hospital_stays: {
         Row: {
           created_at: string
+          diagnosis: string | null
           event: string | null
           hospital_country: string | null
           id: string
@@ -513,6 +514,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          diagnosis?: string | null
           event?: string | null
           hospital_country?: string | null
           id?: string
@@ -523,6 +525,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          diagnosis?: string | null
           event?: string | null
           hospital_country?: string | null
           id?: string
