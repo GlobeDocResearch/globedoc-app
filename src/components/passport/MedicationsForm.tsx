@@ -177,11 +177,11 @@ export default function MedicationsForm() {
   };
 
   // Generic helpers per list
-  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", indication: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
   const updateRx = (id: string, p: Partial<Rx>, d = true) => { setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveRx = async (item: Rx) => {
     if (!userId) return;
-    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, prescriber: item.prescriber };
+    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, indication: item.indication, prescriber: item.prescriber };
     if (item.persisted) {
       await supabase.from("prescription_medications").update(payload).eq("id", item.id);
       audit("prescription_medications", "update");
