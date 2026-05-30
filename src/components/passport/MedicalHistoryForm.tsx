@@ -491,6 +491,8 @@ export default function MedicalHistoryForm() {
       setDirty(false);
       setDirtyStays(new Set());
       setDirtyTags(new Set());
+      setDirtyLocations(new Set());
+
       toast.success(t("saved"));
       return true;
     } catch {
