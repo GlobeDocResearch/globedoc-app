@@ -98,7 +98,7 @@ function PairingPage() {
         </div>
 
         {/* Card */}
-        <div className="mt-4 rounded-2xl bg-white p-8 shadow-sm">
+        <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm">
           {!code || expired ? (
             <div className="flex flex-col items-center text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
