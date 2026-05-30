@@ -1028,10 +1028,15 @@ export default function LifestyleForm() {
                 values={s.substances}
                 onToggle={(v) => toggleArr("substances", v)}
                 options={[
+                  { v: "none", l: t("sub_none") },
                   { v: "testosterone", l: t("sub_test") },
                   { v: "steroids", l: t("sub_steroids") },
                   { v: "cannabis", l: t("sub_cannabis") },
                   { v: "stimulants", l: t("sub_stim") },
+                  { v: "nootropics", l: t("sub_nootropics") },
+                  { v: "glp1", l: t("sub_glp1") },
+                  { v: "peptides", l: t("sub_peptides") },
+                  { v: "herbal", l: t("sub_herbal") },
                   { v: "other", l: t("other") },
                 ]}
               />
