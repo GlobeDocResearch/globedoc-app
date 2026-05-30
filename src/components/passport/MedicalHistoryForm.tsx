@@ -27,6 +27,27 @@ type ConditionTag = {
   persisted: boolean;
 };
 
+type RecordLocation = {
+  id: string;
+  institution: string;
+  city: string;
+  country: string;
+  years: string;
+  record_type: string;
+  collapsed: boolean;
+  persisted: boolean;
+};
+
+const RECORD_TYPES = [
+  "General records",
+  "Imaging / Radiology",
+  "Lab results",
+  "Specialist records",
+  "Other",
+];
+
+
+
 const SUGGESTIONS = ALL_CONDITIONS;
 
 
