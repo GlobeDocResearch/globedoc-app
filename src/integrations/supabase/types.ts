@@ -935,6 +935,83 @@ export type Database = {
         }
         Relationships: []
       }
+      record_comments: {
+        Row: {
+          body: string
+          created_at: string
+          entry_id: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          entry_id: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          entry_id?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "record_comments_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "record_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      record_entries: {
+        Row: {
+          body: string | null
+          created_at: string
+          entry_type: string
+          file_mime: string | null
+          file_name: string | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          entry_type: string
+          file_mime?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          entry_type?: string
+          file_mime?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       stopped_medications: {
         Row: {
           created_at: string
