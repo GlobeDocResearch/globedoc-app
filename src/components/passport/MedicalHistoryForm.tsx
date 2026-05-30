@@ -219,9 +219,22 @@ export default function MedicalHistoryForm() {
         setAssisted(oh.data.assisted_reproduction);
         setAssistedNotes(oh.data.notes ?? "");
       }
+      if (rl.data) {
+        setLocations((rl.data as any[]).map((r) => ({
+          id: r.id,
+          institution: r.institution ?? "",
+          city: r.city ?? "",
+          country: r.country ?? "",
+          years: r.years ?? "",
+          record_type: r.record_type ?? "",
+          collapsed: true,
+          persisted: true,
+        })));
+      }
       setLoading(false);
     })();
   }, [navigate]);
+
 
   // Reactive biological_sex via realtime subscription
   useEffect(() => {
