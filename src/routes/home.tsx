@@ -102,16 +102,16 @@ function HomePage() {
             </div>
             <div className="flex-1">
               <h2 className="text-lg font-bold text-[#0D1B2A]">{t("home.passportTitle")}</h2>
-              <p className="mt-1 text-sm text-[#2563EB]">{t("home.passportSubtitle")}</p>
+              <p className="mt-1 text-sm text-[#0D1B2A]">{t("home.passportSubtitle")}</p>
             </div>
           </div>
-          <button
-            type="button"
+          <Link
+            to="/passport"
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           >
             <Sparkles className="h-4 w-4" />
             {t("home.passportCta")}
-          </button>
+          </Link>
         </section>
       </main>
 
