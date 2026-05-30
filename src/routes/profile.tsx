@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Bell, LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle } from "lucide-react";
+import { Bell, LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle, Camera } from "lucide-react";
+import { useRef } from "react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
@@ -20,7 +21,7 @@ type Profile = {
   date_of_birth: string | null; biological_sex: string | null;
   nationality: string | null; country_of_residence: string | null;
   phone: string | null; address: string | null; blood_group: string | null;
-  language: string | null;
+  language: string | null; avatar_url: string | null;
 };
 
 const T = {
@@ -80,6 +81,35 @@ function ProfilePage() {
   const [consentOpen, setConsentOpen] = useState(false);
   const [consent, setConsent] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarClick = () => fileInputRef.current?.click();
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    if (!file.type.startsWith("image/")) { toast.error("Please select an image"); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5MB"); return; }
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${userId}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+      const url = pub.publicUrl;
+      const { error: dbErr } = await supabase.from("profiles").update({ avatar_url: url } as any).eq("user_id", userId);
+      if (dbErr) throw dbErr;
+      setProfile((p) => p ? { ...p, avatar_url: url } : p);
+      toast.success(t.saved);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
+      setUploadingAvatar(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -221,6 +251,35 @@ function ProfilePage() {
 
       <main className="mx-auto w-full max-w-3xl space-y-4 px-4 py-6">
         <h1 className="text-center text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
+
+        {/* Avatar */}
+        <div className="flex flex-col items-center">
+          <button
+            type="button"
+            onClick={handleAvatarClick}
+            disabled={uploadingAvatar}
+            aria-label="Change profile photo"
+            className="relative h-24 w-24 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
+          >
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <User className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
+            )}
+            <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-[#2563EB] text-white shadow ring-2 ring-white">
+              <Camera className="h-3.5 w-3.5" />
+            </span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
+        </div>
+
 
         {/* Personal Information */}
         <Card>
@@ -421,16 +480,17 @@ function BottomNav() {
     <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
       <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
         <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
-        <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Health Pass" />
+        <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" />
         <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label="Travel" />
+        <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label="Records" />
         <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
         <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" active />
       </ul>
     </nav>
   );
 }
-function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/travel" | "/pairing" | "/profile" }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"}`;
+function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/travel" | "/records" | "/pairing" | "/profile" }) {
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"}`;
   return (
     <li>
       {to ? <Link to={to} className={className}>{icon}<span>{label}</span></Link>

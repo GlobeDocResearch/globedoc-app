@@ -225,7 +225,7 @@ const T: Record<Lang, Record<string, string>> = {
     s_sub: "Recreational & self-administered substances",
     sub_q:
       "Do you use any of the following? (This information is confidential and helps your clinician provide safe care)",
-    sub_none: "None of the above",
+    sub_none: "None of the below",
     sub_test: "Self-administered testosterone",
     sub_steroids: "Anabolic steroids / performance-enhancing drugs",
     sub_cannabis: "Cannabis (if not already stated under Narcotics)",
@@ -375,7 +375,7 @@ const T: Record<Lang, Record<string, string>> = {
     s_sub: "Rekreations- och självadministrerade substanser",
     sub_q:
       "Använder du något av följande? (Denna information är konfidentiell och hjälper din kliniker att ge säker vård)",
-    sub_none: "Inget av ovanstående",
+    sub_none: "Inget av nedanstående",
     sub_test: "Självadministrerat testosteron",
     sub_steroids: "Anabola steroider / prestationshöjande preparat",
     sub_cannabis: "Cannabis (om ej redan angivet under Narkotika)",

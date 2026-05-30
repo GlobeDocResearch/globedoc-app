@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, ChevronRight } from "lucide-react";
+import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, ChevronRight, FileText } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { PassportSetupModal } from "@/components/PassportSetupModal";
@@ -25,10 +25,10 @@ const SECTIONS: {
   subtitle: string;
   color: string;
 }[] = [
-  { key: "medical-history", emoji: "🏥", title: "Medical History", subtitle: "Diagnoses, hospitalisations & operations", color: "#EAF3FB" },
+  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#EAF3FB" },
   { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#E6F6E8" },
   { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#EEEAF7" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risk", subtitle: "Habits that matter clinically", color: "#BFE6E2" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#BFE6E2" },
   { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#F2D6BC" },
   { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#FADDD7" },
 ];
@@ -176,17 +176,15 @@ function PassportPage() {
       <section className="mt-6 px-4">
         <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
-          <Hex style={{ left: 100, top: 86 }} color="#F8F9FA" filled pageBg="#F8F9FA">
-            <div className="flex flex-col items-center -mt-2">
-              <img src={logo} alt="" className="h-14 w-14" />
-              <span className="mt-0.5 text-[11px] font-bold leading-tight text-[#0D1B2A] text-center">GlobeDoc<br/>Health Passport</span>
-              <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
+          <Hex style={{ left: 100, top: 86 }} color="#FFFFFF" filled pageBg="#F8F9FA">
+            <div className="flex items-center justify-center">
+              <img src={logo} alt="GlobeDoc" className="h-16 w-16" />
             </div>
           </Hex>
-          {/* Top-left: Medical History */}
+          {/* Top-left: History */}
           <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-[#0D1B2A] text-center">Medical<br/>History</span>
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">History</span>
           </Hex>
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} color={SECTIONS[1].color} filled={done["medications"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[1].key)}>
@@ -201,7 +199,7 @@ function PassportPage() {
           {/* Bottom-right: Lifestyle & Risk */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-[#0D1B2A] text-center">Lifestyle<br/>& Risk</span>
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Lifestyle</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
@@ -259,8 +257,9 @@ function PassportPage() {
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
-          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Health Pass" active />
+          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" active />
           <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label="Travel" />
+          <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label="Records" />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
           <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" />
         </ul>
@@ -302,8 +301,8 @@ function Hex({ children, color, filled = true, pageBg, style, onClick }: { child
 }
 
 
-function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/travel" | "/pairing" | "/profile" }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
+function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/travel" | "/records" | "/pairing" | "/profile" }) {
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
     active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
   }`;
   return (

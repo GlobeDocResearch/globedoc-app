@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User } from "lucide-react";
+import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User, FileText } from "lucide-react";
+import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -72,22 +73,27 @@ function PairingPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-24">
       {/* Top section */}
-      <header className="bg-[#0D1B2A] px-5 pt-6 pb-6 text-white">
-        <h1 className="text-2xl font-bold">Pairing Code</h1>
-        <p className="mt-1 text-sm text-gray-400">
-          Share your Health Passport with a clinician
-        </p>
+      <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
+          <span className="text-lg font-bold text-[#0D1B2A]">GlobeDoc</span>
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 py-5">
-        {/* Gradient banner */}
-        <div className="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#3B5BDB] to-[#0CA678] p-4 text-white shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/20">
-            <LinkIcon className="h-6 w-6" />
+        <h1 className="text-2xl font-bold text-[#0D1B2A]">Pairing Code</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Share your Health Passport with a clinician
+        </p>
+
+        {/* Banner */}
+        <div className="mt-4 flex items-center gap-4 rounded-2xl bg-gray-100 p-4 shadow-sm">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
+            <LinkIcon className="h-6 w-6 text-[#0D1B2A]" />
           </div>
           <div>
-            <h2 className="text-base font-bold">Share your passport</h2>
-            <p className="text-xs text-white/80">Valid for 10 minutes · One-time use</p>
+            <h2 className="text-base font-bold text-[#0D1B2A]">Share your GlobeDoc Health Passport</h2>
+            <p className="text-xs text-gray-600">Valid for 10 minutes · One-time use</p>
           </div>
         </div>
 
@@ -133,7 +139,7 @@ function PairingPage() {
             type="button"
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#3B5BDB] to-[#0CA678] px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 px-5 py-3.5 text-sm font-semibold text-[#0D1B2A] shadow-sm hover:bg-gray-200 disabled:opacity-60"
           >
             <LinkIcon className="h-4 w-4" />
             {loading ? "Generating..." : "Generate pairing code"}
@@ -154,8 +160,9 @@ function PairingPage() {
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
-          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Health Pass" />
+          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" />
           <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label="Travel" />
+          <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label="Records" />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" active />
           <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" />
         </ul>
@@ -164,8 +171,8 @@ function PairingPage() {
   );
 }
 
-function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/travel" | "/pairing" | "/profile" }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
+function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/passport" | "/travel" | "/records" | "/pairing" | "/profile" }) {
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
     active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
   }`;
   return (

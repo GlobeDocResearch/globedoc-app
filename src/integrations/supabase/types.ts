@@ -881,6 +881,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          avatar_url: string | null
           biological_sex: string | null
           blood_group: string | null
           country_of_residence: string | null
@@ -898,6 +899,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          avatar_url?: string | null
           biological_sex?: string | null
           blood_group?: string | null
           country_of_residence?: string | null
@@ -915,6 +917,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          avatar_url?: string | null
           biological_sex?: string | null
           blood_group?: string | null
           country_of_residence?: string | null
