@@ -636,15 +636,10 @@ export default function MedicalHistoryForm() {
             </section>
 
             <section>
-              <div className="mb-1 flex flex-wrap items-center gap-2">
-                <h2 className="text-sm font-bold text-[#0D1B2A]">Global Health Record Retrieval</h2>
-                <span className="rounded-full bg-[#EEF0FB] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#5B6BD4]">
-                  Coming soon
-                </span>
-              </div>
               <p className="mb-3 text-xs text-gray-600">
-                Tell us where your medical records are held around the world. When automatic retrieval becomes available, we will notify you and fetch them on your behalf.
+                Enter the locations where your health records are held around the world. We will notify you when automated retrieval becomes operational in your region — and retrieve them on your behalf.
               </p>
+
 
               <div className="space-y-3">
                 {locations.map((loc) =>
