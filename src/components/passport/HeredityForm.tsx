@@ -255,6 +255,16 @@ const T: Record<Lang, Record<string, string>> = {
     findings_q: "Vad testades och vad blev resultatet?",
     findings_ph: "T.ex. BRCA1-gentest — negativt. Far testade positivt för Huntingtons gen.",
     counselling_q: "Får du genetisk rådgivning just nu?",
+    s_dna_title: "Importera rå DNA-data",
+    s_dna_sub: "Har du gjort ett konsument-DNA-test? Importera din rådatafil för att berika din genetiska hälsoprofil.",
+    dna_which_q: "Vilket test gjorde du?",
+    dna_other_ph: "Specificera annat gentest…",
+    dna_upload_btn: "Ladda upp rå DNA-fil",
+    dna_upload_hint: "Format som stöds: 23andMe .txt · AncestryDNA .txt · VCF · BAM (helgenom)",
+    dna_privacy: "Din rå DNA-data lagras krypterad och delas aldrig utan ditt uttryckliga samtycke. GlobeDoc tolkar inte rå DNA — filen kan delas med en klinisk genetiker via parkod.",
+    dna_uploaded: "Uppladdad",
+    dna_remove: "Ta bort",
+    dna_uploading: "Laddar upp…",
   },
 };
 
