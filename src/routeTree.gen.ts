@@ -19,9 +19,13 @@ import { Route as PairingRouteImport } from './routes/pairing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PassportIndexRouteImport } from './routes/passport.index'
 import { Route as PassportSectionRouteImport } from './routes/passport.$section'
+import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
+import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
+import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
 
 const VerifiedRoute = VerifiedRouteImport.update({
   id: '/verified',
@@ -73,6 +77,11 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -88,9 +97,26 @@ const PassportSectionRoute = PassportSectionRouteImport.update({
   path: '/passport/$section',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicConnectPassportRoute =
+  ApiPublicConnectPassportRouteImport.update({
+    id: '/api/public/connect/passport',
+    path: '/api/public/connect/passport',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicConnectPairRoute = ApiPublicConnectPairRouteImport.update({
+  id: '/api/public/connect/pair',
+  path: '/api/public/connect/pair',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectNoteRoute = ApiPublicConnectNoteRouteImport.update({
+  id: '/api/public/connect/note',
+  path: '/api/public/connect/note',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
@@ -103,9 +129,13 @@ export interface FileRoutesByFullPath {
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
+  '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
+  '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
+  '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
@@ -118,10 +148,14 @@ export interface FileRoutesByTo {
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport': typeof PassportIndexRoute
+  '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
+  '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
+  '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
@@ -134,11 +168,15 @@ export interface FileRoutesById {
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
   '/passport/': typeof PassportIndexRoute
+  '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
+  '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
+  '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/connect'
     | '/home'
     | '/legal'
     | '/login'
@@ -151,9 +189,13 @@ export interface FileRouteTypes {
     | '/verified'
     | '/passport/$section'
     | '/passport/'
+    | '/api/public/connect/note'
+    | '/api/public/connect/pair'
+    | '/api/public/connect/passport'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/connect'
     | '/home'
     | '/legal'
     | '/login'
@@ -166,9 +208,13 @@ export interface FileRouteTypes {
     | '/verified'
     | '/passport/$section'
     | '/passport'
+    | '/api/public/connect/note'
+    | '/api/public/connect/pair'
+    | '/api/public/connect/passport'
   id:
     | '__root__'
     | '/'
+    | '/connect'
     | '/home'
     | '/legal'
     | '/login'
@@ -181,10 +227,14 @@ export interface FileRouteTypes {
     | '/verified'
     | '/passport/$section'
     | '/passport/'
+    | '/api/public/connect/note'
+    | '/api/public/connect/pair'
+    | '/api/public/connect/passport'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConnectRoute: typeof ConnectRoute
   HomeRoute: typeof HomeRoute
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
@@ -197,6 +247,9 @@ export interface RootRouteChildren {
   VerifiedRoute: typeof VerifiedRoute
   PassportSectionRoute: typeof PassportSectionRoute
   PassportIndexRoute: typeof PassportIndexRoute
+  ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
+  ApiPublicConnectPairRoute: typeof ApiPublicConnectPairRoute
+  ApiPublicConnectPassportRoute: typeof ApiPublicConnectPassportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -271,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -292,11 +352,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PassportSectionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/connect/passport': {
+      id: '/api/public/connect/passport'
+      path: '/api/public/connect/passport'
+      fullPath: '/api/public/connect/passport'
+      preLoaderRoute: typeof ApiPublicConnectPassportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/pair': {
+      id: '/api/public/connect/pair'
+      path: '/api/public/connect/pair'
+      fullPath: '/api/public/connect/pair'
+      preLoaderRoute: typeof ApiPublicConnectPairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/note': {
+      id: '/api/public/connect/note'
+      path: '/api/public/connect/note'
+      fullPath: '/api/public/connect/note'
+      preLoaderRoute: typeof ApiPublicConnectNoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConnectRoute: ConnectRoute,
   HomeRoute: HomeRoute,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
@@ -309,6 +391,9 @@ const rootRouteChildren: RootRouteChildren = {
   VerifiedRoute: VerifiedRoute,
   PassportSectionRoute: PassportSectionRoute,
   PassportIndexRoute: PassportIndexRoute,
+  ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
+  ApiPublicConnectPairRoute: ApiPublicConnectPairRoute,
+  ApiPublicConnectPassportRoute: ApiPublicConnectPassportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

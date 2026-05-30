@@ -15,7 +15,7 @@ export const Route = createFileRoute("/records")({
   component: RecordsPage,
 });
 
-type EntryType = "note" | "document" | "image" | "lab";
+type EntryType = "note" | "document" | "image" | "lab" | "clinical_note";
 
 type RecordEntry = {
   id: string;
@@ -88,6 +88,7 @@ function typeMeta(type: EntryType, t: typeof T.en) {
     case "document": return { Icon: FileUp, label: t.doc, color: "text-blue-600 bg-blue-50" };
     case "image": return { Icon: ImageIcon, label: t.image, color: "text-purple-600 bg-purple-50" };
     case "lab": return { Icon: FlaskConical, label: t.lab, color: "text-emerald-600 bg-emerald-50" };
+    case "clinical_note": return { Icon: StickyNote, label: "Clinical note", color: "text-green-700 bg-green-50" };
   }
 }
 

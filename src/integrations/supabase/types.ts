@@ -820,6 +820,7 @@ export type Database = {
           id: string
           used: boolean
           user_id: string
+          validity_minutes: number
         }
         Insert: {
           code: string
@@ -828,6 +829,7 @@ export type Database = {
           id?: string
           used?: boolean
           user_id: string
+          validity_minutes?: number
         }
         Update: {
           code?: string
@@ -836,6 +838,7 @@ export type Database = {
           id?: string
           used?: boolean
           user_id?: string
+          validity_minutes?: number
         }
         Relationships: []
       }
@@ -873,6 +876,57 @@ export type Database = {
           id?: string
           indication?: string | null
           prescriber?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pro_sessions: {
+        Row: {
+          access_level: string
+          created_at: string
+          expires_at: string
+          id: string
+          institution: string | null
+          last_accessed_at: string | null
+          paired_at: string
+          pairing_code_id: string | null
+          pro_name: string
+          pro_title: string | null
+          revoked_at: string | null
+          session_token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          institution?: string | null
+          last_accessed_at?: string | null
+          paired_at?: string
+          pairing_code_id?: string | null
+          pro_name: string
+          pro_title?: string | null
+          revoked_at?: string | null
+          session_token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          institution?: string | null
+          last_accessed_at?: string | null
+          paired_at?: string
+          pairing_code_id?: string | null
+          pro_name?: string
+          pro_title?: string | null
+          revoked_at?: string | null
+          session_token?: string
           updated_at?: string
           user_id?: string
         }
@@ -972,6 +1026,8 @@ export type Database = {
       }
       record_entries: {
         Row: {
+          author_name: string | null
+          author_role: string | null
           body: string | null
           created_at: string
           entry_type: string
@@ -980,11 +1036,14 @@ export type Database = {
           file_path: string | null
           file_size: number | null
           id: string
+          pro_session_id: string | null
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          author_name?: string | null
+          author_role?: string | null
           body?: string | null
           created_at?: string
           entry_type: string
@@ -993,11 +1052,14 @@ export type Database = {
           file_path?: string | null
           file_size?: number | null
           id?: string
+          pro_session_id?: string | null
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          author_name?: string | null
+          author_role?: string | null
           body?: string | null
           created_at?: string
           entry_type?: string
@@ -1006,6 +1068,7 @@ export type Database = {
           file_path?: string | null
           file_size?: number | null
           id?: string
+          pro_session_id?: string | null
           title?: string
           updated_at?: string
           user_id?: string
