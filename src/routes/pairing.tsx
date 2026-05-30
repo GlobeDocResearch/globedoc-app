@@ -101,14 +101,14 @@ function PairingPage() {
         <div className="mt-4 rounded-2xl bg-white p-8 shadow-sm">
           {!code || expired ? (
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
-                <LinkIcon className="h-10 w-10 text-gray-400" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                <LinkIcon className="h-6 w-6 text-gray-400" />
               </div>
-              <h3 className="mt-5 text-lg font-bold text-[#0D1B2A]">
+              <h3 className="mt-3 text-base font-bold text-[#0D1B2A]">
                 {expired ? "Code expired" : "No active code"}
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                Generate a code when you're with a clinician
+                Generate a code when you are with a clinician
               </p>
             </div>
           ) : (
