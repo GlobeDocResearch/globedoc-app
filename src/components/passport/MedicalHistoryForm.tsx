@@ -714,17 +714,22 @@ function ConditionTagInput({
       </div>
 
       {quickPicks.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          {quickPicks.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => commit(c)}
-              className="rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
-            >
-              {c}
-            </button>
-          ))}
+        <div className="space-y-1.5 pt-1">
+          <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Most common conditions
+          </h3>
+          <div className="flex flex-wrap gap-1.5">
+            {quickPicks.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => commit(c)}
+                className="rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
