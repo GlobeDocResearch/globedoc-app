@@ -149,6 +149,10 @@ const initialState: State = {
   tested: null,
   findings: "",
   under_counselling: null,
+  dna_tests: [],
+  dna_other: "",
+  dna_file_path: null,
+  dna_file_name: null,
 };
 
 const T: Record<Lang, Record<string, string>> = {
