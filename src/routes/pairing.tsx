@@ -73,22 +73,27 @@ function PairingPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-24">
       {/* Top section */}
-      <header className="bg-[#0D1B2A] px-5 pt-6 pb-6 text-white">
-        <h1 className="text-2xl font-bold">Pairing Code</h1>
-        <p className="mt-1 text-sm text-gray-400">
-          Share your Health Passport with a clinician
-        </p>
+      <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
+          <span className="text-lg font-bold text-[#0D1B2A]">GlobeDoc</span>
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 py-5">
-        {/* Gradient banner */}
-        <div className="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#3B5BDB] to-[#0CA678] p-4 text-white shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/20">
-            <LinkIcon className="h-6 w-6" />
+        <h1 className="text-2xl font-bold text-[#0D1B2A]">Pairing Code</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Share your Health Passport with a clinician
+        </p>
+
+        {/* Banner */}
+        <div className="mt-4 flex items-center gap-4 rounded-2xl bg-gray-100 p-4 shadow-sm">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
+            <LinkIcon className="h-6 w-6 text-[#0D1B2A]" />
           </div>
           <div>
-            <h2 className="text-base font-bold">Share your passport</h2>
-            <p className="text-xs text-white/80">Valid for 10 minutes · One-time use</p>
+            <h2 className="text-base font-bold text-[#0D1B2A]">Share your GlobeDoc Health Passport</h2>
+            <p className="text-xs text-gray-600">Valid for 10 minutes · One-time use</p>
           </div>
         </div>
 
