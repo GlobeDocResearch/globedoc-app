@@ -7,6 +7,8 @@ import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIco
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import WorldMap, { type MapLocation } from "@/components/WorldMap";
+
 
 export const Route = createFileRoute("/home")({
   head: () => ({
