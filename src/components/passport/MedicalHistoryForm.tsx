@@ -604,63 +604,9 @@ export default function MedicalHistoryForm() {
 
             <section>
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s2")}</h2>
-              <div className="space-y-3">
-                {stays.map((stay) =>
-                  stay.collapsed ? (
-                    <div
-                      key={stay.id}
-                      className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3"
-                    >
-                      <span className="truncate text-sm text-[#0D1B2A]">
-                        {[stay.event, stay.year, stay.hospital_country].filter(Boolean).join(" · ")}
-                      </span>
-                      <div className="flex gap-2">
-                        <button type="button" aria-label="Edit" onClick={() => updateStay(stay.id, { collapsed: false })} className="rounded-md p-1.5 text-gray-600 hover:bg-gray-200">
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button type="button" aria-label="Delete" onClick={() => deleteStay(stay)} className="rounded-md p-1.5 text-red-500 hover:bg-gray-200">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                      <Field label={t("f_event")} value={stay.event} ph={t("f_event_ph")} onChange={(v) => updateStay(stay.id, { event: v })} />
-                      <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
-                      <Field label={t("f_year")} value={stay.year} ph={t("f_year_ph")} onChange={(v) => updateStay(stay.id, { year: v })} />
-                      <Field label={t("f_hosp")} value={stay.hospital_country} ph={t("f_hosp_ph")} onChange={(v) => updateStay(stay.id, { hospital_country: v })} />
-                      <Field label={t("f_notes")} value={stay.notes} ph={t("f_notes_ph")} onChange={(v) => updateStay(stay.id, { notes: v })} />
-                      {dirtyStays.has(stay.id) && (
-                        <CardUnsavedBanner onSave={() => saveStay(stay)} onDiscard={() => discardStay(stay)} />
-                      )}
-                      <div className="flex justify-end gap-2 pt-1">
-                        <button type="button" onClick={() => deleteStay(stay)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                        <button type="button" onClick={() => saveStay(stay)} className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]">
-                          {t("save_stay")}
-                        </button>
-                      </div>
-                    </div>
-                  ),
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={addStay}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#E5E7EB] px-4 py-3 text-sm text-gray-600 hover:bg-[#F8F9FA]"
-              >
-                <Plus className="h-4 w-4" />
-                {t("add_stay")}
-              </button>
-            </section>
-
-            <section>
               <p className="mb-3 text-xs text-gray-600">
                 Enter the locations where your health records are held around the world. We will notify you when automated retrieval becomes operational in your region — and retrieve them on your behalf.
               </p>
-
-
               <div className="space-y-3">
                 {locations.map((loc) =>
                   loc.collapsed ? (
@@ -719,15 +665,76 @@ export default function MedicalHistoryForm() {
                     </div>
                   ),
                 )}
+
+                {stays.map((stay) =>
+                  stay.collapsed ? (
+                    <div
+                      key={stay.id}
+                      className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium text-[#0D1B2A]">
+                          {[stay.event, stay.year].filter(Boolean).join(" · ") || stay.institution || "—"}
+                        </div>
+                        <div className="truncate text-xs text-gray-600">
+                          {[stay.institution, stay.city, stay.country].filter(Boolean).join(" · ")}
+                          {stay.record_type ? ` — ${stay.record_type}` : ""}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button type="button" aria-label="Edit" onClick={() => updateStay(stay.id, { collapsed: false })} className="rounded-md p-1.5 text-gray-600 hover:bg-gray-200">
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button type="button" aria-label="Delete" onClick={() => deleteStay(stay)} className="rounded-md p-1.5 text-red-500 hover:bg-gray-200">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                      <Field label={t("f_event")} value={stay.event} ph="E.g. Appendectomy, outpatient consultation" onChange={(v) => updateStay(stay.id, { event: v })} />
+                      <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
+                      <Field label={t("f_year")} value={stay.year} ph="E.g. 2019 or 2018–2022" onChange={(v) => updateStay(stay.id, { year: v })} />
+                      <Field label="Institution / Hospital name" value={stay.institution} ph="E.g. Karolinska University Hospital" onChange={(v) => updateStay(stay.id, { institution: v })} />
+                      <Field label="City" value={stay.city} ph="E.g. Stockholm" onChange={(v) => updateStay(stay.id, { city: v })} />
+                      <Field label="Country" value={stay.country} ph="E.g. Sweden" onChange={(v) => updateStay(stay.id, { country: v })} />
+                      <div>
+                        <label className="block text-xs text-gray-600">Record type</label>
+                        <select
+                          value={stay.record_type}
+                          onChange={(e) => updateStay(stay.id, { record_type: e.target.value })}
+                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#5B6BD4] focus:outline-none"
+                        >
+                          <option value="">Select…</option>
+                          {RECORD_TYPES.map((rt) => (
+                            <option key={rt} value={rt}>{rt}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <Field label={t("f_notes")} value={stay.notes} ph={t("f_notes_ph")} onChange={(v) => updateStay(stay.id, { notes: v })} />
+                      {dirtyStays.has(stay.id) && (
+                        <CardUnsavedBanner onSave={() => saveStay(stay)} onDiscard={() => discardStay(stay)} />
+                      )}
+                      <div className="flex justify-end gap-2 pt-1">
+                        <button type="button" onClick={() => deleteStay(stay)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                        <button type="button" onClick={() => saveStay(stay)} className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]">
+                          {t("save_stay")}
+                        </button>
+                      </div>
+                    </div>
+                  ),
+                )}
               </div>
 
               <button
                 type="button"
-                onClick={addLocation}
+                onClick={addStay}
                 className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#E5E7EB] px-4 py-3 text-sm text-gray-600 hover:bg-[#F8F9FA]"
               >
                 <Plus className="h-4 w-4" />
-                Add record location
+                Add clinical contact, hospitalisation or record location
               </button>
 
               <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#E5E7EB] bg-[#FFF8E1] p-3 text-xs text-[#0D1B2A]">
@@ -741,6 +748,7 @@ export default function MedicalHistoryForm() {
                 </p>
               </div>
             </section>
+
 
 
 
