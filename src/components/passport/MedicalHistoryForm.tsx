@@ -605,15 +605,23 @@ function ConditionTagInput({
 }) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const [browseOpen, setBrowseOpen] = useState(false);
+  const [browseQ, setBrowseQ] = useState("");
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const used = useMemo(() => new Set(tags.map((t) => t.condition_name.toLowerCase())), [tags]);
+
+  const quickPicks = useMemo(
+    () => TOP_CONDITIONS.filter((s) => !used.has(s.toLowerCase())),
+    [used],
+  );
+
   const matches = useMemo(() => {
     const term = q.trim().toLowerCase();
-    if (!term) return SUGGESTIONS.filter((s) => !used.has(s.toLowerCase())).slice(0, 8);
+    if (!term) return [];
     return SUGGESTIONS
       .filter((s) => s.toLowerCase().includes(term) && !used.has(s.toLowerCase()))
-      .slice(0, 8);
+      .slice(0, 10);
   }, [q, used]);
 
   useEffect(() => {
@@ -680,7 +688,7 @@ function ConditionTagInput({
           placeholder={searchPlaceholder}
           className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
         />
-        {open && (matches.length > 0 || q.trim()) && (
+        {open && q.trim() && (
           <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             {matches.map((m) => (
               <button
@@ -692,7 +700,7 @@ function ConditionTagInput({
                 {m}
               </button>
             ))}
-            {q.trim() && !SUGGESTIONS.some((s) => s.toLowerCase() === q.trim().toLowerCase()) && (
+            {!SUGGESTIONS.some((s) => s.toLowerCase() === q.trim().toLowerCase()) && (
               <button
                 type="button"
                 onClick={() => commit(q)}
@@ -704,9 +712,85 @@ function ConditionTagInput({
           </div>
         )}
       </div>
+
+      {quickPicks.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {quickPicks.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => commit(c)}
+              className="rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
+            >
+              + {c}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => { setBrowseQ(""); setBrowseOpen(true); }}
+        className="text-xs font-medium text-[#5B6BD4] hover:underline"
+      >
+        browse by speciality →
+      </button>
+
+      <Sheet open={browseOpen} onOpenChange={setBrowseOpen}>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Browse by speciality</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4">
+            <input
+              value={browseQ}
+              onChange={(e) => setBrowseQ(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
+            />
+          </div>
+          <div className="mt-4 space-y-5 pb-8">
+            {CONDITION_GROUPS.map((group) => {
+              const term = browseQ.trim().toLowerCase();
+              const items = term
+                ? group.items.filter((i) => i.toLowerCase().includes(term))
+                : group.items;
+              if (items.length === 0) return null;
+              return (
+                <div key={group.specialty}>
+                  <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-500">
+                    {group.specialty}
+                  </h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {items.map((c) => {
+                      const isUsed = used.has(c.toLowerCase());
+                      return (
+                        <button
+                          key={`${group.specialty}-${c}`}
+                          type="button"
+                          disabled={isUsed}
+                          onClick={() => commit(c)}
+                          className={`rounded-full border px-3 py-1 text-xs ${
+                            isUsed
+                              ? "cursor-not-allowed border-[#E5E7EB] bg-[#F1F2F6] text-gray-400"
+                              : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
+                          }`}
+                        >
+                          {isUsed ? `✓ ${c}` : `+ ${c}`}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
+
 
 function Field({ label, value, ph, onChange }: { label: string; value: string; ph: string; onChange: (v: string) => void }) {
   return (
