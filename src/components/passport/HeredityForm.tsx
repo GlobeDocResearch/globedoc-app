@@ -72,6 +72,60 @@ const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolea
   { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros", ageKind: "onset" },
 ];
 
+const FAMILY_MEMBERS: { v: string; l_en: string; l_sv: string }[] = [
+  { v: "paternal_grandfather", l_en: "Paternal grandfather", l_sv: "Farfar" },
+  { v: "paternal_grandmother", l_en: "Paternal grandmother", l_sv: "Farmor" },
+  { v: "maternal_grandfather", l_en: "Maternal grandfather", l_sv: "Morfar" },
+  { v: "maternal_grandmother", l_en: "Maternal grandmother", l_sv: "Mormor" },
+  { v: "father", l_en: "Father", l_sv: "Far" },
+  { v: "mother", l_en: "Mother", l_sv: "Mor" },
+  { v: "brother", l_en: "Brother", l_sv: "Bror" },
+  { v: "sister", l_en: "Sister", l_sv: "Syster" },
+  { v: "son", l_en: "Son", l_sv: "Son" },
+  { v: "daughter", l_en: "Daughter", l_sv: "Dotter" },
+  { v: "paternal_uncle_aunt", l_en: "Paternal uncle / aunt", l_sv: "Farbror / faster" },
+  { v: "maternal_uncle_aunt", l_en: "Maternal uncle / aunt", l_sv: "Morbror / moster" },
+  { v: "cousin", l_en: "Cousin", l_sv: "Kusin" },
+  { v: "other", l_en: "Other (specify)", l_sv: "Annan (specificera)" },
+];
+
+function parseRelatives(s: string | null | undefined): { picks: string[]; other: string } {
+  if (!s) return { picks: [], other: "" };
+  const picks: string[] = [];
+  let other = "";
+  for (const raw of s.split(",").map((p) => p.trim()).filter(Boolean)) {
+    if (raw.startsWith("other:")) {
+      other = raw.slice(6).trim();
+      if (!picks.includes("other")) picks.push("other");
+    } else if (FAMILY_MEMBERS.some((fm) => fm.v === raw)) {
+      picks.push(raw);
+    } else {
+      // Legacy free-text — treat as Other
+      other = other ? `${other}, ${raw}` : raw;
+      if (!picks.includes("other")) picks.push("other");
+    }
+  }
+  return { picks, other };
+}
+
+function serializeRelatives(picks: string[], other: string): string {
+  return picks
+    .map((p) => (p === "other" ? (other.trim() ? `other:${other.trim()}` : "") : p))
+    .filter(Boolean)
+    .join(",");
+}
+
+function displayRelatives(s: string | null | undefined, lang: Lang): string {
+  const { picks, other } = parseRelatives(s);
+  return picks
+    .map((p) => {
+      if (p === "other") return other || (lang === "sv" ? "Annan" : "Other");
+      const fm = FAMILY_MEMBERS.find((f) => f.v === p);
+      return fm ? (lang === "sv" ? fm.l_sv : fm.l_en) : p;
+    })
+    .join(", ");
+}
+
 
 const initialState: State = {
   nothing: false,
