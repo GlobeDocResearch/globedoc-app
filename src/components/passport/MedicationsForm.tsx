@@ -95,7 +95,7 @@ const T: Record<Lang, Record<string, string>> = {
     f_period: "Period",
     f_period_ph: "T.ex. 2019–2023",
     f_reason_stopped: "Anledning till att sluta",
-    f_reason_stopped_ph: "T.ex. Biverkningar — muskelsmärta",
+    f_reason_stopped_ph: "T.ex. Biverkningar, inte längre nödvändig, ersatt av annat läkemedel",
     intolerances_ph: "T.ex. NSAID → magsår, Morfin → illamående…",
     save: "Spara",
     save_item: "Spara",
