@@ -347,6 +347,7 @@ export default function MedicalHistoryForm() {
     if (data) {
       updateStay(stay.id, {
         event: data.event ?? "",
+        diagnosis: (data as any).diagnosis ?? "",
         year: data.year ?? "",
         hospital_country: data.hospital_country ?? "",
         notes: data.notes ?? "",
