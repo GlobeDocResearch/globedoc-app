@@ -730,7 +730,7 @@ export default function HeredityForm() {
                             <div className="font-medium">{cc.name}</div>
                             {cc.relative && (
                               <div className="mt-0.5 text-xs text-gray-600">
-                                {t("which_relative")} {cc.relative}
+                                {t("which_relative")} {displayRelatives(cc.relative, lang)}
                               </div>
                             )}
                           </div>
