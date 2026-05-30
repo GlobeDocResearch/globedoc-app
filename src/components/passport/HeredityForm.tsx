@@ -636,7 +636,7 @@ export default function HeredityForm() {
                       const spec = s.specifyByCondition[c.v];
                       const ageLabel = c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset");
                       const parts: string[] = [];
-                      if (rel) parts.push(`${t("which_relative")} ${rel}`);
+                      if (rel) parts.push(`${t("which_relative")} ${displayRelatives(rel, lang)}`);
                       if (c.ageKind && spec) parts.push(`${ageLabel} ${spec}`);
                       if (c.needsSpecify && spec) parts.push(`${t("which_condition")} ${spec}`);
                       return (
