@@ -145,6 +145,8 @@ export default function MedicalHistoryForm() {
   const [current, setCurrent] = useState<ConditionTag[]>([]);
   const [past, setPast] = useState<ConditionTag[]>([]);
   const [stays, setStays] = useState<Stay[]>([]);
+  const [locations, setLocations] = useState<RecordLocation[]>([]);
+
 
   const [biologicalSex, setBiologicalSex] = useState<string | null>(null);
 
