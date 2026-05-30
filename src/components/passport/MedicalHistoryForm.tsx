@@ -714,33 +714,51 @@ function ConditionTagInput({
         )}
       </div>
 
-      {quickPicks.length > 0 && (
-        <div className="space-y-1.5 pt-1">
-          <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500">
-            Most common conditions
-          </h3>
-          <div className="flex flex-wrap gap-1.5">
-            {quickPicks.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => commit(c)}
-                className="rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="flex flex-col gap-1.5 pt-1">
+        <button
+          type="button"
+          onClick={() => setCommonOpen(true)}
+          className="self-start text-xs font-medium text-[#5B6BD4] hover:underline"
+        >
+          Browse most common conditions →
+        </button>
+        <button
+          type="button"
+          onClick={() => { setBrowseQ(""); setBrowseOpen(true); }}
+          className="self-start text-xs font-medium text-[#5B6BD4] hover:underline"
+        >
+          Browse by speciality →
+        </button>
+      </div>
 
-      <button
-        type="button"
-        onClick={() => { setBrowseQ(""); setBrowseOpen(true); }}
-        className="text-xs font-medium text-[#5B6BD4] hover:underline"
-      >
-        browse by speciality →
-      </button>
+      <Sheet open={commonOpen} onOpenChange={setCommonOpen}>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Most common conditions</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 flex flex-wrap gap-1.5 pb-8">
+            {TOP_CONDITIONS.map((c) => {
+              const isUsed = used.has(c.toLowerCase());
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  disabled={isUsed}
+                  onClick={() => commit(c)}
+                  className={`rounded-full border px-3 py-1 text-xs ${
+                    isUsed
+                      ? "cursor-not-allowed border-[#E5E7EB] bg-[#F1F2F6] text-gray-400"
+                      : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
+                  }`}
+                >
+                  {isUsed ? `✓ ${c}` : c}
+                </button>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
+
 
       <Sheet open={browseOpen} onOpenChange={setBrowseOpen}>
         <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
