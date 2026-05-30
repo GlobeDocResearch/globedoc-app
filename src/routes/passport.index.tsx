@@ -176,17 +176,15 @@ function PassportPage() {
       <section className="mt-6 px-4">
         <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
-          <Hex style={{ left: 100, top: 86 }} color="#F8F9FA" filled pageBg="#F8F9FA">
-            <div className="flex flex-col items-center -mt-2">
-              <img src={logo} alt="" className="h-14 w-14" />
-              <span className="mt-0.5 text-[11px] font-bold leading-tight text-[#0D1B2A] text-center">GlobeDoc<br/>Health Passport</span>
-              <span className="text-[11px] font-bold text-[#3B82F6]">{completed}/{total}</span>
+          <Hex style={{ left: 100, top: 86 }} color="#FFFFFF" filled pageBg="#F8F9FA">
+            <div className="flex items-center justify-center">
+              <img src={logo} alt="GlobeDoc" className="h-16 w-16" />
             </div>
           </Hex>
-          {/* Top-left: Medical History */}
+          {/* Top-left: History */}
           <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-[#0D1B2A] text-center">Medical<br/>History</span>
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">History</span>
           </Hex>
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} color={SECTIONS[1].color} filled={done["medications"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[1].key)}>
