@@ -155,7 +155,7 @@ const T: Record<Lang, Record<string, string>> = {
     s2: "Travel vaccines",
     s3: "Other vaccines",
     s4: "Contraindications",
-    info_sweden: "Based on the Swedish vaccination programme for someone born in {year}. These vaccines were likely given during childhood — confirm or adjust as needed.",
+    info_sweden: "Based on the Swedish vaccination programme for someone born in {year}. Confirm or adjust as needed.",
     info_other: "Adjust based on your country's vaccination programme.",
     info_no_year: "We don't know your year of birth yet. All vaccines default to \"Unsure\" — please confirm.",
     likely: "Likely received",
