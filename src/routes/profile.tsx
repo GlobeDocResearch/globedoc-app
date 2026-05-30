@@ -21,7 +21,7 @@ type Profile = {
   date_of_birth: string | null; biological_sex: string | null;
   nationality: string | null; country_of_residence: string | null;
   phone: string | null; address: string | null; blood_group: string | null;
-  language: string | null;
+  language: string | null; avatar_url: string | null;
 };
 
 const T = {
