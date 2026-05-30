@@ -365,6 +365,10 @@ export type Database = {
       heredity_genetic_testing: {
         Row: {
           created_at: string
+          dna_file_name: string | null
+          dna_file_path: string | null
+          dna_other: string | null
+          dna_tests: string[] | null
           findings: string | null
           id: string
           tested: boolean | null
@@ -374,6 +378,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          dna_file_name?: string | null
+          dna_file_path?: string | null
+          dna_other?: string | null
+          dna_tests?: string[] | null
           findings?: string | null
           id?: string
           tested?: boolean | null
@@ -383,6 +391,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          dna_file_name?: string | null
+          dna_file_path?: string | null
+          dna_other?: string | null
+          dna_tests?: string[] | null
           findings?: string | null
           id?: string
           tested?: boolean | null

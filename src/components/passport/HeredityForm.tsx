@@ -49,6 +49,10 @@ type State = {
   tested: boolean | null;
   findings: string;
   under_counselling: boolean | null;
+  dna_tests: string[];
+  dna_other: string;
+  dna_file_path: string | null;
+  dna_file_name: string | null;
 };
 
 type AgeKind = "stroke" | "onset";
@@ -72,6 +76,60 @@ const CONDITIONS: { v: string; l_en: string; l_sv: string; needsSpecify?: boolea
   { v: "cystic_fibrosis", l_en: "Cystic fibrosis", l_sv: "Cystisk fibros", ageKind: "onset" },
 ];
 
+const FAMILY_MEMBERS: { v: string; l_en: string; l_sv: string }[] = [
+  { v: "paternal_grandfather", l_en: "Paternal grandfather", l_sv: "Farfar" },
+  { v: "paternal_grandmother", l_en: "Paternal grandmother", l_sv: "Farmor" },
+  { v: "maternal_grandfather", l_en: "Maternal grandfather", l_sv: "Morfar" },
+  { v: "maternal_grandmother", l_en: "Maternal grandmother", l_sv: "Mormor" },
+  { v: "father", l_en: "Father", l_sv: "Far" },
+  { v: "mother", l_en: "Mother", l_sv: "Mor" },
+  { v: "brother", l_en: "Brother", l_sv: "Bror" },
+  { v: "sister", l_en: "Sister", l_sv: "Syster" },
+  { v: "son", l_en: "Son", l_sv: "Son" },
+  { v: "daughter", l_en: "Daughter", l_sv: "Dotter" },
+  { v: "paternal_uncle_aunt", l_en: "Paternal uncle / aunt", l_sv: "Farbror / faster" },
+  { v: "maternal_uncle_aunt", l_en: "Maternal uncle / aunt", l_sv: "Morbror / moster" },
+  { v: "cousin", l_en: "Cousin", l_sv: "Kusin" },
+  { v: "other", l_en: "Other (specify)", l_sv: "Annan (specificera)" },
+];
+
+function parseRelatives(s: string | null | undefined): { picks: string[]; other: string } {
+  if (!s) return { picks: [], other: "" };
+  const picks: string[] = [];
+  let other = "";
+  for (const raw of s.split(",").map((p) => p.trim()).filter(Boolean)) {
+    if (raw.startsWith("other:")) {
+      other = raw.slice(6).trim();
+      if (!picks.includes("other")) picks.push("other");
+    } else if (FAMILY_MEMBERS.some((fm) => fm.v === raw)) {
+      picks.push(raw);
+    } else {
+      // Legacy free-text — treat as Other
+      other = other ? `${other}, ${raw}` : raw;
+      if (!picks.includes("other")) picks.push("other");
+    }
+  }
+  return { picks, other };
+}
+
+function serializeRelatives(picks: string[], other: string): string {
+  return picks
+    .map((p) => (p === "other" ? (other.trim() ? `other:${other.trim()}` : "") : p))
+    .filter(Boolean)
+    .join(",");
+}
+
+function displayRelatives(s: string | null | undefined, lang: Lang): string {
+  const { picks, other } = parseRelatives(s);
+  return picks
+    .map((p) => {
+      if (p === "other") return other || (lang === "sv" ? "Annan" : "Other");
+      const fm = FAMILY_MEMBERS.find((f) => f.v === p);
+      return fm ? (lang === "sv" ? fm.l_sv : fm.l_en) : p;
+    })
+    .join(", ");
+}
+
 
 const initialState: State = {
   nothing: false,
@@ -91,6 +149,10 @@ const initialState: State = {
   tested: null,
   findings: "",
   under_counselling: null,
+  dna_tests: [],
+  dna_other: "",
+  dna_file_path: null,
+  dna_file_name: null,
 };
 
 const T: Record<Lang, Record<string, string>> = {
@@ -137,6 +199,16 @@ const T: Record<Lang, Record<string, string>> = {
     findings_q: "What was tested and what were the findings?",
     findings_ph: "E.g. BRCA1 gene test — negative. Father tested positive for Huntington's gene.",
     counselling_q: "Are you currently under genetic counselling?",
+    s_dna_title: "Import raw DNA data",
+    s_dna_sub: "Have you taken a consumer DNA test? Import your raw data file to enrich your genetic health profile.",
+    dna_which_q: "Which test did you take?",
+    dna_other_ph: "Specify other genetic test…",
+    dna_upload_btn: "Upload raw DNA file",
+    dna_upload_hint: "Supported formats: 23andMe .txt · AncestryDNA .txt · VCF · BAM (whole genome)",
+    dna_privacy: "Your raw DNA data is stored encrypted and is never shared without your explicit consent. GlobeDoc does not interpret raw DNA — this file can be shared with a clinical geneticist via pairing code.",
+    dna_uploaded: "Uploaded",
+    dna_remove: "Remove",
+    dna_uploading: "Uploading…",
   },
   sv: {
     title: "Ärftlighet",
@@ -183,6 +255,16 @@ const T: Record<Lang, Record<string, string>> = {
     findings_q: "Vad testades och vad blev resultatet?",
     findings_ph: "T.ex. BRCA1-gentest — negativt. Far testade positivt för Huntingtons gen.",
     counselling_q: "Får du genetisk rådgivning just nu?",
+    s_dna_title: "Importera rå DNA-data",
+    s_dna_sub: "Har du gjort ett konsument-DNA-test? Importera din rådatafil för att berika din genetiska hälsoprofil.",
+    dna_which_q: "Vilket test gjorde du?",
+    dna_other_ph: "Specificera annat gentest…",
+    dna_upload_btn: "Ladda upp rå DNA-fil",
+    dna_upload_hint: "Format som stöds: 23andMe .txt · AncestryDNA .txt · VCF · BAM (helgenom)",
+    dna_privacy: "Din rå DNA-data lagras krypterad och delas aldrig utan ditt uttryckliga samtycke. GlobeDoc tolkar inte rå DNA — filen kan delas med en klinisk genetiker via parkod.",
+    dna_uploaded: "Uppladdad",
+    dna_remove: "Ta bort",
+    dna_uploading: "Laddar upp…",
   },
 };
 
@@ -332,6 +414,10 @@ export default function HeredityForm() {
         next.tested = gen.data.tested;
         next.findings = gen.data.findings ?? "";
         next.under_counselling = gen.data.under_counselling;
+        next.dna_tests = gen.data.dna_tests ?? [];
+        next.dna_other = gen.data.dna_other ?? "";
+        next.dna_file_path = gen.data.dna_file_path ?? null;
+        next.dna_file_name = gen.data.dna_file_name ?? null;
       }
       setS(next);
       setLoading(false);
@@ -431,6 +517,10 @@ export default function HeredityForm() {
             tested: s.tested,
             findings: s.tested ? s.findings || null : null,
             under_counselling: s.tested ? s.under_counselling : null,
+            dna_tests: s.dna_tests.length > 0 ? s.dna_tests : null,
+            dna_other: s.dna_other || null,
+            dna_file_path: s.dna_file_path,
+            dna_file_name: s.dna_file_name,
             updated_at: new Date().toISOString(),
           },
           { onConflict: "user_id" },
@@ -546,7 +636,7 @@ export default function HeredityForm() {
                       const spec = s.specifyByCondition[c.v];
                       const ageLabel = c.ageKind === "stroke" ? t("age_at_first_stroke") : t("age_at_onset");
                       const parts: string[] = [];
-                      if (rel) parts.push(`${t("which_relative")} ${rel}`);
+                      if (rel) parts.push(`${t("which_relative")} ${displayRelatives(rel, lang)}`);
                       if (c.ageKind && spec) parts.push(`${ageLabel} ${spec}`);
                       if (c.needsSpecify && spec) parts.push(`${t("which_condition")} ${spec}`);
                       return (
@@ -610,6 +700,7 @@ export default function HeredityForm() {
                       editingCustomId === cc.id ? (
                         <AddOtherCondition
                           key={cc.id}
+                          lang={lang}
                           whichRelativeLabel={t("which_relative")}
                           whichRelativePh={t("which_relative_ph")}
                           whichConditionLabel={t("which_condition")}
@@ -640,7 +731,7 @@ export default function HeredityForm() {
                             <div className="font-medium">{cc.name}</div>
                             {cc.relative && (
                               <div className="mt-0.5 text-xs text-gray-600">
-                                {t("which_relative")} {cc.relative}
+                                {t("which_relative")} {displayRelatives(cc.relative, lang)}
                               </div>
                             )}
                           </div>
@@ -675,6 +766,7 @@ export default function HeredityForm() {
                 )}
 
               <AddOtherCondition
+                lang={lang}
                 whichRelativeLabel={t("which_relative")}
                 whichRelativePh={t("which_relative_ph")}
                 whichConditionLabel={t("which_condition")}
@@ -706,12 +798,11 @@ export default function HeredityForm() {
                         <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
                           {lang === "sv" ? c.l_sv : c.l_en}
                         </div>
-                        <Txt
+                        <Lbl>{t("which_relative")}</Lbl>
+                        <RelativeChecklist
                           value={s.conditions[c.v] ?? ""}
                           onChange={(v) => setConditionRelative(c.v, v)}
-                          placeholder={t("which_relative_ph")}
-                          label={t("which_relative")}
-                          onKeyDown={onEnter}
+                          lang={lang}
                         />
                         {c.ageKind && (
                           <div className="mt-2">
@@ -836,6 +927,19 @@ export default function HeredityForm() {
                 </div>
               )}
             </Accordion>
+
+            <DnaSection
+              t={t}
+              userId={userId}
+              tests={s.dna_tests}
+              other={s.dna_other}
+              filePath={s.dna_file_path}
+              fileName={s.dna_file_name}
+              onChange={(patch) => {
+                setS((p) => ({ ...p, ...patch }));
+                setDirty(true);
+              }}
+            />
           </>
         )}
       </div>
@@ -1148,7 +1252,7 @@ function YesNo({
 
 function AddOtherCondition({
   whichRelativeLabel,
-  whichRelativePh,
+  whichRelativePh: _whichRelativePh,
   whichConditionLabel,
   whichConditionPh,
   buttonLabel,
@@ -1158,6 +1262,7 @@ function AddOtherCondition({
   initialRelative = "",
   startOpen = false,
   onCancel,
+  lang,
 }: {
   whichRelativeLabel: string;
   whichRelativePh: string;
@@ -1170,6 +1275,7 @@ function AddOtherCondition({
   initialRelative?: string;
   startOpen?: boolean;
   onCancel?: () => void;
+  lang: Lang;
 }) {
   const [open, setOpen] = useState(startOpen);
   const [name, setName] = useState(initialName);
@@ -1208,14 +1314,7 @@ function AddOtherCondition({
     <div className="mt-3 rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3 space-y-2">
       <div>
         <label className="mb-1 block text-xs text-gray-600">{whichRelativeLabel}</label>
-        <input
-          autoFocus
-          value={relative}
-          onChange={(e) => setRelative(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") cancel(); }}
-          placeholder={whichRelativePh}
-          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
-        />
+        <RelativeChecklist value={relative} onChange={setRelative} lang={lang} />
       </div>
       <div>
         <label className="mb-1 block text-xs text-gray-600">{whichConditionLabel}</label>
@@ -1244,5 +1343,194 @@ function AddOtherCondition({
         </button>
       </div>
     </div>
+  );
+}
+
+function RelativeChecklist({
+  value,
+  onChange,
+  lang,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  lang: Lang;
+}) {
+  const { picks, other } = parseRelatives(value);
+  const toggle = (v: string) => {
+    const next = picks.includes(v) ? picks.filter((p) => p !== v) : [...picks, v];
+    onChange(serializeRelatives(next, other));
+  };
+  const setOther = (txt: string) => onChange(serializeRelatives(picks, txt));
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+        {FAMILY_MEMBERS.map((fm) => (
+          <label
+            key={fm.v}
+            className="flex cursor-pointer items-center gap-2 text-xs text-[#0D1B2A]"
+          >
+            <Checkbox
+              checked={picks.includes(fm.v)}
+              onCheckedChange={() => toggle(fm.v)}
+            />
+            {lang === "sv" ? fm.l_sv : fm.l_en}
+          </label>
+        ))}
+      </div>
+      {picks.includes("other") && (
+        <input
+          value={other}
+          onChange={(e) => setOther(e.target.value)}
+          placeholder={lang === "sv" ? "Specificera…" : "Specify…"}
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        />
+      )}
+    </div>
+  );
+}
+
+const DNA_TESTS: { v: string; label: string }[] = [
+  { v: "23andme", label: "23andMe" },
+  { v: "ancestrydna", label: "AncestryDNA" },
+  { v: "myheritage", label: "MyHeritage DNA" },
+  { v: "ftdna", label: "FamilyTreeDNA (FTDNA)" },
+  { v: "dante_nebula", label: "Dante Labs / Nebula Genomics" },
+  { v: "other", label: "Other genetic test (specify)" },
+];
+
+type DnaPatch = {
+  dna_tests?: string[];
+  dna_other?: string;
+  dna_file_path?: string | null;
+  dna_file_name?: string | null;
+};
+
+function DnaSection({
+  t,
+  userId,
+  tests,
+  other,
+  filePath,
+  fileName,
+  onChange,
+}: {
+  t: (k: any) => string;
+  userId: string | null;
+  tests: string[];
+  other: string;
+  filePath: string | null;
+  fileName: string | null;
+  onChange: (patch: DnaPatch) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const toggle = (v: string) => {
+    const next = tests.includes(v) ? tests.filter((x) => x !== v) : [...tests, v];
+    onChange({ dna_tests: next });
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setUploading(true);
+    try {
+      // Remove previous file if any
+      if (filePath) {
+        await supabase.storage.from("dna-files").remove([filePath]);
+      }
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `${userId}/${Date.now()}-${safeName}`;
+      const { error } = await supabase.storage.from("dna-files").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (error) throw error;
+      onChange({ dna_file_path: path, dna_file_name: file.name });
+      toast.success("Uploaded");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  const removeFile = async () => {
+    if (filePath) await supabase.storage.from("dna-files").remove([filePath]);
+    onChange({ dna_file_path: null, dna_file_name: null });
+  };
+
+  return (
+    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-4">
+      <h2 className="text-sm font-bold text-[#0D1B2A]">{t("s_dna_title")}</h2>
+      <p className="mt-1 text-xs text-gray-600">{t("s_dna_sub")}</p>
+
+      <div className="mt-4">
+        <Lbl>{t("dna_which_q")}</Lbl>
+        <div className="space-y-1.5">
+          {DNA_TESTS.map((dt) => (
+            <label
+              key={dt.v}
+              className="flex cursor-pointer items-center gap-2 text-sm text-[#0D1B2A]"
+            >
+              <Checkbox
+                checked={tests.includes(dt.v)}
+                onCheckedChange={() => toggle(dt.v)}
+              />
+              {dt.label}
+            </label>
+          ))}
+        </div>
+        {tests.includes("other") && (
+          <input
+            value={other}
+            onChange={(e) => onChange({ dna_other: e.target.value })}
+            placeholder={t("dna_other_ph")}
+            className="mt-2 w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+          />
+        )}
+      </div>
+
+      <div className="mt-5">
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".txt,.zip,.vcf,.bam"
+          className="hidden"
+          onChange={handleUpload}
+        />
+        <button
+          type="button"
+          disabled={uploading || !userId}
+          onClick={() => fileRef.current?.click()}
+          className="w-full rounded-xl border border-[#E0A066] bg-white py-2.5 text-sm font-semibold text-[#C4854A] hover:bg-[#FFF7EE] disabled:opacity-50"
+        >
+          {uploading ? t("dna_uploading") : `+ ${t("dna_upload_btn")}`}
+        </button>
+        <p className="mt-1.5 text-[11px] text-gray-500">{t("dna_upload_hint")}</p>
+
+        {filePath && fileName && (
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3 text-sm">
+            <div className="min-w-0 flex-1 truncate">
+              <span className="font-medium">{t("dna_uploaded")}: </span>
+              <span className="text-gray-700">{fileName}</span>
+            </div>
+            <button
+              type="button"
+              onClick={removeFile}
+              className="ml-3 shrink-0 rounded-md p-1.5 text-gray-600 hover:bg-white"
+              aria-label="Remove"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <p className="mt-4 rounded-xl bg-[#FFF7EE] p-3 text-[11px] leading-relaxed text-[#8a5a20]">
+        {t("dna_privacy")}
+      </p>
+    </section>
   );
 }
