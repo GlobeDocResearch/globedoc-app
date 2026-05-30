@@ -538,6 +538,7 @@ export type Database = {
           alcohol_drinks_per_week: number | null
           alcohol_frequency: string | null
           alcohol_type: string[] | null
+          alcohol_units_per_week: string | null
           created_at: string
           currently_in_treatment: boolean | null
           diet_other: string | null
@@ -551,6 +552,11 @@ export type Database = {
           mental_health_conditions: string[] | null
           mental_health_other: string | null
           mental_health_treated: boolean | null
+          narcotics_ever_injected: boolean | null
+          narcotics_status: string | null
+          narcotics_substances: string[] | null
+          narcotics_substances_other: string | null
+          narcotics_use_status: string | null
           nothing_to_report: boolean
           sleep_issues: string[] | null
           sleep_other: string | null
@@ -572,6 +578,7 @@ export type Database = {
           alcohol_drinks_per_week?: number | null
           alcohol_frequency?: string | null
           alcohol_type?: string[] | null
+          alcohol_units_per_week?: string | null
           created_at?: string
           currently_in_treatment?: boolean | null
           diet_other?: string | null
@@ -585,6 +592,11 @@ export type Database = {
           mental_health_conditions?: string[] | null
           mental_health_other?: string | null
           mental_health_treated?: boolean | null
+          narcotics_ever_injected?: boolean | null
+          narcotics_status?: string | null
+          narcotics_substances?: string[] | null
+          narcotics_substances_other?: string | null
+          narcotics_use_status?: string | null
           nothing_to_report?: boolean
           sleep_issues?: string[] | null
           sleep_other?: string | null
@@ -606,6 +618,7 @@ export type Database = {
           alcohol_drinks_per_week?: number | null
           alcohol_frequency?: string | null
           alcohol_type?: string[] | null
+          alcohol_units_per_week?: string | null
           created_at?: string
           currently_in_treatment?: boolean | null
           diet_other?: string | null
@@ -619,6 +632,11 @@ export type Database = {
           mental_health_conditions?: string[] | null
           mental_health_other?: string | null
           mental_health_treated?: boolean | null
+          narcotics_ever_injected?: boolean | null
+          narcotics_status?: string | null
+          narcotics_substances?: string[] | null
+          narcotics_substances_other?: string | null
+          narcotics_use_status?: string | null
           nothing_to_report?: boolean
           sleep_issues?: string[] | null
           sleep_other?: string | null
