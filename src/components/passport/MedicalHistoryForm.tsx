@@ -318,7 +318,7 @@ export default function MedicalHistoryForm() {
     const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      { id, event: "", diagnosis: "", year: "", hospital_country: "", notes: "", collapsed: false, persisted: false },
+      { id, event: "", diagnosis: "", year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
     ]);
     markStayDirty(id);
   };
@@ -330,17 +330,24 @@ export default function MedicalHistoryForm() {
 
   const saveStay = async (stay: Stay) => {
     if (!userId) return;
+    const payload: any = {
+      event: stay.event,
+      diagnosis: stay.diagnosis,
+      year: stay.year,
+      institution: stay.institution,
+      city: stay.city,
+      country: stay.country,
+      record_type: stay.record_type,
+      notes: stay.notes,
+    };
     if (stay.persisted) {
-      await supabase
-        .from("hospital_stays")
-        .update({ event: stay.event, diagnosis: stay.diagnosis, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
-        .eq("id", stay.id);
+      await supabase.from("hospital_stays").update(payload).eq("id", stay.id);
       audit("hospital_stays", "update");
       updateStay(stay.id, { collapsed: true }, false);
     } else {
       const { data } = await supabase
         .from("hospital_stays")
-        .insert({ user_id: userId, event: stay.event, diagnosis: stay.diagnosis, year: stay.year, hospital_country: stay.hospital_country, notes: stay.notes })
+        .insert({ user_id: userId, ...payload })
         .select()
         .single();
       audit("hospital_stays", "insert");
@@ -357,17 +364,22 @@ export default function MedicalHistoryForm() {
     }
     const { data } = await supabase.from("hospital_stays").select("*").eq("id", stay.id).maybeSingle();
     if (data) {
+      const r = data as any;
       updateStay(stay.id, {
-        event: data.event ?? "",
-        diagnosis: (data as any).diagnosis ?? "",
-        year: data.year ?? "",
-        hospital_country: data.hospital_country ?? "",
-        notes: data.notes ?? "",
+        event: r.event ?? "",
+        diagnosis: r.diagnosis ?? "",
+        year: r.year ?? "",
+        institution: r.institution ?? "",
+        city: r.city ?? "",
+        country: r.country ?? r.hospital_country ?? "",
+        record_type: r.record_type ?? "",
+        notes: r.notes ?? "",
         collapsed: true,
       }, false);
     }
     clearStayDirty(stay.id);
   };
+
 
   const deleteStay = async (stay: Stay) => {
     if (stay.persisted) {
