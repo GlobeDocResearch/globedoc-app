@@ -612,10 +612,6 @@ function ConditionTagInput({
 
   const used = useMemo(() => new Set(tags.map((t) => t.condition_name.toLowerCase())), [tags]);
 
-  const quickPicks = useMemo(
-    () => TOP_CONDITIONS.filter((s) => !used.has(s.toLowerCase())),
-    [used],
-  );
 
   const matches = useMemo(() => {
     const term = q.trim().toLowerCase();
