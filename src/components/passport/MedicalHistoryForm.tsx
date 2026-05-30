@@ -306,7 +306,7 @@ export default function MedicalHistoryForm() {
     const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      { id, event: "", year: "", hospital_country: "", notes: "", collapsed: false, persisted: false },
+      { id, event: "", diagnosis: "", year: "", hospital_country: "", notes: "", collapsed: false, persisted: false },
     ]);
     markStayDirty(id);
   };
