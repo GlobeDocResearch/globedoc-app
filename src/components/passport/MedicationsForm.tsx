@@ -6,12 +6,13 @@ import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
-import { AutocompleteInput, COMMON_MEDICATIONS, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
+import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
+import { MEDICATION_LABELS, findMedicationByLabel } from "@/lib/medications";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
 
-type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; prescriber: string; collapsed: boolean; persisted: boolean };
+type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; collapsed: boolean; persisted: boolean };
 type Otc = { id: string; product: string; dose: string; frequency: string; reason: string; collapsed: boolean; persisted: boolean };
 type Stopped = { id: string; drug_generic: string; dose: string; period: string; reason_stopped: string; collapsed: boolean; persisted: boolean };
 
@@ -37,6 +38,8 @@ const T: Record<Lang, Record<string, string>> = {
     f_freq_ph: "E.g. Twice daily with food",
     f_prescriber: "Prescriber",
     f_prescriber_ph: "E.g. Dr. Andersson, GP",
+    f_indication: "Indication",
+    f_indication_ph: "E.g. Type 2 diabetes, blood pressure",
     f_product: "Product",
     f_product_ph: "E.g. Vitamin D3",
     f_dose: "Dose",
@@ -49,7 +52,7 @@ const T: Record<Lang, Record<string, string>> = {
     f_period: "Period taken",
     f_period_ph: "E.g. 2019–2023",
     f_reason_stopped: "Reason for stopping",
-    f_reason_stopped_ph: "E.g. Side effects — muscle pain",
+    f_reason_stopped_ph: "E.g. Side effects, no longer needed, replaced by another drug",
     intolerances_ph: "E.g. NSAIDs → gastric ulcer, Morphine → nausea…",
     save: "Save",
     save_item: "Save",
@@ -78,6 +81,8 @@ const T: Record<Lang, Record<string, string>> = {
     f_freq_ph: "T.ex. Två gånger dagligen med mat",
     f_prescriber: "Förskrivare",
     f_prescriber_ph: "T.ex. Dr. Andersson, husläkare",
+    f_indication: "Indikation",
+    f_indication_ph: "T.ex. Typ 2-diabetes, blodtryck",
     f_product: "Produkt",
     f_product_ph: "T.ex. D-vitamin D3",
     f_dose: "Dos",
@@ -90,7 +95,7 @@ const T: Record<Lang, Record<string, string>> = {
     f_period: "Period",
     f_period_ph: "T.ex. 2019–2023",
     f_reason_stopped: "Anledning till att sluta",
-    f_reason_stopped_ph: "T.ex. Biverkningar — muskelsmärta",
+    f_reason_stopped_ph: "T.ex. Biverkningar, inte längre nödvändig, ersatt av annat läkemedel",
     intolerances_ph: "T.ex. NSAID → magsår, Morfin → illamående…",
     save: "Spara",
     save_item: "Spara",
@@ -142,7 +147,7 @@ export default function MedicationsForm() {
 
       if (pm.data) setRx(pm.data.map((r: any) => ({
         id: r.id, drug_generic: r.drug_generic ?? "", brand_name: r.brand_name ?? "",
-        dose_form: r.dose_form ?? "", frequency: r.frequency ?? "", prescriber: r.prescriber ?? "",
+        dose_form: r.dose_form ?? "", frequency: r.frequency ?? "", indication: r.indication ?? "", prescriber: r.prescriber ?? "",
         collapsed: true, persisted: true,
       })));
       if (ot.data) setOtc(ot.data.map((r: any) => ({
@@ -176,11 +181,11 @@ export default function MedicationsForm() {
   };
 
   // Generic helpers per list
-  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", indication: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
   const updateRx = (id: string, p: Partial<Rx>, d = true) => { setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveRx = async (item: Rx) => {
     if (!userId) return;
-    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, prescriber: item.prescriber };
+    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, indication: item.indication, prescriber: item.prescriber };
     if (item.persisted) {
       await supabase.from("prescription_medications").update(payload).eq("id", item.id);
       audit("prescription_medications", "update");
@@ -200,7 +205,7 @@ export default function MedicationsForm() {
   const discardRx = async (item: Rx) => {
     if (!item.persisted) { setRx((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
     const { data } = await supabase.from("prescription_medications").select("*").eq("id", item.id).maybeSingle();
-    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
+    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", indication: data.indication ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
     clearDirty(item.id);
   };
 
@@ -334,13 +339,24 @@ export default function MedicationsForm() {
                     className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveRx(item); } }}
                   >
-                    <FieldAuto label={t("f_drug")} value={item.drug_generic} ph={t("f_drug_ph")} suggestions={COMMON_MEDICATIONS} onChange={(v) => updateRx(item.id, { drug_generic: v })} />
+                    <MedicationDrugField
+                      label={t("f_drug")}
+                      ph={t("f_drug_ph")}
+                      value={item.drug_generic}
+                      onChange={(v) => updateRx(item.id, { drug_generic: v })}
+                      onSelectMed={(entry) => {
+                        const patch: Partial<Rx> = { drug_generic: entry.generic };
+                        if (entry.brand && !item.brand_name) patch.brand_name = entry.brand;
+                        if (entry.indication && !item.indication) patch.indication = entry.indication;
+                        updateRx(item.id, patch);
+                      }}
+                    />
                     <Field label={t("f_brand")} value={item.brand_name} ph={t("f_brand_ph")} onChange={(v) => updateRx(item.id, { brand_name: v })} />
                     <Field label={t("f_dose_form")} value={item.dose_form} ph={t("f_dose_form_ph")} onChange={(v) => updateRx(item.id, { dose_form: v })} />
                     <Field label={t("f_freq")} value={item.frequency} ph={t("f_freq_ph")} onChange={(v) => updateRx(item.id, { frequency: v })} />
+                    <Field label={t("f_indication")} value={item.indication} ph={t("f_indication_ph")} onChange={(v) => updateRx(item.id, { indication: v })} />
                     <Field label={t("f_prescriber")} value={item.prescriber} ph={t("f_prescriber_ph")} onChange={(v) => updateRx(item.id, { prescriber: v })} />
                     
-
                     <CardActions onDelete={() => deleteRx(item)} />
                   </div>
                 ))}
@@ -388,9 +404,14 @@ export default function MedicationsForm() {
                     className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveStopped(item); } }}
                   >
-                    
-
-                    <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
+                    <MedicationDrugField
+                      label={t("f_drug")}
+                      ph={t("f_drug_stopped_ph")}
+                      value={item.drug_generic}
+                      onChange={(v) => updateStopped(item.id, { drug_generic: v })}
+                      onSelectMed={(entry) => updateStopped(item.id, { drug_generic: entry.generic })}
+                    />
+                    <Field label={t("f_dose_form")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveStopped(item)} onDiscard={() => discardStopped(item)} />}
@@ -451,6 +472,36 @@ function FieldAuto({ label, value, ph, suggestions, onChange }: { label: string;
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
       <AutocompleteInput value={value} onChange={onChange} placeholder={ph} suggestions={suggestions} />
+    </div>
+  );
+}
+
+function MedicationDrugField({
+  label,
+  ph,
+  value,
+  onChange,
+  onSelectMed,
+}: {
+  label: string;
+  ph: string;
+  value: string;
+  onChange: (v: string) => void;
+  onSelectMed: (entry: { generic: string; brand?: string; indication?: string }) => void;
+}) {
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <AutocompleteInput
+        value={value}
+        placeholder={ph}
+        suggestions={MEDICATION_LABELS}
+        onChange={(v) => {
+          const entry = findMedicationByLabel(v);
+          if (entry) onSelectMed(entry);
+          else onChange(v);
+        }}
+      />
     </div>
   );
 }

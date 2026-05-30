@@ -751,6 +751,7 @@ export type Database = {
           drug_generic: string | null
           frequency: string | null
           id: string
+          indication: string | null
           prescriber: string | null
           updated_at: string
           user_id: string
@@ -762,6 +763,7 @@ export type Database = {
           drug_generic?: string | null
           frequency?: string | null
           id?: string
+          indication?: string | null
           prescriber?: string | null
           updated_at?: string
           user_id: string
@@ -773,6 +775,7 @@ export type Database = {
           drug_generic?: string | null
           frequency?: string | null
           id?: string
+          indication?: string | null
           prescriber?: string | null
           updated_at?: string
           user_id?: string
