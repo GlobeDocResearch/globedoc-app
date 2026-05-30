@@ -131,7 +131,7 @@ function HomePage() {
 }
 
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: NavTo }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-4 py-1.5 text-xs font-medium ${
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
     active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"
   }`;
   return (
