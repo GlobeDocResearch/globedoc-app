@@ -363,6 +363,78 @@ export default function MedicalHistoryForm() {
     clearStayDirty(stay.id);
   };
 
+  // -------- Record locations --------
+  const sbAny = supabase as any;
+
+  const addLocation = () => {
+    const id = crypto.randomUUID();
+    setLocations((arr) => [
+      ...arr,
+      { id, institution: "", city: "", country: "", years: "", record_type: "", collapsed: false, persisted: false },
+    ]);
+    markLocDirty(id);
+  };
+
+  const updateLocation = (id: string, patch: Partial<RecordLocation>, dirtyFlag = true) => {
+    setLocations((arr) => arr.map((x) => (x.id === id ? { ...x, ...patch } : x)));
+    if (dirtyFlag) markLocDirty(id);
+  };
+
+  const saveLocation = async (loc: RecordLocation) => {
+    if (!userId) return;
+    const payload = {
+      institution: loc.institution,
+      city: loc.city || null,
+      country: loc.country || null,
+      years: loc.years || null,
+      record_type: loc.record_type || null,
+    };
+    if (loc.persisted) {
+      await sbAny.from("record_locations").update(payload).eq("id", loc.id);
+      audit("record_locations", "update");
+      updateLocation(loc.id, { collapsed: true }, false);
+    } else {
+      const { data } = await sbAny
+        .from("record_locations")
+        .insert({ user_id: userId, ...payload })
+        .select()
+        .single();
+      audit("record_locations", "insert");
+      if (data) updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
+    }
+    clearLocDirty(loc.id);
+  };
+
+  const discardLocation = async (loc: RecordLocation) => {
+    if (!loc.persisted) {
+      setLocations((arr) => arr.filter((x) => x.id !== loc.id));
+      clearLocDirty(loc.id);
+      return;
+    }
+    const { data } = await sbAny.from("record_locations").select("*").eq("id", loc.id).maybeSingle();
+    if (data) {
+      updateLocation(loc.id, {
+        institution: data.institution ?? "",
+        city: data.city ?? "",
+        country: data.country ?? "",
+        years: data.years ?? "",
+        record_type: data.record_type ?? "",
+        collapsed: true,
+      }, false);
+    }
+    clearLocDirty(loc.id);
+  };
+
+  const deleteLocation = async (loc: RecordLocation) => {
+    if (loc.persisted) {
+      await sbAny.from("record_locations").delete().eq("id", loc.id);
+      audit("record_locations", "delete");
+    }
+    setLocations((arr) => arr.filter((x) => x.id !== loc.id));
+    clearLocDirty(loc.id);
+  };
+
+
   // Visibility for obstetric section
   const sex = (biologicalSex ?? "").toLowerCase();
   const showObstetric = sex !== "male";
