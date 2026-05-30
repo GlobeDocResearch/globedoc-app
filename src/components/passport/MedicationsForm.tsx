@@ -38,6 +38,8 @@ const T: Record<Lang, Record<string, string>> = {
     f_freq_ph: "E.g. Twice daily with food",
     f_prescriber: "Prescriber",
     f_prescriber_ph: "E.g. Dr. Andersson, GP",
+    f_indication: "Indication",
+    f_indication_ph: "E.g. Type 2 diabetes, blood pressure",
     f_product: "Product",
     f_product_ph: "E.g. Vitamin D3",
     f_dose: "Dose",
