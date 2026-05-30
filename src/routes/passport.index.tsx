@@ -199,7 +199,7 @@ function PassportPage() {
           {/* Bottom-right: Lifestyle & Risk */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[10px] font-bold leading-tight text-[#0D1B2A] text-center">Lifestyle<br/>& Risk</span>
+            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Lifestyle</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
