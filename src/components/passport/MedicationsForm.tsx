@@ -476,6 +476,36 @@ function FieldAuto({ label, value, ph, suggestions, onChange }: { label: string;
   );
 }
 
+function MedicationDrugField({
+  label,
+  ph,
+  value,
+  onChange,
+  onSelectMed,
+}: {
+  label: string;
+  ph: string;
+  value: string;
+  onChange: (v: string) => void;
+  onSelectMed: (entry: { generic: string; brand?: string; indication?: string }) => void;
+}) {
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <AutocompleteInput
+        value={value}
+        placeholder={ph}
+        suggestions={MEDICATION_LABELS}
+        onChange={(v) => {
+          const entry = findMedicationByLabel(v);
+          if (entry) onSelectMed(entry);
+          else onChange(v);
+        }}
+      />
+    </div>
+  );
+}
+
 function SummaryRow({ text, onEdit, onDelete }: { text: string; onEdit: () => void; onDelete: () => void }) {
   return (
     <div className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3">
