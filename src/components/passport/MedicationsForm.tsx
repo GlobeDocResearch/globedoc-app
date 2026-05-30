@@ -404,9 +404,14 @@ export default function MedicationsForm() {
                     className="space-y-2 rounded-xl bg-[#F8F9FA] p-4"
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveStopped(item); } }}
                   >
-                    
-
-                    <Field label={t("f_dose")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
+                    <MedicationDrugField
+                      label={t("f_drug")}
+                      ph={t("f_drug_stopped_ph")}
+                      value={item.drug_generic}
+                      onChange={(v) => updateStopped(item.id, { drug_generic: v })}
+                      onSelectMed={(entry) => updateStopped(item.id, { drug_generic: entry.generic })}
+                    />
+                    <Field label={t("f_dose_form")} value={item.dose} ph={t("f_dose_stopped_ph")} onChange={(v) => updateStopped(item.id, { dose: v })} />
                     <Field label={t("f_period")} value={item.period} ph={t("f_period_ph")} onChange={(v) => updateStopped(item.id, { period: v })} />
                     <Field label={t("f_reason_stopped")} value={item.reason_stopped} ph={t("f_reason_stopped_ph")} onChange={(v) => updateStopped(item.id, { reason_stopped: v })} />
                     {dirtyIds.has(item.id) && <CardUnsavedBanner onSave={() => saveStopped(item)} onDiscard={() => discardStopped(item)} />}
