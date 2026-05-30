@@ -71,7 +71,7 @@ const T: Record<Lang, Record<string, string>> = {
   },
   sv: {
     title: "Sjukdomshistorik",
-    subtitle: "Diagnoser, sjukhusvistelser & operationer",
+    subtitle: "Diagnoser, sjukhusvistelser, operationer & journalplatser",
     nothing: "Inget att rapportera",
     s1: "Pågående & kroniska tillstånd",
     s1ph: "Sök eller skriv ett tillstånd…",
