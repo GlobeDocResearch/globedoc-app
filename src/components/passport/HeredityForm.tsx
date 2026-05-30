@@ -927,6 +927,19 @@ export default function HeredityForm() {
                 </div>
               )}
             </Accordion>
+
+            <DnaSection
+              t={t}
+              userId={userId}
+              tests={s.dna_tests}
+              other={s.dna_other}
+              filePath={s.dna_file_path}
+              fileName={s.dna_file_name}
+              onChange={(patch) => {
+                setS((p) => ({ ...p, ...patch }));
+                setDirty(true);
+              }}
+            />
           </>
         )}
       </div>
