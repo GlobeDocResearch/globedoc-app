@@ -203,7 +203,7 @@ function PairingPage() {
                   onClick={() => setValidity(opt.value)}
                   className={`rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
                     validity === opt.value
-                      ? "border-green-600 bg-green-50 text-green-700"
+                      ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
                       : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
