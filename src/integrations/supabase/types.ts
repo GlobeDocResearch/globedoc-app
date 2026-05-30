@@ -1075,6 +1075,42 @@ export type Database = {
         }
         Relationships: []
       }
+      record_locations: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          id: string
+          institution: string
+          record_type: string | null
+          updated_at: string
+          user_id: string
+          years: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          institution: string
+          record_type?: string | null
+          updated_at?: string
+          user_id: string
+          years?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          institution?: string
+          record_type?: string | null
+          updated_at?: string
+          user_id?: string
+          years?: string | null
+        }
+        Relationships: []
+      }
       stopped_medications: {
         Row: {
           created_at: string

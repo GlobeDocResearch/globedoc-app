@@ -27,13 +27,34 @@ type ConditionTag = {
   persisted: boolean;
 };
 
+type RecordLocation = {
+  id: string;
+  institution: string;
+  city: string;
+  country: string;
+  years: string;
+  record_type: string;
+  collapsed: boolean;
+  persisted: boolean;
+};
+
+const RECORD_TYPES = [
+  "General records",
+  "Imaging / Radiology",
+  "Lab results",
+  "Specialist records",
+  "Other",
+];
+
+
+
 const SUGGESTIONS = ALL_CONDITIONS;
 
 
 const T: Record<Lang, Record<string, string>> = {
   en: {
     title: "Medical History",
-    subtitle: "Diagnoses, hospitalisations & operations",
+    subtitle: "Diagnoses, hospitalisations, operations & record locations",
     nothing: "Nothing to report",
     s1: "Current & chronic conditions",
     s1ph: "Search or type a condition…",
@@ -71,7 +92,7 @@ const T: Record<Lang, Record<string, string>> = {
   },
   sv: {
     title: "Sjukdomshistorik",
-    subtitle: "Diagnoser, sjukhusvistelser & operationer",
+    subtitle: "Diagnoser, sjukhusvistelser, operationer & journalplatser",
     nothing: "Inget att rapportera",
     s1: "Pågående & kroniska tillstånd",
     s1ph: "Sök eller skriv ett tillstånd…",
@@ -124,6 +145,8 @@ export default function MedicalHistoryForm() {
   const [current, setCurrent] = useState<ConditionTag[]>([]);
   const [past, setPast] = useState<ConditionTag[]>([]);
   const [stays, setStays] = useState<Stay[]>([]);
+  const [locations, setLocations] = useState<RecordLocation[]>([]);
+
 
   const [biologicalSex, setBiologicalSex] = useState<string | null>(null);
 
@@ -137,11 +160,15 @@ export default function MedicalHistoryForm() {
   const [dirty, setDirty] = useState(false);
   const [dirtyStays, setDirtyStays] = useState<Set<string>>(new Set());
   const [dirtyTags, setDirtyTags] = useState<Set<string>>(new Set());
+  const [dirtyLocations, setDirtyLocations] = useState<Set<string>>(new Set());
   const markStayDirty = (id: string) => setDirtyStays((s) => { const n = new Set(s); n.add(id); return n; });
   const clearStayDirty = (id: string) => setDirtyStays((s) => { const n = new Set(s); n.delete(id); return n; });
   const markTagDirty = (id: string) => setDirtyTags((s) => { const n = new Set(s); n.add(id); return n; });
   const clearTagDirty = (id: string) => setDirtyTags((s) => { const n = new Set(s); n.delete(id); return n; });
-  const anyDirty = dirty || dirtyStays.size > 0 || dirtyTags.size > 0;
+  const markLocDirty = (id: string) => setDirtyLocations((s) => { const n = new Set(s); n.add(id); return n; });
+  const clearLocDirty = (id: string) => setDirtyLocations((s) => { const n = new Set(s); n.delete(id); return n; });
+  const anyDirty = dirty || dirtyStays.size > 0 || dirtyTags.size > 0 || dirtyLocations.size > 0;
+
 
   useEffect(() => {
     (async () => {
@@ -152,13 +179,15 @@ export default function MedicalHistoryForm() {
       }
       setUserId(user.id);
 
-      const [prof, sum, mc, hs, oh] = await Promise.all([
+      const [prof, sum, mc, hs, oh, rl] = await Promise.all([
         supabase.from("profiles").select("biological_sex").eq("user_id", user.id).maybeSingle(),
         supabase.from("medical_conditions_summary").select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("medical_conditions").select("*").eq("user_id", user.id).order("created_at"),
         supabase.from("hospital_stays").select("*").eq("user_id", user.id).order("created_at"),
         supabase.from("obstetric_history").select("*").eq("user_id", user.id).maybeSingle(),
+        (supabase as any).from("record_locations").select("*").eq("user_id", user.id).order("created_at"),
       ]);
+
 
       setBiologicalSex(((prof.data as any)?.biological_sex ?? null));
       if (sum.data) setNothing(sum.data.nothing_to_report ?? false);
@@ -190,9 +219,22 @@ export default function MedicalHistoryForm() {
         setAssisted(oh.data.assisted_reproduction);
         setAssistedNotes(oh.data.notes ?? "");
       }
+      if (rl.data) {
+        setLocations((rl.data as any[]).map((r) => ({
+          id: r.id,
+          institution: r.institution ?? "",
+          city: r.city ?? "",
+          country: r.country ?? "",
+          years: r.years ?? "",
+          record_type: r.record_type ?? "",
+          collapsed: true,
+          persisted: true,
+        })));
+      }
       setLoading(false);
     })();
   }, [navigate]);
+
 
   // Reactive biological_sex via realtime subscription
   useEffect(() => {
@@ -321,6 +363,78 @@ export default function MedicalHistoryForm() {
     clearStayDirty(stay.id);
   };
 
+  // -------- Record locations --------
+  const sbAny = supabase as any;
+
+  const addLocation = () => {
+    const id = crypto.randomUUID();
+    setLocations((arr) => [
+      ...arr,
+      { id, institution: "", city: "", country: "", years: "", record_type: "", collapsed: false, persisted: false },
+    ]);
+    markLocDirty(id);
+  };
+
+  const updateLocation = (id: string, patch: Partial<RecordLocation>, dirtyFlag = true) => {
+    setLocations((arr) => arr.map((x) => (x.id === id ? { ...x, ...patch } : x)));
+    if (dirtyFlag) markLocDirty(id);
+  };
+
+  const saveLocation = async (loc: RecordLocation) => {
+    if (!userId) return;
+    const payload = {
+      institution: loc.institution,
+      city: loc.city || null,
+      country: loc.country || null,
+      years: loc.years || null,
+      record_type: loc.record_type || null,
+    };
+    if (loc.persisted) {
+      await sbAny.from("record_locations").update(payload).eq("id", loc.id);
+      audit("record_locations", "update");
+      updateLocation(loc.id, { collapsed: true }, false);
+    } else {
+      const { data } = await sbAny
+        .from("record_locations")
+        .insert({ user_id: userId, ...payload })
+        .select()
+        .single();
+      audit("record_locations", "insert");
+      if (data) updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
+    }
+    clearLocDirty(loc.id);
+  };
+
+  const discardLocation = async (loc: RecordLocation) => {
+    if (!loc.persisted) {
+      setLocations((arr) => arr.filter((x) => x.id !== loc.id));
+      clearLocDirty(loc.id);
+      return;
+    }
+    const { data } = await sbAny.from("record_locations").select("*").eq("id", loc.id).maybeSingle();
+    if (data) {
+      updateLocation(loc.id, {
+        institution: data.institution ?? "",
+        city: data.city ?? "",
+        country: data.country ?? "",
+        years: data.years ?? "",
+        record_type: data.record_type ?? "",
+        collapsed: true,
+      }, false);
+    }
+    clearLocDirty(loc.id);
+  };
+
+  const deleteLocation = async (loc: RecordLocation) => {
+    if (loc.persisted) {
+      await sbAny.from("record_locations").delete().eq("id", loc.id);
+      audit("record_locations", "delete");
+    }
+    setLocations((arr) => arr.filter((x) => x.id !== loc.id));
+    clearLocDirty(loc.id);
+  };
+
+
   // Visibility for obstetric section
   const sex = (biologicalSex ?? "").toLowerCase();
   const showObstetric = sex !== "male";
@@ -344,6 +458,13 @@ export default function MedicalHistoryForm() {
           await saveStay(stay);
         }
       }
+      // Save any open dirty location cards
+      for (const loc of locations) {
+        if (dirtyLocations.has(loc.id) && loc.institution.trim()) {
+          await saveLocation(loc);
+        }
+      }
+
       await Promise.all([
         supabase
           .from("medical_conditions_summary")
@@ -370,6 +491,8 @@ export default function MedicalHistoryForm() {
       setDirty(false);
       setDirtyStays(new Set());
       setDirtyTags(new Set());
+      setDirtyLocations(new Set());
+
       toast.success(t("saved"));
       return true;
     } catch {
@@ -503,6 +626,100 @@ export default function MedicalHistoryForm() {
                 {t("add_stay")}
               </button>
             </section>
+
+            <section>
+              <div className="mb-1 flex flex-wrap items-center gap-2">
+                <h2 className="text-sm font-bold text-[#0D1B2A]">Global Health Record Retrieval</h2>
+                <span className="rounded-full bg-[#EEF0FB] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#5B6BD4]">
+                  Coming soon
+                </span>
+              </div>
+              <p className="mb-3 text-xs text-gray-600">
+                Tell us where your medical records are held around the world. When automatic retrieval becomes available, we will notify you and fetch them on your behalf.
+              </p>
+
+              <div className="space-y-3">
+                {locations.map((loc) =>
+                  loc.collapsed ? (
+                    <div key={loc.id} className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium text-[#0D1B2A]">{loc.institution}</div>
+                        <div className="truncate text-xs text-gray-600">
+                          {[loc.city, loc.country, loc.years].filter(Boolean).join(" · ")}
+                          {loc.record_type ? ` — ${loc.record_type}` : ""}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button type="button" aria-label="Edit" onClick={() => updateLocation(loc.id, { collapsed: false })} className="rounded-md p-1.5 text-gray-600 hover:bg-gray-200">
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button type="button" aria-label="Delete" onClick={() => deleteLocation(loc)} className="rounded-md p-1.5 text-red-500 hover:bg-gray-200">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={loc.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
+                      <Field label="Institution / Hospital name" value={loc.institution} ph="E.g. Karolinska University Hospital" onChange={(v) => updateLocation(loc.id, { institution: v })} />
+                      <Field label="City" value={loc.city} ph="E.g. Stockholm" onChange={(v) => updateLocation(loc.id, { city: v })} />
+                      <Field label="Country" value={loc.country} ph="E.g. Sweden" onChange={(v) => updateLocation(loc.id, { country: v })} />
+                      <Field label="Approximate year(s)" value={loc.years} ph="E.g. 2018–2022" onChange={(v) => updateLocation(loc.id, { years: v })} />
+                      <div>
+                        <label className="block text-xs text-gray-600">Record type</label>
+                        <select
+                          value={loc.record_type}
+                          onChange={(e) => updateLocation(loc.id, { record_type: e.target.value })}
+                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#5B6BD4] focus:outline-none"
+                        >
+                          <option value="">Select…</option>
+                          {RECORD_TYPES.map((rt) => (
+                            <option key={rt} value={rt}>{rt}</option>
+                          ))}
+                        </select>
+                      </div>
+                      {dirtyLocations.has(loc.id) && (
+                        <CardUnsavedBanner onSave={() => saveLocation(loc)} onDiscard={() => discardLocation(loc)} />
+                      )}
+                      <div className="flex justify-end gap-2 pt-1">
+                        <button type="button" onClick={() => deleteLocation(loc)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => saveLocation(loc)}
+                          disabled={!loc.institution.trim()}
+                          className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {t("save_stay")}
+                        </button>
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={addLocation}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#E5E7EB] px-4 py-3 text-sm text-gray-600 hover:bg-[#F8F9FA]"
+              >
+                <Plus className="h-4 w-4" />
+                Add record location
+              </button>
+
+              <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#E5E7EB] bg-[#FFF8E1] p-3 text-xs text-[#0D1B2A]">
+                <span className="text-base leading-none">📎</span>
+                <p>
+                  In the meantime, you can manually upload records, scans and images under{" "}
+                  <Link to="/records" className="font-semibold text-[#5B6BD4] underline">
+                    Records
+                  </Link>{" "}
+                  in GlobeDoc.
+                </p>
+              </div>
+            </section>
+
+
 
             <section>
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s3")}</h2>
