@@ -6,12 +6,13 @@ import { useI18n, type Lang } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
-import { AutocompleteInput, COMMON_MEDICATIONS, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
+import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
+import { MEDICATION_LABELS, findMedicationByLabel } from "@/lib/medications";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
 
-type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; prescriber: string; collapsed: boolean; persisted: boolean };
+type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; collapsed: boolean; persisted: boolean };
 type Otc = { id: string; product: string; dose: string; frequency: string; reason: string; collapsed: boolean; persisted: boolean };
 type Stopped = { id: string; drug_generic: string; dose: string; period: string; reason_stopped: string; collapsed: boolean; persisted: boolean };
 
