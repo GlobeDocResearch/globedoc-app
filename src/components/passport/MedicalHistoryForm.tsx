@@ -179,13 +179,15 @@ export default function MedicalHistoryForm() {
       }
       setUserId(user.id);
 
-      const [prof, sum, mc, hs, oh] = await Promise.all([
+      const [prof, sum, mc, hs, oh, rl] = await Promise.all([
         supabase.from("profiles").select("biological_sex").eq("user_id", user.id).maybeSingle(),
         supabase.from("medical_conditions_summary").select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("medical_conditions").select("*").eq("user_id", user.id).order("created_at"),
         supabase.from("hospital_stays").select("*").eq("user_id", user.id).order("created_at"),
         supabase.from("obstetric_history").select("*").eq("user_id", user.id).maybeSingle(),
+        (supabase as any).from("record_locations").select("*").eq("user_id", user.id).order("created_at"),
       ]);
+
 
       setBiologicalSex(((prof.data as any)?.biological_sex ?? null));
       if (sum.data) setNothing(sum.data.nothing_to_report ?? false);
