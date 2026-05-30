@@ -1388,3 +1388,149 @@ function RelativeChecklist({
     </div>
   );
 }
+
+const DNA_TESTS: { v: string; label: string }[] = [
+  { v: "23andme", label: "23andMe" },
+  { v: "ancestrydna", label: "AncestryDNA" },
+  { v: "myheritage", label: "MyHeritage DNA" },
+  { v: "ftdna", label: "FamilyTreeDNA (FTDNA)" },
+  { v: "dante_nebula", label: "Dante Labs / Nebula Genomics" },
+  { v: "other", label: "Other genetic test (specify)" },
+];
+
+type DnaPatch = {
+  dna_tests?: string[];
+  dna_other?: string;
+  dna_file_path?: string | null;
+  dna_file_name?: string | null;
+};
+
+function DnaSection({
+  t,
+  userId,
+  tests,
+  other,
+  filePath,
+  fileName,
+  onChange,
+}: {
+  t: (k: any) => string;
+  userId: string | null;
+  tests: string[];
+  other: string;
+  filePath: string | null;
+  fileName: string | null;
+  onChange: (patch: DnaPatch) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const toggle = (v: string) => {
+    const next = tests.includes(v) ? tests.filter((x) => x !== v) : [...tests, v];
+    onChange({ dna_tests: next });
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setUploading(true);
+    try {
+      // Remove previous file if any
+      if (filePath) {
+        await supabase.storage.from("dna-files").remove([filePath]);
+      }
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `${userId}/${Date.now()}-${safeName}`;
+      const { error } = await supabase.storage.from("dna-files").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (error) throw error;
+      onChange({ dna_file_path: path, dna_file_name: file.name });
+      toast.success("Uploaded");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  const removeFile = async () => {
+    if (filePath) await supabase.storage.from("dna-files").remove([filePath]);
+    onChange({ dna_file_path: null, dna_file_name: null });
+  };
+
+  return (
+    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-4">
+      <h2 className="text-sm font-bold text-[#0D1B2A]">{t("s_dna_title")}</h2>
+      <p className="mt-1 text-xs text-gray-600">{t("s_dna_sub")}</p>
+
+      <div className="mt-4">
+        <Lbl>{t("dna_which_q")}</Lbl>
+        <div className="space-y-1.5">
+          {DNA_TESTS.map((dt) => (
+            <label
+              key={dt.v}
+              className="flex cursor-pointer items-center gap-2 text-sm text-[#0D1B2A]"
+            >
+              <Checkbox
+                checked={tests.includes(dt.v)}
+                onCheckedChange={() => toggle(dt.v)}
+              />
+              {dt.label}
+            </label>
+          ))}
+        </div>
+        {tests.includes("other") && (
+          <input
+            value={other}
+            onChange={(e) => onChange({ dna_other: e.target.value })}
+            placeholder={t("dna_other_ph")}
+            className="mt-2 w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+          />
+        )}
+      </div>
+
+      <div className="mt-5">
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".txt,.zip,.vcf,.bam"
+          className="hidden"
+          onChange={handleUpload}
+        />
+        <button
+          type="button"
+          disabled={uploading || !userId}
+          onClick={() => fileRef.current?.click()}
+          className="w-full rounded-xl border border-[#E0A066] bg-white py-2.5 text-sm font-semibold text-[#C4854A] hover:bg-[#FFF7EE] disabled:opacity-50"
+        >
+          {uploading ? t("dna_uploading") : `+ ${t("dna_upload_btn")}`}
+        </button>
+        <p className="mt-1.5 text-[11px] text-gray-500">{t("dna_upload_hint")}</p>
+
+        {filePath && fileName && (
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3 text-sm">
+            <div className="min-w-0 flex-1 truncate">
+              <span className="font-medium">{t("dna_uploaded")}: </span>
+              <span className="text-gray-700">{fileName}</span>
+            </div>
+            <button
+              type="button"
+              onClick={removeFile}
+              className="ml-3 shrink-0 rounded-md p-1.5 text-gray-600 hover:bg-white"
+              aria-label="Remove"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      <p className="mt-4 rounded-xl bg-[#FFF7EE] p-3 text-[11px] leading-relaxed text-[#8a5a20]">
+        {t("dna_privacy")}
+      </p>
+    </section>
+  );
+}
