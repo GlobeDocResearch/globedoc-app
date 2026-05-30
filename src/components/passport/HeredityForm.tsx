@@ -700,6 +700,7 @@ export default function HeredityForm() {
                       editingCustomId === cc.id ? (
                         <AddOtherCondition
                           key={cc.id}
+                          lang={lang}
                           whichRelativeLabel={t("which_relative")}
                           whichRelativePh={t("which_relative_ph")}
                           whichConditionLabel={t("which_condition")}
