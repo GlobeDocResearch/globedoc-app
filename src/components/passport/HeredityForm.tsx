@@ -1332,3 +1332,46 @@ function AddOtherCondition({
     </div>
   );
 }
+
+function RelativeChecklist({
+  value,
+  onChange,
+  lang,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  lang: Lang;
+}) {
+  const { picks, other } = parseRelatives(value);
+  const toggle = (v: string) => {
+    const next = picks.includes(v) ? picks.filter((p) => p !== v) : [...picks, v];
+    onChange(serializeRelatives(next, other));
+  };
+  const setOther = (txt: string) => onChange(serializeRelatives(picks, txt));
+  return (
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+        {FAMILY_MEMBERS.map((fm) => (
+          <label
+            key={fm.v}
+            className="flex cursor-pointer items-center gap-2 text-xs text-[#0D1B2A]"
+          >
+            <Checkbox
+              checked={picks.includes(fm.v)}
+              onCheckedChange={() => toggle(fm.v)}
+            />
+            {lang === "sv" ? fm.l_sv : fm.l_en}
+          </label>
+        ))}
+      </div>
+      {picks.includes("other") && (
+        <input
+          value={other}
+          onChange={(e) => setOther(e.target.value)}
+          placeholder={lang === "sv" ? "Specificera…" : "Specify…"}
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        />
+      )}
+    </div>
+  );
+}
