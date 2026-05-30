@@ -52,7 +52,7 @@ const T: Record<Lang, Record<string, string>> = {
     f_period: "Period taken",
     f_period_ph: "E.g. 2019–2023",
     f_reason_stopped: "Reason for stopping",
-    f_reason_stopped_ph: "E.g. Side effects — muscle pain",
+    f_reason_stopped_ph: "E.g. Side effects, no longer needed, replaced by another drug",
     intolerances_ph: "E.g. NSAIDs → gastric ulcer, Morphine → nausea…",
     save: "Save",
     save_item: "Save",
