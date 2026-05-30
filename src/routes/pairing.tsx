@@ -219,7 +219,7 @@ function PairingPage() {
             type="button"
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
           >
             <LinkIcon className="h-4 w-4" />
             {loading ? "Generating..." : "Generate pairing code"}
