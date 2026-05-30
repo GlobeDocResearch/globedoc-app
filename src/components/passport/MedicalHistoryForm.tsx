@@ -215,12 +215,16 @@ export default function MedicalHistoryForm() {
           event: r.event ?? "",
           diagnosis: r.diagnosis ?? "",
           year: r.year ?? "",
-          hospital_country: r.hospital_country ?? "",
+          institution: r.institution ?? "",
+          city: r.city ?? "",
+          country: r.country ?? r.hospital_country ?? "",
+          record_type: r.record_type ?? "",
           notes: r.notes ?? "",
           collapsed: true,
           persisted: true,
         })));
       }
+
       if (oh.data) {
         setObNA(oh.data.not_applicable ?? false);
         setGaveBirth(oh.data.gave_birth);
