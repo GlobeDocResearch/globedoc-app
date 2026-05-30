@@ -149,31 +149,79 @@ export type Database = {
         }
         Relationships: []
       }
+      contrast_allergies: {
+        Row: {
+          agent: string
+          carry_epipen: boolean
+          created_at: string
+          id: string
+          is_preset: boolean
+          reaction: string | null
+          reaction_type: string | null
+          severity: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent: string
+          carry_epipen?: boolean
+          created_at?: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent?: string
+          carry_epipen?: boolean
+          created_at?: string
+          id?: string
+          is_preset?: boolean
+          reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       drug_allergies: {
         Row: {
+          carry_epipen: boolean
           created_at: string
           drug_name: string
           id: string
           is_preset: boolean
           reaction: string | null
+          reaction_type: string | null
+          severity: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          carry_epipen?: boolean
           created_at?: string
           drug_name: string
           id?: string
           is_preset?: boolean
           reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          carry_epipen?: boolean
           created_at?: string
           drug_name?: string
           id?: string
           is_preset?: boolean
           reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -209,28 +257,37 @@ export type Database = {
       environmental_allergies: {
         Row: {
           allergen: string
+          carry_epipen: boolean
           created_at: string
           id: string
           is_preset: boolean
           reaction: string | null
+          reaction_type: string | null
+          severity: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           allergen: string
+          carry_epipen?: boolean
           created_at?: string
           id?: string
           is_preset?: boolean
           reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           allergen?: string
+          carry_epipen?: boolean
           created_at?: string
           id?: string
           is_preset?: boolean
           reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -238,29 +295,38 @@ export type Database = {
       }
       food_allergies: {
         Row: {
+          carry_epipen: boolean
           created_at: string
           food_item: string
           id: string
           is_preset: boolean
           reaction: string | null
+          reaction_type: string | null
+          severity: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          carry_epipen?: boolean
           created_at?: string
           food_item: string
           id?: string
           is_preset?: boolean
           reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          carry_epipen?: boolean
           created_at?: string
           food_item?: string
           id?: string
           is_preset?: boolean
           reaction?: string | null
+          reaction_type?: string | null
+          severity?: string | null
           updated_at?: string
           user_id?: string
         }
