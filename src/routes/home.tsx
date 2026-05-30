@@ -120,7 +120,8 @@ function HomePage() {
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} active />
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
-          <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label={t("nav.records")} />
+          <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label={t("nav.travel")} />
+          <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label={t("nav.records")} />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
           <NavTab to="/profile" icon={<User className="h-5 w-5" />} label={t("nav.profile")} />
         </ul>
