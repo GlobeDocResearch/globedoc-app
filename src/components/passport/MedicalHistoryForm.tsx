@@ -7,6 +7,8 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
 
 type Stay = {
   id: string;
@@ -25,18 +27,8 @@ type ConditionTag = {
   persisted: boolean;
 };
 
-const SUGGESTIONS = [
-  "Type 1 diabetes", "Type 2 diabetes", "Hypertension", "Asthma", "COPD",
-  "Coronary artery disease", "Heart failure", "Atrial fibrillation", "Stroke",
-  "Epilepsy", "Multiple sclerosis", "Parkinson's disease", "Alzheimer's / dementia",
-  "Rheumatoid arthritis", "Osteoarthritis", "Osteoporosis", "Crohn's disease",
-  "Ulcerative colitis", "Irritable bowel syndrome", "Coeliac disease",
-  "Hypothyroidism", "Hyperthyroidism", "Chronic kidney disease", "Liver cirrhosis",
-  "HIV", "Hepatitis B", "Hepatitis C", "Cancer (specify type)", "Depression",
-  "Anxiety disorder", "Bipolar disorder", "PTSD", "ADHD", "Autism spectrum disorder",
-  "Lupus", "Fibromyalgia", "Chronic fatigue syndrome", "Sleep apnoea", "Migraine",
-  "Psoriasis", "Eczema", "Endometriosis", "PCOS",
-];
+const SUGGESTIONS = ALL_CONDITIONS;
+
 
 const T: Record<Lang, Record<string, string>> = {
   en: {
