@@ -43,7 +43,7 @@ const MAX_BYTES = 50 * 1024 * 1024;
 
 const T = {
   en: {
-    title: "Records", sub: "Your personal health journal",
+    title: "Records", sub: "Your personal health record",
     empty: "Your Records feed is empty — add your first entry with the + button.",
     you: "You", add: "Add entry", pickType: "Choose entry type",
     note: "Personal note", noteSub: "Free text",
