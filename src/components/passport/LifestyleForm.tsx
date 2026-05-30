@@ -606,11 +606,12 @@ export default function LifestyleForm() {
                       values={s.tobacco_products}
                       onToggle={(v) => toggleArr("tobacco_products", v)}
                       options={[
-                        { v: "cigarettes", l: "Cigarettes" },
-                        { v: "snus", l: "Snus" },
-                        { v: "vape", l: "Vape/e-cigarette" },
-                        { v: "pipe", l: "Pipe" },
-                        { v: "cigar", l: "Cigar" },
+                        { v: "cigarettes", l: t("tob_p_cigarettes") },
+                        { v: "snus", l: t("tob_p_snus") },
+                        { v: "vape", l: t("tob_p_vape") },
+                        { v: "pipe", l: t("tob_p_pipe") },
+                        { v: "cigar", l: t("tob_p_cigar") },
+                        { v: "patches", l: t("tob_p_patches") },
                       ]}
                     />
                   </div>
