@@ -15,11 +15,15 @@ type Stay = {
   event: string;
   diagnosis: string;
   year: string;
-  hospital_country: string;
+  institution: string;
+  city: string;
+  country: string;
+  record_type: string;
   notes: string;
   collapsed: boolean;
   persisted: boolean;
 };
+
 
 type ConditionTag = {
   id: string;
