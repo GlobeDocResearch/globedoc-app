@@ -7,6 +7,8 @@ import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIco
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import WorldMap, { type MapLocation } from "@/components/WorldMap";
+
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -20,6 +22,7 @@ function HomePage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [locations, setLocations] = useState<MapLocation[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -31,17 +34,27 @@ function HomePage() {
       }
       if (!mounted) return;
       setEmail(user.email ?? "");
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("first_name")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      if (mounted && profile?.first_name) setFirstName(profile.first_name);
+      const [{ data: profile }, hs, rl] = await Promise.all([
+        supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle(),
+        supabase.from("hospital_stays").select("id, city, country, hospital_country").eq("user_id", user.id),
+        (supabase as any).from("record_locations").select("id, city, country").eq("user_id", user.id),
+      ]);
+      if (!mounted) return;
+      if (profile?.first_name) setFirstName(profile.first_name);
+      const locs: MapLocation[] = [];
+      for (const r of (hs.data ?? []) as any[]) {
+        locs.push({ id: `hs-${r.id}`, city: r.city, country: r.country ?? r.hospital_country });
+      }
+      for (const r of (rl.data ?? []) as any[]) {
+        locs.push({ id: `rl-${r.id}`, city: r.city, country: r.country });
+      }
+      setLocations(locs);
     })();
     return () => {
       mounted = false;
     };
   }, [navigate]);
+
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -113,7 +126,13 @@ function HomePage() {
             {t("home.passportCta")}
           </Link>
         </section>
+
+        {/* World map of record locations */}
+        <section className="mt-6">
+          <WorldMap locations={locations} />
+        </section>
       </main>
+
 
       {/* Bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">

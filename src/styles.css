@@ -82,3 +82,14 @@
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
 }
+
+@keyframes map-dot-pulse {
+  0% { transform: scale(0.6); opacity: 0.55; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.map-dot-pulse {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: map-dot-pulse 2.2s ease-out infinite;
+}
