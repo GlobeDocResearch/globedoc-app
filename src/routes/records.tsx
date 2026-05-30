@@ -15,7 +15,7 @@ export const Route = createFileRoute("/records")({
   component: RecordsPage,
 });
 
-type EntryType = "note" | "document" | "image" | "lab";
+type EntryType = "note" | "document" | "image" | "lab" | "clinical_note";
 
 type RecordEntry = {
   id: string;
