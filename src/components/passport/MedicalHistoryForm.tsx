@@ -722,7 +722,7 @@ function ConditionTagInput({
               onClick={() => commit(c)}
               className="rounded-full border border-[#E5E7EB] bg-white px-3 py-1 text-xs text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
             >
-              + {c}
+              {c}
             </button>
           ))}
         </div>
@@ -776,7 +776,7 @@ function ConditionTagInput({
                               : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
                           }`}
                         >
-                          {isUsed ? `✓ ${c}` : `+ ${c}`}
+                          {isUsed ? `✓ ${c}` : c}
                         </button>
                       );
                     })}
