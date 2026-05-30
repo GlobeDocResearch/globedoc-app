@@ -49,6 +49,10 @@ type State = {
   tested: boolean | null;
   findings: string;
   under_counselling: boolean | null;
+  dna_tests: string[];
+  dna_other: string;
+  dna_file_path: string | null;
+  dna_file_name: string | null;
 };
 
 type AgeKind = "stroke" | "onset";
