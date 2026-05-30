@@ -1,0 +1,5 @@
+ALTER TABLE public.hospital_stays
+  ADD COLUMN IF NOT EXISTS institution TEXT,
+  ADD COLUMN IF NOT EXISTS city TEXT,
+  ADD COLUMN IF NOT EXISTS country TEXT,
+  ADD COLUMN IF NOT EXISTS record_type TEXT;

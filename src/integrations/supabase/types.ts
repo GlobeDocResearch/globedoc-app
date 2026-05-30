@@ -502,34 +502,46 @@ export type Database = {
       }
       hospital_stays: {
         Row: {
+          city: string | null
+          country: string | null
           created_at: string
           diagnosis: string | null
           event: string | null
           hospital_country: string | null
           id: string
+          institution: string | null
           notes: string | null
+          record_type: string | null
           updated_at: string
           user_id: string
           year: string | null
         }
         Insert: {
+          city?: string | null
+          country?: string | null
           created_at?: string
           diagnosis?: string | null
           event?: string | null
           hospital_country?: string | null
           id?: string
+          institution?: string | null
           notes?: string | null
+          record_type?: string | null
           updated_at?: string
           user_id: string
           year?: string | null
         }
         Update: {
+          city?: string | null
+          country?: string | null
           created_at?: string
           diagnosis?: string | null
           event?: string | null
           hospital_country?: string | null
           id?: string
+          institution?: string | null
           notes?: string | null
+          record_type?: string | null
           updated_at?: string
           user_id?: string
           year?: string | null
