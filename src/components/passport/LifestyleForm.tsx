@@ -660,11 +660,12 @@ export default function LifestyleForm() {
                   { v: "occasionally", l: t("alc_occ") },
                   { v: "monthly", l: t("alc_monthly") },
                   { v: "weekly", l: t("alc_weekly") },
+                  { v: "daily", l: t("alc_daily") },
                 ]}
               />
               {showAlcoholExtra && (
                 <div className="mt-3 space-y-3">
-                  {(s.alcohol_frequency === "monthly" || s.alcohol_frequency === "weekly") && (
+                  {(s.alcohol_frequency === "monthly" || s.alcohol_frequency === "weekly" || s.alcohol_frequency === "daily") && (
                     <div>
                       <Lbl>{t("alc_drinks")}</Lbl>
                       <input
@@ -691,9 +692,84 @@ export default function LifestyleForm() {
                       ]}
                     />
                   </div>
+                  <div>
+                    <Lbl>{t("alc_units")}</Lbl>
+                    <Txt
+                      value={s.alcohol_units_per_week}
+                      onChange={(v) => set("alcohol_units_per_week", v)}
+                      placeholder={t("alc_units_ph")}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">{t("alc_units_help")}</p>
+                  </div>
                 </div>
               )}
             </Section>
+
+            {/* NARCOTICS */}
+            <Section title={t("s_narc")}>
+              <p className="mb-3 text-xs text-gray-600">{t("narc_sub")}</p>
+              <Lbl>{t("narc_q")}</Lbl>
+              <Radios
+                value={s.narcotics_status}
+                onChange={(v) => set("narcotics_status", v)}
+                options={[
+                  { v: "yes", l: t("narc_yes") },
+                  { v: "no", l: t("narc_no") },
+                  { v: "pnts", l: t("narc_pnts") },
+                ]}
+              />
+              {s.narcotics_status === "yes" && (
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <Lbl>{t("narc_subs")}</Lbl>
+                    <CheckList
+                      values={s.narcotics_substances}
+                      onToggle={(v) => toggleArr("narcotics_substances", v)}
+                      options={[
+                        { v: "cannabis", l: t("narc_cannabis") },
+                        { v: "cocaine", l: t("narc_cocaine") },
+                        { v: "heroin", l: t("narc_heroin") },
+                        { v: "amphetamine", l: t("narc_amph") },
+                        { v: "mdma", l: t("narc_mdma") },
+                        { v: "hallucinogens", l: t("narc_hallu") },
+                        { v: "benzo", l: t("narc_benzo") },
+                        { v: "other", l: t("other") },
+                      ]}
+                    />
+                    {s.narcotics_substances.includes("other") && (
+                      <div className="mt-2">
+                        <Txt
+                          value={s.narcotics_substances_other}
+                          onChange={(v) => set("narcotics_substances_other", v)}
+                          placeholder={t("please_specify")}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Lbl>{t("narc_status")}</Lbl>
+                    <Sel
+                      value={s.narcotics_use_status}
+                      onChange={(v) => set("narcotics_use_status", v)}
+                      options={[
+                        { v: "past", l: t("narc_st_past") },
+                        { v: "occasional", l: t("narc_st_occ") },
+                        { v: "regular", l: t("narc_st_reg") },
+                        { v: "recovery", l: t("narc_st_rec") },
+                      ]}
+                    />
+                  </div>
+                  <YesNo
+                    label={t("narc_inject")}
+                    value={s.narcotics_ever_injected}
+                    onChange={(v) => set("narcotics_ever_injected", v)}
+                    yes={t("yes")}
+                    no={t("no")}
+                  />
+                </div>
+              )}
+            </Section>
+
 
 
             {/* HEIGHT & WEIGHT */}
