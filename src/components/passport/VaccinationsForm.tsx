@@ -190,7 +190,7 @@ const T: Record<Lang, Record<string, string>> = {
     s2: "Resevaccin",
     s3: "Övriga vaccin",
     s4: "Kontraindikationer",
-    info_sweden: "Baserat på svenska vaccinationsprogrammet för någon född {year}. Dessa vaccin gavs sannolikt under barndomen — bekräfta eller justera.",
+    info_sweden: "Baserat på svenska vaccinationsprogrammet för någon född {year}. Bekräfta eller justera vid behov.",
     info_other: "Justera utifrån ditt lands vaccinationsprogram.",
     info_no_year: "Vi känner inte till ditt födelseår än. Alla vaccin är \"Osäker\" som standard — vänligen bekräfta.",
     likely: "Troligen fått",
