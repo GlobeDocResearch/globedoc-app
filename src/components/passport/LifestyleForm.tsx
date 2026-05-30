@@ -504,7 +504,13 @@ export default function LifestyleForm() {
           s.nothing || !s.alcohol_drinks_per_week
             ? null
             : parseInt(s.alcohol_drinks_per_week, 10),
+        alcohol_units_per_week: s.nothing ? null : s.alcohol_units_per_week || null,
         alcohol_type: s.nothing ? null : s.alcohol_type,
+        narcotics_status: s.nothing ? null : s.narcotics_status || null,
+        narcotics_substances: s.nothing ? null : s.narcotics_substances,
+        narcotics_substances_other: s.nothing ? null : s.narcotics_substances_other || null,
+        narcotics_use_status: s.nothing ? null : s.narcotics_use_status || null,
+        narcotics_ever_injected: s.nothing ? null : s.narcotics_ever_injected,
         height_cm: s.nothing || !s.height_cm ? null : parseFloat(s.height_cm),
         weight_kg: s.nothing || !s.weight_kg ? null : parseFloat(s.weight_kg),
         exercise_frequency: s.nothing ? null : s.exercise_frequency || null,
