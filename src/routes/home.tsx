@@ -126,7 +126,13 @@ function HomePage() {
             {t("home.passportCta")}
           </Link>
         </section>
+
+        {/* World map of record locations */}
+        <section className="mt-6">
+          <WorldMap locations={locations} />
+        </section>
       </main>
+
 
       {/* Bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
