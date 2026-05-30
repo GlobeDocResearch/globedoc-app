@@ -796,12 +796,11 @@ export default function HeredityForm() {
                         <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
                           {lang === "sv" ? c.l_sv : c.l_en}
                         </div>
-                        <Txt
+                        <Lbl>{t("which_relative")}</Lbl>
+                        <RelativeChecklist
                           value={s.conditions[c.v] ?? ""}
                           onChange={(v) => setConditionRelative(c.v, v)}
-                          placeholder={t("which_relative_ph")}
-                          label={t("which_relative")}
-                          onKeyDown={onEnter}
+                          lang={lang}
                         />
                         {c.ageKind && (
                           <div className="mt-2">
