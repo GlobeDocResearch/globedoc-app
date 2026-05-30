@@ -143,7 +143,7 @@ export default function MedicationsForm() {
 
       if (pm.data) setRx(pm.data.map((r: any) => ({
         id: r.id, drug_generic: r.drug_generic ?? "", brand_name: r.brand_name ?? "",
-        dose_form: r.dose_form ?? "", frequency: r.frequency ?? "", prescriber: r.prescriber ?? "",
+        dose_form: r.dose_form ?? "", frequency: r.frequency ?? "", indication: r.indication ?? "", prescriber: r.prescriber ?? "",
         collapsed: true, persisted: true,
       })));
       if (ot.data) setOtc(ot.data.map((r: any) => ({
