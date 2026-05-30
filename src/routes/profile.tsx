@@ -252,6 +252,35 @@ function ProfilePage() {
       <main className="mx-auto w-full max-w-3xl space-y-4 px-4 py-6">
         <h1 className="text-center text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
 
+        {/* Avatar */}
+        <div className="flex flex-col items-center">
+          <button
+            type="button"
+            onClick={handleAvatarClick}
+            disabled={uploadingAvatar}
+            aria-label="Change profile photo"
+            className="relative h-24 w-24 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
+          >
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <User className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
+            )}
+            <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-[#2563EB] text-white shadow ring-2 ring-white">
+              <Camera className="h-3.5 w-3.5" />
+            </span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
+        </div>
+
+
         {/* Personal Information */}
         <Card>
           <div className="flex items-start justify-between">
