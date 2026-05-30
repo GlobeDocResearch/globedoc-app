@@ -263,13 +263,29 @@ export default function VaccinationsForm() {
       setNationality(country);
       setBirthYear(year);
 
-      // Build childhood list — use saved rows if present, otherwise defaults
+      // Build childhood list — filter to vaccines that were part of the Swedish
+      // programme while the patient was 0–18 (when Sweden + birth year known).
       const savedMap: Record<string, any> = {};
       (cv.data ?? []).forEach((r: any) => { savedMap[r.vaccine_name] = r; });
       const isSweden = country === "Sweden";
       const yearNum = year ? parseInt(year, 10) : null;
-      const swedenEligible = isSweden && yearNum !== null && yearNum >= 1993;
-      const list: ChildhoodVax[] = CHILDHOOD_DEFS.map((d) => {
+      const defs: { name: string; descEn: string; descSv: string }[] =
+        isSweden && yearNum !== null
+          ? programmeForBirthYear(yearNum).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
+          : SE_PROGRAMME.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
+      // Include any previously-saved vaccine that isn't in the filtered list so user edits aren't lost
+      Object.keys(savedMap).forEach((name) => {
+        if (!defs.find((d) => d.name === name)) {
+          const orig = SE_PROGRAMME.find((p) => p.name === name);
+          defs.push({
+            name,
+            descEn: orig?.descEn ?? "",
+            descSv: orig?.descSv ?? "",
+          });
+        }
+      });
+      const sweEligible = isSweden && yearNum !== null;
+      const list: ChildhoodVax[] = defs.map((d) => {
         if (savedMap[d.name]) {
           return {
             name: d.name,
@@ -279,10 +295,10 @@ export default function VaccinationsForm() {
             year_received: savedMap[d.name].year_received ?? "",
           };
         }
-        const defaultStatus: Status =
-          swedenEligible && SWEDEN_PRESELECTED.has(d.name) ? "likely_received" : "unsure";
+        const defaultStatus: Status = sweEligible ? "likely_received" : "unsure";
         return { name: d.name, descEn: d.descEn, descSv: d.descSv, status: defaultStatus, year_received: "" };
       });
+
       setChildhood(list);
 
       // Travel — group rows by destination
