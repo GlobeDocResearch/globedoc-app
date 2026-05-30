@@ -841,14 +841,12 @@ export default function LifestyleForm() {
                       values={s.exercise_types}
                       onToggle={(v) => toggleArr("exercise_types", v)}
                       options={[
-                        { v: "cardio", l: t("ex_cardio") },
                         { v: "strength", l: t("ex_strength") },
+                        { v: "cardio", l: t("ex_cardio") },
                         { v: "swim", l: t("ex_swim") },
-                        { v: "yoga", l: t("ex_yoga") },
-                        { v: "climb", l: t("ex_climb") },
                         { v: "cycle", l: t("ex_cycle") },
                         { v: "team", l: t("ex_team") },
-                        { v: "walk", l: t("ex_walk") },
+                        { v: "yoga", l: t("ex_yoga") },
                         { v: "other", l: t("other") },
                       ]}
                     />
