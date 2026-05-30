@@ -201,7 +201,7 @@ export default function MedicationsForm() {
   const discardRx = async (item: Rx) => {
     if (!item.persisted) { setRx((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
     const { data } = await supabase.from("prescription_medications").select("*").eq("id", item.id).maybeSingle();
-    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
+    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", indication: data.indication ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
     clearDirty(item.id);
   };
 
