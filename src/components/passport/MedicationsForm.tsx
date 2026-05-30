@@ -387,7 +387,13 @@ export default function MedicationsForm() {
               </div>
               <AddBtn label={t("add_otc")} onClick={addOtc} />
             </Accordion>
-
+                    <MedicationDrugField
+                      label={t("f_drug")}
+                      ph={t("f_drug_ph")}
+                      value={item.drug_generic}
+                      onChange={(v) => updateStopped(item.id, { drug_generic: v })}
+                      onSelectMed={(entry) => updateStopped(item.id, { drug_generic: entry.generic })}
+                    />
             {/* Section 3 — stopped accordion */}
             <Accordion title={t("s3")} open={stoppedOpen} onToggle={() => setStoppedOpen(!stoppedOpen)}>
               <div className="space-y-3">
