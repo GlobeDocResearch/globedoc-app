@@ -160,11 +160,15 @@ export default function MedicalHistoryForm() {
   const [dirty, setDirty] = useState(false);
   const [dirtyStays, setDirtyStays] = useState<Set<string>>(new Set());
   const [dirtyTags, setDirtyTags] = useState<Set<string>>(new Set());
+  const [dirtyLocations, setDirtyLocations] = useState<Set<string>>(new Set());
   const markStayDirty = (id: string) => setDirtyStays((s) => { const n = new Set(s); n.add(id); return n; });
   const clearStayDirty = (id: string) => setDirtyStays((s) => { const n = new Set(s); n.delete(id); return n; });
   const markTagDirty = (id: string) => setDirtyTags((s) => { const n = new Set(s); n.add(id); return n; });
   const clearTagDirty = (id: string) => setDirtyTags((s) => { const n = new Set(s); n.delete(id); return n; });
-  const anyDirty = dirty || dirtyStays.size > 0 || dirtyTags.size > 0;
+  const markLocDirty = (id: string) => setDirtyLocations((s) => { const n = new Set(s); n.add(id); return n; });
+  const clearLocDirty = (id: string) => setDirtyLocations((s) => { const n = new Set(s); n.delete(id); return n; });
+  const anyDirty = dirty || dirtyStays.size > 0 || dirtyTags.size > 0 || dirtyLocations.size > 0;
+
 
   useEffect(() => {
     (async () => {
