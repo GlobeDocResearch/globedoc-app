@@ -394,6 +394,10 @@ export default function HeredityForm() {
         next.tested = gen.data.tested;
         next.findings = gen.data.findings ?? "";
         next.under_counselling = gen.data.under_counselling;
+        next.dna_tests = gen.data.dna_tests ?? [];
+        next.dna_other = gen.data.dna_other ?? "";
+        next.dna_file_path = gen.data.dna_file_path ?? null;
+        next.dna_file_name = gen.data.dna_file_name ?? null;
       }
       setS(next);
       setLoading(false);
