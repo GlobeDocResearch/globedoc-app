@@ -66,3 +66,60 @@ function stripHighlight(s: string): string {
   // WHO returns titles with <em class='found'>…</em> highlight markup.
   return s.replace(/<[^>]+>/g, "").trim();
 }
+
+// ---- ICHI (WHO International Classification of Health Interventions) -------
+
+export type IchiMatch = {
+  code: string;
+  title: string;
+};
+
+const ICHI_CACHE = new Map<string, { at: number; data: IchiMatch[] }>();
+
+export async function searchIchi(
+  query: string,
+  lang: string,
+  signal?: AbortSignal,
+): Promise<IchiMatch[]> {
+  const q = query.trim();
+  if (q.length < 3) return [];
+
+  const key = `${lang}::${q.toLowerCase()}`;
+  const cached = ICHI_CACHE.get(key);
+  if (cached && Date.now() - cached.at < TTL_MS) return cached.data;
+
+  const url =
+    "https://id.who.int/icd/entity/search?" +
+    new URLSearchParams({
+      q,
+      useFlexisearch: "true",
+      flatResults: "true",
+      releaseId: "2024-01/ichi",
+    }).toString();
+
+  try {
+    const res = await fetch(url, {
+      signal,
+      headers: {
+        Accept: "application/json",
+        "API-Version": "v2",
+        "Accept-Language": lang || "en",
+      },
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as {
+      destinationEntities?: Array<{ theCode?: string; title?: string }>;
+    };
+    const matches: IchiMatch[] = (json.destinationEntities ?? [])
+      .map((e) => ({
+        code: (e.theCode ?? "").trim(),
+        title: stripHighlight(e.title ?? ""),
+      }))
+      .filter((m) => m.code && m.title)
+      .slice(0, 10);
+    ICHI_CACHE.set(key, { at: Date.now(), data: matches });
+    return matches;
+  } catch {
+    return [];
+  }
+}

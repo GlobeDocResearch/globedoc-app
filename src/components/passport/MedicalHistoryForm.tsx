@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
-import { searchIcd11, type Icd11Match } from "@/lib/icd11";
+import { searchIcd11, searchIchi, type Icd11Match, type IchiMatch } from "@/lib/icd11";
 import {
   upsertPassportEntry,
   deletePassportEntry,
@@ -22,6 +22,7 @@ import {
 type Stay = {
   id: string;
   event: string;
+  ichi_code: string | null;
   diagnosis: string;
   year: string;
   institution: string;
@@ -69,13 +70,13 @@ const SUGGESTIONS = ALL_CONDITIONS;
 const T: Record<Lang, Record<string, string>> = {
   en: {
     title: "Medical History",
-    subtitle: "Diagnoses, hospitalisations, operations & record locations",
+    subtitle: "Diagnoses, hospitalisations, procedures & record locations",
     nothing: "Nothing to report",
     s1: "Current & chronic conditions",
     s1ph: "Search or type a condition…",
     s1_year_ph: "Year diagnosed, e.g. 2018",
-    s2: "Hospitalisations, Operations & Global Record Locations",
-    f_event: "Event / procedure",
+    s2: "Hospitalisations, Procedures & Global Record Locations",
+    f_event: "Event / procedure / intervention",
     f_event_ph: "E.g. Appendectomy",
     f_diagnosis: "Diagnosis / condition treated",
     f_diagnosis_ph: "E.g. Appendicitis, hip fracture",
@@ -109,13 +110,13 @@ const T: Record<Lang, Record<string, string>> = {
   },
   sv: {
     title: "Sjukdomshistorik",
-    subtitle: "Diagnoser, sjukhusvistelser, operationer & journalplatser",
+    subtitle: "Diagnoser, sjukhusvistelser, ingrepp & journalplatser",
     nothing: "Inget att rapportera",
     s1: "Pågående & kroniska tillstånd",
     s1ph: "Sök eller skriv ett tillstånd…",
     s1_year_ph: "År för diagnos, t.ex. 2018",
-    s2: "Sjukhusvistelser, operationer & globala journalplatser",
-    f_event: "Händelse / ingrepp",
+    s2: "Sjukhusvistelser, ingrepp & globala journalplatser",
+    f_event: "Händelse / ingrepp / åtgärd",
     f_event_ph: "T.ex. Blindtarmsoperation",
     f_diagnosis: "Diagnos / behandlat tillstånd",
     f_diagnosis_ph: "T.ex. Blindtarmsinflammation, höftfraktur",
@@ -223,6 +224,7 @@ export default function MedicalHistoryForm() {
         setStays(hs.data.map((r: any) => ({
           id: r.id,
           event: r.event ?? "",
+          ichi_code: r.ichi_code ?? null,
           diagnosis: r.diagnosis ?? "",
           year: r.year ?? "",
           institution: r.institution ?? "",
@@ -350,7 +352,7 @@ export default function MedicalHistoryForm() {
     const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      { id, event: "", diagnosis: "", year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
+      { id, event: "", ichi_code: null, diagnosis: "", year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
     ]);
     markStayDirty(id);
   };
@@ -364,6 +366,7 @@ export default function MedicalHistoryForm() {
     if (!userId) return;
     const payload: any = {
       event: stay.event,
+      ichi_code: stay.ichi_code,
       diagnosis: stay.diagnosis,
       year: stay.year,
       institution: stay.institution,
@@ -415,6 +418,7 @@ export default function MedicalHistoryForm() {
       const r = data as any;
       updateStay(stay.id, {
         event: r.event ?? "",
+        ichi_code: r.ichi_code ?? null,
         diagnosis: r.diagnosis ?? "",
         year: r.year ?? "",
         institution: r.institution ?? "",
@@ -746,8 +750,15 @@ export default function MedicalHistoryForm() {
                       className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3"
                     >
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-medium text-[#0D1B2A]">
-                          {[stay.event, stay.year].filter(Boolean).join(" · ") || stay.institution || "—"}
+                        <div className="flex items-center gap-2 truncate text-sm font-medium text-[#0D1B2A]">
+                          <span className="truncate">
+                            {[stay.event, stay.year].filter(Boolean).join(" · ") || stay.institution || "—"}
+                          </span>
+                          {stay.ichi_code && (
+                            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                              {stay.ichi_code}
+                            </span>
+                          )}
                         </div>
                         <div className="truncate text-xs text-gray-600">
                           {[stay.institution, stay.city, stay.country].filter(Boolean).join(" · ")}
@@ -765,7 +776,14 @@ export default function MedicalHistoryForm() {
                     </div>
                   ) : (
                     <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                      <Field label={t("f_event")} value={stay.event} ph="E.g. Appendectomy, outpatient consultation" onChange={(v) => updateStay(stay.id, { event: v })} />
+                      <ProcedureField
+                        label={t("f_event")}
+                        value={stay.event}
+                        code={stay.ichi_code}
+                        ph="E.g. Appendectomy, outpatient consultation"
+                        lang={lang}
+                        onChange={(ev, code) => updateStay(stay.id, { event: ev, ichi_code: code })}
+                      />
                       <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
                       <Field label={t("f_year")} value={stay.year} ph="E.g. 2019 or 2018–2022" onChange={(v) => updateStay(stay.id, { year: v })} />
                       <Field label="Institution / Hospital name" value={stay.institution} ph="E.g. Karolinska University Hospital" onChange={(v) => updateStay(stay.id, { institution: v })} />
@@ -1199,6 +1217,99 @@ function Field({ label, value, ph, onChange }: { label: string; value: string; p
         placeholder={ph}
         className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
       />
+    </div>
+  );
+}
+
+function ProcedureField({
+  label,
+  value,
+  code,
+  ph,
+  lang,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  code: string | null;
+  ph: string;
+  lang: Lang;
+  onChange: (event: string, ichi_code: string | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<IchiMatch[]>([]);
+  const [loading, setLoading] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const term = value.trim();
+    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    const ctrl = new AbortController();
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const res = await searchIchi(term, lang, ctrl.signal);
+      setResults(res);
+      setLoading(false);
+    }, 300);
+    return () => { clearTimeout(handle); ctrl.abort(); };
+  }, [value, lang]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const infoNote =
+    lang === "sv"
+      ? "Ingrepp kan sökas med WHO:s ICHI-klassificering (International Classification of Health Interventions) — den globala standarden för medicinska procedurer, ingrepp och operationer. Sök på ditt föredragna språk. ICHI-koder hjälper kliniker världen över att förstå exakt vad som utfördes, oavsett lokal terminologi."
+      : "Procedures can be searched using the WHO ICHI classification (International Classification of Health Interventions) — the global standard for medical procedures, interventions and surgeries. Search in your preferred language. ICHI codes help clinicians anywhere in the world understand exactly what was performed, regardless of local terminology.";
+
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <div ref={wrapRef} className="relative">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#5B6BD4]">
+          <input
+            value={value}
+            onChange={(e) => { onChange(e.target.value, null); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            placeholder={ph}
+            className="flex-1 bg-transparent text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:outline-none"
+          />
+          {code && (
+            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              {code}
+            </span>
+          )}
+        </div>
+        {open && value.trim().length >= 3 && (loading || results.length > 0) && (
+          <div className="absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+            <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              ICHI — WHO International Classification of Health Interventions
+            </div>
+            {loading && results.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+            )}
+            {results.map((r) => (
+              <button
+                key={`${r.code}-${r.title}`}
+                type="button"
+                onClick={() => { onChange(r.title, r.code); setOpen(false); }}
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="truncate">{r.title}</span>
+                <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                  {r.code}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <p className="pt-1 text-[11px] leading-snug text-gray-500">{infoNote}</p>
     </div>
   );
 }
