@@ -11,8 +11,8 @@ import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
 import { MEDICATIONS } from "@/lib/medications";
 import { searchRxNorm, getBrandName, getAtcCode, type RxMatch } from "@/lib/rxnorm";
 
-const ACCENT = "#6BBF8E";
-const ACCENT_2 = "#4DA070";
+const ACCENT = "#1A6B4A";
+const ACCENT_2 = "#1A6B4A";
 
 type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; atc_code: string; collapsed: boolean; persisted: boolean };
 type Otc = { id: string; product: string; dose: string; frequency: string; reason: string; collapsed: boolean; persisted: boolean };

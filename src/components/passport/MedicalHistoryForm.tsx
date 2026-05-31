@@ -152,8 +152,8 @@ const T: Record<Lang, Record<string, string>> = {
   },
 };
 
-const ACCENT = "#5B6BD4";
-const ACCENT_2 = "#7B8BE4";
+const ACCENT = "#1B3A6B";
+const ACCENT_2 = "#1B3A6B";
 
 export default function MedicalHistoryForm() {
   const { lang } = useI18n();
