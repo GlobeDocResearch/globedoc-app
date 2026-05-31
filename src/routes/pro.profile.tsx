@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, ShieldCheck, User as UserIcon, Upload, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 
 export const Route = createFileRoute("/pro/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc Pro" }] }),
@@ -33,6 +34,7 @@ function ProfileTab() {
   const [saving, setSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [surveyOpen, setSurveyOpen] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
 
@@ -216,6 +218,12 @@ function ProfileTab() {
           {saving ? "Saving..." : "Save changes"}
         </button>
       </form>
+
+      <div className="mt-4">
+        <BetaSurveyCard onOpen={() => setSurveyOpen(true)} />
+      </div>
+
+      <BetaSurvey open={surveyOpen} onClose={() => setSurveyOpen(false)} userId={userId} role="pro" />
     </main>
   );
 }
