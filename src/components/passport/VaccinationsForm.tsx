@@ -463,7 +463,6 @@ export default function VaccinationsForm() {
             {/* SECTION 1 — chip pill design, only show likely-received vaccines */}
             <section className="rounded-2xl border border-gray-200 p-4">
               <h2 className="text-base font-bold text-[#0D1B2A]">{t("s1")}</h2>
-              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {childhood
                   .filter((c) => c.status === "likely_received")
@@ -496,7 +495,11 @@ export default function VaccinationsForm() {
                     </button>
                   ))}
               </div>
+              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
             </section>
+
+
+
 
 
             {/* SECTION 2 */}
