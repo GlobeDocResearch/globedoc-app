@@ -30,6 +30,7 @@ type ConditionTag = {
   id: string;
   condition_name: string;
   year: string;
+  icd11_code: string | null;
   persisted: boolean;
 };
 
