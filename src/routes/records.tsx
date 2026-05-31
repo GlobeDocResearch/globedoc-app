@@ -62,6 +62,12 @@ const T = {
     tooLarge: "File exceeds 50 MB", uploading: "Uploading…",
     open: "Open file", download: "Download",
     formats: "Supported: PDF · JPEG · PNG · TXT — max 50 MB",
+    fromPassport: "From Health Passport",
+    passportDeleteHint: "To remove this entry, update your Health Passport",
+    addDetails: "Add details",
+    viewFeed: "Feed",
+    viewTimeline: "Timeline",
+    timelineEmpty: "Your medical timeline will appear here as you fill in your Health Passport. Start by adding conditions and hospitalisations under Medical History.",
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
