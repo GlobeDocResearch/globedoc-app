@@ -469,7 +469,7 @@ export default function VaccinationsForm() {
                         setChildhood((arr) => arr.map((x) => x.name === c.name ? { ...x, status: "unsure" } : x));
                         markDirty();
                       }}
-                      className="rounded-full border border-[#F5C800] bg-[#F5C800] px-3 py-1.5 text-xs font-medium text-white"
+                      className="rounded-full border border-[#F5C800] bg-[#F5C800] px-3 py-1.5 text-xs font-medium text-[#1B3A6B]"
                     >
                       {c.name}
                     </button>
@@ -537,7 +537,7 @@ export default function VaccinationsForm() {
                         setAddVaxOpen(false);
                         markDirty();
                       }}
-                      className="rounded-full bg-[#F5C800] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#F5C800]"
+                      className="rounded-full bg-[#F5C800] px-4 py-1.5 text-xs font-semibold text-[#1B3A6B] hover:bg-[#E0B600]"
                     >
                       {lang === "sv" ? "Lägg till" : "Add"}
                     </button>
