@@ -22,6 +22,7 @@ import {
 type Stay = {
   id: string;
   event: string;
+  ichi_code: string | null;
   diagnosis: string;
   year: string;
   institution: string;
