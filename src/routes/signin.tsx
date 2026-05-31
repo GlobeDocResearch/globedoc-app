@@ -44,13 +44,14 @@ function LoginPage() {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
     setSubmitting(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    navigate({ to: "/home" });
+    const isPro = (data.user?.user_metadata as { account_type?: string } | null)?.account_type === "professional";
+    navigate({ to: isPro ? "/pro" : "/home" });
   };
 
   const onReset = async (e: React.FormEvent) => {
