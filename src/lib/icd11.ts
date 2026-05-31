@@ -9,6 +9,7 @@
 export type Icd11Match = {
   code: string;
   title: string;
+  description?: string;
 };
 
 type CacheEntry = { at: number; data: Icd11Match[] };
@@ -46,15 +47,24 @@ export async function searchIcd11(
     });
     if (!res.ok) return [];
     const json = (await res.json()) as {
-      destinationEntities?: Array<{ theCode?: string; title?: string }>;
+      destinationEntities?: Array<{
+        theCode?: string;
+        title?: string;
+        chapter?: string;
+        chapterTitle?: string;
+      }>;
     };
     const matches: Icd11Match[] = (json.destinationEntities ?? [])
-      .map((e) => ({
-        code: (e.theCode ?? "").trim(),
-        title: stripHighlight(e.title ?? ""),
-      }))
+      .map((e) => {
+        const description = stripHighlight(e.chapterTitle ?? "");
+        return {
+          code: (e.theCode ?? "").trim(),
+          title: stripHighlight(e.title ?? ""),
+          ...(description ? { description } : {}),
+        };
+      })
       .filter((m) => m.code && m.title)
-      .slice(0, 10);
+      .slice(0, 20);
     CACHE.set(key, { at: Date.now(), data: matches });
     return matches;
   } catch {
