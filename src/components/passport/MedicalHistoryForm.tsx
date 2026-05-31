@@ -1337,13 +1337,26 @@ function DiagnosisField({
             </span>
           )}
         </div>
-        {open && value.trim().length >= 1 && (loading || results.length > 0) && (
+        {open && value.trim().length >= 1 && (localResults.length > 0 || loading || results.length > 0) && (
           <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
               ICD-11 — WHO Global Disease Classification
             </div>
+            {localResults.map((r) => (
+              <button
+                key={`local-${r.code}-${r.title}`}
+                type="button"
+                onClick={() => { onChange(r.title, r.code); setOpen(false); }}
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="truncate">{r.title}</span>
+                <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                  {r.code}
+                </span>
+              </button>
+            ))}
             {loading && results.length === 0 && (
-              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+              <div className="px-3 py-2 text-xs text-gray-500">Searching WHO ICD-11…</div>
             )}
             {results.map((r) => (
               <button
@@ -1366,7 +1379,7 @@ function DiagnosisField({
         onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
         className="mt-1 text-xs font-medium text-[#185FA5] hover:underline"
       >
-        Browse ICD-11 — WHO Global Disease Classification →
+        Browse ICD-11 — WHO Global Disease Classification
       </button>
       <Icd11BrowserSheet
         open={browseOpen}
