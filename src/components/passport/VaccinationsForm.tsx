@@ -15,6 +15,7 @@ import {
   WHO_GENERIC,
   isSupportedCountry,
   programmeForCountryAndYear,
+  swedenProgrammeForYear,
 } from "@/lib/childhoodVaccines";
 
 const ACCENT = "#9B7FD4";
