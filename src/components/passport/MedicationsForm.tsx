@@ -446,14 +446,18 @@ export default function MedicationsForm() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E5E7EB] bg-white p-4">
-        <button
-          type="button"
-          onClick={handleSaveAndExit}
+        <SaveButton
+          onSave={async () => {
+            bypassGuardRef.current = true;
+            const ok = await saveAll();
+            if (ok) navigate({ to: "/passport" });
+            else { bypassGuardRef.current = false; return false; }
+          }}
+          icon={<Check className="h-4 w-4" />}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6BBF8E] to-[#4DA070] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
-          <Check className="h-4 w-4" />
           {t("save")}
-        </button>
+        </SaveButton>
       </div>
       <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
     </div>
