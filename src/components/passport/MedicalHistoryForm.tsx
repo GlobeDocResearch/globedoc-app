@@ -769,7 +769,14 @@ export default function MedicalHistoryForm() {
                     </div>
                   ) : (
                     <div key={stay.id} className="space-y-2 rounded-xl bg-[#F8F9FA] p-4">
-                      <Field label={t("f_event")} value={stay.event} ph="E.g. Appendectomy, outpatient consultation" onChange={(v) => updateStay(stay.id, { event: v })} />
+                      <ProcedureField
+                        label={t("f_event")}
+                        value={stay.event}
+                        code={stay.ichi_code}
+                        ph="E.g. Appendectomy, outpatient consultation"
+                        lang={lang}
+                        onChange={(ev, code) => updateStay(stay.id, { event: ev, ichi_code: code })}
+                      />
                       <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
                       <Field label={t("f_year")} value={stay.year} ph="E.g. 2019 or 2018–2022" onChange={(v) => updateStay(stay.id, { year: v })} />
                       <Field label="Institution / Hospital name" value={stay.institution} ph="E.g. Karolinska University Hospital" onChange={(v) => updateStay(stay.id, { institution: v })} />
