@@ -214,6 +214,8 @@ export default function VaccinationsForm() {
   const [others, setOthers] = useState<OtherEntry[]>([]);
   const [contra, setContra] = useState("");
   const [contraOpen, setContraOpen] = useState(false);
+  const [addVaxOpen, setAddVaxOpen] = useState(false);
+  const [addVax, setAddVax] = useState({ name: "", year: "", country: "", notes: "" });
 
   const markDirty = () => setDirty(true);
 
