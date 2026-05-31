@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
-import { LANGUAGES } from "@/lib/languages";
+import { useLanguages } from "@/lib/useLanguages";
 import { cn } from "@/lib/utils";
 
 /** Shared dialog that lists every supported UI language. */
