@@ -750,8 +750,15 @@ export default function MedicalHistoryForm() {
                       className="flex items-center justify-between rounded-xl bg-[#F8F9FA] px-4 py-3"
                     >
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-medium text-[#0D1B2A]">
-                          {[stay.event, stay.year].filter(Boolean).join(" · ") || stay.institution || "—"}
+                        <div className="flex items-center gap-2 truncate text-sm font-medium text-[#0D1B2A]">
+                          <span className="truncate">
+                            {[stay.event, stay.year].filter(Boolean).join(" · ") || stay.institution || "—"}
+                          </span>
+                          {stay.ichi_code && (
+                            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                              {stay.ichi_code}
+                            </span>
+                          )}
                         </div>
                         <div className="truncate text-xs text-gray-600">
                           {[stay.institution, stay.city, stay.country].filter(Boolean).join(" · ")}
