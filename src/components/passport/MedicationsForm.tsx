@@ -334,7 +334,7 @@ export default function MedicationsForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <div className="space-y-3">
                 {rx.map((item) => item.collapsed ? (
-                  <SummaryRow key={item.id} text={[item.drug_generic, item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
+                  <SummaryRow key={item.id} text={[item.drug_generic + (item.atc_code ? ` · ${item.atc_code}` : ""), item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
                 ) : (
                   <div
                     key={item.id}
@@ -345,11 +345,14 @@ export default function MedicationsForm() {
                       label={t("f_drug")}
                       ph={t("f_drug_ph")}
                       value={item.drug_generic}
-                      onChange={(v) => updateRx(item.id, { drug_generic: v })}
+                      code={item.atc_code}
+                      lang={lang}
+                      onChange={(v) => updateRx(item.id, { drug_generic: v, atc_code: "" })}
                       onSelectMed={(entry) => {
                         const patch: Partial<Rx> = { drug_generic: entry.generic };
                         if (entry.brand && !item.brand_name) patch.brand_name = entry.brand;
                         if (entry.indication && !item.indication) patch.indication = entry.indication;
+                        if (entry.atc_code !== undefined) patch.atc_code = entry.atc_code ?? "";
                         updateRx(item.id, patch);
                       }}
                     />
@@ -410,6 +413,8 @@ export default function MedicationsForm() {
                       label={t("f_drug")}
                       ph={t("f_drug_stopped_ph")}
                       value={item.drug_generic}
+                      code={null}
+                      lang={lang}
                       onChange={(v) => updateStopped(item.id, { drug_generic: v })}
                       onSelectMed={(entry) => updateStopped(item.id, { drug_generic: entry.generic })}
                     />
