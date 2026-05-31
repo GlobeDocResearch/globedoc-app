@@ -1119,7 +1119,26 @@ function ConditionTagInput({
         >
           Browse by speciality →
         </button>
+        <button
+          type="button"
+          onClick={() => { setIcdBrowseQ(""); setIcdBrowseResults([]); setIcdBrowseOpen(true); }}
+          className="self-start text-xs font-medium text-[#5B6BD4] hover:underline"
+        >
+          Browse ICD-11 — WHO Global Classification →
+        </button>
       </div>
+
+      <Icd11BrowserSheet
+        open={icdBrowseOpen}
+        onOpenChange={setIcdBrowseOpen}
+        lang={lang}
+        q={icdBrowseQ}
+        setQ={setIcdBrowseQ}
+        results={icdBrowseResults}
+        setResults={setIcdBrowseResults}
+        used={used}
+        onPick={(name, code) => { commit(name, code); setIcdBrowseOpen(false); }}
+      />
 
       <Sheet open={commonOpen} onOpenChange={setCommonOpen}>
         <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
