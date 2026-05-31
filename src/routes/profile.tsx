@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
+import { LanguagePickerRow } from "@/components/LanguagePicker";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc" }] }),
