@@ -12,8 +12,8 @@ import { useLeaveGuard, LeaveDialog } from "./unsaved";
 import { AutocompleteInput, COMMON_MEDICATIONS } from "./AutocompleteInput";
 
 
-const ACCENT = "#8B1A1A";
-const ACCENT_2 = "#8B1A1A";
+const ACCENT = "#993C1D";
+const ACCENT_2 = "#993C1D";
 
 type Detail = {
   reaction_type?: string | null; // Rash | Urticaria | Angioedema | Anaphylaxis | Other

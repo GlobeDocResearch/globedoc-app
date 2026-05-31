@@ -25,12 +25,12 @@ const SECTIONS: {
   subtitle: string;
   color: string;
 }[] = [
-  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#1B3A6B" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#1A6B4A" },
-  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#3D2B7A" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#2C5282" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#2C3E50" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#8B1A1A" },
+  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#185FA5" },
+  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#0F6E56" },
+  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#3B6D11" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#BA7517" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#534AB7" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#993C1D" },
 ];
 
 function PassportPage() {
