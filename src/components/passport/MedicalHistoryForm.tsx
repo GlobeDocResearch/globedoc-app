@@ -352,7 +352,7 @@ export default function MedicalHistoryForm() {
     const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      { id, event: "", diagnosis: "", year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
+      { id, event: "", ichi_code: null, diagnosis: "", year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
     ]);
     markStayDirty(id);
   };
