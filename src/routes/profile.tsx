@@ -407,6 +407,16 @@ function ProfilePage() {
           </div>
         </Card>
 
+        {/* Advanced Security & Privacy */}
+        <Card>
+          <h2 className="text-base font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
+          <div className="mt-3 divide-y divide-gray-100">
+            <AdvancedComingSoonRow icon="🔗" label="GlobeDoc Chain" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
+            <AdvancedComingSoonRow icon="🔐" label="Homomorphic Encryption" subtitle="Your data can be analysed without ever being decrypted" />
+            <AdvancedComingSoonRow icon="🤖" label="Federated Learning" subtitle="AI that learns from your health data without it ever leaving your device" />
+          </div>
+        </Card>
+
         <button onClick={handleSignOut} className="w-full rounded-full border border-red-500 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50">
           <LogOut className="mr-2 inline h-4 w-4" />{t.signOut}
         </button>
