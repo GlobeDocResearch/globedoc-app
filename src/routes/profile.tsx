@@ -10,6 +10,7 @@ import { BLOOD_GROUPS } from "@/lib/countries";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { deleteMyAccount } from "@/lib/account.functions";
+import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc" }] }),
@@ -91,6 +92,7 @@ function ProfilePage() {
   const [consent, setConsent] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [surveyOpen, setSurveyOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -366,6 +368,8 @@ function ProfilePage() {
             </div>
           </div>
         </Card>
+
+        <BetaSurveyCard onOpen={() => setSurveyOpen(true)} />
 
         {/* Settings */}
         <Card>
