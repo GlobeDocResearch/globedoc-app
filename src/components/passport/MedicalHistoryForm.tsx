@@ -465,6 +465,7 @@ export default function MedicalHistoryForm() {
       years: loc.years || null,
       record_type: loc.record_type || null,
     };
+    let locId = loc.id;
     if (loc.persisted) {
       await sbAny.from("record_locations").update(payload).eq("id", loc.id);
       audit("record_locations", "update");
@@ -476,7 +477,21 @@ export default function MedicalHistoryForm() {
         .select()
         .single();
       audit("record_locations", "insert");
-      if (data) updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
+      if (data) {
+        locId = data.id;
+        updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
+      }
+    }
+    const title = titleForLocation(loc);
+    if (title.trim()) {
+      await upsertPassportEntry({
+        userId,
+        sourceKind: "record_location",
+        sourceId: locId,
+        title,
+        body: loc.record_type || null,
+        eventYear: firstYear(loc.years),
+      });
     }
     clearLocDirty(loc.id);
   };
@@ -505,6 +520,7 @@ export default function MedicalHistoryForm() {
     if (loc.persisted) {
       await sbAny.from("record_locations").delete().eq("id", loc.id);
       audit("record_locations", "delete");
+      if (userId) await deletePassportEntry(userId, "record_location", loc.id);
     }
     setLocations((arr) => arr.filter((x) => x.id !== loc.id));
     clearLocDirty(loc.id);
