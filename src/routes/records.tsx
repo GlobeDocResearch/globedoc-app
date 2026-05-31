@@ -388,6 +388,8 @@ function RecordEntryCard({
     return () => { if (revoke) URL.revokeObjectURL(revoke); };
   }, [entry.file_path, entry.file_mime]);
 
+  const isPassport = Boolean(entry.source_kind);
+
   return (
     <li>
       <article className="rounded-2xl bg-white p-4 shadow-sm">
@@ -399,10 +401,17 @@ function RecordEntryCard({
                 <p className="truncate text-sm font-semibold text-[#0D1B2A]">{authorName}</p>
                 <p className="text-xs text-gray-500">{formatDate(entry.created_at, lang)}</p>
               </div>
-              <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${meta.color}`}>
-                <meta.Icon className="h-3 w-3" />
-                {meta.label}
-              </span>
+              {isPassport ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#EEF0FB] px-2 py-0.5 text-xs font-medium text-[#5B6BD4]">
+                  <Hospital className="h-3 w-3" />
+                  {t.fromPassport}
+                </span>
+              ) : (
+                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${meta.color}`}>
+                  <meta.Icon className="h-3 w-3" />
+                  {meta.label}
+                </span>
+              )}
             </div>
 
             <button type="button" onClick={onOpen} className="mt-3 block w-full text-left">
@@ -425,12 +434,14 @@ function RecordEntryCard({
               <button type="button" onClick={onOpen} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-gray-100">
                 <MessageCircle className="h-4 w-4" /> {commentCount}
               </button>
-              <button type="button" onClick={onEdit} aria-label={t.edit} className="ml-auto rounded-md p-1.5 hover:bg-gray-100">
-                <Pencil className="h-4 w-4" />
+              <button type="button" onClick={onEdit} aria-label={isPassport ? t.addDetails : t.edit} title={isPassport ? t.addDetails : t.edit} className="ml-auto rounded-md p-1.5 hover:bg-gray-100">
+                {isPassport ? <Plus className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
               </button>
-              <button type="button" onClick={onDelete} aria-label={t.delete} className="rounded-md p-1.5 text-red-500 hover:bg-red-50">
-                <Trash2 className="h-4 w-4" />
-              </button>
+              {!isPassport && (
+                <button type="button" onClick={onDelete} aria-label={t.delete} className="rounded-md p-1.5 text-red-500 hover:bg-red-50">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>
