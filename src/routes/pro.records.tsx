@@ -181,7 +181,9 @@ function ProRecordsTab() {
               </li>
             );
           })}
-        </ul>
+            </ul>
+          )}
+        </>
       )}
 
       {selectedId && (
