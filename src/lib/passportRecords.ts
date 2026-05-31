@@ -23,22 +23,29 @@ type UpsertArgs = {
 
 export async function upsertPassportEntry(args: UpsertArgs) {
   const { userId, sourceKind, sourceId, title, body, eventYear, codeIcd11, codeIchi } = args;
-  await (supabase as any)
+  const payload = {
+    user_id: userId,
+    entry_type: "clinical_note",
+    title,
+    body: body ?? null,
+    event_year: eventYear ?? null,
+    source_kind: sourceKind,
+    source_id: sourceId,
+    code_icd11: codeIcd11 ?? null,
+    code_ichi: codeIchi ?? null,
+  };
+  console.log("[passportRecords] upsert ->", payload);
+  const { data, error } = await (supabase as any)
     .from("record_entries")
-    .upsert(
-      {
-        user_id: userId,
-        entry_type: "clinical_note",
-        title,
-        body: body ?? null,
-        event_year: eventYear ?? null,
-        source_kind: sourceKind,
-        source_id: sourceId,
-        code_icd11: codeIcd11 ?? null,
-        code_ichi: codeIchi ?? null,
-      },
-      { onConflict: "user_id,source_kind,source_id" },
-    );
+    .upsert(payload, { onConflict: "user_id,source_kind,source_id" })
+    .select()
+    .maybeSingle();
+  if (error) {
+    console.error("[passportRecords] upsert FAILED", error);
+  } else {
+    console.log("[passportRecords] upsert OK", data?.id);
+  }
+  return { data, error };
 }
 
 export async function deletePassportEntry(
