@@ -11,11 +11,9 @@ import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
 import { COUNTRIES } from "@/lib/countries";
 import {
-  PROGRAMMES as COUNTRY_PROGRAMMES,
   WHO_GENERIC,
   isSupportedCountry,
-  programmeForCountryAndYear,
-  swedenProgrammeForYear,
+  eligibleProgrammeFor,
 } from "@/lib/childhoodVaccines";
 
 const ACCENT = "#9B7FD4";
