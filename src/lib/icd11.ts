@@ -27,7 +27,7 @@ async function runSearch<T extends { code: string; title: string }>(
   lang: string,
 ): Promise<T[]> {
   const q = query.trim();
-  if (q.length < 3) return [];
+  if (q.length < 1) return [];
   const key = `${lang}::${q.toLowerCase()}`;
   const cached = cache.get(key);
   if (cached && Date.now() - cached.at < TTL_MS) return cached.data;
