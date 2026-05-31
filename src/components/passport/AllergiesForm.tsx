@@ -820,6 +820,13 @@ function AllergySection({
           );
         })}
       </div>
+      {withDetails && presets.length > 0 && (
+        <p className="mt-2 text-[11px] text-gray-500">
+          Tap once to select · Tap again to describe reaction and severity
+        </p>
+      )}
+
+
 
       <div className="mt-3 space-y-2">
         {state.customs.map((e) => {
