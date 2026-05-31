@@ -1107,13 +1107,16 @@ export type Database = {
           file_name: string | null
           file_path: string | null
           file_size: number | null
+          icon: string | null
           id: string
           pro_session_id: string | null
+          source: string | null
           source_id: string | null
           source_kind: string | null
           title: string
           updated_at: string
           user_id: string
+          year: string | null
         }
         Insert: {
           author_name?: string | null
@@ -1128,13 +1131,16 @@ export type Database = {
           file_name?: string | null
           file_path?: string | null
           file_size?: number | null
+          icon?: string | null
           id?: string
           pro_session_id?: string | null
+          source?: string | null
           source_id?: string | null
           source_kind?: string | null
           title: string
           updated_at?: string
           user_id: string
+          year?: string | null
         }
         Update: {
           author_name?: string | null
@@ -1149,13 +1155,16 @@ export type Database = {
           file_name?: string | null
           file_path?: string | null
           file_size?: number | null
+          icon?: string | null
           id?: string
           pro_session_id?: string | null
+          source?: string | null
           source_id?: string | null
           source_kind?: string | null
           title?: string
           updated_at?: string
           user_id?: string
+          year?: string | null
         }
         Relationships: []
       }
@@ -1293,7 +1302,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      health_passport_record_title: {
+        Args: {
+          _city: string
+          _country: string
+          _diagnosis: string
+          _event: string
+          _institution: string
+          _name: string
+          _record_type: string
+          _source_kind: string
+          _year: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
