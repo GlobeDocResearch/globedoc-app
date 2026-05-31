@@ -47,7 +47,7 @@ const ACCESS_OPTIONS = [
   { value: "passport_suggest", label: "Passport read + can suggest edits" },
 ];
 
-const ACCESS_LABEL: Record<string, string> = Object.fromEntries(ACCESS_OPTIONS.map(o => [o.value, o.label]));
+
 
 type PassportData = {
   session: { pro_name: string; pro_title: string | null; institution: string | null; access_level: string; expires_at: string };
