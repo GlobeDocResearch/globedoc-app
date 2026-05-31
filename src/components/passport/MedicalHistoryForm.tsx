@@ -10,6 +10,14 @@ import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
 import { searchIcd11, type Icd11Match } from "@/lib/icd11";
+import {
+  upsertPassportEntry,
+  deletePassportEntry,
+  titleForCondition,
+  titleForStay,
+  titleForLocation,
+  firstYear,
+} from "@/lib/passportRecords";
 
 type Stay = {
   id: string;
