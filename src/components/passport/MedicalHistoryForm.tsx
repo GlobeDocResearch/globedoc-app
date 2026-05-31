@@ -983,19 +983,31 @@ function ConditionTagInput({
       .slice(0, 10);
   }, [q, used]);
 
-  // Debounced ICD-11 search at 3+ chars
+  // Instant local ICD-11 matches (synchronous, from first character).
+  const icdLocalResults = useMemo(() => {
+    const term = q.trim();
+    if (term.length < 1) return [] as Icd11Match[];
+    return searchIcd11Local(term)
+      .filter((r) => !used.has(r.title.toLowerCase()))
+      .map((r) => ({ code: r.code, title: r.title }));
+  }, [q, used]);
+
+  // Debounced WHO ICD-11 API search at 2+ chars.
   useEffect(() => {
     const term = q.trim();
-    if (term.length < 1) { setIcdResults([]); setIcdLoading(false); return; }
+    if (term.length < 2) { setIcdResults([]); setIcdLoading(false); return; }
     const ctrl = new AbortController();
     setIcdLoading(true);
     const handle = setTimeout(async () => {
       const res = await searchIcd11(term, lang, ctrl.signal);
-      setIcdResults(res.filter((r) => !used.has(r.title.toLowerCase())));
+      const localCodes = new Set(icdLocalResults.map((r) => r.code));
+      setIcdResults(
+        res.filter((r) => !used.has(r.title.toLowerCase()) && !localCodes.has(r.code)),
+      );
       setIcdLoading(false);
     }, 300);
     return () => { clearTimeout(handle); ctrl.abort(); };
-  }, [q, lang, used]);
+  }, [q, lang, used, icdLocalResults]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
