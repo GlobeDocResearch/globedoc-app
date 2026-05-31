@@ -28,6 +28,8 @@ type RecordEntry = {
   file_mime: string | null;
   file_size: number | null;
   created_at: string;
+  source_kind: string | null;
+  event_year: string | null;
 };
 
 type Comment = {
