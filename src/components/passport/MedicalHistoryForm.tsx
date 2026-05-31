@@ -283,6 +283,19 @@ export default function MedicalHistoryForm() {
   };
 
   // -------- Conditions tag input helpers --------
+  const syncConditionEntry = async (tag: ConditionTag, list: "current" | "past") => {
+    if (!userId) return;
+    const sourceKind = list === "current" ? "condition_current" : "condition_past";
+    await upsertPassportEntry({
+      userId,
+      sourceKind,
+      sourceId: tag.id,
+      title: titleForCondition(list, tag.condition_name, tag.icd11_code, tag.year || null),
+      body: tag.icd11_code ? `ICD-11: ${tag.icd11_code}` : null,
+      eventYear: tag.year || null,
+    });
+  };
+
   const addTag = async (
     list: "current" | "past",
     condition_name: string,
@@ -302,11 +315,15 @@ export default function MedicalHistoryForm() {
     if (list === "current") setCurrent((c) => [...c, tag]);
     else setPast((c) => [...c, tag]);
     audit("medical_conditions", "insert");
+    await syncConditionEntry(tag, list);
   };
 
   const removeTag = async (list: "current" | "past", id: string) => {
     await supabase.from("medical_conditions").delete().eq("id", id);
     audit("medical_conditions", "delete");
+    if (userId) {
+      await deletePassportEntry(userId, list === "current" ? "condition_current" : "condition_past", id);
+    }
     if (list === "current") setCurrent((c) => c.filter((x) => x.id !== id));
     else setPast((c) => c.filter((x) => x.id !== id));
     clearTagDirty(id);
@@ -321,6 +338,10 @@ export default function MedicalHistoryForm() {
   const saveTagYear = async (id: string, year: string) => {
     await supabase.from("medical_conditions").update({ year: year || null }).eq("id", id);
     audit("medical_conditions", "update");
+    const inCurrent = current.find((c) => c.id === id);
+    const inPast = past.find((c) => c.id === id);
+    if (inCurrent) await syncConditionEntry({ ...inCurrent, year }, "current");
+    else if (inPast) await syncConditionEntry({ ...inPast, year }, "past");
     clearTagDirty(id);
   };
 
