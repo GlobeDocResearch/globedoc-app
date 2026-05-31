@@ -337,6 +337,18 @@ function ProfilePage() {
                   {BLOOD_GROUPS.map((b) => <option key={b} value={b}>{b}</option>)}
                 </select>
               } />
+            <FieldRow label={t.civic} editing={editing} value={view?.civic_registration_number}
+              edit={<input className={input} placeholder={t.civicPlaceholder} value={view?.civic_registration_number ?? ""} onChange={(e) => updateDraft("civic_registration_number", e.target.value)} />} />
+          </div>
+        </Card>
+
+        {/* Security */}
+        <Card>
+          <h2 className="text-base font-bold text-[#0D1B2A]">{t.security}</h2>
+          <div className="mt-3 divide-y divide-gray-100">
+            <ComingSoonRow icon="🏦" label={t.bankid} badge={t.comingSoon} />
+            <ComingSoonRow icon="🔐" label={t.threeFactor} badge={t.comingSoon} />
+            <ComingSoonRow icon="👁" label={t.biometric} badge={t.comingSoon} />
           </div>
         </Card>
 
