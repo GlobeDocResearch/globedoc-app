@@ -226,6 +226,58 @@ export function isSupportedCountry(country?: string | null): boolean {
   return !!country && country in PROGRAMMES;
 }
 
+// Sweden-specific age-at-vaccination logic. Each entry specifies the typical
+// age the vaccine is given and the programme's active years; eligibility is
+// computed as (birthYear + ageGiven) falling within the active window.
+type SwedenRule = {
+  name: string;
+  desc: { en: string; sv: string };
+  ageGiven: number; // years (use 1 for 3–12 month schedules, 0 for infant <6m)
+  start: number;
+  end?: number;
+  sex?: "male" | "female";
+};
+
+const SWEDEN_RULES: SwedenRule[] = [
+  { name: "Smallpox", desc: D.smallpox, ageGiven: 1, start: 1940, end: 1976 },
+  { name: "BCG", desc: D.bcg, ageGiven: 0, start: 1940, end: 1975 },
+  { name: "Diphtheria", desc: D.diph, ageGiven: 1, start: 1940 },
+  { name: "Tetanus", desc: D.tet, ageGiven: 1, start: 1940 },
+  { name: "Pertussis (1953–1979)", desc: D.pert, ageGiven: 1, start: 1953, end: 1979 },
+  { name: "Pertussis (1996+)", desc: D.pert, ageGiven: 1, start: 1996 },
+  { name: "Polio (IPV)", desc: D.polio, ageGiven: 1, start: 1957 },
+  { name: "Measles (single)", desc: D.measles, ageGiven: 2, start: 1971, end: 1982 },
+  { name: "MMR", desc: D.mmr, ageGiven: 2, start: 1982 },
+  { name: "Hib", desc: D.hib, ageGiven: 1, start: 1998 },
+  { name: "Pneumococcal (PCV)", desc: D.pcv, ageGiven: 1, start: 2009 },
+  { name: "Hepatitis B", desc: D.hepb, ageGiven: 1, start: 2016 },
+  { name: "HPV (girls)", desc: D.hpv, ageGiven: 11, start: 2010, sex: "female" },
+  { name: "HPV (boys)", desc: D.hpv, ageGiven: 11, start: 2020, sex: "male" },
+  { name: "Rotavirus", desc: D.rota, ageGiven: 0, start: 2014 },
+  // Varicella is planned from 2027 in Sweden — not yet in the programme.
+];
+
+export function swedenProgrammeForYear(
+  birthYear: number,
+  sex?: string | null,
+): Programme[] {
+  const normalizedSex = sex === "male" || sex === "female" ? sex : null;
+  return SWEDEN_RULES
+    .filter((r) => {
+      // Sex filter for HPV variants; if sex unknown, include both.
+      if (r.sex && normalizedSex && r.sex !== normalizedSex) return false;
+      const y = birthYear + r.ageGiven;
+      return y >= r.start && y <= (r.end ?? 9999);
+    })
+    .map((r) => ({
+      name: r.name,
+      descEn: r.desc.en,
+      descSv: r.desc.sv,
+      start: r.start,
+      end: r.end,
+    }));
+}
+
 // Return vaccines that were part of the programme at any point while the
 // patient was aged 0–18.
 export function programmeForCountryAndYear(

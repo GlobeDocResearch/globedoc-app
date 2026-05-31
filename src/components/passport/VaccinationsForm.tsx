@@ -15,6 +15,7 @@ import {
   WHO_GENERIC,
   isSupportedCountry,
   programmeForCountryAndYear,
+  swedenProgrammeForYear,
 } from "@/lib/childhoodVaccines";
 
 const ACCENT = "#9B7FD4";
@@ -205,6 +206,7 @@ export default function VaccinationsForm() {
   const [loading, setLoading] = useState(true);
   const [nationality, setNationality] = useState<string | null>(null);
   const [birthYear, setBirthYear] = useState<string | null>(null);
+  const [sex, setSex] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const bypassGuardRef = useRef(false);
 
@@ -232,13 +234,15 @@ export default function VaccinationsForm() {
         sb.from("travel_vaccines").select("*").eq("user_id", user.id).order("created_at"),
         sb.from("other_vaccines").select("*").eq("user_id", user.id).order("created_at"),
         sb.from("vaccination_contraindications").select("*").eq("user_id", user.id).maybeSingle(),
-        sb.from("profiles").select("nationality,date_of_birth").eq("user_id", user.id).maybeSingle(),
+        sb.from("profiles").select("nationality,date_of_birth,biological_sex").eq("user_id", user.id).maybeSingle(),
       ]);
 
       const country = prof.data?.nationality ?? null;
       const year = prof.data?.date_of_birth ? String(prof.data.date_of_birth).slice(0, 4) : null;
+      const bioSex = prof.data?.biological_sex ?? null;
       setNationality(country);
       setBirthYear(year);
+      setSex(bioSex);
 
       // Build childhood list — filter to vaccines that were part of the
       // national programme while the patient was 0–18, using country of birth.
@@ -251,7 +255,10 @@ export default function VaccinationsForm() {
         : WHO_GENERIC;
       const defs: { name: string; descEn: string; descSv: string }[] =
         yearNum !== null
-          ? programmeForCountryAndYear(country, yearNum).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
+          ? (country === "Sweden"
+              ? swedenProgrammeForYear(yearNum, bioSex)
+              : programmeForCountryAndYear(country, yearNum)
+            ).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
           : fullList.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
       // Include any previously-saved vaccine that isn't in the filtered list so user edits aren't lost
       Object.keys(savedMap).forEach((name) => {
