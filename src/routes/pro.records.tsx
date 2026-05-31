@@ -4,6 +4,7 @@ import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "l
 import { supabase } from "@/integrations/supabase/client";
 import { loadPairings, type ProPairing } from "@/lib/proPairings";
 import { toast } from "sonner";
+import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/pro/records")({
   head: () => ({ meta: [{ title: "Records — GlobeDoc Pro" }] }),
@@ -260,17 +261,17 @@ function ProEntryComposer({
     : type === "document" ? "Document title"
     : "Suggestion title";
 
-  async function submit() {
-    if (!title.trim()) { toast.error("Title required"); return; }
-    if (type === "document" && !file) { toast.error("Choose a file"); return; }
-    if ((type === "clinical_note" || type === "suggestion") && !body.trim()) { toast.error("Body required"); return; }
+  async function submit(): Promise<boolean | void> {
+    if (!title.trim()) { toast.error("Title required"); return false; }
+    if (type === "document" && !file) { toast.error("Choose a file"); return false; }
+    if ((type === "clinical_note" || type === "suggestion") && !body.trim()) { toast.error("Body required"); return false; }
     setBusy(true);
     try {
       let file_base64: string | undefined;
       let file_name: string | undefined;
       let file_mime: string | undefined;
       if (file) {
-        if (file.size > 25 * 1024 * 1024) { toast.error("File exceeds 25 MB"); setBusy(false); return; }
+        if (file.size > 25 * 1024 * 1024) { toast.error("File exceeds 25 MB"); return false; }
         const ab = await file.arrayBuffer();
         let bin = "";
         const bytes = new Uint8Array(ab);
@@ -285,7 +286,7 @@ function ProEntryComposer({
         body: JSON.stringify({ type, title: title.trim(), body: body.trim() || undefined, file_base64, file_name, file_mime }),
       });
       const json = await res.json();
-      if (!res.ok) { toast.error(json.error || "Could not save"); return; }
+      if (!res.ok) throw new Error(json.error || "Could not save");
       onSaved();
     } finally { setBusy(false); }
   }
@@ -323,14 +324,14 @@ function ProEntryComposer({
         </div>
         <div className="mt-4 flex justify-end gap-2">
           <button type="button" onClick={onClose} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
-          <button
-            type="button"
-            onClick={submit}
+          <SaveButton
+            onSave={submit}
             disabled={busy}
-            className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:opacity-50"
+            savingLabel="Saving…"
+            className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 flex items-center gap-2"
           >
-            {busy ? "Saving…" : "Save"}
-          </button>
+            Save
+          </SaveButton>
         </div>
       </div>
     </div>
