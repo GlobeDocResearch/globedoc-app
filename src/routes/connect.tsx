@@ -455,7 +455,7 @@ function PassportView({
   noteOpen: boolean;
   noteText: string;
   setNoteText: (v: string) => void;
-  onSaveNote: () => void;
+  onSaveNote: () => Promise<boolean | void> | boolean | void;
   onCloseNote: () => void;
   noteSaving: boolean;
 }) {
