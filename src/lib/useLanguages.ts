@@ -7,11 +7,9 @@ const PRIMARY_CODES = ["en", "sv"];
 
 function nativeNameFor(code: string, englishName: string): string {
   try {
-    // @ts-expect-error - DisplayNames is widely supported in modern browsers
     const dn = new Intl.DisplayNames([code], { type: "language" });
     const native = dn.of(code);
     if (native && typeof native === "string") {
-      // Capitalize first char for languages that lowercase by default
       return native.charAt(0).toLocaleUpperCase(code) + native.slice(1);
     }
   } catch {
@@ -22,7 +20,6 @@ function nativeNameFor(code: string, englishName: string): string {
 
 function englishNameFor(code: string, fallback: string): string {
   try {
-    // @ts-expect-error - DisplayNames is widely supported in modern browsers
     const dn = new Intl.DisplayNames(["en"], { type: "language" });
     return dn.of(code) || fallback;
   } catch {
