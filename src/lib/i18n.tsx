@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { translateBatch } from "./translate.functions";
 
-export type Lang = "en" | "sv";
+export type Lang = string;
 
 type Dict = Record<string, string>;
 
