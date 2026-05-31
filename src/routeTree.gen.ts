@@ -30,11 +30,13 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProIndexRouteImport } from './routes/pro.index'
 import { Route as PassportIndexRouteImport } from './routes/passport.index'
 import { Route as ProSettingsRouteImport } from './routes/pro.settings'
+import { Route as ProRecordsRouteImport } from './routes/pro.records'
 import { Route as ProProfileRouteImport } from './routes/pro.profile'
 import { Route as PassportSectionRouteImport } from './routes/passport.$section'
 import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
 import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
 import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
+import { Route as ApiPublicConnectEntryRouteImport } from './routes/api/public/connect.entry'
 
 const VerifiedProRoute = VerifiedProRouteImport.update({
   id: '/verified-pro',
@@ -141,6 +143,11 @@ const ProSettingsRoute = ProSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => ProRoute,
 } as any)
+const ProRecordsRoute = ProRecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => ProRoute,
+} as any)
 const ProProfileRoute = ProProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -167,6 +174,11 @@ const ApiPublicConnectNoteRoute = ApiPublicConnectNoteRouteImport.update({
   path: '/api/public/connect/note',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicConnectEntryRoute = ApiPublicConnectEntryRouteImport.update({
+  id: '/api/public/connect/entry',
+  path: '/api/public/connect/entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -189,9 +201,11 @@ export interface FileRoutesByFullPath {
   '/verified-pro': typeof VerifiedProRoute
   '/passport/$section': typeof PassportSectionRoute
   '/pro/profile': typeof ProProfileRoute
+  '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/passport/': typeof PassportIndexRoute
   '/pro/': typeof ProIndexRoute
+  '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
@@ -216,9 +230,11 @@ export interface FileRoutesByTo {
   '/verified-pro': typeof VerifiedProRoute
   '/passport/$section': typeof PassportSectionRoute
   '/pro/profile': typeof ProProfileRoute
+  '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/passport': typeof PassportIndexRoute
   '/pro': typeof ProIndexRoute
+  '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
@@ -245,9 +261,11 @@ export interface FileRoutesById {
   '/verified-pro': typeof VerifiedProRoute
   '/passport/$section': typeof PassportSectionRoute
   '/pro/profile': typeof ProProfileRoute
+  '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/passport/': typeof PassportIndexRoute
   '/pro/': typeof ProIndexRoute
+  '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
@@ -275,9 +293,11 @@ export interface FileRouteTypes {
     | '/verified-pro'
     | '/passport/$section'
     | '/pro/profile'
+    | '/pro/records'
     | '/pro/settings'
     | '/passport/'
     | '/pro/'
+    | '/api/public/connect/entry'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
@@ -302,9 +322,11 @@ export interface FileRouteTypes {
     | '/verified-pro'
     | '/passport/$section'
     | '/pro/profile'
+    | '/pro/records'
     | '/pro/settings'
     | '/passport'
     | '/pro'
+    | '/api/public/connect/entry'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
@@ -330,9 +352,11 @@ export interface FileRouteTypes {
     | '/verified-pro'
     | '/passport/$section'
     | '/pro/profile'
+    | '/pro/records'
     | '/pro/settings'
     | '/passport/'
     | '/pro/'
+    | '/api/public/connect/entry'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
@@ -359,6 +383,7 @@ export interface RootRouteChildren {
   VerifiedProRoute: typeof VerifiedProRoute
   PassportSectionRoute: typeof PassportSectionRoute
   PassportIndexRoute: typeof PassportIndexRoute
+  ApiPublicConnectEntryRoute: typeof ApiPublicConnectEntryRoute
   ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
   ApiPublicConnectPairRoute: typeof ApiPublicConnectPairRoute
   ApiPublicConnectPassportRoute: typeof ApiPublicConnectPassportRoute
@@ -513,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProSettingsRouteImport
       parentRoute: typeof ProRoute
     }
+    '/pro/records': {
+      id: '/pro/records'
+      path: '/records'
+      fullPath: '/pro/records'
+      preLoaderRoute: typeof ProRecordsRouteImport
+      parentRoute: typeof ProRoute
+    }
     '/pro/profile': {
       id: '/pro/profile'
       path: '/profile'
@@ -548,17 +580,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicConnectNoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/connect/entry': {
+      id: '/api/public/connect/entry'
+      path: '/api/public/connect/entry'
+      fullPath: '/api/public/connect/entry'
+      preLoaderRoute: typeof ApiPublicConnectEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface ProRouteChildren {
   ProProfileRoute: typeof ProProfileRoute
+  ProRecordsRoute: typeof ProRecordsRoute
   ProSettingsRoute: typeof ProSettingsRoute
   ProIndexRoute: typeof ProIndexRoute
 }
 
 const ProRouteChildren: ProRouteChildren = {
   ProProfileRoute: ProProfileRoute,
+  ProRecordsRoute: ProRecordsRoute,
   ProSettingsRoute: ProSettingsRoute,
   ProIndexRoute: ProIndexRoute,
 }
@@ -586,6 +627,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifiedProRoute: VerifiedProRoute,
   PassportSectionRoute: PassportSectionRoute,
   PassportIndexRoute: PassportIndexRoute,
+  ApiPublicConnectEntryRoute: ApiPublicConnectEntryRoute,
   ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
   ApiPublicConnectPairRoute: ApiPublicConnectPairRoute,
   ApiPublicConnectPassportRoute: ApiPublicConnectPassportRoute,
