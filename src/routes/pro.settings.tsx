@@ -56,10 +56,10 @@ function SettingsTab() {
           <LanguagePickerRow />
         </div>
 
-        <div className="flex items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-3">
-            <Bell className="h-5 w-5 text-gray-500" />
-            <div>
+        <div className="flex items-center justify-between gap-3 px-5 py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <Bell className="h-5 w-5 shrink-0 text-gray-500" />
+            <div className="min-w-0">
               <p className="text-sm font-semibold text-[#0D1B2A]">Notifications</p>
               <p className="text-xs text-gray-500">Email and in-app alerts</p>
             </div>
@@ -69,10 +69,10 @@ function SettingsTab() {
             role="switch"
             aria-checked={notifications}
             onClick={() => setNotifications((v) => !v)}
-            className={`relative h-6 w-11 rounded-full transition-colors ${notifications ? "bg-[#2563EB]" : "bg-gray-300"}`}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${notifications ? "bg-[#2563EB]" : "bg-gray-300"}`}
           >
             <span
-              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${notifications ? "translate-x-5" : "translate-x-0.5"}`}
+              className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${notifications ? "translate-x-[22px]" : "translate-x-0.5"}`}
             />
           </button>
         </div>
