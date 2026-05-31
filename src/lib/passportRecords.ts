@@ -17,10 +17,12 @@ type UpsertArgs = {
   title: string;
   body?: string | null;
   eventYear?: string | null;
+  codeIcd11?: string | null;
+  codeIchi?: string | null;
 };
 
 export async function upsertPassportEntry(args: UpsertArgs) {
-  const { userId, sourceKind, sourceId, title, body, eventYear } = args;
+  const { userId, sourceKind, sourceId, title, body, eventYear, codeIcd11, codeIchi } = args;
   await (supabase as any)
     .from("record_entries")
     .upsert(
@@ -32,6 +34,8 @@ export async function upsertPassportEntry(args: UpsertArgs) {
         event_year: eventYear ?? null,
         source_kind: sourceKind,
         source_id: sourceId,
+        code_icd11: codeIcd11 ?? null,
+        code_ichi: codeIchi ?? null,
       },
       { onConflict: "user_id,source_kind,source_id" },
     );
@@ -71,10 +75,10 @@ export function titleForStay(stay: {
   country?: string | null;
   year?: string | null;
 }): string {
-  const place = [stay.city, stay.country].filter(Boolean).join(", ");
-  return [stay.event, stay.institution, place, stay.year]
-    .filter(Boolean)
-    .join(" · ");
+  const event = (stay.event ?? "").trim();
+  const place = [stay.institution, stay.country].filter(Boolean).join(", ");
+  const head = event && place ? `${event} at ${place}` : event || place;
+  return [head, stay.year].filter(Boolean).join(" · ");
 }
 
 export function titleForLocation(loc: {
