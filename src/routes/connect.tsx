@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Link as LinkIcon, ShieldCheck, FileText, X, Loader2, Users } from "lucide-react";
+import { Link as LinkIcon, ShieldCheck, FileText, X, Loader2 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
