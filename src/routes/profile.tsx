@@ -22,6 +22,7 @@ type Profile = {
   nationality: string | null; country_of_residence: string | null;
   phone: string | null; address: string | null; blood_group: string | null;
   language: string | null; avatar_url: string | null;
+  civic_registration_number: string | null;
 };
 
 const T = {
@@ -31,6 +32,10 @@ const T = {
     sex: "Biological sex", male: "Male", female: "Female", other: "Other",
     nationality: "Nationality / country of origin", residence: "Country of residence",
     phone: "Phone number", address: "Address", blood: "Blood group", optional: "Optional",
+    civic: "Civic registration number", civicPlaceholder: "Personal identity number",
+    security: "Security",
+    bankid: "Connect BankID", threeFactor: "Three-factor verification", biometric: "Biometric login",
+    comingSoon: "Coming Soon",
     save: "Save", cancel: "Cancel", saved: "Profile saved",
     account: "Account", email: "Email address", changePwd: "Change password", changePwdBtn: "Send reset email", resetSent: "Reset email sent",
     settings: "Settings", appLang: "App Language",
@@ -52,6 +57,10 @@ const T = {
     sex: "Biologiskt kön", male: "Man", female: "Kvinna", other: "Annat",
     nationality: "Nationalitet / ursprungsland", residence: "Bosättningsland",
     phone: "Telefonnummer", address: "Adress", blood: "Blodgrupp", optional: "Valfritt",
+    civic: "Personnummer", civicPlaceholder: "Personnummer",
+    security: "Säkerhet",
+    bankid: "Anslut BankID", threeFactor: "Trefaktorsautentisering", biometric: "Biometrisk inloggning",
+    comingSoon: "Kommer snart",
     save: "Spara", cancel: "Avbryt", saved: "Profil sparad",
     account: "Konto", email: "E-postadress", changePwd: "Ändra lösenord", changePwdBtn: "Skicka återställning", resetSent: "Återställningsmejl skickat",
     settings: "Inställningar", appLang: "Språk",
