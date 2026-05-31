@@ -26,12 +26,16 @@ const SECTIONS: {
   color: string;
 }[] = [
   { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#185FA5" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#0F6E56" },
-  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#3B6D11" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#BA7517" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#534AB7" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#993C1D" },
+  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#00A550" },
+  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#F5C800" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risks", subtitle: "Habits that matter clinically", color: "#E8640C" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#6B7280" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#EF3638" },
 ];
+
+// Sections whose filled background needs dark text for legibility (yellow, grey)
+const DARK_TEXT_ON_FILL: Record<string, boolean> = { vaccinations: true, heredity: true };
+const DARK_TEXT = "#1B3A6B";
 
 function PassportPage() {
   const navigate = useNavigate();
@@ -194,9 +198,9 @@ function PassportPage() {
           {/* Right: Vaccinations */}
           <Hex style={{ left: 200, top: 86 }} color={SECTIONS[2].color} filled={done["vaccinations"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[2].key)}>
             <span className="text-xl">{SECTIONS[2].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold" style={{ color: done["vaccinations"] ? "#FFFFFF" : SECTIONS[2].color }}>Vaccinations</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["vaccinations"] ? DARK_TEXT : SECTIONS[2].color }}>Vaccinations</span>
           </Hex>
-          {/* Bottom-right: Lifestyle & Risk */}
+          {/* Bottom-right: Lifestyle & Risks */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["lifestyle"] ? "#FFFFFF" : SECTIONS[3].color }}>Lifestyle</span>
@@ -204,7 +208,7 @@ function PassportPage() {
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? "#FFFFFF" : SECTIONS[4].color }}>Heredity</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? DARK_TEXT : SECTIONS[4].color }}>Heredity</span>
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} color={SECTIONS[5].color} filled={done["allergies"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[5].key)}>
@@ -218,6 +222,8 @@ function PassportPage() {
       <section className="mt-6 space-y-3 px-5">
         {SECTIONS.map((s) => {
           const isDone = done[s.key];
+          const filledText = DARK_TEXT_ON_FILL[s.key] ? DARK_TEXT : "#FFFFFF";
+          const filledSub = DARK_TEXT_ON_FILL[s.key] ? "rgba(27,58,107,0.75)" : "rgba(255,255,255,0.85)";
           return (
             <button
               key={s.key}
@@ -231,8 +237,8 @@ function PassportPage() {
             >
               <span className="text-2xl">{s.emoji}</span>
               <div className="flex-1">
-                <h3 className="text-sm font-bold" style={{ color: isDone ? "#FFFFFF" : s.color }}>{s.title}</h3>
-                <p className="text-xs" style={{ color: isDone ? "rgba(255,255,255,0.85)" : "#4B5563" }}>{s.subtitle}</p>
+                <h3 className="text-sm font-bold" style={{ color: isDone ? filledText : s.color }}>{s.title}</h3>
+                <p className="text-xs" style={{ color: isDone ? filledSub : "#4B5563" }}>{s.subtitle}</p>
               </div>
             </button>
           );

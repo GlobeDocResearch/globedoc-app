@@ -16,8 +16,9 @@ import {
   eligibleProgrammeFor,
 } from "@/lib/childhoodVaccines";
 
-const ACCENT = "#3B6D11";
-const ACCENT_2 = "#3B6D11";
+const ACCENT = "#F5C800";
+const ACCENT_2 = "#F5C800";
+const HEADER_TEXT = "#1B3A6B";
 
 function yearOf(s?: string | null): string {
   if (!s) return "";
@@ -428,14 +429,15 @@ export default function VaccinationsForm() {
           <div className="flex items-start gap-3">
             <span className="text-3xl leading-none">💉</span>
             <div>
-              <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-              <p className="mt-1 text-sm text-white/85">{t("subtitle")}</p>
+              <h1 className="text-2xl font-bold" style={{ color: HEADER_TEXT }}>{t("title")}</h1>
+              <p className="mt-1 text-sm" style={{ color: HEADER_TEXT, opacity: 0.8 }}>{t("subtitle")}</p>
             </div>
           </div>
           <Link
             to="/passport"
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10 hover:bg-black/20"
+            style={{ color: HEADER_TEXT }}
           >
             <X className="h-5 w-5" />
           </Link>
