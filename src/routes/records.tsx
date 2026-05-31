@@ -227,30 +227,88 @@ function RecordsPage() {
         <h1 className="text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
         <p className="mt-1 text-sm text-gray-500">{t.sub}</p>
 
-        {loading ? null : entries.length === 0 ? (
+        <div className="mt-4 inline-flex rounded-full border border-gray-200 bg-white p-1 text-sm">
+          <button
+            type="button"
+            onClick={() => setView("feed")}
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
+              view === "feed" ? "bg-[#2563EB] text-white" : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            <Rows className="h-4 w-4" /> {t.viewFeed}
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("timeline")}
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
+              view === "timeline" ? "bg-[#2563EB] text-white" : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            <CalendarDays className="h-4 w-4" /> {t.viewTimeline}
+          </button>
+        </div>
+
+        {loading ? null : view === "feed" ? (
+          entries.length === 0 ? (
+            <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <FileText className="h-7 w-7 text-gray-400" />
+              </div>
+              <p className="mt-4 text-sm text-gray-600">{t.empty}</p>
+            </div>
+          ) : (
+            <ul className="mt-6 space-y-3">
+              {entries.map(e => (
+                <RecordEntryCard
+                  key={e.id}
+                  entry={e}
+                  authorName={authorName}
+                  avatarUrl={avatarUrl}
+                  commentCount={counts[e.id] ?? 0}
+                  t={t}
+                  lang={lang}
+                  onOpen={() => setOpenEntryId(e.id)}
+                  onEdit={() => setEditingEntry(e)}
+                  onDelete={() => deleteEntry(e)}
+                />
+              ))}
+            </ul>
+          )
+        ) : timelineGroups.length === 0 ? (
           <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <FileText className="h-7 w-7 text-gray-400" />
+              <CalendarDays className="h-7 w-7 text-gray-400" />
             </div>
-            <p className="mt-4 text-sm text-gray-600">{t.empty}</p>
+            <p className="mt-4 text-sm text-gray-600">{t.timelineEmpty}</p>
           </div>
         ) : (
-          <ul className="mt-6 space-y-3">
-            {entries.map(e => (
-              <RecordEntryCard
-                key={e.id}
-                entry={e}
-                authorName={authorName}
-                avatarUrl={avatarUrl}
-                commentCount={counts[e.id] ?? 0}
-                t={t}
-                lang={lang}
-                onOpen={() => setOpenEntryId(e.id)}
-                onEdit={() => setEditingEntry(e)}
-                onDelete={() => deleteEntry(e)}
-              />
-            ))}
-          </ul>
+          <div className="mt-6">
+            <ol className="relative space-y-6 border-l-2 border-gray-200 pl-6">
+              {timelineGroups.map(([year, items]) => (
+                <li key={year} className="relative">
+                  <span className="absolute -left-[34px] flex h-6 min-w-[3rem] items-center justify-center rounded-full bg-[#2563EB] px-2 text-xs font-bold text-white">
+                    {year}
+                  </span>
+                  <ul className="space-y-3">
+                    {items.map((e) => (
+                      <RecordEntryCard
+                        key={e.id}
+                        entry={e}
+                        authorName={authorName}
+                        avatarUrl={avatarUrl}
+                        commentCount={counts[e.id] ?? 0}
+                        t={t}
+                        lang={lang}
+                        onOpen={() => setOpenEntryId(e.id)}
+                        onEdit={() => setEditingEntry(e)}
+                        onDelete={() => deleteEntry(e)}
+                      />
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </div>
         )}
       </main>
 
