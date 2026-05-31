@@ -4,6 +4,7 @@ import { Bell, Lock, FileText, Shield, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguagePickerRow } from "@/components/LanguagePicker";
+import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/pro/settings")({
   head: () => ({ meta: [{ title: "Settings — GlobeDoc Pro" }] }),
@@ -15,21 +16,15 @@ function SettingsTab() {
   const [notifications, setNotifications] = useState(true);
   const [pwOpen, setPwOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
-  const [pwSaving, setPwSaving] = useState(false);
+  
 
-  const onChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onChangePassword = async () => {
     if (newPw.length < 8) {
       toast.error("Password must be at least 8 characters");
-      return;
+      return false;
     }
-    setPwSaving(true);
     const { error } = await supabase.auth.updateUser({ password: newPw });
-    setPwSaving(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
+    if (error) throw new Error(error.message);
     toast.success("Password updated");
     setNewPw("");
     setPwOpen(false);
@@ -90,7 +85,7 @@ function SettingsTab() {
         </button>
 
         {pwOpen && (
-          <form onSubmit={onChangePassword} className="space-y-3 bg-gray-50 px-5 py-4">
+          <div className="space-y-3 bg-gray-50 px-5 py-4">
             <input
               type="password"
               value={newPw}
@@ -98,14 +93,13 @@ function SettingsTab() {
               placeholder="New password (min. 8 characters)"
               className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
             />
-            <button
-              type="submit"
-              disabled={pwSaving}
-              className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:opacity-60"
+            <SaveButton
+              onSave={onChangePassword}
+              className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 flex items-center gap-2"
             >
-              {pwSaving ? "Saving..." : "Update password"}
-            </button>
-          </form>
+              Update password
+            </SaveButton>
+          </div>
         )}
 
         <ComingSoonRow icon="🏦" label="Connect BankID" />

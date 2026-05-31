@@ -16,6 +16,7 @@ import {
   titleForLocation,
   firstYear,
 } from "@/lib/passportRecords";
+import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/records")({
   head: () => ({ meta: [{ title: "Records — GlobeDoc" }] }),
@@ -717,8 +718,6 @@ function UploadModal({
         if (error) throw error;
       }
       onSaved();
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Error");
     } finally {
       setBusy(false);
     }
@@ -780,9 +779,14 @@ function UploadModal({
 
         <div className="mt-5 flex items-center justify-end gap-2">
           <button type="button" onClick={onClose} className="rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100">{t.cancel}</button>
-          <button type="button" disabled={busy} onClick={submit} className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60">
-            {busy ? t.uploading : t.save}
-          </button>
+          <SaveButton
+            onSave={submit}
+            disabled={busy}
+            savingLabel={t.uploading}
+            className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8] flex items-center gap-2"
+          >
+            {t.save}
+          </SaveButton>
         </div>
       </div>
     </div>

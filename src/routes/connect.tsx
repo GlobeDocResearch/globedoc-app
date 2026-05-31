@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { addPairing, loadPairings, removePairing, type ProPairing } from "@/lib/proPairings";
 import { ProBottomNav } from "./pro";
+import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/connect")({
   head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
@@ -120,7 +121,7 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
   };
 
   const handleAddNote = async () => {
-    if (!token || !noteText.trim()) return;
+    if (!token || !noteText.trim()) return false;
     setNoteSaving(true);
     try {
       const res = await fetch("/api/public/connect/note", {
@@ -129,7 +130,7 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
         body: JSON.stringify({ body: noteText, title: "Clinical note" }),
       });
       const json = await res.json();
-      if (!res.ok) { toast.error(json.error || "Could not save note"); return; }
+      if (!res.ok) throw new Error(json.error || "Could not save note");
       toast.success("Note added to patient's Records");
       setNoteText("");
       setNoteOpen(false);
@@ -454,7 +455,7 @@ function PassportView({
   noteOpen: boolean;
   noteText: string;
   setNoteText: (v: string) => void;
-  onSaveNote: () => void;
+  onSaveNote: () => Promise<boolean | void> | boolean | void;
   onCloseNote: () => void;
   noteSaving: boolean;
 }) {
@@ -602,14 +603,14 @@ function PassportView({
               <button type="button" onClick={onCloseNote} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={onSaveNote}
+              <SaveButton
+                onSave={onSaveNote}
                 disabled={noteSaving || !noteText.trim()}
-                className="rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                savingLabel="Saving..."
+                className="rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 flex items-center gap-2"
               >
-                {noteSaving ? "Saving..." : "Add note"}
-              </button>
+                Add note
+              </SaveButton>
             </div>
           </div>
         </div>

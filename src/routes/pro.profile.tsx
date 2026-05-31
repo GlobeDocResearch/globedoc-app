@@ -4,6 +4,7 @@ import { Camera, ShieldCheck, User as UserIcon, Upload, FileText } from "lucide-
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
+import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/pro/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc Pro" }] }),
@@ -31,7 +32,7 @@ function ProfileTab() {
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [meta, setMeta] = useState<ProMeta>({});
-  const [saving, setSaving] = useState(false);
+  
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [surveyOpen, setSurveyOpen] = useState(false);
@@ -103,14 +104,12 @@ function ProfileTab() {
     }
   };
 
-  const onSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  const onSave = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     const { error } = await supabase.auth.updateUser({
       data: { ...meta, account_type: "professional" },
     });
-    setSaving(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) throw new Error(error.message);
     toast.success("Profile saved");
   };
 
@@ -210,13 +209,13 @@ function ProfileTab() {
           placeholder="Personal identity number"
         />
 
-        <button
+        <SaveButton
           type="submit"
-          disabled={saving}
-          className="w-full rounded-full bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+          onSave={() => onSave()}
+          className="w-full rounded-full bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 flex items-center justify-center gap-2"
         >
-          {saving ? "Saving..." : "Save changes"}
-        </button>
+          Save changes
+        </SaveButton>
       </form>
 
       <div className="mt-4">

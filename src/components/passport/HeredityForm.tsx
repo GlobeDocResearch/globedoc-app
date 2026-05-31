@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { X, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
+import { SaveButton } from "@/components/ui/save-button";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
@@ -945,19 +946,18 @@ export default function HeredityForm() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white p-4">
-        <button
-          type="button"
-          onClick={async () => {
+        <SaveButton
+          onSave={async () => {
             bypassGuardRef.current = true;
             const ok = await saveAll();
             if (ok) navigate({ to: "/passport" });
-            else bypassGuardRef.current = false;
+            else { bypassGuardRef.current = false; return false; }
           }}
-          className="w-full rounded-xl py-3 text-sm font-semibold text-white shadow hover:opacity-95"
+          className="w-full rounded-xl py-3 text-sm font-semibold text-white shadow hover:opacity-95 flex items-center justify-center gap-2"
           style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
         >
           {t("save")}
-        </button>
+        </SaveButton>
       </div>
 
       <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />

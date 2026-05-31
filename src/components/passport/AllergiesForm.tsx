@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Pencil, Trash2, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
+import { SaveButton } from "@/components/ui/save-button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -633,14 +634,13 @@ export default function AllergiesForm() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 bg-white/95 px-5 py-3 backdrop-blur border-t border-gray-100">
-        <button
-          type="button"
-          onClick={saveAndExit}
+        <SaveButton
+          onSave={async () => { const ok = await saveAndExit(); if (!ok) return false; }}
           className="block w-full rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}
         >
           {t("save")}
-        </button>
+        </SaveButton>
       </div>
 
       <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
