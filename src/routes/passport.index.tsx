@@ -25,16 +25,16 @@ const SECTIONS: {
   subtitle: string;
   color: string;
 }[] = [
-  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#185FA5" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#00A550" },
-  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#F5C800" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risks", subtitle: "Habits that matter clinically", color: "#E8640C" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#6B7280" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#EF3638" },
+  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#1D3A6B" },
+  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#0F8BE8" },
+  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#F5D33A" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risks", subtitle: "Habits that matter clinically", color: "#64C8F0" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#9E9E9E" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#C93535" },
 ];
 
-// Sections whose filled background needs dark text for legibility (yellow, grey)
-const DARK_TEXT_ON_FILL: Record<string, boolean> = { vaccinations: true, heredity: true };
+// Sections whose filled background needs dark text for legibility (light backgrounds)
+const DARK_TEXT_ON_FILL: Record<string, boolean> = { vaccinations: true, lifestyle: true };
 const DARK_TEXT = "#1B3A6B";
 
 function PassportPage() {
@@ -203,12 +203,12 @@ function PassportPage() {
           {/* Bottom-right: Lifestyle & Risks */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold" style={{ color: done["lifestyle"] ? "#FFFFFF" : SECTIONS[3].color }}>Lifestyle</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["lifestyle"] ? DARK_TEXT : SECTIONS[3].color }}>Lifestyle</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? DARK_TEXT : SECTIONS[4].color }}>Heredity</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? "#FFFFFF" : SECTIONS[4].color }}>Heredity</span>
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} color={SECTIONS[5].color} filled={done["allergies"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[5].key)}>

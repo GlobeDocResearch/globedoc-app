@@ -153,8 +153,8 @@ const T: Record<Lang, Record<string, string>> = {
   },
 };
 
-const ACCENT = "#185FA5";
-const ACCENT_2 = "#185FA5";
+const ACCENT = "#1D3A6B";
+const ACCENT_2 = "#1D3A6B";
 
 export default function MedicalHistoryForm() {
   const { lang } = useI18n();
@@ -719,7 +719,7 @@ export default function MedicalHistoryForm() {
                         <select
                           value={loc.record_type}
                           onChange={(e) => updateLocation(loc.id, { record_type: e.target.value })}
-                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#185FA5] focus:outline-none"
+                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#1D3A6B] focus:outline-none"
                         >
                           <option value="">Select…</option>
                           {RECORD_TYPES.map((rt) => (
@@ -737,7 +737,7 @@ export default function MedicalHistoryForm() {
                         <SaveButton
                           onSave={() => saveLocation(loc)}
                           disabled={!loc.institution.trim()}
-                          className="rounded-md bg-[#185FA5] px-4 py-2 text-xs font-medium text-white hover:bg-[#0F4A85] disabled:cursor-not-allowed disabled:opacity-50"
+                          className="rounded-md bg-[#1D3A6B] px-4 py-2 text-xs font-medium text-white hover:bg-[#13294D] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {t("save_stay")}
                         </SaveButton>
@@ -804,7 +804,7 @@ export default function MedicalHistoryForm() {
                         <select
                           value={stay.record_type}
                           onChange={(e) => updateStay(stay.id, { record_type: e.target.value })}
-                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#185FA5] focus:outline-none"
+                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#1D3A6B] focus:outline-none"
                         >
                           <option value="">Select…</option>
                           {RECORD_TYPES.map((rt) => (
@@ -822,7 +822,7 @@ export default function MedicalHistoryForm() {
                         </button>
                         <SaveButton
                           onSave={() => saveStay(stay)}
-                          className="rounded-md bg-[#185FA5] px-4 py-2 text-xs font-medium text-white hover:bg-[#0F4A85]"
+                          className="rounded-md bg-[#1D3A6B] px-4 py-2 text-xs font-medium text-white hover:bg-[#13294D]"
                         >
                           {t("save_stay")}
                         </SaveButton>
@@ -845,7 +845,7 @@ export default function MedicalHistoryForm() {
                 <span className="text-base leading-none">📎</span>
                 <p>
                   We will notify you when this feature becomes operational in your area. In the meantime, you can manually upload records, scans and images under{" "}
-                  <Link to="/records" className="font-semibold text-[#185FA5] underline">
+                  <Link to="/records" className="font-semibold text-[#1D3A6B] underline">
                     Records
                   </Link>{" "}
                   in GlobeDoc.
@@ -894,7 +894,7 @@ export default function MedicalHistoryForm() {
                             min={0}
                             value={numChildren}
                             onChange={(e) => { setNumChildren(e.target.value); setDirty(true); }}
-                            className="mt-1 w-32 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#185FA5] focus:outline-none"
+                            className="mt-1 w-32 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] focus:border-[#1D3A6B] focus:outline-none"
                           />
                         </div>
                       )}
@@ -905,7 +905,7 @@ export default function MedicalHistoryForm() {
                           onChange={(e) => { setObComplications(e.target.value); setDirty(true); }}
                           placeholder={t("complications_ph")}
                           rows={3}
-                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+                          className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
                         />
                       </div>
                       <YesNo label={t("assisted")} value={assisted} onChange={(v) => { setAssisted(v); setDirty(true); }} yes={t("yes")} no={t("no")} />
@@ -915,7 +915,7 @@ export default function MedicalHistoryForm() {
                           onChange={(e) => { setAssistedNotes(e.target.value); setDirty(true); }}
                           placeholder={t("describe")}
                           rows={3}
-                          className="w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+                          className="w-full rounded-md border border-[#E5E7EB] bg-white p-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
                         />
                       )}
                     </>
@@ -936,7 +936,7 @@ export default function MedicalHistoryForm() {
             else { bypassGuardRef.current = false; return false; }
           }}
           icon={<Check className="h-4 w-4" />}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#185FA5] to-[#185FA5] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1D3A6B] to-[#1D3A6B] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
           {t("save")}
         </SaveButton>
@@ -1051,7 +1051,7 @@ function ConditionTagInput({
               onChange={(e) => onYearChange(tag.id, e.target.value)}
               onBlur={(e) => onYearBlur(tag.id, e.target.value)}
               placeholder={yearPlaceholder}
-              className="w-36 rounded-full border border-transparent bg-white/70 px-2 py-0.5 text-xs text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+              className="w-36 rounded-full border border-transparent bg-white/70 px-2 py-0.5 text-xs text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
             />
             <button
               type="button"
@@ -1081,7 +1081,7 @@ function ConditionTagInput({
             }
           }}
           placeholder={searchPlaceholder}
-          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
         />
         {open && q.trim() && (
           <div className="absolute z-50 mt-1 max-h-80 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
@@ -1139,7 +1139,7 @@ function ConditionTagInput({
               <button
                 type="button"
                 onClick={() => commit(q)}
-                className="block w-full border-t border-[#E5E7EB] px-3 py-2 text-left text-sm text-[#185FA5] hover:bg-[#F8F9FA]"
+                className="block w-full border-t border-[#E5E7EB] px-3 py-2 text-left text-sm text-[#1D3A6B] hover:bg-[#F8F9FA]"
               >
                 + {addLabel} “{q.trim()}” — {noMatchHint}
               </button>
@@ -1154,7 +1154,7 @@ function ConditionTagInput({
         <button
           type="button"
           onClick={() => setCommonOpen(true)}
-          className="text-[#185FA5] hover:underline"
+          className="text-[#1D3A6B] hover:underline"
         >
           Browse most common conditions
         </button>
@@ -1162,7 +1162,7 @@ function ConditionTagInput({
         <button
           type="button"
           onClick={() => { setBrowseQ(""); setBrowseOpen(true); }}
-          className="text-[#185FA5] hover:underline"
+          className="text-[#1D3A6B] hover:underline"
         >
           Browse by speciality
         </button>
@@ -1198,7 +1198,7 @@ function ConditionTagInput({
                   className={`rounded-full border px-3 py-1 text-xs ${
                     isUsed
                       ? "cursor-not-allowed border-[#E5E7EB] bg-[#F1F2F6] text-gray-400"
-                      : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#185FA5] hover:bg-[#EEF0FB]"
+                      : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#1D3A6B] hover:bg-[#EEF0FB]"
                   }`}
                 >
                   {isUsed ? `✓ ${c}` : c}
@@ -1220,7 +1220,7 @@ function ConditionTagInput({
               value={browseQ}
               onChange={(e) => setBrowseQ(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
             />
           </div>
           <div className="mt-4 space-y-5 pb-8">
@@ -1247,7 +1247,7 @@ function ConditionTagInput({
                           className={`rounded-full border px-3 py-1 text-xs ${
                             isUsed
                               ? "cursor-not-allowed border-[#E5E7EB] bg-[#F1F2F6] text-gray-400"
-                              : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#185FA5] hover:bg-[#EEF0FB]"
+                              : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#1D3A6B] hover:bg-[#EEF0FB]"
                           }`}
                         >
                           {isUsed ? `✓ ${c}` : c}
@@ -1316,7 +1316,7 @@ function DiagnosisField({
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
       <div ref={wrapRef} className="relative">
-        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#185FA5]">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1D3A6B]">
           <input
             value={value}
             onChange={(e) => { onChange(e.target.value, null); setOpen(true); }}
@@ -1370,7 +1370,7 @@ function DiagnosisField({
       <button
         type="button"
         onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
-        className="mt-1 text-xs font-medium text-[#185FA5] hover:underline"
+        className="mt-1 text-xs font-medium text-[#1D3A6B] hover:underline"
       >
         Browse ICD-11 — WHO Global Disease Classification
       </button>
@@ -1399,7 +1399,7 @@ function Field({ label, value, ph, onChange }: { label: string; value: string; p
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={ph}
-        className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+        className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
       />
     </div>
   );
@@ -1475,7 +1475,7 @@ function ProcedureField({
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
       <div ref={wrapRef} className="relative">
-        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#185FA5]">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#1D3A6B]">
           <input
             value={value}
             onChange={(e) => { onChange(e.target.value, null); setOpen(true); }}
@@ -1517,7 +1517,7 @@ function ProcedureField({
       <button
         type="button"
         onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
-        className="mt-1 text-xs font-medium text-[#185FA5] hover:underline"
+        className="mt-1 text-xs font-medium text-[#1D3A6B] hover:underline"
       >
         Browse ICHI — WHO Procedures Classification
       </button>
@@ -1533,7 +1533,7 @@ function ProcedureField({
               value={browseQ}
               onChange={(e) => setBrowseQ(e.target.value)}
               placeholder={lang === "sv" ? "Sök ICHI (t.ex. appendektomi)…" : "Search ICHI (e.g. appendectomy)…"}
-              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
             />
             <p className="mt-2 text-[11px] leading-snug text-gray-500">
               {lang === "sv"
@@ -1557,7 +1557,7 @@ function ProcedureField({
                 key={`${r.code}-${r.title}`}
                 type="button"
                 onClick={() => { onChange(r.title, r.code); setBrowseOpen(false); }}
-                className="flex w-full items-center justify-between gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-left text-sm text-[#0D1B2A] hover:border-[#185FA5] hover:bg-[#EEF0FB]"
+                className="flex w-full items-center justify-between gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-left text-sm text-[#0D1B2A] hover:border-[#1D3A6B] hover:bg-[#EEF0FB]"
               >
                 <span className="truncate font-medium">{r.title}</span>
                 <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
@@ -1586,8 +1586,8 @@ function YesNo({ label, value, onChange, yes, no }: { label: string; value: bool
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
       <div className="mt-1 inline-flex overflow-hidden rounded-md border border-[#E5E7EB]">
-        <button type="button" onClick={() => onChange(true)} className={`px-4 py-1.5 text-xs ${value === true ? "bg-[#185FA5] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{yes}</button>
-        <button type="button" onClick={() => onChange(false)} className={`px-4 py-1.5 text-xs ${value === false ? "bg-[#185FA5] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{no}</button>
+        <button type="button" onClick={() => onChange(true)} className={`px-4 py-1.5 text-xs ${value === true ? "bg-[#1D3A6B] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{yes}</button>
+        <button type="button" onClick={() => onChange(false)} className={`px-4 py-1.5 text-xs ${value === false ? "bg-[#1D3A6B] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{no}</button>
       </div>
     </div>
   );
@@ -1639,7 +1639,7 @@ function Icd11BrowserSheet({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={placeholder}
-            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#185FA5] focus:outline-none"
+            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#1D3A6B] focus:outline-none"
           />
           <p className="mt-2 text-[11px] leading-snug text-gray-500">
             {lang === "sv"
@@ -1669,7 +1669,7 @@ function Icd11BrowserSheet({
                 className={`flex w-full flex-col gap-0.5 rounded-lg border px-3 py-2 text-left text-sm ${
                   isUsed
                     ? "cursor-not-allowed border-[#E5E7EB] bg-[#F1F2F6] text-gray-400"
-                    : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#185FA5] hover:bg-[#EEF0FB]"
+                    : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#1D3A6B] hover:bg-[#EEF0FB]"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">

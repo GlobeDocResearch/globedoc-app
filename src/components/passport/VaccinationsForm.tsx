@@ -16,8 +16,8 @@ import {
   eligibleProgrammeFor,
 } from "@/lib/childhoodVaccines";
 
-const ACCENT = "#F5C800";
-const ACCENT_2 = "#F5C800";
+const ACCENT = "#F5D33A";
+const ACCENT_2 = "#F5D33A";
 const HEADER_TEXT = "#1B3A6B";
 
 function yearOf(s?: string | null): string {
@@ -469,7 +469,7 @@ export default function VaccinationsForm() {
                         setChildhood((arr) => arr.map((x) => x.name === c.name ? { ...x, status: "unsure" } : x));
                         markDirty();
                       }}
-                      className="rounded-full border border-[#F5C800] bg-[#F5C800] px-3 py-1.5 text-xs font-medium text-[#1B3A6B]"
+                      className="rounded-full border border-[#F5D33A] bg-[#F5D33A] px-3 py-1.5 text-xs font-medium text-[#1B3A6B]"
                     >
                       {c.name}
                     </button>
@@ -537,7 +537,7 @@ export default function VaccinationsForm() {
                         setAddVaxOpen(false);
                         markDirty();
                       }}
-                      className="rounded-full bg-[#F5C800] px-4 py-1.5 text-xs font-semibold text-[#1B3A6B] hover:bg-[#E0B600]"
+                      className="rounded-full bg-[#F5D33A] px-4 py-1.5 text-xs font-semibold text-[#1B3A6B] hover:bg-[#DBB820]"
                     >
                       {lang === "sv" ? "Lägg till" : "Add"}
                     </button>
@@ -551,7 +551,7 @@ export default function VaccinationsForm() {
                   </div>
                 </div>
               )}
-              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#185FA5]">{infoText}</div>
+              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1D3A6B]">{infoText}</div>
               <p className="mt-2 px-1 text-[10px] leading-relaxed text-gray-500">
                 {(() => {
                   const SOURCES: Record<string, { name: string; url: string }> = {
