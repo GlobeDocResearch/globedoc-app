@@ -22,6 +22,7 @@ type Profile = {
   nationality: string | null; country_of_residence: string | null;
   phone: string | null; address: string | null; blood_group: string | null;
   language: string | null; avatar_url: string | null;
+  civic_registration_number: string | null;
 };
 
 const T = {
@@ -31,6 +32,10 @@ const T = {
     sex: "Biological sex", male: "Male", female: "Female", other: "Other",
     nationality: "Nationality / country of origin", residence: "Country of residence",
     phone: "Phone number", address: "Address", blood: "Blood group", optional: "Optional",
+    civic: "Civic registration number", civicPlaceholder: "Personal identity number",
+    security: "Security",
+    bankid: "Connect BankID", threeFactor: "Three-factor verification", biometric: "Biometric login",
+    comingSoon: "Coming Soon",
     save: "Save", cancel: "Cancel", saved: "Profile saved",
     account: "Account", email: "Email address", changePwd: "Change password", changePwdBtn: "Send reset email", resetSent: "Reset email sent",
     settings: "Settings", appLang: "App Language",
@@ -52,6 +57,10 @@ const T = {
     sex: "Biologiskt kön", male: "Man", female: "Kvinna", other: "Annat",
     nationality: "Nationalitet / ursprungsland", residence: "Bosättningsland",
     phone: "Telefonnummer", address: "Adress", blood: "Blodgrupp", optional: "Valfritt",
+    civic: "Personnummer", civicPlaceholder: "Personnummer",
+    security: "Säkerhet",
+    bankid: "Anslut BankID", threeFactor: "Trefaktorsautentisering", biometric: "Biometrisk inloggning",
+    comingSoon: "Kommer snart",
     save: "Spara", cancel: "Avbryt", saved: "Profil sparad",
     account: "Konto", email: "E-postadress", changePwd: "Ändra lösenord", changePwdBtn: "Skicka återställning", resetSent: "Återställningsmejl skickat",
     settings: "Inställningar", appLang: "Språk",
@@ -328,6 +337,18 @@ function ProfilePage() {
                   {BLOOD_GROUPS.map((b) => <option key={b} value={b}>{b}</option>)}
                 </select>
               } />
+            <FieldRow label={t.civic} editing={editing} value={view?.civic_registration_number}
+              edit={<input className={input} placeholder={t.civicPlaceholder} value={view?.civic_registration_number ?? ""} onChange={(e) => updateDraft("civic_registration_number", e.target.value)} />} />
+          </div>
+        </Card>
+
+        {/* Security */}
+        <Card>
+          <h2 className="text-base font-bold text-[#0D1B2A]">{t.security}</h2>
+          <div className="mt-3 divide-y divide-gray-100">
+            <ComingSoonRow icon="🏦" label={t.bankid} badge={t.comingSoon} />
+            <ComingSoonRow icon="🔐" label={t.threeFactor} badge={t.comingSoon} />
+            <ComingSoonRow icon="👁" label={t.biometric} badge={t.comingSoon} />
           </div>
         </Card>
 
@@ -427,6 +448,20 @@ function FieldRow({ label, value, editing, edit, required }: { label: string; va
         {required && <span className="ml-0.5 text-red-500" aria-hidden="true">*</span>}
       </p>
       {editing ? edit : <p className="text-sm text-[#0D1B2A]">{value || "—"}</p>}
+    </div>
+  );
+}
+
+function ComingSoonRow({ icon, label, badge }: { icon: string; label: string; badge: string }) {
+  return (
+    <div aria-disabled className="flex items-center justify-between py-3 opacity-50 cursor-not-allowed select-none">
+      <div className="flex items-center gap-3">
+        <span className="text-lg" aria-hidden>{icon}</span>
+        <p className="text-sm font-semibold text-gray-500">{label}</p>
+      </div>
+      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+        {badge}
+      </span>
     </div>
   );
 }

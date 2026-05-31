@@ -96,6 +96,10 @@ function SettingsTab() {
           </form>
         )}
 
+        <ComingSoonRow icon="🏦" label="Connect BankID" />
+        <ComingSoonRow icon="🔐" label="Three-factor verification" />
+        <ComingSoonRow icon="👁" label="Biometric login" />
+
         <Link to="/legal" className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50">
           <Shield className="h-5 w-5 text-gray-500" />
           <div>
@@ -121,5 +125,19 @@ function SettingsTab() {
         Log out
       </button>
     </main>
+  );
+}
+
+function ComingSoonRow({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div aria-disabled className="flex items-center justify-between px-5 py-4 opacity-50 cursor-not-allowed select-none">
+      <div className="flex items-center gap-3">
+        <span className="text-lg" aria-hidden>{icon}</span>
+        <p className="text-sm font-semibold text-gray-500">{label}</p>
+      </div>
+      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+        Coming Soon
+      </span>
+    </div>
   );
 }

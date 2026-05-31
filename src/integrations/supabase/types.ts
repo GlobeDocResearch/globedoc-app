@@ -953,6 +953,7 @@ export type Database = {
           avatar_url: string | null
           biological_sex: string | null
           blood_group: string | null
+          civic_registration_number: string | null
           country_of_residence: string | null
           created_at: string
           date_of_birth: string | null
@@ -971,6 +972,7 @@ export type Database = {
           avatar_url?: string | null
           biological_sex?: string | null
           blood_group?: string | null
+          civic_registration_number?: string | null
           country_of_residence?: string | null
           created_at?: string
           date_of_birth?: string | null
@@ -989,6 +991,7 @@ export type Database = {
           avatar_url?: string | null
           biological_sex?: string | null
           blood_group?: string | null
+          civic_registration_number?: string | null
           country_of_residence?: string | null
           created_at?: string
           date_of_birth?: string | null

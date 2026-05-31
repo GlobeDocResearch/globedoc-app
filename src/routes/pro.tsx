@@ -51,7 +51,7 @@ export function ProHeader() {
   );
 }
 
-function ProBottomNav() {
+export function ProBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const tabs = [
     { to: "/pro" as const, icon: <Users className="h-5 w-5" />, label: "Patients", match: (p: string) => p === "/pro" || p === "/pro/" },
