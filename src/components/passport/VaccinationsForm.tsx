@@ -214,6 +214,8 @@ export default function VaccinationsForm() {
   const [others, setOthers] = useState<OtherEntry[]>([]);
   const [contra, setContra] = useState("");
   const [contraOpen, setContraOpen] = useState(false);
+  const [addVaxOpen, setAddVaxOpen] = useState(false);
+  const [addVax, setAddVax] = useState({ name: "", year: "", country: "", notes: "" });
 
   const markDirty = () => setDirty(true);
 
@@ -484,7 +486,85 @@ export default function VaccinationsForm() {
                       {c.name}
                     </button>
                   ))}
+                {/* "Other" chip — quick free-text add */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const name = window.prompt(lang === "sv" ? "Vaccinets namn" : "Vaccine name");
+                    if (!name || !name.trim()) return;
+                    const n = name.trim();
+                    setChildhood((arr) =>
+                      arr.find((x) => x.name === n)
+                        ? arr
+                        : [...arr, { name: n, descEn: "", descSv: "", status: "likely_received", year_received: "" }],
+                    );
+                    markDirty();
+                  }}
+                  className="rounded-full border border-dashed border-[#9B7FD4] bg-white px-3 py-1.5 text-xs font-medium text-[#9B7FD4] hover:bg-[#F5F0FB]"
+                >
+                  {lang === "sv" ? "Annat" : "Other"}
+                </button>
+                {/* "+ Add vaccine" — opens inline form */}
+                <button
+                  type="button"
+                  onClick={() => setAddVaxOpen((v) => !v)}
+                  className="rounded-full border border-[#9B7FD4] bg-white px-3 py-1.5 text-xs font-medium text-[#9B7FD4] hover:bg-[#F5F0FB]"
+                >
+                  + {t("add_vaccine")}
+                </button>
               </div>
+              {addVaxOpen && (
+                <div className="mt-3 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                  <Input
+                    placeholder={lang === "sv" ? "Vaccinets namn" : "Vaccine name"}
+                    value={addVax.name}
+                    onChange={(e) => setAddVax((s) => ({ ...s, name: e.target.value }))}
+                  />
+                  <Input
+                    placeholder={lang === "sv" ? "År, t.ex. 2010" : "Year given, e.g. 2010"}
+                    value={addVax.year}
+                    onChange={(e) => setAddVax((s) => ({ ...s, year: e.target.value }))}
+                  />
+                  <Input
+                    placeholder={lang === "sv" ? "Land där det gavs" : "Country given"}
+                    value={addVax.country}
+                    onChange={(e) => setAddVax((s) => ({ ...s, country: e.target.value }))}
+                  />
+                  <Textarea
+                    placeholder={lang === "sv" ? "Anteckningar" : "Notes"}
+                    value={addVax.notes}
+                    onChange={(e) => setAddVax((s) => ({ ...s, notes: e.target.value }))}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const n = addVax.name.trim();
+                        if (!n) return;
+                        const desc = [addVax.country, addVax.notes].filter(Boolean).join(" · ");
+                        setChildhood((arr) =>
+                          arr.find((x) => x.name === n)
+                            ? arr.map((x) => x.name === n ? { ...x, status: "likely_received", year_received: addVax.year.trim() } : x)
+                            : [...arr, { name: n, descEn: desc, descSv: desc, status: "likely_received", year_received: addVax.year.trim() }],
+                        );
+                        setAddVax({ name: "", year: "", country: "", notes: "" });
+                        setAddVaxOpen(false);
+                        markDirty();
+                      }}
+                      className="rounded-full bg-[#9B7FD4] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#7B5FB4]"
+                    >
+                      {lang === "sv" ? "Lägg till" : "Add"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setAddVaxOpen(false); setAddVax({ name: "", year: "", country: "", notes: "" }); }}
+                      className="rounded-full border border-gray-300 bg-white px-4 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                      {lang === "sv" ? "Avbryt" : "Cancel"}
+                    </button>
+                  </div>
+                </div>
+              )}
               <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
               <p className="mt-2 px-1 text-[10px] leading-relaxed text-gray-500">
                 {(() => {
