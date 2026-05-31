@@ -1,6 +1,10 @@
-// National childhood vaccination programmes (historical eligibility windows).
-// `start` = first year vaccine was part of the routine programme.
-// `end` (optional, inclusive) = last year it was part of it.
+// National childhood vaccination programmes — age-at-vaccination logic.
+//
+// Each rule = { name, desc, ageGiven (years, earliest dose), start, end?, sex? }
+// A vaccine is "likely received" if (birthYear + ageGiven) falls within
+// [start, end ?? 9999]. ALL rules for the country are returned regardless;
+// the caller uses `likely` to decide between filled (purple) and outlined
+// (unfilled but tappable) chip states.
 
 export type Programme = {
   name: string;
@@ -8,6 +12,22 @@ export type Programme = {
   descSv: string;
   start: number;
   end?: number;
+};
+
+export type EligibleVaccine = {
+  name: string;
+  descEn: string;
+  descSv: string;
+  likely: boolean;
+};
+
+type Rule = {
+  name: string;
+  desc: { en: string; sv: string };
+  ageGiven: number;
+  start: number;
+  end?: number;
+  sex?: "male" | "female";
 };
 
 const D = {
@@ -24,268 +44,279 @@ const D = {
   hpv: { en: "Human papillomavirus", sv: "Humant papillomvirus" },
   rota: { en: "Rotavirus", sv: "Rotavirus" },
   hepb: { en: "Hepatitis B", sv: "Hepatit B" },
+  hepa: { en: "Hepatitis A", sv: "Hepatit A" },
   vari: { en: "Chickenpox", sv: "Vattkoppor" },
   menc: { en: "Meningococcal C", sv: "Meningokock C" },
   menacwy: { en: "Meningococcal ACWY", sv: "Meningokock ACWY" },
 };
 
-const P = (
+const R = (
   name: string,
-  d: { en: string; sv: string },
+  desc: { en: string; sv: string },
+  ageGiven: number,
   start: number,
   end?: number,
-): Programme => ({ name, descEn: d.en, descSv: d.sv, start, end });
+  sex?: "male" | "female",
+): Rule => ({ name, desc, ageGiven, start, end, sex });
 
-export const PROGRAMMES: Record<string, Programme[]> = {
+const RULES: Record<string, Rule[]> = {
   Sweden: [
-    P("BCG", D.bcg, 1940, 1975),
-    P("Smallpox", D.smallpox, 1940, 1976),
-    P("Diphtheria", D.diph, 1940),
-    P("Tetanus", D.tet, 1940),
-    P("Pertussis (1953–1979)", D.pert, 1953, 1979),
-    P("Pertussis (1996+)", D.pert, 1996),
-    P("Polio (IPV)", D.polio, 1957),
-    P("Measles (single)", D.measles, 1971, 1982),
-    P("MMR", D.mmr, 1982),
-    P("Hib", D.hib, 1998),
-    P("Pneumococcal (PCV)", D.pcv, 2009),
-    P("HPV (girls)", D.hpv, 2010),
-    P("HPV (boys)", D.hpv, 2020),
-    P("Rotavirus", D.rota, 2014),
-    P("Hepatitis B", D.hepb, 2016),
+    R("Smallpox", D.smallpox, 1, 1940, 1976),
+    R("BCG", D.bcg, 0, 1940, 1975),
+    R("Diphtheria", D.diph, 1, 1940),
+    R("Tetanus", D.tet, 1, 1940),
+    R("Pertussis (1953–1979)", D.pert, 1, 1953, 1979),
+    R("Pertussis (1996+)", D.pert, 1, 1996),
+    R("Polio (IPV)", D.polio, 1, 1957),
+    R("Measles (single)", D.measles, 2, 1971, 1982),
+    R("MMR", D.mmr, 2, 1982),
+    R("Hib", D.hib, 1, 1998),
+    R("Pneumococcal (PCV)", D.pcv, 1, 2009),
+    R("Hepatitis B", D.hepb, 1, 2016),
+    R("HPV (girls)", D.hpv, 11, 2010, undefined, "female"),
+    R("HPV (boys)", D.hpv, 11, 2020, undefined, "male"),
+    R("Rotavirus", D.rota, 0, 2014),
   ],
   "United Kingdom": [
-    P("Smallpox", D.smallpox, 1940, 1971),
-    P("Diphtheria", D.diph, 1940),
-    P("Tetanus", D.tet, 1961),
-    P("Pertussis (1957–1974)", D.pert, 1957, 1974),
-    P("Pertussis (1990+)", D.pert, 1990),
-    P("Polio (IPV)", D.polio, 1956),
-    P("Measles (single)", D.measles, 1968, 1988),
-    P("MMR", D.mmr, 1988),
-    P("Hib", D.hib, 1992),
-    P("MenC", D.menc, 1999),
-    P("Pneumococcal (PCV)", D.pcv, 2006),
-    P("HPV (girls)", D.hpv, 2008),
-    P("HPV (boys)", D.hpv, 2019),
-    P("Rotavirus", D.rota, 2013),
-    P("Hepatitis B", D.hepb, 2017),
+    R("Smallpox", D.smallpox, 1, 1940, 1971),
+    R("BCG", D.bcg, 13, 1953, 2005),
+    R("Diphtheria", D.diph, 0, 1940),
+    R("Tetanus", D.tet, 0, 1961),
+    R("Pertussis (1957–1974)", D.pert, 0, 1957, 1974),
+    R("Pertussis (1990+)", D.pert, 0, 1990),
+    R("Polio (IPV)", D.polio, 0, 1956),
+    R("Measles (single)", D.measles, 1, 1968, 1988),
+    R("MMR", D.mmr, 1, 1988),
+    R("Hib", D.hib, 0, 1992),
+    R("MenC", D.menc, 0, 1999),
+    R("Pneumococcal (PCV)", D.pcv, 0, 2006),
+    R("Hepatitis B", D.hepb, 0, 2017),
+    R("HPV (girls)", D.hpv, 12, 2008, undefined, "female"),
+    R("HPV (boys)", D.hpv, 12, 2019, undefined, "male"),
+    R("Rotavirus", D.rota, 0, 2013),
   ],
   "United States": [
-    P("Smallpox", D.smallpox, 1940, 1972),
-    P("Diphtheria", D.diph, 1945),
-    P("Tetanus", D.tet, 1945),
-    P("Pertussis", D.pert, 1948),
-    P("Polio (IPV)", D.polio, 1955),
-    P("Measles (single)", D.measles, 1963, 1971),
-    P("MMR", D.mmr, 1971),
-    P("Hib", D.hib, 1985),
-    P("Hepatitis B", D.hepb, 1991),
-    P("Pneumococcal (PCV)", D.pcv, 2000),
-    P("Varicella", D.vari, 1995),
-    P("HPV (girls)", D.hpv, 2006),
-    P("HPV (boys)", D.hpv, 2011),
-    P("Rotavirus", D.rota, 2006),
-    P("MenACWY", D.menacwy, 2005),
+    R("Smallpox", D.smallpox, 1, 1940, 1972),
+    R("Diphtheria", D.diph, 0, 1945),
+    R("Tetanus", D.tet, 0, 1945),
+    R("Pertussis", D.pert, 0, 1948),
+    R("Polio (IPV)", D.polio, 0, 1955),
+    R("Measles (single)", D.measles, 1, 1963, 1971),
+    R("MMR", D.mmr, 1, 1971),
+    R("Hib", D.hib, 0, 1985),
+    R("Hepatitis B", D.hepb, 0, 1991),
+    R("Varicella", D.vari, 1, 1995),
+    R("Hepatitis A", D.hepa, 1, 1996),
+    R("Pneumococcal (PCV)", D.pcv, 0, 2000),
+    R("MenACWY", D.menacwy, 11, 2005),
+    R("Rotavirus", D.rota, 0, 2006),
+    R("HPV (girls)", D.hpv, 11, 2006, undefined, "female"),
+    R("HPV (boys)", D.hpv, 11, 2011, undefined, "male"),
   ],
   Germany: [
-    P("Smallpox", D.smallpox, 1940, 1976),
-    P("Diphtheria", D.diph, 1945),
-    P("Tetanus", D.tet, 1960),
-    P("Pertussis", D.pert, 1960),
-    P("Polio (IPV)", D.polio, 1962),
-    P("Measles (single)", D.measles, 1967, 1980),
-    P("MMR", D.mmr, 1980),
-    P("Hib", D.hib, 1990),
-    P("Hepatitis B", D.hepb, 1995),
-    P("Pneumococcal (PCV)", D.pcv, 2006),
-    P("HPV (girls)", D.hpv, 2007),
-    P("HPV (boys)", D.hpv, 2018),
-    P("Rotavirus", D.rota, 2013),
-    P("Varicella", D.vari, 2004),
+    R("Smallpox", D.smallpox, 1, 1940, 1976),
+    R("Diphtheria", D.diph, 0, 1945),
+    R("Tetanus", D.tet, 0, 1960),
+    R("Pertussis", D.pert, 0, 1960),
+    R("Polio (IPV)", D.polio, 0, 1962),
+    R("Measles (single)", D.measles, 1, 1967, 1980),
+    R("MMR", D.mmr, 1, 1980),
+    R("Hib", D.hib, 0, 1990),
+    R("Hepatitis B", D.hepb, 0, 1995),
+    R("Varicella", D.vari, 1, 2004),
+    R("Pneumococcal (PCV)", D.pcv, 0, 2006),
+    R("HPV (girls)", D.hpv, 9, 2007, undefined, "female"),
+    R("HPV (boys)", D.hpv, 9, 2018, undefined, "male"),
+    R("Rotavirus", D.rota, 0, 2013),
   ],
   France: [
-    P("Smallpox", D.smallpox, 1940, 1979),
-    P("Diphtheria", D.diph, 1938),
-    P("Tetanus", D.tet, 1945),
-    P("Pertussis", D.pert, 1959),
-    P("Polio (IPV)", D.polio, 1958),
-    P("BCG", D.bcg, 1940, 2007),
-    P("Measles (single)", D.measles, 1968, 1983),
-    P("MMR", D.mmr, 1983),
-    P("Hib", D.hib, 1992),
-    P("Hepatitis B", D.hepb, 1994),
-    P("Pneumococcal (PCV)", D.pcv, 2006),
-    P("HPV (girls)", D.hpv, 2007),
-    P("HPV (boys)", D.hpv, 2021),
-    P("Rotavirus", D.rota, 2015),
-    P("Varicella", D.vari, 2004),
+    R("Smallpox", D.smallpox, 1, 1940, 1979),
+    R("BCG", D.bcg, 0, 1940, 2007),
+    R("Diphtheria", D.diph, 0, 1938),
+    R("Tetanus", D.tet, 0, 1945),
+    R("Pertussis", D.pert, 0, 1959),
+    R("Polio (IPV)", D.polio, 0, 1958),
+    R("Measles (single)", D.measles, 1, 1968, 1983),
+    R("MMR", D.mmr, 1, 1983),
+    R("Hib", D.hib, 0, 1992),
+    R("Hepatitis B", D.hepb, 0, 1994),
+    R("Varicella", D.vari, 1, 2004),
+    R("Pneumococcal (PCV)", D.pcv, 0, 2006),
+    R("HPV (girls)", D.hpv, 11, 2007, undefined, "female"),
+    R("HPV (boys)", D.hpv, 11, 2021, undefined, "male"),
+    R("Rotavirus", D.rota, 0, 2015),
   ],
   Australia: [
-    P("Smallpox", D.smallpox, 1940, 1980),
-    P("Diphtheria", D.diph, 1950),
-    P("Tetanus", D.tet, 1950),
-    P("Pertussis", D.pert, 1953),
-    P("Polio (IPV)", D.polio, 1956),
-    P("Measles (single)", D.measles, 1966, 1982),
-    P("MMR", D.mmr, 1982),
-    P("Hib", D.hib, 1993),
-    P("Hepatitis B", D.hepb, 1990),
-    P("Pneumococcal (PCV)", D.pcv, 2005),
-    P("HPV (girls)", D.hpv, 2007),
-    P("HPV (boys)", D.hpv, 2013),
-    P("Rotavirus", D.rota, 2007),
-    P("Varicella", D.vari, 2005),
-    P("MenACWY", D.menacwy, 2016),
+    R("Smallpox", D.smallpox, 1, 1940, 1980),
+    R("Diphtheria", D.diph, 0, 1950),
+    R("Tetanus", D.tet, 0, 1950),
+    R("Pertussis", D.pert, 0, 1953),
+    R("Polio (IPV)", D.polio, 0, 1956),
+    R("Measles (single)", D.measles, 1, 1966, 1982),
+    R("MMR", D.mmr, 1, 1982),
+    R("Hepatitis B", D.hepb, 0, 1990),
+    R("Hib", D.hib, 0, 1993),
+    R("Varicella", D.vari, 1, 2005),
+    R("Pneumococcal (PCV)", D.pcv, 0, 2005),
+    R("HPV (girls)", D.hpv, 12, 2007, undefined, "female"),
+    R("Rotavirus", D.rota, 0, 2007),
+    R("HPV (boys)", D.hpv, 12, 2013, undefined, "male"),
+    R("MenACWY", D.menacwy, 1, 2016),
   ],
   Canada: [
-    P("Smallpox", D.smallpox, 1940, 1972),
-    P("Diphtheria", D.diph, 1945),
-    P("Tetanus", D.tet, 1945),
-    P("Pertussis", D.pert, 1943),
-    P("Polio (IPV)", D.polio, 1955),
-    P("Measles (single)", D.measles, 1963, 1983),
-    P("MMR", D.mmr, 1983),
-    P("Hib", D.hib, 1985),
-    P("Hepatitis B", D.hepb, 1992),
-    P("Pneumococcal (PCV)", D.pcv, 2002),
-    P("Varicella", D.vari, 2000),
-    P("HPV (girls)", D.hpv, 2007),
-    P("HPV (boys)", D.hpv, 2012),
-    P("Rotavirus", D.rota, 2011),
-    P("MenC", D.menc, 2001),
+    R("Smallpox", D.smallpox, 1, 1940, 1972),
+    R("Pertussis", D.pert, 0, 1943),
+    R("Diphtheria", D.diph, 0, 1945),
+    R("Tetanus", D.tet, 0, 1945),
+    R("Polio (IPV)", D.polio, 0, 1955),
+    R("Measles (single)", D.measles, 1, 1963, 1983),
+    R("MMR", D.mmr, 1, 1983),
+    R("Hib", D.hib, 0, 1985),
+    R("Hepatitis B", D.hepb, 9, 1992),
+    R("Varicella", D.vari, 1, 2000),
+    R("MenC", D.menc, 0, 2001),
+    R("Pneumococcal (PCV)", D.pcv, 0, 2002),
+    R("HPV (girls)", D.hpv, 9, 2007, undefined, "female"),
+    R("Rotavirus", D.rota, 0, 2011),
+    R("HPV (boys)", D.hpv, 9, 2012, undefined, "male"),
   ],
   Norway: [
-    P("BCG", D.bcg, 1947, 1995),
-    P("Smallpox", D.smallpox, 1940, 1976),
-    P("Diphtheria", D.diph, 1952),
-    P("Tetanus", D.tet, 1952),
-    P("Pertussis (1952–1979)", D.pert, 1952, 1979),
-    P("Pertussis (1998+)", D.pert, 1998),
-    P("Polio (IPV)", D.polio, 1957),
-    P("MMR", D.mmr, 1983),
-    P("Hib", D.hib, 1992),
-    P("Hepatitis B", D.hepb, 2006),
-    P("Pneumococcal (PCV)", D.pcv, 2006),
-    P("HPV (girls)", D.hpv, 2009),
-    P("HPV (boys)", D.hpv, 2018),
-    P("Rotavirus", D.rota, 2014),
+    R("Smallpox", D.smallpox, 1, 1940, 1976),
+    R("BCG", D.bcg, 14, 1947, 1995),
+    R("Diphtheria", D.diph, 1, 1952),
+    R("Tetanus", D.tet, 1, 1952),
+    R("Pertussis (1952–1979)", D.pert, 1, 1952, 1979),
+    R("Pertussis (1998+)", D.pert, 1, 1998),
+    R("Polio (IPV)", D.polio, 1, 1957),
+    R("MMR", D.mmr, 2, 1983),
+    R("Hib", D.hib, 1, 1992),
+    R("Hepatitis B", D.hepb, 1, 2006),
+    R("Pneumococcal (PCV)", D.pcv, 1, 2006),
+    R("HPV (girls)", D.hpv, 11, 2009, undefined, "female"),
+    R("Rotavirus", D.rota, 0, 2014),
+    R("HPV (boys)", D.hpv, 11, 2018, undefined, "male"),
   ],
   Denmark: [
-    P("BCG", D.bcg, 1948, 1986),
-    P("Smallpox", D.smallpox, 1940, 1976),
-    P("Diphtheria", D.diph, 1943),
-    P("Tetanus", D.tet, 1943),
-    P("Pertussis (1943–1985)", D.pert, 1943, 1985),
-    P("Pertussis (1997+)", D.pert, 1997),
-    P("Polio (IPV)", D.polio, 1955),
-    P("Measles (single)", D.measles, 1969, 1987),
-    P("MMR", D.mmr, 1987),
-    P("Hib", D.hib, 1993),
-    P("Hepatitis B", D.hepb, 2009),
-    P("Pneumococcal (PCV)", D.pcv, 2007),
-    P("HPV (girls)", D.hpv, 2009),
-    P("HPV (boys)", D.hpv, 2019),
-    P("Rotavirus", D.rota, 2012),
+    R("Smallpox", D.smallpox, 1, 1940, 1976),
+    R("Diphtheria", D.diph, 1, 1943),
+    R("Tetanus", D.tet, 1, 1943),
+    R("Pertussis (1943–1985)", D.pert, 1, 1943, 1985),
+    R("Pertussis (1997+)", D.pert, 1, 1997),
+    R("BCG", D.bcg, 7, 1948, 1986),
+    R("Polio (IPV)", D.polio, 1, 1955),
+    R("Measles (single)", D.measles, 2, 1969, 1987),
+    R("MMR", D.mmr, 2, 1987),
+    R("Hib", D.hib, 1, 1993),
+    R("Pneumococcal (PCV)", D.pcv, 1, 2007),
+    R("Hepatitis B", D.hepb, 1, 2009),
+    R("HPV (girls)", D.hpv, 12, 2009, undefined, "female"),
+    R("Rotavirus", D.rota, 0, 2012),
+    R("HPV (boys)", D.hpv, 12, 2019, undefined, "male"),
   ],
   Finland: [
-    P("BCG", D.bcg, 1941, 2006),
-    P("Smallpox", D.smallpox, 1940, 1980),
-    P("Diphtheria", D.diph, 1943),
-    P("Tetanus", D.tet, 1943),
-    P("Pertussis", D.pert, 1952),
-    P("Polio (IPV)", D.polio, 1957),
-    P("Measles (single)", D.measles, 1975, 1982),
-    P("MMR", D.mmr, 1982),
-    P("Hib", D.hib, 1986),
-    P("Hepatitis B", D.hepb, 2005),
-    P("Pneumococcal (PCV)", D.pcv, 2010),
-    P("HPV (girls)", D.hpv, 2013),
-    P("HPV (boys)", D.hpv, 2020),
-    P("Rotavirus", D.rota, 2009),
-    P("Varicella", D.vari, 2017),
+    R("BCG", D.bcg, 0, 1941, 2006),
+    R("Diphtheria", D.diph, 1, 1943),
+    R("Tetanus", D.tet, 1, 1943),
+    R("Pertussis", D.pert, 1, 1952),
+    R("Polio (IPV)", D.polio, 1, 1957),
+    R("Smallpox", D.smallpox, 1, 1940, 1980),
+    R("Measles (single)", D.measles, 2, 1975, 1982),
+    R("MMR", D.mmr, 2, 1982),
+    R("Hib", D.hib, 0, 1986),
+    R("Hepatitis B", D.hepb, 1, 2005),
+    R("Rotavirus", D.rota, 0, 2009),
+    R("Pneumococcal (PCV)", D.pcv, 1, 2010),
+    R("HPV (girls)", D.hpv, 11, 2013, undefined, "female"),
+    R("Varicella", D.vari, 1, 2017),
+    R("HPV (boys)", D.hpv, 11, 2020, undefined, "male"),
   ],
 };
 
-// Generic WHO-style fallback for unsupported countries — broad core EPI list.
-export const WHO_GENERIC: Programme[] = [
-  P("BCG", D.bcg, 1950),
-  P("Diphtheria", D.diph, 1950),
-  P("Tetanus", D.tet, 1950),
-  P("Pertussis", D.pert, 1950),
-  P("Polio (IPV)", D.polio, 1960),
-  P("MMR", D.mmr, 1985),
-  P("Hib", D.hib, 1995),
-  P("Hepatitis B", D.hepb, 2000),
-  P("Pneumococcal (PCV)", D.pcv, 2010),
-  P("Rotavirus", D.rota, 2010),
-  P("HPV", D.hpv, 2010),
+// WHO Essentials — shown as unfilled chips for unsupported countries.
+const WHO_ESSENTIALS: { name: string; desc: { en: string; sv: string } }[] = [
+  { name: "BCG", desc: D.bcg },
+  { name: "Polio (IPV)", desc: D.polio },
+  { name: "DTP", desc: { en: "Diphtheria, tetanus, pertussis", sv: "Difteri, stelkramp, kikhosta" } },
+  { name: "MMR", desc: D.mmr },
+  { name: "Hepatitis B", desc: D.hepb },
+  { name: "Hib", desc: D.hib },
+  { name: "Pneumococcal (PCV)", desc: D.pcv },
+  { name: "Rotavirus", desc: D.rota },
+  { name: "HPV", desc: D.hpv },
 ];
 
 export function isSupportedCountry(country?: string | null): boolean {
-  return !!country && country in PROGRAMMES;
+  return !!country && country in RULES;
 }
 
-// Sweden-specific age-at-vaccination logic. Each entry specifies the typical
-// age the vaccine is given and the programme's active years; eligibility is
-// computed as (birthYear + ageGiven) falling within the active window.
-type SwedenRule = {
-  name: string;
-  desc: { en: string; sv: string };
-  ageGiven: number; // years (use 1 for 3–12 month schedules, 0 for infant <6m)
-  start: number;
-  end?: number;
-  sex?: "male" | "female";
-};
-
-const SWEDEN_RULES: SwedenRule[] = [
-  { name: "Smallpox", desc: D.smallpox, ageGiven: 1, start: 1940, end: 1976 },
-  { name: "BCG", desc: D.bcg, ageGiven: 0, start: 1940, end: 1975 },
-  { name: "Diphtheria", desc: D.diph, ageGiven: 1, start: 1940 },
-  { name: "Tetanus", desc: D.tet, ageGiven: 1, start: 1940 },
-  { name: "Pertussis (1953–1979)", desc: D.pert, ageGiven: 1, start: 1953, end: 1979 },
-  { name: "Pertussis (1996+)", desc: D.pert, ageGiven: 1, start: 1996 },
-  { name: "Polio (IPV)", desc: D.polio, ageGiven: 1, start: 1957 },
-  { name: "Measles (single)", desc: D.measles, ageGiven: 2, start: 1971, end: 1982 },
-  { name: "MMR", desc: D.mmr, ageGiven: 2, start: 1982 },
-  { name: "Hib", desc: D.hib, ageGiven: 1, start: 1998 },
-  { name: "Pneumococcal (PCV)", desc: D.pcv, ageGiven: 1, start: 2009 },
-  { name: "Hepatitis B", desc: D.hepb, ageGiven: 1, start: 2016 },
-  { name: "HPV (girls)", desc: D.hpv, ageGiven: 11, start: 2010, sex: "female" },
-  { name: "HPV (boys)", desc: D.hpv, ageGiven: 11, start: 2020, sex: "male" },
-  { name: "Rotavirus", desc: D.rota, ageGiven: 0, start: 2014 },
-  // Varicella is planned from 2027 in Sweden — not yet in the programme.
-];
-
-export function swedenProgrammeForYear(
-  birthYear: number,
+// Main API: returns all programme vaccines for the country with `likely`
+// computed from age-at-vaccination logic. For unsupported countries, returns
+// WHO Essentials all marked `likely: false`.
+export function eligibleProgrammeFor(
+  country: string | null | undefined,
+  birthYear: number | null,
   sex?: string | null,
-): Programme[] {
+): EligibleVaccine[] {
   const normalizedSex = sex === "male" || sex === "female" ? sex : null;
-  return SWEDEN_RULES
-    .filter((r) => {
-      // Sex filter for HPV variants; if sex unknown, include both.
-      if (r.sex && normalizedSex && r.sex !== normalizedSex) return false;
-      const y = birthYear + r.ageGiven;
-      return y >= r.start && y <= (r.end ?? 9999);
-    })
-    .map((r) => ({
+  const rules = country && RULES[country];
+  if (!rules) {
+    return WHO_ESSENTIALS.map((v) => ({
+      name: v.name,
+      descEn: v.desc.en,
+      descSv: v.desc.sv,
+      likely: false,
+    }));
+  }
+  return rules
+    .filter((r) => !(r.sex && normalizedSex && r.sex !== normalizedSex))
+    .map((r) => {
+      const likely =
+        birthYear !== null &&
+        birthYear + r.ageGiven >= r.start &&
+        birthYear + r.ageGiven <= (r.end ?? 9999);
+      return {
+        name: r.name,
+        descEn: r.desc.en,
+        descSv: r.desc.sv,
+        likely,
+      };
+    });
+}
+
+// Back-compat exports kept for any other importers.
+export const PROGRAMMES: Record<string, Programme[]> = Object.fromEntries(
+  Object.entries(RULES).map(([k, rs]) => [
+    k,
+    rs.map((r) => ({
       name: r.name,
       descEn: r.desc.en,
       descSv: r.desc.sv,
       start: r.start,
       end: r.end,
-    }));
-}
+    })),
+  ]),
+);
 
-// Return vaccines that were part of the programme at any point while the
-// patient was aged 0–18.
+export const WHO_GENERIC: Programme[] = WHO_ESSENTIALS.map((v) => ({
+  name: v.name,
+  descEn: v.desc.en,
+  descSv: v.desc.sv,
+  start: 1950,
+}));
+
 export function programmeForCountryAndYear(
   country: string | null | undefined,
   birthYear: number,
 ): Programme[] {
   const list = (country && PROGRAMMES[country]) || WHO_GENERIC;
-  const lo = birthYear;
-  const hi = birthYear + 18;
-  return list.filter((p) => p.start <= hi && (p.end ?? 9999) >= lo);
+  return list.filter((p) => p.start <= birthYear + 18 && (p.end ?? 9999) >= birthYear);
+}
+
+export function swedenProgrammeForYear(
+  birthYear: number,
+  sex?: string | null,
+): Programme[] {
+  return eligibleProgrammeFor("Sweden", birthYear, sex)
+    .filter((v) => v.likely)
+    .map((v) => ({ name: v.name, descEn: v.descEn, descSv: v.descSv, start: 0 }));
 }
