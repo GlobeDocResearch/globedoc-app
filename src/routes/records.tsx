@@ -130,6 +130,7 @@ function RecordsPage() {
   const [uploadType, setUploadType] = useState<EntryType | null>(null);
   const [editingEntry, setEditingEntry] = useState<RecordEntry | null>(null);
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
+  const [view, setView] = useState<"feed" | "timeline">("feed");
 
   useEffect(() => {
     (async () => {
