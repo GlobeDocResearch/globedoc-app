@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 type NavTo = "/home" | "/pairing" | "/passport" | "/profile" | "/travel" | "/records";
-import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
+import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText, User as UserIcon } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
