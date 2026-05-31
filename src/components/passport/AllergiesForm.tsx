@@ -766,11 +766,8 @@ function AllergySection({
   onRemove: (id: string) => void;
   nameSuggestions?: string[];
 }) {
-  const toneOn = useMemo(() => {
-    if (chipTone === "red") return "bg-[#E07B6B] text-white border-[#E07B6B]";
-    if (chipTone === "amber") return "bg-[#E89B4A] text-white border-[#E89B4A]";
-    return "bg-[#E8C24A] text-[#5A4500] border-[#E8C24A]";
-  }, [chipTone]);
+  const toneOn = "bg-[#EF3638] text-white border-[#EF3638]";
+  void chipTone;
 
   return (
     <Section title={title}>
