@@ -395,20 +395,18 @@ export default function MedicalHistoryForm() {
         updateStay(stay.id, { id: data.id, persisted: true, collapsed: true }, false);
       }
     }
-    // Mirror into Records feed
-    const title = titleForStay(stay);
-    if (title.trim()) {
-      await upsertPassportEntry({
-        userId,
-        sourceKind: "hospital_stay",
-        sourceId: stayId,
-        title,
-        body: stay.notes || null,
-        eventYear: firstYear(stay.year),
-        codeIchi: stay.ichi_code,
-        codeIcd11: stay.diagnosis_code,
-      });
-    }
+    // Mirror into Records feed (always — title always has a fallback)
+    const title = titleForStay({ ...stay, ...payload });
+    await upsertPassportEntry({
+      userId,
+      sourceKind: "hospital_stay",
+      sourceId: stayId,
+      title,
+      body: stay.notes || null,
+      eventYear: firstYear(stay.year),
+      codeIchi: stay.ichi_code,
+      codeIcd11: stay.diagnosis_code,
+    });
     clearStayDirty(stay.id);
   };
 
@@ -492,17 +490,15 @@ export default function MedicalHistoryForm() {
         updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
       }
     }
-    const title = titleForLocation(loc);
-    if (title.trim()) {
-      await upsertPassportEntry({
-        userId,
-        sourceKind: "record_location",
-        sourceId: locId,
-        title,
-        body: loc.record_type || null,
-        eventYear: firstYear(loc.years),
-      });
-    }
+    const title = titleForLocation({ ...loc, ...payload });
+    await upsertPassportEntry({
+      userId,
+      sourceKind: "record_location",
+      sourceId: locId,
+      title,
+      body: loc.record_type || null,
+      eventYear: firstYear(loc.years),
+    });
     clearLocDirty(loc.id);
   };
 

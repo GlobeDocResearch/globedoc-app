@@ -85,7 +85,8 @@ export function titleForStay(stay: {
   const event = (stay.event ?? "").trim();
   const place = [stay.institution, stay.country].filter(Boolean).join(", ");
   const head = event && place ? `${event} at ${place}` : event || place;
-  return [head, stay.year].filter(Boolean).join(" · ");
+  const out = [head, stay.year].filter(Boolean).join(" · ");
+  return out || "Hospital stay";
 }
 
 export function titleForLocation(loc: {
@@ -95,7 +96,8 @@ export function titleForLocation(loc: {
   years?: string | null;
 }): string {
   const place = [loc.city, loc.country].filter(Boolean).join(", ");
-  return [loc.institution, place, loc.years].filter(Boolean).join(" · ");
+  const out = [loc.institution, place, loc.years].filter(Boolean).join(" · ");
+  return out || "Health record location";
 }
 
 // ---- Year extraction (best-effort first 4-digit year) -----------------------

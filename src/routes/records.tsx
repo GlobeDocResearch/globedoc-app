@@ -9,6 +9,13 @@ import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
+import {
+  upsertPassportEntry,
+  titleForCondition,
+  titleForStay,
+  titleForLocation,
+  firstYear,
+} from "@/lib/passportRecords";
 
 export const Route = createFileRoute("/records")({
   head: () => ({ meta: [{ title: "Records — GlobeDoc" }] }),
@@ -140,6 +147,7 @@ function RecordsPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -154,11 +162,89 @@ function RecordsPage() {
         if (n) setAuthorName(n);
         setAvatarUrl(prof.avatar_url ?? null);
       }
+      await backfillFromPassport(user.id);
       await reload(user.id);
       setLoading(false);
+
+      // Re-fetch immediately whenever the Health Passport (or anything else)
+      // inserts/updates/deletes a row in record_entries for this user.
+      channel = supabase
+        .channel(`record-entries-${user.id}`)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "record_entries", filter: `user_id=eq.${user.id}` },
+          () => { reload(user.id); },
+        )
+        .subscribe();
     })();
+    return () => { if (channel) supabase.removeChannel(channel); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // One-shot reconcile: ensure every existing Medical History row has a
+  // matching record_entries row (idempotent via the unique constraint on
+  // user_id+source_kind+source_id).
+  async function backfillFromPassport(uid: string) {
+    try {
+      const [mc, hs, rl] = await Promise.all([
+        supabase.from("medical_conditions").select("*").eq("user_id", uid),
+        supabase.from("hospital_stays").select("*").eq("user_id", uid),
+        (supabase as any).from("record_locations").select("*").eq("user_id", uid),
+      ]);
+      const existing = await supabase
+        .from("record_entries")
+        .select("source_kind,source_id")
+        .eq("user_id", uid)
+        .not("source_kind", "is", null);
+      const have = new Set<string>(
+        ((existing.data ?? []) as any[]).map((r) => `${r.source_kind}::${r.source_id}`),
+      );
+      const jobs: Promise<unknown>[] = [];
+      for (const r of (mc.data ?? []) as any[]) {
+        const kind = r.is_resolved ? "condition_past" : "condition_current";
+        if (have.has(`${kind}::${r.id}`)) continue;
+        jobs.push(upsertPassportEntry({
+          userId: uid,
+          sourceKind: kind,
+          sourceId: r.id,
+          title: titleForCondition(r.is_resolved ? "past" : "current", r.condition_name, r.icd11_code ?? null, r.year ?? null),
+          body: r.icd11_code ? `ICD-11: ${r.icd11_code}` : null,
+          eventYear: r.year ?? null,
+          codeIcd11: r.icd11_code ?? null,
+        }));
+      }
+      for (const r of (hs.data ?? []) as any[]) {
+        if (have.has(`hospital_stay::${r.id}`)) continue;
+        jobs.push(upsertPassportEntry({
+          userId: uid,
+          sourceKind: "hospital_stay",
+          sourceId: r.id,
+          title: titleForStay(r),
+          body: r.notes ?? null,
+          eventYear: firstYear(r.year),
+          codeIchi: r.ichi_code ?? null,
+          codeIcd11: r.diagnosis_code ?? null,
+        }));
+      }
+      for (const r of ((rl.data ?? []) as any[])) {
+        if (have.has(`record_location::${r.id}`)) continue;
+        jobs.push(upsertPassportEntry({
+          userId: uid,
+          sourceKind: "record_location",
+          sourceId: r.id,
+          title: titleForLocation(r),
+          body: r.record_type ?? null,
+          eventYear: firstYear(r.years),
+        }));
+      }
+      if (jobs.length) {
+        console.log(`[records] backfilling ${jobs.length} passport entries`);
+        await Promise.all(jobs);
+      }
+    } catch (e) {
+      console.error("[records] backfill failed", e);
+    }
+  }
 
   async function reload(uid: string) {
     const { data } = await supabase
