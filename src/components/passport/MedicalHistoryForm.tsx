@@ -1290,19 +1290,26 @@ function DiagnosisField({
   const [browseResults, setBrowseResults] = useState<Icd11Match[]>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
 
+  const localResults = useMemo<Icd11Match[]>(() => {
+    const term = value.trim();
+    if (term.length < 1) return [];
+    return searchIcd11Local(term).map((r) => ({ code: r.code, title: r.title }));
+  }, [value]);
+
   useEffect(() => {
     const term = value.trim();
-    if (term.length < 1) { setResults([]); setLoading(false); return; }
+    if (term.length < 2) { setResults([]); setLoading(false); return; }
     let cancelled = false;
     setLoading(true);
     const handle = setTimeout(async () => {
       const res = await searchIcd11(term, lang);
       if (cancelled) return;
-      setResults(res);
+      const localCodes = new Set(localResults.map((r) => r.code));
+      setResults(res.filter((r) => !localCodes.has(r.code)));
       setLoading(false);
     }, 300);
     return () => { cancelled = true; clearTimeout(handle); };
-  }, [value, lang]);
+  }, [value, lang, localResults]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
