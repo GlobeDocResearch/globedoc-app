@@ -68,7 +68,7 @@ function ProSignupPage() {
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/verified`,
+        emailRedirectTo: `${window.location.origin}/verified-pro`,
         data: {
           account_type: "professional",
           full_name: parsed.data.fullName,
@@ -85,8 +85,8 @@ function ProSignupPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Professional account created.");
-    navigate({ to: "/connect" });
+    toast.success("Account created. Check your email to confirm.");
+    navigate({ to: "/confirm-email-pro" });
   };
 
   return (
