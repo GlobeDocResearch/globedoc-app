@@ -372,6 +372,7 @@ export default function MedicalHistoryForm() {
       record_type: stay.record_type,
       notes: stay.notes,
     };
+    let stayId = stay.id;
     if (stay.persisted) {
       await supabase.from("hospital_stays").update(payload).eq("id", stay.id);
       audit("hospital_stays", "update");
@@ -383,7 +384,22 @@ export default function MedicalHistoryForm() {
         .select()
         .single();
       audit("hospital_stays", "insert");
-      if (data) updateStay(stay.id, { id: data.id, persisted: true, collapsed: true }, false);
+      if (data) {
+        stayId = data.id;
+        updateStay(stay.id, { id: data.id, persisted: true, collapsed: true }, false);
+      }
+    }
+    // Mirror into Records feed
+    const title = titleForStay(stay);
+    if (title.trim()) {
+      await upsertPassportEntry({
+        userId,
+        sourceKind: "hospital_stay",
+        sourceId: stayId,
+        title,
+        body: stay.notes || null,
+        eventYear: firstYear(stay.year),
+      });
     }
     clearStayDirty(stay.id);
   };
@@ -417,6 +433,7 @@ export default function MedicalHistoryForm() {
     if (stay.persisted) {
       await supabase.from("hospital_stays").delete().eq("id", stay.id);
       audit("hospital_stays", "delete");
+      if (userId) await deletePassportEntry(userId, "hospital_stay", stay.id);
     }
     setStays((s) => s.filter((x) => x.id !== stay.id));
     clearStayDirty(stay.id);
