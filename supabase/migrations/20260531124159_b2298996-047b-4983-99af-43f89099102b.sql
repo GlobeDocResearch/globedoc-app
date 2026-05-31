@@ -1,0 +1,1 @@
+ALTER TABLE public.prescription_medications ADD COLUMN IF NOT EXISTS atc_code text;
