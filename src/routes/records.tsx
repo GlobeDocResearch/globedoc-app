@@ -344,7 +344,7 @@ function RecordsPage() {
       <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-          <span className="text-lg font-bold text-[#0D1B2A]">GlobeDoc</span>
+          <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
         </div>
         <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600">
           <Bell className="h-5 w-5" />
@@ -489,7 +489,7 @@ function RecordsPage() {
         />
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-gray-100 bg-white">
+      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D438C] bg-[#1D438C]">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" />
@@ -913,7 +913,7 @@ function EntryDetail({
 }
 
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to: "/home" | "/passport" | "/travel" | "/records" | "/pairing" | "/profile" }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-blue-50 text-[#2563EB]" : "text-gray-500"}`;
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"}`;
   return (
     <li>
       <Link to={to} className={className}>{icon}<span>{label}</span></Link>
