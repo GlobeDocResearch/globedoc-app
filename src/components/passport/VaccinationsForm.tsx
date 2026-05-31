@@ -496,6 +496,26 @@ export default function VaccinationsForm() {
                   ))}
               </div>
               <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
+              <p className="mt-2 px-1 text-[10px] leading-relaxed text-gray-500">
+                {(() => {
+                  const SOURCES: Record<string, { name: string; url: string }> = {
+                    Sweden: { name: "Folkhälsomyndigheten", url: "folkhalsomyndigheten.se" },
+                    "United Kingdom": { name: "NHS Green Book", url: "gov.uk/greenbook" },
+                    "United States": { name: "CDC Immunization Schedule", url: "cdc.gov" },
+                    Germany: { name: "STIKO", url: "rki.de" },
+                    France: { name: "Ministère de la Santé", url: "sante.gouv.fr" },
+                    Australia: { name: "Australian Immunisation Handbook", url: "health.gov.au" },
+                    Canada: { name: "Canadian Immunization Guide", url: "canada.ca" },
+                    Norway: { name: "Folkehelseinstituttet", url: "fhi.no" },
+                    Denmark: { name: "Sundhedsstyrelsen", url: "sst.dk" },
+                    Finland: { name: "THL", url: "thl.fi" },
+                  };
+                  const src = nationality && SOURCES[nationality];
+                  const label = lang === "sv" ? "Källa" : "Source";
+                  if (src) return `${label}: ${src.name} · ${src.url}`;
+                  return `${label}: WHO Immunization · who.int/immunization`;
+                })()}
+              </p>
             </section>
 
 
