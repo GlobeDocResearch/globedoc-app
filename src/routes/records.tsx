@@ -135,6 +135,7 @@ function RecordsPage() {
   const [editingEntry, setEditingEntry] = useState<RecordEntry | null>(null);
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
   const [view, setView] = useState<"feed" | "timeline">("feed");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -193,15 +194,41 @@ function RecordsPage() {
     await reload(userId);
   }
 
+  const typeLabel = (et: EntryType) => {
+    switch (et) {
+      case "note": return t.note;
+      case "document": return t.doc;
+      case "image": return t.image;
+      case "lab": return t.lab;
+      case "clinical_note": return "Clinical note";
+      default: return et;
+    }
+  };
+
+  const filteredEntries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return entries;
+    return entries.filter((e) => {
+      const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
+      return (
+        e.title.toLowerCase().includes(q) ||
+        (e.body ?? "").toLowerCase().includes(q) ||
+        dateStr.toLowerCase().includes(q) ||
+        typeLabel(e.entry_type).toLowerCase().includes(q) ||
+        e.entry_type.toLowerCase().includes(q)
+      );
+    });
+  }, [entries, searchQuery, lang, t]);
+
   // Timeline entries: anything with an event year (passport-derived rows always
   // carry one; manual rows are included if they happen to have an event_year).
   const timelineEntries = useMemo(
     () =>
-      entries
+      filteredEntries
         .filter((e) => (e.event_year ?? "").trim().length > 0)
         .slice()
         .sort((a, b) => Number(a.event_year) - Number(b.event_year)),
-    [entries],
+    [filteredEntries],
   );
   const timelineGroups = useMemo(() => {
     const map = new Map<string, RecordEntry[]>();
