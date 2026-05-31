@@ -951,6 +951,9 @@ function ConditionTagInput({
   const [commonOpen, setCommonOpen] = useState(false);
   const [icdResults, setIcdResults] = useState<Icd11Match[]>([]);
   const [icdLoading, setIcdLoading] = useState(false);
+  const [icdBrowseOpen, setIcdBrowseOpen] = useState(false);
+  const [icdBrowseQ, setIcdBrowseQ] = useState("");
+  const [icdBrowseResults, setIcdBrowseResults] = useState<Icd11Match[]>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const used = useMemo(() => new Set(tags.map((t) => t.condition_name.toLowerCase())), [tags]);
