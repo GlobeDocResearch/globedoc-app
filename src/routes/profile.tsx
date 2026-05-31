@@ -452,6 +452,20 @@ function FieldRow({ label, value, editing, edit, required }: { label: string; va
   );
 }
 
+function ComingSoonRow({ icon, label, badge }: { icon: string; label: string; badge: string }) {
+  return (
+    <div aria-disabled className="flex items-center justify-between py-3 opacity-50 cursor-not-allowed select-none">
+      <div className="flex items-center gap-3">
+        <span className="text-lg" aria-hidden>{icon}</span>
+        <p className="text-sm font-semibold text-gray-500">{label}</p>
+      </div>
+      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+        {badge}
+      </span>
+    </div>
+  );
+}
+
 function PrivacyRow({ icon, title, subtitle, action }: { icon: React.ReactNode; title: React.ReactNode; subtitle: string; action: React.ReactNode }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 py-3">
