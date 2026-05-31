@@ -594,7 +594,8 @@ export default function MedicalHistoryForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <ConditionTagInput
                 tags={current}
-                onAdd={(name) => addTag("current", name)}
+                lang={lang}
+                onAdd={(name, code) => addTag("current", name, code)}
                 onRemove={(id) => removeTag("current", id)}
                 onYearChange={(id, y) => updateTagYear("current", id, y)}
                 onYearBlur={(id, y) => saveTagYear(id, y)}
