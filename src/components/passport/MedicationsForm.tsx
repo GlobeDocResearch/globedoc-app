@@ -487,28 +487,132 @@ function MedicationDrugField({
   label,
   ph,
   value,
+  code,
+  lang,
   onChange,
   onSelectMed,
 }: {
   label: string;
   ph: string;
   value: string;
+  code: string | null;
+  lang: Lang;
   onChange: (v: string) => void;
-  onSelectMed: (entry: { generic: string; brand?: string; indication?: string }) => void;
+  onSelectMed: (entry: { generic: string; brand?: string; indication?: string; atc_code?: string | null }) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<Array<{ generic: string; brand?: string; rxcui?: string; indication?: string }>>([]);
+  const [loading, setLoading] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Local fallback lookup by lowercase substring.
+  const localMatches = (term: string) => {
+    const lc = term.toLowerCase();
+    return MEDICATIONS
+      .filter((m) => m.generic.toLowerCase().includes(lc) || (m.brand ?? "").toLowerCase().includes(lc))
+      .slice(0, 10)
+      .map((m) => ({ generic: m.generic, brand: m.brand, indication: m.indication }));
+  };
+
+  useEffect(() => {
+    const term = value.trim();
+    if (term.length < 2) { setResults([]); setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const rx = await searchRxNorm(term);
+      if (cancelled) return;
+      const local = localMatches(term);
+      const indicationByName = new Map(MEDICATIONS.map((m) => [m.generic.toLowerCase(), m.indication]));
+      let merged: Array<{ generic: string; brand?: string; rxcui?: string; indication?: string }>;
+      if (rx.length === 0) {
+        // RxNorm unavailable or no hits → fall back to local list.
+        merged = local;
+      } else {
+        merged = rx.map((m: RxMatch) => ({
+          generic: m.generic,
+          brand: m.brand,
+          rxcui: m.rxcui,
+          indication: indicationByName.get(m.generic.toLowerCase()),
+        }));
+      }
+      setResults(merged);
+      setLoading(false);
+    }, 300);
+    return () => { cancelled = true; clearTimeout(handle); };
+  }, [value]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const note =
+    lang === "sv"
+      ? "Mediciner hämtas från NIH:s RxNorm-databas (100 000+ läkemedel, generiska och varumärken). ATC-klassificering tillhandahålls av WHO. Du kan också skriva valfritt läkemedelsnamn fritt."
+      : "Medications are sourced from the NIH RxNorm database (100,000+ drugs, generic and brand names). ATC classification codes are provided by the WHO. You may also type any medication name freely.";
+
+  const pick = async (r: { generic: string; brand?: string; rxcui?: string; indication?: string }) => {
+    // Optimistic commit first (works even if ATC fetch fails).
+    onSelectMed({ generic: r.generic, brand: r.brand, indication: r.indication, atc_code: null });
+    setOpen(false);
+    if (!r.rxcui) return;
+    const [brand, atc] = await Promise.all([
+      r.brand ? Promise.resolve(r.brand) : getBrandName(r.rxcui),
+      getAtcCode(r.rxcui),
+    ]);
+    onSelectMed({
+      generic: r.generic,
+      brand: brand ?? r.brand,
+      indication: r.indication,
+      atc_code: atc,
+    });
+  };
+
   return (
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
-      <AutocompleteInput
-        value={value}
-        placeholder={ph}
-        suggestions={MEDICATION_LABELS}
-        onChange={(v) => {
-          const entry = findMedicationByLabel(v);
-          if (entry) onSelectMed(entry);
-          else onChange(v);
-        }}
-      />
+      <div ref={wrapRef} className="relative">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#6BBF8E]">
+          <input
+            value={value}
+            onChange={(e) => { onChange(e.target.value); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            placeholder={ph}
+            className="flex-1 bg-transparent text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:outline-none"
+          />
+          {code && (
+            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              {code}
+            </span>
+          )}
+        </div>
+        {open && value.trim().length >= 2 && (loading || results.length > 0) && (
+          <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+            <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              RxNorm — NIH drug database
+            </div>
+            {loading && results.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+            )}
+            {results.map((r, i) => (
+              <button
+                key={`${r.rxcui ?? r.generic}-${i}`}
+                type="button"
+                onClick={() => pick(r)}
+                className="block w-full px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="font-medium">{r.generic}</span>
+                {r.brand && <span className="text-gray-500"> ({r.brand})</span>}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <p className="pt-1 text-[11px] leading-snug text-gray-500">{note}</p>
     </div>
   );
 }
