@@ -12,6 +12,7 @@ import jsPDF from "jspdf";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 import { LanguagePickerRow } from "@/components/LanguagePicker";
+import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc" }] }),
@@ -138,15 +139,16 @@ function ProfilePage() {
   const cancelEdit = () => { setEditing(false); setDraft(null); };
 
   const save = async () => {
-    if (!draft) return;
+    if (!draft) return false;
     const payload: any = { ...draft };
     Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
     delete payload.language;
     const { error } = await supabase.from("profiles").update(payload).eq("user_id", userId);
-    if (error) { toast.error(error.message); return; }
+    if (error) throw new Error(error.message);
     await supabase.from("audit_log").insert({ user_id: userId, table_name: "profiles", action: "update" });
     setProfile(draft); setEditing(false); setDraft(null);
     toast.success(t.saved);
+    return true;
   };
 
   const updateDraft = <K extends keyof Profile>(k: K, v: Profile[K]) => setDraft((p) => p ? { ...p, [k]: v } : p);
@@ -304,7 +306,7 @@ function ProfilePage() {
             ) : (
               <div className="flex gap-2">
                 <button onClick={cancelEdit} className="rounded-md border border-gray-200 px-3 py-1 text-xs">{t.cancel}</button>
-                <button onClick={save} className="rounded-md bg-[#2563EB] px-3 py-1 text-xs font-semibold text-white">{t.save}</button>
+                <SaveButton onSave={save} className="rounded-md bg-[#2563EB] px-3 py-1 text-xs font-semibold text-white flex items-center gap-1">{t.save}</SaveButton>
               </div>
             )}
           </div>
