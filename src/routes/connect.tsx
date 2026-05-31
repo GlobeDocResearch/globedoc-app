@@ -5,11 +5,28 @@ import logo from "@/assets/globedoc-logo.svg";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { addPairing } from "@/lib/proPairings";
+import { ProBottomNav } from "./pro";
 
 export const Route = createFileRoute("/connect")({
   head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
-  component: ConnectPage,
+  component: ConnectPageWrapper,
 });
+
+function ConnectPageWrapper() {
+  const [isPro, setIsPro] = useState(false);
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsPro(user?.user_metadata?.account_type === "professional");
+    })();
+  }, []);
+  return (
+    <div className={isPro ? "pb-24" : ""}>
+      <ConnectPage />
+      {isPro && <ProBottomNav />}
+    </div>
+  );
+}
 
 const ACCESS_OPTIONS = [
   { value: "passport_records", label: "Full Passport + Records" },
