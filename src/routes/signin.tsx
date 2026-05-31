@@ -213,16 +213,19 @@ function LoginPage() {
                 to="/connect"
                 className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#2563EB] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
               >
-                Connect with Patient
+                Connect with Pairing Code
               </Link>
-              <div className="mt-3">
-                <Link
-                  to="/signup"
-                  className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
-                >
-                  or Create a Professional Account →
+              <Link
+                to="/signin"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-muted px-6 py-3.5 text-base font-semibold text-foreground shadow-sm transition-opacity hover:opacity-95"
+              >
+                Sign in
+              </Link>
+              <p className="mt-5 text-sm text-muted-foreground">
+                <Link to="/signup-pro" className="font-semibold text-brand-blue hover:underline">
+                  Or Create a Professional Account
                 </Link>
-              </div>
+              </p>
             </section>
           </>
         )}
