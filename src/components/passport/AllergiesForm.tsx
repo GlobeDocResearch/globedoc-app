@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Pencil, Trash2, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -682,7 +682,7 @@ function DetailEditor({
                 onClick={() => onChange({ reaction_type: on ? null : r })}
                 className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
                   on
-                    ? "bg-[#E07B6B] text-white border-[#E07B6B]"
+                    ? "bg-[#EF3638] text-white border-[#EF3638]"
                     : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                 }`}
               >
@@ -697,19 +697,15 @@ function DetailEditor({
         <div className="flex flex-wrap gap-1.5">
           {SEVERITIES.map((sv) => {
             const on = detail.severity === sv;
-            const tone =
-              sv === "Mild"
-                ? "bg-[#E8C24A] text-[#5A4500] border-[#E8C24A]"
-                : sv === "Moderate"
-                  ? "bg-[#E89B4A] text-white border-[#E89B4A]"
-                  : "bg-[#C45A4A] text-white border-[#C45A4A]";
             return (
               <button
                 key={sv}
                 type="button"
                 onClick={() => onChange({ severity: on ? null : sv })}
                 className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                  on ? tone : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
+                  on
+                    ? "bg-[#EF3638] text-white border-[#EF3638]"
+                    : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                 }`}
               >
                 {label(sv)}
@@ -770,11 +766,8 @@ function AllergySection({
   onRemove: (id: string) => void;
   nameSuggestions?: string[];
 }) {
-  const toneOn = useMemo(() => {
-    if (chipTone === "red") return "bg-[#E07B6B] text-white border-[#E07B6B]";
-    if (chipTone === "amber") return "bg-[#E89B4A] text-white border-[#E89B4A]";
-    return "bg-[#E8C24A] text-[#5A4500] border-[#E8C24A]";
-  }, [chipTone]);
+  const toneOn = "bg-[#EF3638] text-white border-[#EF3638]";
+  void chipTone;
 
   return (
     <Section title={title}>
@@ -827,6 +820,13 @@ function AllergySection({
           );
         })}
       </div>
+      {withDetails && presets.length > 0 && (
+        <p className="mt-2 text-[11px] text-gray-500">
+          Tap once to select · Tap again to describe reaction and severity
+        </p>
+      )}
+
+
 
       <div className="mt-3 space-y-2">
         {state.customs.map((e) => {

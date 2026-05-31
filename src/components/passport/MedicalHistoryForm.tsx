@@ -11,6 +11,7 @@ import { SaveButton } from "@/components/ui/save-button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
 import { searchIcd11, searchIchi, type Icd11Match, type IchiMatch } from "@/lib/icd11";
+import { searchIcd11Local } from "@/lib/icd11Local";
 import {
   upsertPassportEntry,
   deletePassportEntry,
@@ -982,19 +983,31 @@ function ConditionTagInput({
       .slice(0, 10);
   }, [q, used]);
 
-  // Debounced ICD-11 search at 3+ chars
+  // Instant local ICD-11 matches (synchronous, from first character).
+  const icdLocalResults = useMemo(() => {
+    const term = q.trim();
+    if (term.length < 1) return [] as Icd11Match[];
+    return searchIcd11Local(term)
+      .filter((r) => !used.has(r.title.toLowerCase()))
+      .map((r) => ({ code: r.code, title: r.title }));
+  }, [q, used]);
+
+  // Debounced WHO ICD-11 API search at 2+ chars.
   useEffect(() => {
     const term = q.trim();
-    if (term.length < 1) { setIcdResults([]); setIcdLoading(false); return; }
+    if (term.length < 2) { setIcdResults([]); setIcdLoading(false); return; }
     const ctrl = new AbortController();
     setIcdLoading(true);
     const handle = setTimeout(async () => {
       const res = await searchIcd11(term, lang, ctrl.signal);
-      setIcdResults(res.filter((r) => !used.has(r.title.toLowerCase())));
+      const localCodes = new Set(icdLocalResults.map((r) => r.code));
+      setIcdResults(
+        res.filter((r) => !used.has(r.title.toLowerCase()) && !localCodes.has(r.code)),
+      );
       setIcdLoading(false);
     }, 300);
     return () => { clearTimeout(handle); ctrl.abort(); };
-  }, [q, lang, used]);
+  }, [q, lang, used, icdLocalResults]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -1083,13 +1096,26 @@ function ConditionTagInput({
               </button>
             ))}
 
-            {q.trim().length >= 1 && (icdLoading || icdResults.length > 0) && (
+            {q.trim().length >= 1 && (icdLocalResults.length > 0 || icdLoading || icdResults.length > 0) && (
               <>
                 <div className="border-t border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
                   ICD-11 — WHO Global Disease Classification
                 </div>
+                {icdLocalResults.map((r) => (
+                  <button
+                    key={`local-${r.code}-${r.title}`}
+                    type="button"
+                    onClick={() => commit(r.title, r.code)}
+                    className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+                  >
+                    <span className="truncate">{r.title}</span>
+                    <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                      {r.code}
+                    </span>
+                  </button>
+                ))}
                 {icdLoading && icdResults.length === 0 && (
-                  <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+                  <div className="px-3 py-2 text-xs text-gray-500">Searching WHO ICD-11…</div>
                 )}
                 {icdResults.map((r) => (
                   <button
@@ -1108,7 +1134,8 @@ function ConditionTagInput({
             )}
 
             {!SUGGESTIONS.some((s) => s.toLowerCase() === q.trim().toLowerCase()) &&
-              !icdResults.some((r) => r.title.toLowerCase() === q.trim().toLowerCase()) && (
+              !icdResults.some((r) => r.title.toLowerCase() === q.trim().toLowerCase()) &&
+              !icdLocalResults.some((r) => r.title.toLowerCase() === q.trim().toLowerCase()) && (
               <button
                 type="button"
                 onClick={() => commit(q)}
@@ -1123,27 +1150,29 @@ function ConditionTagInput({
 
       <p className="pt-1 text-[11px] leading-snug text-gray-500">{infoNote}</p>
 
-      <div className="flex flex-col gap-1.5 pt-1">
-        <button
-          type="button"
-          onClick={() => setCommonOpen(true)}
-          className="self-start text-xs font-medium text-[#185FA5] hover:underline"
-        >
-          Browse most common conditions →
-        </button>
-        <button
-          type="button"
-          onClick={() => { setBrowseQ(""); setBrowseOpen(true); }}
-          className="self-start text-xs font-medium text-[#185FA5] hover:underline"
-        >
-          Browse by speciality →
-        </button>
+      <div className="space-y-2 pt-1">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setCommonOpen(true)}
+            className="rounded-md bg-[#185FA5] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0F4A85]"
+          >
+            Most common conditions
+          </button>
+          <button
+            type="button"
+            onClick={() => { setBrowseQ(""); setBrowseOpen(true); }}
+            className="rounded-md bg-[#185FA5] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0F4A85]"
+          >
+            Browse by speciality
+          </button>
+        </div>
         <button
           type="button"
           onClick={() => { setIcdBrowseQ(""); setIcdBrowseResults([]); setIcdBrowseOpen(true); }}
-          className="self-start text-xs font-medium text-[#185FA5] hover:underline"
+          className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-[11px] font-medium text-gray-600 hover:bg-gray-50"
         >
-          Browse ICD-11 — WHO Global Classification →
+          Browse ICD-11 — WHO Classification
         </button>
       </div>
 
@@ -1261,19 +1290,26 @@ function DiagnosisField({
   const [browseResults, setBrowseResults] = useState<Icd11Match[]>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
 
+  const localResults = useMemo<Icd11Match[]>(() => {
+    const term = value.trim();
+    if (term.length < 1) return [];
+    return searchIcd11Local(term).map((r) => ({ code: r.code, title: r.title }));
+  }, [value]);
+
   useEffect(() => {
     const term = value.trim();
-    if (term.length < 1) { setResults([]); setLoading(false); return; }
+    if (term.length < 2) { setResults([]); setLoading(false); return; }
     let cancelled = false;
     setLoading(true);
     const handle = setTimeout(async () => {
       const res = await searchIcd11(term, lang);
       if (cancelled) return;
-      setResults(res);
+      const localCodes = new Set(localResults.map((r) => r.code));
+      setResults(res.filter((r) => !localCodes.has(r.code)));
       setLoading(false);
     }, 300);
     return () => { cancelled = true; clearTimeout(handle); };
-  }, [value, lang]);
+  }, [value, lang, localResults]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -1301,13 +1337,26 @@ function DiagnosisField({
             </span>
           )}
         </div>
-        {open && value.trim().length >= 1 && (loading || results.length > 0) && (
+        {open && value.trim().length >= 1 && (localResults.length > 0 || loading || results.length > 0) && (
           <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
               ICD-11 — WHO Global Disease Classification
             </div>
+            {localResults.map((r) => (
+              <button
+                key={`local-${r.code}-${r.title}`}
+                type="button"
+                onClick={() => { onChange(r.title, r.code); setOpen(false); }}
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="truncate">{r.title}</span>
+                <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                  {r.code}
+                </span>
+              </button>
+            ))}
             {loading && results.length === 0 && (
-              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+              <div className="px-3 py-2 text-xs text-gray-500">Searching WHO ICD-11…</div>
             )}
             {results.map((r) => (
               <button
@@ -1330,7 +1379,7 @@ function DiagnosisField({
         onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
         className="mt-1 text-xs font-medium text-[#185FA5] hover:underline"
       >
-        Browse ICD-11 — WHO Global Disease Classification →
+        Browse ICD-11 — WHO Global Disease Classification
       </button>
       <Icd11BrowserSheet
         open={browseOpen}
@@ -1477,7 +1526,7 @@ function ProcedureField({
         onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
         className="mt-1 text-xs font-medium text-[#185FA5] hover:underline"
       >
-        Browse ICHI — WHO Procedures Classification →
+        Browse ICHI — WHO Procedures Classification
       </button>
 
       <Sheet open={browseOpen} onOpenChange={setBrowseOpen}>
