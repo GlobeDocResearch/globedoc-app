@@ -418,6 +418,7 @@ export default function MedicalHistoryForm() {
       const r = data as any;
       updateStay(stay.id, {
         event: r.event ?? "",
+        ichi_code: r.ichi_code ?? null,
         diagnosis: r.diagnosis ?? "",
         year: r.year ?? "",
         institution: r.institution ?? "",
