@@ -1,0 +1,304 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { loadPairings, type ProPairing } from "@/lib/proPairings";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/pro/records")({
+  head: () => ({ meta: [{ title: "Records — GlobeDoc Pro" }] }),
+  component: ProRecordsTab,
+});
+
+type Entry = {
+  id: string;
+  entry_type: string;
+  title: string;
+  body: string | null;
+  file_name: string | null;
+  file_mime: string | null;
+  author_name: string | null;
+  author_role: string | null;
+  created_at: string;
+};
+
+type ProEntryType = "clinical_note" | "document" | "suggestion";
+
+function typeMeta(t: string) {
+  switch (t) {
+    case "clinical_note": return { label: "Clinical note", color: "text-green-700 bg-green-50", Icon: StickyNote };
+    case "document": return { label: "Document", color: "text-blue-600 bg-blue-50", Icon: FileUp };
+    case "note": return { label: "Note", color: "text-amber-600 bg-amber-50", Icon: StickyNote };
+    case "image": return { label: "Image", color: "text-purple-600 bg-purple-50", Icon: FileText };
+    case "lab": return { label: "Lab", color: "text-emerald-600 bg-emerald-50", Icon: FileText };
+    default: return { label: t, color: "text-gray-600 bg-gray-50", Icon: FileText };
+  }
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString("en-GB", {
+    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+  });
+}
+
+function ProRecordsTab() {
+  const [pairings, setPairings] = useState<ProPairing[]>([]);
+  const [selectedId, setSelectedId] = useState<string>("");
+  const [token, setToken] = useState<string>("");
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [patientName, setPatientName] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [composer, setComposer] = useState<ProEntryType | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const ps = loadPairings(user.id).filter(p => new Date(p.expires_at).getTime() > Date.now());
+      setPairings(ps);
+    })();
+  }, []);
+
+  const onSelect = async (id: string) => {
+    setSelectedId(id);
+    const p = pairings.find(x => x.id === id);
+    if (!p) return;
+    setToken(p.id);
+    setPatientName(p.patient_name);
+    await loadEntries(p.id);
+  };
+
+  const loadEntries = async (t: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/public/connect/passport", { headers: { "x-session-token": t } });
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error || "Could not load records"); setEntries([]); return; }
+      setEntries(json.records || []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refresh = () => token && loadEntries(token);
+
+  return (
+    <main className="mx-auto w-full max-w-3xl px-5 py-6">
+      <h1 className="text-2xl font-bold text-[#0D1B2A]">Records</h1>
+      <p className="mt-1 text-sm text-gray-500">View and contribute to your patients' records.</p>
+
+      <div className="mt-5">
+        <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">Select patient</label>
+        <select
+          value={selectedId}
+          onChange={(e) => onSelect(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+        >
+          <option value="">— Choose a patient —</option>
+          {pairings.map(p => (
+            <option key={p.id} value={p.id}>{p.patient_name}</option>
+          ))}
+        </select>
+      </div>
+
+      {!selectedId ? (
+        <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+          <FileText className="mx-auto h-7 w-7 text-gray-400" />
+          <p className="mt-3 text-sm text-gray-600">Select a patient above to view their records.</p>
+        </div>
+      ) : loading ? (
+        <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
+      ) : entries.length === 0 ? (
+        <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+          <p className="text-sm text-gray-600">No records yet for {patientName}.</p>
+        </div>
+      ) : (
+        <ul className="mt-6 space-y-3">
+          {entries.map(e => {
+            const m = typeMeta(e.entry_type);
+            return (
+              <li key={e.id}>
+                <article className="rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-[#0D1B2A]">
+                        {e.author_name || patientName}
+                        {e.author_role && <span className="ml-1 font-normal text-gray-500">· {e.author_role}</span>}
+                      </p>
+                      <p className="text-xs text-gray-500">{formatDate(e.created_at)}</p>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${m.color}`}>
+                      <m.Icon className="h-3 w-3" />{m.label}
+                    </span>
+                  </div>
+                  <h3 className="mt-3 text-base font-bold text-[#0D1B2A]">{e.title}</h3>
+                  {e.body && <p className="mt-1 line-clamp-3 text-sm text-gray-600">{e.body}</p>}
+                  {e.file_name && (
+                    <div className="mt-3 flex items-center gap-2 rounded-lg border border-gray-200 p-2 text-xs text-gray-600">
+                      <FileUp className="h-4 w-4" />
+                      <span className="truncate">{e.file_name}</span>
+                    </div>
+                  )}
+                  <div className="mt-3 flex items-center text-gray-400">
+                    <button type="button" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-gray-100">
+                      <MessageCircle className="h-4 w-4" /> Comment
+                    </button>
+                  </div>
+                </article>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {selectedId && (
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          aria-label="Add entry"
+          className="fixed bottom-24 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg hover:bg-[#1d4ed8]"
+        >
+          <Plus className="h-6 w-6" />
+        </button>
+      )}
+
+      {pickerOpen && (
+        <ProTypePicker
+          onPick={(t) => { setPickerOpen(false); setComposer(t); }}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
+
+      {composer && (
+        <ProEntryComposer
+          type={composer}
+          token={token}
+          onClose={() => setComposer(null)}
+          onSaved={async () => { setComposer(null); await refresh(); toast.success("Entry added"); }}
+        />
+      )}
+    </main>
+  );
+}
+
+function ProTypePicker({ onPick, onClose }: { onPick: (t: ProEntryType) => void; onClose: () => void }) {
+  const opts: { t: ProEntryType; emoji: string; label: string }[] = [
+    { t: "clinical_note", emoji: "📋", label: "Clinical note" },
+    { t: "document", emoji: "📎", label: "Document upload" },
+    { t: "suggestion", emoji: "💊", label: "Passport update suggestion" },
+  ];
+  return (
+    <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
+      <div className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-base font-bold text-[#0D1B2A]">Choose entry type</h2>
+          <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
+        </div>
+        <ul className="space-y-2">
+          {opts.map(o => (
+            <li key={o.t}>
+              <button
+                type="button"
+                onClick={() => onPick(o.t)}
+                className="flex w-full items-center gap-3 rounded-xl border border-gray-200 p-3 text-left hover:bg-gray-50"
+              >
+                <span className="text-2xl">{o.emoji}</span>
+                <span className="text-sm font-semibold text-[#0D1B2A]">{o.label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function ProEntryComposer({
+  type, token, onClose, onSaved,
+}: { type: ProEntryType; token: string; onClose: () => void; onSaved: () => void }) {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const titleLabel = type === "clinical_note" ? "Clinical note title"
+    : type === "document" ? "Document title"
+    : "Suggestion title";
+
+  async function submit() {
+    if (!title.trim()) { toast.error("Title required"); return; }
+    if (type === "document" && !file) { toast.error("Choose a file"); return; }
+    if ((type === "clinical_note" || type === "suggestion") && !body.trim()) { toast.error("Body required"); return; }
+    setBusy(true);
+    try {
+      let file_base64: string | undefined;
+      let file_name: string | undefined;
+      let file_mime: string | undefined;
+      if (file) {
+        if (file.size > 25 * 1024 * 1024) { toast.error("File exceeds 25 MB"); setBusy(false); return; }
+        const ab = await file.arrayBuffer();
+        let bin = "";
+        const bytes = new Uint8Array(ab);
+        for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        file_base64 = btoa(bin);
+        file_name = file.name;
+        file_mime = file.type;
+      }
+      const res = await fetch("/api/public/connect/entry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-session-token": token },
+        body: JSON.stringify({ type, title: title.trim(), body: body.trim() || undefined, file_base64, file_name, file_mime }),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error || "Could not save"); return; }
+      onSaved();
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
+      <div className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-base font-bold text-[#0D1B2A]">{titleLabel}</h2>
+          <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="space-y-3">
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="Title"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+          />
+          {type !== "document" ? (
+            <textarea
+              value={body}
+              onChange={e => setBody(e.target.value)}
+              rows={6}
+              placeholder={type === "suggestion" ? "Describe the suggested passport update…" : "Write your clinical note…"}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            />
+          ) : (
+            <input
+              type="file"
+              accept=".pdf,image/*"
+              onChange={e => setFile(e.target.files?.[0] ?? null)}
+              className="block w-full text-sm"
+            />
+          )}
+        </div>
+        <div className="mt-4 flex justify-end gap-2">
+          <button type="button" onClick={onClose} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={busy}
+            className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:opacity-50"
+          >
+            {busy ? "Saving…" : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
