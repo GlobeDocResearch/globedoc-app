@@ -1091,12 +1091,15 @@ export type Database = {
           body: string | null
           created_at: string
           entry_type: string
+          event_year: string | null
           file_mime: string | null
           file_name: string | null
           file_path: string | null
           file_size: number | null
           id: string
           pro_session_id: string | null
+          source_id: string | null
+          source_kind: string | null
           title: string
           updated_at: string
           user_id: string
@@ -1107,12 +1110,15 @@ export type Database = {
           body?: string | null
           created_at?: string
           entry_type: string
+          event_year?: string | null
           file_mime?: string | null
           file_name?: string | null
           file_path?: string | null
           file_size?: number | null
           id?: string
           pro_session_id?: string | null
+          source_id?: string | null
+          source_kind?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -1123,12 +1129,15 @@ export type Database = {
           body?: string | null
           created_at?: string
           entry_type?: string
+          event_year?: string | null
           file_mime?: string | null
           file_name?: string | null
           file_path?: string | null
           file_size?: number | null
           id?: string
           pro_session_id?: string | null
+          source_id?: string | null
+          source_kind?: string | null
           title?: string
           updated_at?: string
           user_id?: string

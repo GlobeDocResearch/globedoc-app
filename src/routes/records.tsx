@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bell, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
   Plus, MessageCircle, Pencil, Trash2, FileUp, Image as ImageIcon, FlaskConical,
-  StickyNote, X, Download, ArrowLeft, Send,
+  StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays,
 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,6 +28,8 @@ type RecordEntry = {
   file_mime: string | null;
   file_size: number | null;
   created_at: string;
+  source_kind: string | null;
+  event_year: string | null;
 };
 
 type Comment = {
@@ -60,6 +62,12 @@ const T = {
     tooLarge: "File exceeds 50 MB", uploading: "Uploading…",
     open: "Open file", download: "Download",
     formats: "Supported: PDF · JPEG · PNG · TXT — max 50 MB",
+    fromPassport: "From Health Passport",
+    passportDeleteHint: "To remove this entry, update your Health Passport",
+    addDetails: "Add details",
+    viewFeed: "Feed",
+    viewTimeline: "Timeline",
+    timelineEmpty: "Your medical timeline will appear here as you fill in your Health Passport. Start by adding conditions and hospitalisations under Medical History.",
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
@@ -79,6 +87,12 @@ const T = {
     tooLarge: "Filen är större än 50 MB", uploading: "Laddar upp…",
     open: "Öppna fil", download: "Ladda ner",
     formats: "Format: PDF · JPEG · PNG · TXT — max 50 MB",
+    fromPassport: "Från Hälsopass",
+    passportDeleteHint: "För att ta bort denna post, uppdatera ditt Hälsopass",
+    addDetails: "Lägg till detaljer",
+    viewFeed: "Flöde",
+    viewTimeline: "Tidslinje",
+    timelineEmpty: "Din medicinska tidslinje visas här när du fyller i ditt Hälsopass. Börja med att lägga till tillstånd och sjukhusvistelser under Sjukdomshistorik.",
   },
 };
 
@@ -116,6 +130,7 @@ function RecordsPage() {
   const [uploadType, setUploadType] = useState<EntryType | null>(null);
   const [editingEntry, setEditingEntry] = useState<RecordEntry | null>(null);
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
+  const [view, setView] = useState<"feed" | "timeline">("feed");
 
   useEffect(() => {
     (async () => {
@@ -160,6 +175,10 @@ function RecordsPage() {
   }
 
   async function deleteEntry(entry: RecordEntry) {
+    if (entry.source_kind) {
+      toast.info(t.passportDeleteHint);
+      return;
+    }
     if (!confirm(t.confirmDelete)) return;
     if (entry.file_path) {
       await supabase.storage.from("records").remove([entry.file_path]);
@@ -169,6 +188,26 @@ function RecordsPage() {
     toast.success(t.deleted);
     await reload(userId);
   }
+
+  // Timeline entries: anything with an event year (passport-derived rows always
+  // carry one; manual rows are included if they happen to have an event_year).
+  const timelineEntries = useMemo(
+    () =>
+      entries
+        .filter((e) => (e.event_year ?? "").trim().length > 0)
+        .slice()
+        .sort((a, b) => Number(a.event_year) - Number(b.event_year)),
+    [entries],
+  );
+  const timelineGroups = useMemo(() => {
+    const map = new Map<string, RecordEntry[]>();
+    for (const e of timelineEntries) {
+      const y = e.event_year!;
+      if (!map.has(y)) map.set(y, []);
+      map.get(y)!.push(e);
+    }
+    return Array.from(map.entries());
+  }, [timelineEntries]);
 
   const openEntry = useMemo(() => entries.find(e => e.id === openEntryId) ?? null, [entries, openEntryId]);
 
@@ -188,30 +227,88 @@ function RecordsPage() {
         <h1 className="text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
         <p className="mt-1 text-sm text-gray-500">{t.sub}</p>
 
-        {loading ? null : entries.length === 0 ? (
+        <div className="mt-4 inline-flex rounded-full border border-gray-200 bg-white p-1 text-sm">
+          <button
+            type="button"
+            onClick={() => setView("feed")}
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
+              view === "feed" ? "bg-[#2563EB] text-white" : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            <Rows className="h-4 w-4" /> {t.viewFeed}
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("timeline")}
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
+              view === "timeline" ? "bg-[#2563EB] text-white" : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            <CalendarDays className="h-4 w-4" /> {t.viewTimeline}
+          </button>
+        </div>
+
+        {loading ? null : view === "feed" ? (
+          entries.length === 0 ? (
+            <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <FileText className="h-7 w-7 text-gray-400" />
+              </div>
+              <p className="mt-4 text-sm text-gray-600">{t.empty}</p>
+            </div>
+          ) : (
+            <ul className="mt-6 space-y-3">
+              {entries.map(e => (
+                <RecordEntryCard
+                  key={e.id}
+                  entry={e}
+                  authorName={authorName}
+                  avatarUrl={avatarUrl}
+                  commentCount={counts[e.id] ?? 0}
+                  t={t}
+                  lang={lang}
+                  onOpen={() => setOpenEntryId(e.id)}
+                  onEdit={() => setEditingEntry(e)}
+                  onDelete={() => deleteEntry(e)}
+                />
+              ))}
+            </ul>
+          )
+        ) : timelineGroups.length === 0 ? (
           <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <FileText className="h-7 w-7 text-gray-400" />
+              <CalendarDays className="h-7 w-7 text-gray-400" />
             </div>
-            <p className="mt-4 text-sm text-gray-600">{t.empty}</p>
+            <p className="mt-4 text-sm text-gray-600">{t.timelineEmpty}</p>
           </div>
         ) : (
-          <ul className="mt-6 space-y-3">
-            {entries.map(e => (
-              <RecordEntryCard
-                key={e.id}
-                entry={e}
-                authorName={authorName}
-                avatarUrl={avatarUrl}
-                commentCount={counts[e.id] ?? 0}
-                t={t}
-                lang={lang}
-                onOpen={() => setOpenEntryId(e.id)}
-                onEdit={() => setEditingEntry(e)}
-                onDelete={() => deleteEntry(e)}
-              />
-            ))}
-          </ul>
+          <div className="mt-6">
+            <ol className="relative space-y-6 border-l-2 border-gray-200 pl-6">
+              {timelineGroups.map(([year, items]) => (
+                <li key={year} className="relative">
+                  <span className="absolute -left-[34px] flex h-6 min-w-[3rem] items-center justify-center rounded-full bg-[#2563EB] px-2 text-xs font-bold text-white">
+                    {year}
+                  </span>
+                  <ul className="space-y-3">
+                    {items.map((e) => (
+                      <RecordEntryCard
+                        key={e.id}
+                        entry={e}
+                        authorName={authorName}
+                        avatarUrl={avatarUrl}
+                        commentCount={counts[e.id] ?? 0}
+                        t={t}
+                        lang={lang}
+                        onOpen={() => setOpenEntryId(e.id)}
+                        onEdit={() => setEditingEntry(e)}
+                        onDelete={() => deleteEntry(e)}
+                      />
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </div>
         )}
       </main>
 
@@ -291,6 +388,8 @@ function RecordEntryCard({
     return () => { if (revoke) URL.revokeObjectURL(revoke); };
   }, [entry.file_path, entry.file_mime]);
 
+  const isPassport = Boolean(entry.source_kind);
+
   return (
     <li>
       <article className="rounded-2xl bg-white p-4 shadow-sm">
@@ -302,10 +401,17 @@ function RecordEntryCard({
                 <p className="truncate text-sm font-semibold text-[#0D1B2A]">{authorName}</p>
                 <p className="text-xs text-gray-500">{formatDate(entry.created_at, lang)}</p>
               </div>
-              <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${meta.color}`}>
-                <meta.Icon className="h-3 w-3" />
-                {meta.label}
-              </span>
+              {isPassport ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#EEF0FB] px-2 py-0.5 text-xs font-medium text-[#5B6BD4]">
+                  <Hospital className="h-3 w-3" />
+                  {t.fromPassport}
+                </span>
+              ) : (
+                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${meta.color}`}>
+                  <meta.Icon className="h-3 w-3" />
+                  {meta.label}
+                </span>
+              )}
             </div>
 
             <button type="button" onClick={onOpen} className="mt-3 block w-full text-left">
@@ -328,12 +434,14 @@ function RecordEntryCard({
               <button type="button" onClick={onOpen} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-gray-100">
                 <MessageCircle className="h-4 w-4" /> {commentCount}
               </button>
-              <button type="button" onClick={onEdit} aria-label={t.edit} className="ml-auto rounded-md p-1.5 hover:bg-gray-100">
-                <Pencil className="h-4 w-4" />
+              <button type="button" onClick={onEdit} aria-label={isPassport ? t.addDetails : t.edit} title={isPassport ? t.addDetails : t.edit} className="ml-auto rounded-md p-1.5 hover:bg-gray-100">
+                {isPassport ? <Plus className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
               </button>
-              <button type="button" onClick={onDelete} aria-label={t.delete} className="rounded-md p-1.5 text-red-500 hover:bg-red-50">
-                <Trash2 className="h-4 w-4" />
-              </button>
+              {!isPassport && (
+                <button type="button" onClick={onDelete} aria-label={t.delete} className="rounded-md p-1.5 text-red-500 hover:bg-red-50">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>

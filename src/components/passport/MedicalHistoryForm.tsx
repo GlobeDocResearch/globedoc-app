@@ -10,6 +10,14 @@ import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
 import { searchIcd11, type Icd11Match } from "@/lib/icd11";
+import {
+  upsertPassportEntry,
+  deletePassportEntry,
+  titleForCondition,
+  titleForStay,
+  titleForLocation,
+  firstYear,
+} from "@/lib/passportRecords";
 
 type Stay = {
   id: string;
@@ -275,6 +283,19 @@ export default function MedicalHistoryForm() {
   };
 
   // -------- Conditions tag input helpers --------
+  const syncConditionEntry = async (tag: ConditionTag, list: "current" | "past") => {
+    if (!userId) return;
+    const sourceKind = list === "current" ? "condition_current" : "condition_past";
+    await upsertPassportEntry({
+      userId,
+      sourceKind,
+      sourceId: tag.id,
+      title: titleForCondition(list, tag.condition_name, tag.icd11_code, tag.year || null),
+      body: tag.icd11_code ? `ICD-11: ${tag.icd11_code}` : null,
+      eventYear: tag.year || null,
+    });
+  };
+
   const addTag = async (
     list: "current" | "past",
     condition_name: string,
@@ -294,11 +315,15 @@ export default function MedicalHistoryForm() {
     if (list === "current") setCurrent((c) => [...c, tag]);
     else setPast((c) => [...c, tag]);
     audit("medical_conditions", "insert");
+    await syncConditionEntry(tag, list);
   };
 
   const removeTag = async (list: "current" | "past", id: string) => {
     await supabase.from("medical_conditions").delete().eq("id", id);
     audit("medical_conditions", "delete");
+    if (userId) {
+      await deletePassportEntry(userId, list === "current" ? "condition_current" : "condition_past", id);
+    }
     if (list === "current") setCurrent((c) => c.filter((x) => x.id !== id));
     else setPast((c) => c.filter((x) => x.id !== id));
     clearTagDirty(id);
@@ -313,6 +338,10 @@ export default function MedicalHistoryForm() {
   const saveTagYear = async (id: string, year: string) => {
     await supabase.from("medical_conditions").update({ year: year || null }).eq("id", id);
     audit("medical_conditions", "update");
+    const inCurrent = current.find((c) => c.id === id);
+    const inPast = past.find((c) => c.id === id);
+    if (inCurrent) await syncConditionEntry({ ...inCurrent, year }, "current");
+    else if (inPast) await syncConditionEntry({ ...inPast, year }, "past");
     clearTagDirty(id);
   };
 
@@ -343,6 +372,7 @@ export default function MedicalHistoryForm() {
       record_type: stay.record_type,
       notes: stay.notes,
     };
+    let stayId = stay.id;
     if (stay.persisted) {
       await supabase.from("hospital_stays").update(payload).eq("id", stay.id);
       audit("hospital_stays", "update");
@@ -354,7 +384,22 @@ export default function MedicalHistoryForm() {
         .select()
         .single();
       audit("hospital_stays", "insert");
-      if (data) updateStay(stay.id, { id: data.id, persisted: true, collapsed: true }, false);
+      if (data) {
+        stayId = data.id;
+        updateStay(stay.id, { id: data.id, persisted: true, collapsed: true }, false);
+      }
+    }
+    // Mirror into Records feed
+    const title = titleForStay(stay);
+    if (title.trim()) {
+      await upsertPassportEntry({
+        userId,
+        sourceKind: "hospital_stay",
+        sourceId: stayId,
+        title,
+        body: stay.notes || null,
+        eventYear: firstYear(stay.year),
+      });
     }
     clearStayDirty(stay.id);
   };
@@ -388,6 +433,7 @@ export default function MedicalHistoryForm() {
     if (stay.persisted) {
       await supabase.from("hospital_stays").delete().eq("id", stay.id);
       audit("hospital_stays", "delete");
+      if (userId) await deletePassportEntry(userId, "hospital_stay", stay.id);
     }
     setStays((s) => s.filter((x) => x.id !== stay.id));
     clearStayDirty(stay.id);
@@ -419,6 +465,7 @@ export default function MedicalHistoryForm() {
       years: loc.years || null,
       record_type: loc.record_type || null,
     };
+    let locId = loc.id;
     if (loc.persisted) {
       await sbAny.from("record_locations").update(payload).eq("id", loc.id);
       audit("record_locations", "update");
@@ -430,7 +477,21 @@ export default function MedicalHistoryForm() {
         .select()
         .single();
       audit("record_locations", "insert");
-      if (data) updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
+      if (data) {
+        locId = data.id;
+        updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
+      }
+    }
+    const title = titleForLocation(loc);
+    if (title.trim()) {
+      await upsertPassportEntry({
+        userId,
+        sourceKind: "record_location",
+        sourceId: locId,
+        title,
+        body: loc.record_type || null,
+        eventYear: firstYear(loc.years),
+      });
     }
     clearLocDirty(loc.id);
   };
@@ -459,6 +520,7 @@ export default function MedicalHistoryForm() {
     if (loc.persisted) {
       await sbAny.from("record_locations").delete().eq("id", loc.id);
       audit("record_locations", "delete");
+      if (userId) await deletePassportEntry(userId, "record_location", loc.id);
     }
     setLocations((arr) => arr.filter((x) => x.id !== loc.id));
     clearLocDirty(loc.id);
@@ -476,10 +538,17 @@ export default function MedicalHistoryForm() {
   const saveAll = async () => {
     if (!userId) return false;
     try {
-      // Save dirty tag years
-      for (const tag of [...current, ...past]) {
+      // Save dirty tag years (and mirror into Records)
+      for (const tag of current) {
         if (dirtyTags.has(tag.id)) {
           await supabase.from("medical_conditions").update({ year: tag.year || null }).eq("id", tag.id);
+          await syncConditionEntry(tag, "current");
+        }
+      }
+      for (const tag of past) {
+        if (dirtyTags.has(tag.id)) {
+          await supabase.from("medical_conditions").update({ year: tag.year || null }).eq("id", tag.id);
+          await syncConditionEntry(tag, "past");
         }
       }
       // Save any open dirty stay cards
