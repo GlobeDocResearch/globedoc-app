@@ -16,8 +16,8 @@ import {
   eligibleProgrammeFor,
 } from "@/lib/childhoodVaccines";
 
-const ACCENT = "#3D2B7A";
-const ACCENT_2 = "#3D2B7A";
+const ACCENT = "#3B6D11";
+const ACCENT_2 = "#3B6D11";
 
 function yearOf(s?: string | null): string {
   if (!s) return "";
@@ -549,7 +549,7 @@ export default function VaccinationsForm() {
                   </div>
                 </div>
               )}
-              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
+              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#185FA5]">{infoText}</div>
               <p className="mt-2 px-1 text-[10px] leading-relaxed text-gray-500">
                 {(() => {
                   const SOURCES: Record<string, { name: string; url: string }> = {
