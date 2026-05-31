@@ -96,8 +96,12 @@ function HomePage() {
         {/* User section */}
         <section className="flex items-center gap-4">
           <div className="relative">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-100">
-              <img src={logo} alt="" className="h-[3.75rem] w-[3.75rem]" />
+            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-100 shadow-sm ring-1 ring-gray-100">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-8 w-8 text-gray-400" />
+              )}
             </div>
             <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
           </div>
