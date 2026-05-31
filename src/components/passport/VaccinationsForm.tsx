@@ -206,6 +206,7 @@ export default function VaccinationsForm() {
   const [loading, setLoading] = useState(true);
   const [nationality, setNationality] = useState<string | null>(null);
   const [birthYear, setBirthYear] = useState<string | null>(null);
+  const [sex, setSex] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const bypassGuardRef = useRef(false);
 
