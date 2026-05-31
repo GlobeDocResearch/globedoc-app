@@ -207,16 +207,24 @@ function RecordsPage() {
 
   const filteredEntries = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return entries;
-    return entries.filter((e) => {
-      const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
-      return (
-        e.title.toLowerCase().includes(q) ||
-        (e.body ?? "").toLowerCase().includes(q) ||
-        dateStr.toLowerCase().includes(q) ||
-        typeLabel(e.entry_type).toLowerCase().includes(q) ||
-        e.entry_type.toLowerCase().includes(q)
-      );
+    const base = !q
+      ? entries
+      : entries.filter((e) => {
+          const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
+          return (
+            e.title.toLowerCase().includes(q) ||
+            (e.body ?? "").toLowerCase().includes(q) ||
+            dateStr.toLowerCase().includes(q) ||
+            typeLabel(e.entry_type).toLowerCase().includes(q) ||
+            e.entry_type.toLowerCase().includes(q)
+          );
+        });
+    // Chronological sort: passport entries use event_year; manual entries fall
+    // back to created_at. Newest first.
+    return base.slice().sort((a, b) => {
+      const ka = a.event_year ? new Date(`${a.event_year}-12-31`).getTime() : new Date(a.created_at).getTime();
+      const kb = b.event_year ? new Date(`${b.event_year}-12-31`).getTime() : new Date(b.created_at).getTime();
+      return kb - ka;
     });
   }, [entries, searchQuery, lang, t]);
 
