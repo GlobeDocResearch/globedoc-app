@@ -55,22 +55,29 @@ const InputSchema = z.object({
 export const whoSearch = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }) => {
-    const token = await getWhoToken();
-    if (!token) return { results: [] as Array<{ code: string; title: string; description?: string }> };
-
     const qs = new URLSearchParams({
       q: data.q,
       useFlexisearch: "true",
       flatResults: "true",
       highlightingEnabled: "false",
     }).toString();
-    const url =
-      data.kind === "icd11"
-        ? `https://id.who.int/icd/release/11/2024-01/mms/search?${qs}`
-        : `https://id.who.int/icd/release/11/2024-01/ichi/search?${qs}`;
 
-    try {
-      const res = await fetch(url, {
+    // Try the dated release first, then fall back to the un-dated linearization
+    // URL — WHO occasionally rotates release identifiers and the dated path
+    // returns 404 in that case.
+    const urls =
+      data.kind === "icd11"
+        ? [
+            `https://id.who.int/icd/release/11/2024-01/mms/search?${qs}`,
+            `https://id.who.int/icd/release/11/mms/search?${qs}`,
+          ]
+        : [
+            `https://id.who.int/icd/release/11/2024-01/ichi/search?${qs}`,
+            `https://id.who.int/icd/release/11/ichi/search?${qs}`,
+          ];
+
+    async function attempt(url: string, token: string) {
+      return fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -78,7 +85,28 @@ export const whoSearch = createServerFn({ method: "POST" })
           "Accept-Language": data.lang || "en",
         },
       });
-      if (!res.ok) return { results: [] };
+    }
+
+    try {
+      let token = await getWhoToken();
+      if (!token) return { results: [] as Array<{ code: string; title: string; description?: string }> };
+
+      let res: Response | null = null;
+      for (const url of urls) {
+        res = await attempt(url, token);
+        // Token expired/rejected — clear cache, re-mint once, retry same URL.
+        if (res.status === 401) {
+          cachedToken = null;
+          const fresh = await getWhoToken();
+          if (!fresh) return { results: [] };
+          token = fresh;
+          res = await attempt(url, token);
+        }
+        if (res.ok) break;
+        // 404 → try next URL variant; any other non-ok → also try fallback.
+      }
+      if (!res || !res.ok) return { results: [] };
+
       const json = (await res.json()) as {
         destinationEntities?: Array<{
           theCode?: string;
@@ -98,7 +126,8 @@ export const whoSearch = createServerFn({ method: "POST" })
         .filter((m) => m.code && m.title)
         .slice(0, 20);
       return { results };
-    } catch {
+    } catch (err) {
+      console.error("[whoSearch] failed", err);
       return { results: [] };
     }
   });
