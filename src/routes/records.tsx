@@ -68,6 +68,8 @@ const T = {
     viewFeed: "Feed",
     viewTimeline: "Timeline",
     timelineEmpty: "Your medical timeline will appear here as you fill in your Health Passport. Start by adding conditions and hospitalisations under Medical History.",
+    searchPh: "Search records…",
+    noMatches: "No records match your search.",
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
