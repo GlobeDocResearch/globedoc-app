@@ -26,12 +26,16 @@ const SECTIONS: {
   color: string;
 }[] = [
   { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#185FA5" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#0F6E56" },
-  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#3B6D11" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#BA7517" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#534AB7" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#993C1D" },
+  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#00A550" },
+  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#F5C800" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risks", subtitle: "Habits that matter clinically", color: "#E8640C" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#6B7280" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#EF3638" },
 ];
+
+// Sections whose filled background needs dark text for legibility (yellow, grey)
+const DARK_TEXT_ON_FILL: Record<string, boolean> = { vaccinations: true, heredity: true };
+const DARK_TEXT = "#1B3A6B";
 
 function PassportPage() {
   const navigate = useNavigate();
