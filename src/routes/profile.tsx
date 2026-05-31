@@ -377,10 +377,7 @@ function ProfilePage() {
           <h2 className="text-base font-bold text-[#0D1B2A]">{t.settings}</h2>
           <div className="mt-3 flex items-center justify-between">
             <p className="text-sm text-[#0D1B2A]">{t.appLang}</p>
-            <div className="flex overflow-hidden rounded-full border border-gray-200">
-              <button onClick={() => changeLang("en")} className={`px-3 py-1 text-xs ${lang === "en" ? "bg-[#2563EB] text-white" : "bg-white text-gray-600"}`}>English</button>
-              <button onClick={() => changeLang("sv")} className={`px-3 py-1 text-xs ${lang === "sv" ? "bg-[#2563EB] text-white" : "bg-white text-gray-600"}`}>Svenska</button>
-            </div>
+            <LanguagePickerRow />
           </div>
         </Card>
 
