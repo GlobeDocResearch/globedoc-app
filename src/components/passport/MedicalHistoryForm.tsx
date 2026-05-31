@@ -490,17 +490,15 @@ export default function MedicalHistoryForm() {
         updateLocation(loc.id, { id: data.id, persisted: true, collapsed: true }, false);
       }
     }
-    const title = titleForLocation(loc);
-    if (title.trim()) {
-      await upsertPassportEntry({
-        userId,
-        sourceKind: "record_location",
-        sourceId: locId,
-        title,
-        body: loc.record_type || null,
-        eventYear: firstYear(loc.years),
-      });
-    }
+    const title = titleForLocation({ ...loc, ...payload });
+    await upsertPassportEntry({
+      userId,
+      sourceKind: "record_location",
+      sourceId: locId,
+      title,
+      body: loc.record_type || null,
+      eventYear: firstYear(loc.years),
+    });
     clearLocDirty(loc.id);
   };
 
