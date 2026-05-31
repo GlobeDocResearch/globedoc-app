@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
+import { SaveButton } from "@/components/ui/save-button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
 import { searchIcd11, searchIchi, type Icd11Match, type IchiMatch } from "@/lib/icd11";
@@ -732,14 +733,13 @@ export default function MedicalHistoryForm() {
                         <button type="button" onClick={() => deleteLocation(loc)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
                           <Trash2 className="h-4 w-4" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => saveLocation(loc)}
+                        <SaveButton
+                          onSave={async () => { const ok = await saveLocation(loc); if (!ok) return false; }}
                           disabled={!loc.institution.trim()}
                           className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {t("save_stay")}
-                        </button>
+                        </SaveButton>
                       </div>
                     </div>
                   ),
@@ -819,9 +819,12 @@ export default function MedicalHistoryForm() {
                         <button type="button" onClick={() => deleteStay(stay)} className="rounded-md p-2 text-red-500 hover:bg-gray-200" aria-label="Delete">
                           <Trash2 className="h-4 w-4" />
                         </button>
-                        <button type="button" onClick={() => saveStay(stay)} className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]">
+                        <SaveButton
+                          onSave={async () => { const ok = await saveStay(stay); if (!ok) return false; }}
+                          className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]"
+                        >
                           {t("save_stay")}
-                        </button>
+                        </SaveButton>
                       </div>
                     </div>
                   ),
@@ -924,14 +927,18 @@ export default function MedicalHistoryForm() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#E5E7EB] bg-white p-4">
-        <button
-          type="button"
-          onClick={handleSaveAndExit}
+        <SaveButton
+          onSave={async () => {
+            bypassGuardRef.current = true;
+            const ok = await saveAll();
+            if (ok) navigate({ to: "/passport" });
+            else { bypassGuardRef.current = false; return false; }
+          }}
+          icon={<Check className="h-4 w-4" />}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5B6BD4] to-[#7B8BE4] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
-          <Check className="h-4 w-4" />
           {t("save")}
-        </button>
+        </SaveButton>
       </div>
       <LeaveDialog resolver={resolver} onSaveAndLeave={saveAll} />
     </div>
