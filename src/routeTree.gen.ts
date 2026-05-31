@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as TravelRouteImport } from './routes/travel'
+import { Route as SignupProRouteImport } from './routes/signup-pro'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -36,6 +37,11 @@ const VerifiedRoute = VerifiedRouteImport.update({
 const TravelRoute = TravelRouteImport.update({
   id: '/travel',
   path: '/travel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupProRoute = SignupProRouteImport.update({
+  id: '/signup-pro',
+  path: '/signup-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/signup-pro': typeof SignupProRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/signup-pro': typeof SignupProRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/signup-pro': typeof SignupProRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/passport/$section': typeof PassportSectionRoute
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signin'
     | '/signup'
+    | '/signup-pro'
     | '/travel'
     | '/verified'
     | '/passport/$section'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signin'
     | '/signup'
+    | '/signup-pro'
     | '/travel'
     | '/verified'
     | '/passport/$section'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signin'
     | '/signup'
+    | '/signup-pro'
     | '/travel'
     | '/verified'
     | '/passport/$section'
@@ -256,6 +268,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  SignupProRoute: typeof SignupProRoute
   TravelRoute: typeof TravelRoute
   VerifiedRoute: typeof VerifiedRoute
   PassportSectionRoute: typeof PassportSectionRoute
@@ -279,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/travel'
       fullPath: '/travel'
       preLoaderRoute: typeof TravelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup-pro': {
+      id: '/signup-pro'
+      path: '/signup-pro'
+      fullPath: '/signup-pro'
+      preLoaderRoute: typeof SignupProRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -408,6 +428,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  SignupProRoute: SignupProRoute,
   TravelRoute: TravelRoute,
   VerifiedRoute: VerifiedRoute,
   PassportSectionRoute: PassportSectionRoute,
