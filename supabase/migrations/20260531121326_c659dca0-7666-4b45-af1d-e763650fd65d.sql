@@ -1,0 +1,1 @@
+ALTER TABLE public.hospital_stays ADD COLUMN IF NOT EXISTS ichi_code TEXT;

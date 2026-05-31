@@ -547,6 +547,7 @@ export type Database = {
           diagnosis: string | null
           event: string | null
           hospital_country: string | null
+          ichi_code: string | null
           id: string
           institution: string | null
           notes: string | null
@@ -562,6 +563,7 @@ export type Database = {
           diagnosis?: string | null
           event?: string | null
           hospital_country?: string | null
+          ichi_code?: string | null
           id?: string
           institution?: string | null
           notes?: string | null
@@ -577,6 +579,7 @@ export type Database = {
           diagnosis?: string | null
           event?: string | null
           hospital_country?: string | null
+          ichi_code?: string | null
           id?: string
           institution?: string | null
           notes?: string | null
