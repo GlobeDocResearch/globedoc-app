@@ -278,6 +278,7 @@ export default function MedicalHistoryForm() {
   const addTag = async (
     list: "current" | "past",
     condition_name: string,
+    icd11_code: string | null = null,
   ) => {
     if (!userId) return;
     const name = condition_name.trim();
@@ -285,11 +286,11 @@ export default function MedicalHistoryForm() {
     const is_resolved = list === "past";
     const { data, error } = await supabase
       .from("medical_conditions")
-      .insert({ user_id: userId, condition_name: name, year: null, is_resolved })
+      .insert({ user_id: userId, condition_name: name, year: null, is_resolved, icd11_code } as any)
       .select()
       .single();
     if (error) { toast.error(t("saveError")); return; }
-    const tag: ConditionTag = { id: data.id, condition_name: name, year: "", persisted: true };
+    const tag: ConditionTag = { id: data.id, condition_name: name, year: "", icd11_code, persisted: true };
     if (list === "current") setCurrent((c) => [...c, tag]);
     else setPast((c) => [...c, tag]);
     audit("medical_conditions", "insert");
