@@ -545,6 +545,7 @@ export type Database = {
           country: string | null
           created_at: string
           diagnosis: string | null
+          diagnosis_code: string | null
           event: string | null
           hospital_country: string | null
           ichi_code: string | null
@@ -561,6 +562,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           diagnosis?: string | null
+          diagnosis_code?: string | null
           event?: string | null
           hospital_country?: string | null
           ichi_code?: string | null
@@ -577,6 +579,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           diagnosis?: string | null
+          diagnosis_code?: string | null
           event?: string | null
           hospital_country?: string | null
           ichi_code?: string | null
@@ -1095,6 +1098,8 @@ export type Database = {
           author_name: string | null
           author_role: string | null
           body: string | null
+          code_icd11: string | null
+          code_ichi: string | null
           created_at: string
           entry_type: string
           event_year: string | null
@@ -1114,6 +1119,8 @@ export type Database = {
           author_name?: string | null
           author_role?: string | null
           body?: string | null
+          code_icd11?: string | null
+          code_ichi?: string | null
           created_at?: string
           entry_type: string
           event_year?: string | null
@@ -1133,6 +1140,8 @@ export type Database = {
           author_name?: string | null
           author_role?: string | null
           body?: string | null
+          code_icd11?: string | null
+          code_ichi?: string | null
           created_at?: string
           entry_type?: string
           event_year?: string | null
