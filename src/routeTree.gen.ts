@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifiedProRouteImport } from './routes/verified-pro'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as SignupProRouteImport } from './routes/signup-pro'
@@ -24,6 +25,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ConnectRouteImport } from './routes/connect'
+import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProIndexRouteImport } from './routes/pro.index'
 import { Route as PassportIndexRouteImport } from './routes/passport.index'
@@ -34,6 +36,11 @@ import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/publi
 import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
 import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
 
+const VerifiedProRoute = VerifiedProRouteImport.update({
+  id: '/verified-pro',
+  path: '/verified-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifiedRoute = VerifiedRouteImport.update({
   id: '/verified',
   path: '/verified',
@@ -109,6 +116,11 @@ const ConnectRoute = ConnectRouteImport.update({
   path: '/connect',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfirmEmailProRoute = ConfirmEmailProRouteImport.update({
+  id: '/confirm-email-pro',
+  path: '/confirm-email-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -158,6 +170,7 @@ const ApiPublicConnectNoteRoute = ApiPublicConnectNoteRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
@@ -173,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/signup-pro': typeof SignupProRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
+  '/verified-pro': typeof VerifiedProRoute
   '/passport/$section': typeof PassportSectionRoute
   '/pro/profile': typeof ProProfileRoute
   '/pro/settings': typeof ProSettingsRoute
@@ -184,6 +198,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
@@ -198,6 +213,7 @@ export interface FileRoutesByTo {
   '/signup-pro': typeof SignupProRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
+  '/verified-pro': typeof VerifiedProRoute
   '/passport/$section': typeof PassportSectionRoute
   '/pro/profile': typeof ProProfileRoute
   '/pro/settings': typeof ProSettingsRoute
@@ -210,6 +226,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
   '/legal': typeof LegalRoute
@@ -225,6 +242,7 @@ export interface FileRoutesById {
   '/signup-pro': typeof SignupProRoute
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
+  '/verified-pro': typeof VerifiedProRoute
   '/passport/$section': typeof PassportSectionRoute
   '/pro/profile': typeof ProProfileRoute
   '/pro/settings': typeof ProSettingsRoute
@@ -238,6 +256,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/confirm-email-pro'
     | '/connect'
     | '/home'
     | '/legal'
@@ -253,6 +272,7 @@ export interface FileRouteTypes {
     | '/signup-pro'
     | '/travel'
     | '/verified'
+    | '/verified-pro'
     | '/passport/$section'
     | '/pro/profile'
     | '/pro/settings'
@@ -264,6 +284,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/confirm-email-pro'
     | '/connect'
     | '/home'
     | '/legal'
@@ -278,6 +299,7 @@ export interface FileRouteTypes {
     | '/signup-pro'
     | '/travel'
     | '/verified'
+    | '/verified-pro'
     | '/passport/$section'
     | '/pro/profile'
     | '/pro/settings'
@@ -289,6 +311,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/confirm-email-pro'
     | '/connect'
     | '/home'
     | '/legal'
@@ -304,6 +327,7 @@ export interface FileRouteTypes {
     | '/signup-pro'
     | '/travel'
     | '/verified'
+    | '/verified-pro'
     | '/passport/$section'
     | '/pro/profile'
     | '/pro/settings'
@@ -316,6 +340,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConfirmEmailProRoute: typeof ConfirmEmailProRoute
   ConnectRoute: typeof ConnectRoute
   HomeRoute: typeof HomeRoute
   LegalRoute: typeof LegalRoute
@@ -331,6 +356,7 @@ export interface RootRouteChildren {
   SignupProRoute: typeof SignupProRoute
   TravelRoute: typeof TravelRoute
   VerifiedRoute: typeof VerifiedRoute
+  VerifiedProRoute: typeof VerifiedProRoute
   PassportSectionRoute: typeof PassportSectionRoute
   PassportIndexRoute: typeof PassportIndexRoute
   ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
@@ -340,6 +366,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verified-pro': {
+      id: '/verified-pro'
+      path: '/verified-pro'
+      fullPath: '/verified-pro'
+      preLoaderRoute: typeof VerifiedProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verified': {
       id: '/verified'
       path: '/verified'
@@ -445,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/confirm-email-pro': {
+      id: '/confirm-email-pro'
+      path: '/confirm-email-pro'
+      fullPath: '/confirm-email-pro'
+      preLoaderRoute: typeof ConfirmEmailProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -527,6 +567,7 @@ const ProRouteWithChildren = ProRoute._addFileChildren(ProRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConfirmEmailProRoute: ConfirmEmailProRoute,
   ConnectRoute: ConnectRoute,
   HomeRoute: HomeRoute,
   LegalRoute: LegalRoute,
@@ -542,6 +583,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupProRoute: SignupProRoute,
   TravelRoute: TravelRoute,
   VerifiedRoute: VerifiedRoute,
+  VerifiedProRoute: VerifiedProRoute,
   PassportSectionRoute: PassportSectionRoute,
   PassportIndexRoute: PassportIndexRoute,
   ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
@@ -551,3 +593,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
