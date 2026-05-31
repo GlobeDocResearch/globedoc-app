@@ -16,8 +16,9 @@ import {
   eligibleProgrammeFor,
 } from "@/lib/childhoodVaccines";
 
-const ACCENT = "#3B6D11";
-const ACCENT_2 = "#3B6D11";
+const ACCENT = "#F5C800";
+const ACCENT_2 = "#F5C800";
+const HEADER_TEXT = "#1B3A6B";
 
 function yearOf(s?: string | null): string {
   if (!s) return "";
