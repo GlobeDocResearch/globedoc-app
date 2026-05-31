@@ -734,7 +734,7 @@ export default function MedicalHistoryForm() {
                           <Trash2 className="h-4 w-4" />
                         </button>
                         <SaveButton
-                          onSave={async () => { const ok = await saveLocation(loc); if (!ok) return false; }}
+                          onSave={() => saveLocation(loc)}
                           disabled={!loc.institution.trim()}
                           className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4] disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -820,7 +820,7 @@ export default function MedicalHistoryForm() {
                           <Trash2 className="h-4 w-4" />
                         </button>
                         <SaveButton
-                          onSave={async () => { const ok = await saveStay(stay); if (!ok) return false; }}
+                          onSave={() => saveStay(stay)}
                           className="rounded-md bg-[#5B6BD4] px-4 py-2 text-xs font-medium text-white hover:bg-[#4B5BC4]"
                         >
                           {t("save_stay")}
