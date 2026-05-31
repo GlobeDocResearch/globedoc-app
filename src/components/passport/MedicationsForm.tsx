@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Pencil, Trash2, Plus, Check, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
+import { SaveButton } from "@/components/ui/save-button";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
