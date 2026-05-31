@@ -7,12 +7,13 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
-import { MEDICATION_LABELS, findMedicationByLabel } from "@/lib/medications";
+import { MEDICATION_LABELS, findMedicationByLabel, MEDICATIONS } from "@/lib/medications";
+import { searchRxNorm, getBrandName, getAtcCode, type RxMatch } from "@/lib/rxnorm";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
 
-type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; collapsed: boolean; persisted: boolean };
+type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; atc_code: string; collapsed: boolean; persisted: boolean };
 type Otc = { id: string; product: string; dose: string; frequency: string; reason: string; collapsed: boolean; persisted: boolean };
 type Stopped = { id: string; drug_generic: string; dose: string; period: string; reason_stopped: string; collapsed: boolean; persisted: boolean };
 
@@ -148,6 +149,7 @@ export default function MedicationsForm() {
       if (pm.data) setRx(pm.data.map((r: any) => ({
         id: r.id, drug_generic: r.drug_generic ?? "", brand_name: r.brand_name ?? "",
         dose_form: r.dose_form ?? "", frequency: r.frequency ?? "", indication: r.indication ?? "", prescriber: r.prescriber ?? "",
+        atc_code: r.atc_code ?? "",
         collapsed: true, persisted: true,
       })));
       if (ot.data) setOtc(ot.data.map((r: any) => ({
@@ -181,11 +183,11 @@ export default function MedicationsForm() {
   };
 
   // Generic helpers per list
-  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", indication: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", indication: "", prescriber: "", atc_code: "", collapsed: false, persisted: false }]); markDirty(id); };
   const updateRx = (id: string, p: Partial<Rx>, d = true) => { setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveRx = async (item: Rx) => {
     if (!userId) return;
-    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, indication: item.indication, prescriber: item.prescriber };
+    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, indication: item.indication, prescriber: item.prescriber, atc_code: item.atc_code || null };
     if (item.persisted) {
       await supabase.from("prescription_medications").update(payload).eq("id", item.id);
       audit("prescription_medications", "update");
@@ -205,7 +207,7 @@ export default function MedicationsForm() {
   const discardRx = async (item: Rx) => {
     if (!item.persisted) { setRx((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
     const { data } = await supabase.from("prescription_medications").select("*").eq("id", item.id).maybeSingle();
-    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", indication: data.indication ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
+    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", indication: data.indication ?? "", prescriber: data.prescriber ?? "", atc_code: (data as any).atc_code ?? "", collapsed: true }, false);
     clearDirty(item.id);
   };
 
