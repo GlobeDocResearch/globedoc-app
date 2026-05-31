@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
+import { searchIcd11, type Icd11Match } from "@/lib/icd11";
 
 type Stay = {
   id: string;
@@ -29,6 +30,7 @@ type ConditionTag = {
   id: string;
   condition_name: string;
   year: string;
+  icd11_code: string | null;
   persisted: boolean;
 };
 
@@ -203,10 +205,10 @@ export default function MedicalHistoryForm() {
       if (mc.data) {
         const rows = mc.data as any[];
         setCurrent(rows.filter((r) => !r.is_resolved).map((r) => ({
-          id: r.id, condition_name: r.condition_name, year: r.year ?? "", persisted: true,
+          id: r.id, condition_name: r.condition_name, year: r.year ?? "", icd11_code: r.icd11_code ?? null, persisted: true,
         })));
         setPast(rows.filter((r) => r.is_resolved).map((r) => ({
-          id: r.id, condition_name: r.condition_name, year: r.year ?? "", persisted: true,
+          id: r.id, condition_name: r.condition_name, year: r.year ?? "", icd11_code: r.icd11_code ?? null, persisted: true,
         })));
       }
       if (hs.data) {
@@ -276,6 +278,7 @@ export default function MedicalHistoryForm() {
   const addTag = async (
     list: "current" | "past",
     condition_name: string,
+    icd11_code: string | null = null,
   ) => {
     if (!userId) return;
     const name = condition_name.trim();
@@ -283,11 +286,11 @@ export default function MedicalHistoryForm() {
     const is_resolved = list === "past";
     const { data, error } = await supabase
       .from("medical_conditions")
-      .insert({ user_id: userId, condition_name: name, year: null, is_resolved })
+      .insert({ user_id: userId, condition_name: name, year: null, is_resolved, icd11_code } as any)
       .select()
       .single();
     if (error) { toast.error(t("saveError")); return; }
-    const tag: ConditionTag = { id: data.id, condition_name: name, year: "", persisted: true };
+    const tag: ConditionTag = { id: data.id, condition_name: name, year: "", icd11_code, persisted: true };
     if (list === "current") setCurrent((c) => [...c, tag]);
     else setPast((c) => [...c, tag]);
     audit("medical_conditions", "insert");
@@ -591,7 +594,8 @@ export default function MedicalHistoryForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <ConditionTagInput
                 tags={current}
-                onAdd={(name) => addTag("current", name)}
+                lang={lang}
+                onAdd={(name, code) => addTag("current", name, code)}
                 onRemove={(id) => removeTag("current", id)}
                 onYearChange={(id, y) => updateTagYear("current", id, y)}
                 onYearBlur={(id, y) => saveTagYear(id, y)}
@@ -756,7 +760,8 @@ export default function MedicalHistoryForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s3")}</h2>
               <ConditionTagInput
                 tags={past}
-                onAdd={(name) => addTag("past", name)}
+                lang={lang}
+                onAdd={(name, code) => addTag("past", name, code)}
                 onRemove={(id) => removeTag("past", id)}
                 onYearChange={(id, y) => updateTagYear("past", id, y)}
                 onYearBlur={(id, y) => saveTagYear(id, y)}
@@ -838,11 +843,12 @@ export default function MedicalHistoryForm() {
 }
 
 function ConditionTagInput({
-  tags, onAdd, onRemove, onYearChange, onYearBlur,
+  tags, lang, onAdd, onRemove, onYearChange, onYearBlur,
   searchPlaceholder, yearPlaceholder, noMatchHint, addLabel,
 }: {
   tags: ConditionTag[];
-  onAdd: (name: string) => void;
+  lang: Lang;
+  onAdd: (name: string, icd11_code: string | null) => void;
   onRemove: (id: string) => void;
   onYearChange: (id: string, y: string) => void;
   onYearBlur: (id: string, y: string) => void;
@@ -856,10 +862,11 @@ function ConditionTagInput({
   const [browseOpen, setBrowseOpen] = useState(false);
   const [browseQ, setBrowseQ] = useState("");
   const [commonOpen, setCommonOpen] = useState(false);
+  const [icdResults, setIcdResults] = useState<Icd11Match[]>([]);
+  const [icdLoading, setIcdLoading] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const used = useMemo(() => new Set(tags.map((t) => t.condition_name.toLowerCase())), [tags]);
-
 
   const matches = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -869,6 +876,20 @@ function ConditionTagInput({
       .slice(0, 10);
   }, [q, used]);
 
+  // Debounced ICD-11 search at 3+ chars
+  useEffect(() => {
+    const term = q.trim();
+    if (term.length < 3) { setIcdResults([]); setIcdLoading(false); return; }
+    const ctrl = new AbortController();
+    setIcdLoading(true);
+    const handle = setTimeout(async () => {
+      const res = await searchIcd11(term, lang, ctrl.signal);
+      setIcdResults(res.filter((r) => !used.has(r.title.toLowerCase())));
+      setIcdLoading(false);
+    }, 300);
+    return () => { clearTimeout(handle); ctrl.abort(); };
+  }, [q, lang, used]);
+
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
       if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
@@ -877,14 +898,19 @@ function ConditionTagInput({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const commit = (name: string) => {
+  const commit = (name: string, code: string | null = null) => {
     const v = name.trim();
     if (!v) return;
     if (used.has(v.toLowerCase())) { setQ(""); return; }
-    onAdd(v);
+    onAdd(v, code);
     setQ("");
     setOpen(false);
   };
+
+  const infoNote =
+    lang === "sv"
+      ? "Tillstånd kan sökas på något av de 43 språk som stöds av WHO:s ICD-11-klassificering, inklusive engelska, arabiska, kinesiska, franska, ryska, spanska, svenska, tyska, japanska, hindi, portugisiska, turkiska, koreanska och fler. Skriv på ditt föredragna språk så visas matchande diagnoser med sin ICD-11-kod. ICD-11 är Världshälsoorganisationens globala standard för sjukdomsklassificering och används i hälsojournaler världen över."
+      : "Conditions can be searched in any of the 43 languages supported by the WHO ICD-11 classification, including English, Arabic, Chinese, French, Russian, Spanish, Swedish, German, Japanese, Hindi, Portuguese, Turkish, Korean and more. Type in your preferred language and matching diagnoses will appear with their ICD-11 code. ICD-11 is the World Health Organization's global standard for disease classification, used in health records worldwide.";
 
   return (
     <div className="space-y-2">
@@ -895,6 +921,11 @@ function ConditionTagInput({
             className="flex items-center gap-2 rounded-full bg-[#EEF0FB] py-1 pl-3 pr-1 text-sm text-[#0D1B2A]"
           >
             <span className="font-medium">{tag.condition_name}</span>
+            {tag.icd11_code && (
+              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                {tag.icd11_code}
+              </span>
+            )}
             <input
               type="number"
               value={tag.year}
@@ -934,7 +965,7 @@ function ConditionTagInput({
           className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
         />
         {open && q.trim() && (
-          <div className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+          <div className="absolute z-10 mt-1 max-h-80 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             {matches.map((m) => (
               <button
                 key={m}
@@ -945,7 +976,33 @@ function ConditionTagInput({
                 {m}
               </button>
             ))}
-            {!SUGGESTIONS.some((s) => s.toLowerCase() === q.trim().toLowerCase()) && (
+
+            {q.trim().length >= 3 && (icdLoading || icdResults.length > 0) && (
+              <>
+                <div className="border-t border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                  ICD-11 — WHO Global Disease Classification
+                </div>
+                {icdLoading && icdResults.length === 0 && (
+                  <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+                )}
+                {icdResults.map((r) => (
+                  <button
+                    key={`${r.code}-${r.title}`}
+                    type="button"
+                    onClick={() => commit(r.title, r.code)}
+                    className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+                  >
+                    <span className="truncate">{r.title}</span>
+                    <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                      {r.code}
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
+
+            {!SUGGESTIONS.some((s) => s.toLowerCase() === q.trim().toLowerCase()) &&
+              !icdResults.some((r) => r.title.toLowerCase() === q.trim().toLowerCase()) && (
               <button
                 type="button"
                 onClick={() => commit(q)}
@@ -957,6 +1014,8 @@ function ConditionTagInput({
           </div>
         )}
       </div>
+
+      <p className="pt-1 text-[11px] leading-snug text-gray-500">{infoNote}</p>
 
       <div className="flex flex-col gap-1.5 pt-1">
         <button
@@ -1058,6 +1117,7 @@ function ConditionTagInput({
     </div>
   );
 }
+
 
 
 function Field({ label, value, ph, onChange }: { label: string; value: string; ph: string; onChange: (v: string) => void }) {

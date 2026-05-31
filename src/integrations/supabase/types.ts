@@ -714,6 +714,7 @@ export type Database = {
         Row: {
           condition_name: string
           created_at: string
+          icd11_code: string | null
           id: string
           is_resolved: boolean
           updated_at: string
@@ -723,6 +724,7 @@ export type Database = {
         Insert: {
           condition_name: string
           created_at?: string
+          icd11_code?: string | null
           id?: string
           is_resolved?: boolean
           updated_at?: string
@@ -732,6 +734,7 @@ export type Database = {
         Update: {
           condition_name?: string
           created_at?: string
+          icd11_code?: string | null
           id?: string
           is_resolved?: boolean
           updated_at?: string

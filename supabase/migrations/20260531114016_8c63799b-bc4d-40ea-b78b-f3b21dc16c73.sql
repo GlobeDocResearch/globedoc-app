@@ -1,0 +1,1 @@
+ALTER TABLE public.medical_conditions ADD COLUMN IF NOT EXISTS icd11_code TEXT;
