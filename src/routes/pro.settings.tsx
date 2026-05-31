@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bell, Lock, FileText, Shield } from "lucide-react";
+import { Bell, Lock, FileText, Shield, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { LanguagePickerRow } from "@/components/LanguagePicker";
 
 export const Route = createFileRoute("/pro/settings")({
   head: () => ({ meta: [{ title: "Settings — GlobeDoc Pro" }] }),
@@ -44,6 +45,17 @@ function SettingsTab() {
       <h1 className="text-2xl font-bold text-[#0D1B2A]">Settings</h1>
 
       <section className="mt-4 divide-y divide-gray-100 rounded-2xl bg-white shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4">
+          <div className="flex items-center gap-3">
+            <Globe className="h-5 w-5 text-gray-500" />
+            <div>
+              <p className="text-sm font-semibold text-[#0D1B2A]">App Language</p>
+              <p className="text-xs text-gray-500">Choose your interface language</p>
+            </div>
+          </div>
+          <LanguagePickerRow />
+        </div>
+
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
             <Bell className="h-5 w-5 text-gray-500" />
