@@ -16,7 +16,7 @@ function SettingsTab() {
   const [notifications, setNotifications] = useState(true);
   const [pwOpen, setPwOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
-  const [pwSaving, setPwSaving] = useState(false);
+  
 
   const onChangePassword = async () => {
     if (newPw.length < 8) {

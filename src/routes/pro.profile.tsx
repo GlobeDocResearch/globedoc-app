@@ -32,7 +32,7 @@ function ProfileTab() {
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [meta, setMeta] = useState<ProMeta>({});
-  const [saving, setSaving] = useState(false);
+  
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [surveyOpen, setSurveyOpen] = useState(false);
