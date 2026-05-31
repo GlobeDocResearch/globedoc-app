@@ -10,6 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
 import { COUNTRIES } from "@/lib/countries";
+import {
+  PROGRAMMES as COUNTRY_PROGRAMMES,
+  WHO_GENERIC,
+  isSupportedCountry,
+  programmeForCountryAndYear,
+} from "@/lib/childhoodVaccines";
 
 const ACCENT = "#9B7FD4";
 const ACCENT_2 = "#7B5FB4";
@@ -44,37 +50,8 @@ type Programme = {
   descEn: string;
   descSv: string;
   start: number;
-  end?: number; // last year vaccine was part of the programme (inclusive)
+  end?: number;
 };
-
-// Swedish national childhood vaccination programme — historical eligibility windows
-const SE_PROGRAMME: Programme[] = [
-  { name: "BCG", descEn: "Tuberculosis", descSv: "Tuberkulos", start: 1940, end: 1975 },
-  { name: "Smallpox", descEn: "Smallpox", descSv: "Smittkoppor", start: 1940, end: 1976 },
-  { name: "Diphtheria", descEn: "Diphtheria", descSv: "Difteri", start: 1940 },
-  { name: "Tetanus", descEn: "Tetanus", descSv: "Stelkramp", start: 1940 },
-  { name: "Pertussis (1953–1979)", descEn: "Whooping cough", descSv: "Kikhosta", start: 1953, end: 1979 },
-  { name: "Pertussis (1996+)", descEn: "Whooping cough", descSv: "Kikhosta", start: 1996 },
-  { name: "Polio (IPV)", descEn: "Inactivated polio vaccine", descSv: "Inaktiverat poliovaccin", start: 1957 },
-  { name: "Measles (single)", descEn: "Measles", descSv: "Mässling", start: 1971, end: 1982 },
-  { name: "MMR", descEn: "Measles, mumps & rubella", descSv: "Mässling, påssjuka & röda hund", start: 1982 },
-  { name: "Hib", descEn: "Haemophilus influenzae type b", descSv: "Haemophilus influenzae typ b", start: 1998 },
-  { name: "Pneumococcal (PCV)", descEn: "Pneumococcal disease", descSv: "Pneumokocksjukdom", start: 2009 },
-  { name: "HPV (girls)", descEn: "Human papillomavirus", descSv: "Humant papillomvirus", start: 2010 },
-  { name: "HPV (boys)", descEn: "Human papillomavirus", descSv: "Humant papillomvirus", start: 2020 },
-  { name: "Rotavirus", descEn: "Rotavirus", descSv: "Rotavirus", start: 2014 },
-  { name: "Hepatitis B", descEn: "Liver infection caused by hepatitis B virus", descSv: "Leverinfektion orsakad av hepatit B-virus", start: 2016 },
-  { name: "Covid-19", descEn: "SARS-CoV-2", descSv: "SARS-CoV-2", start: 2020 },
-  { name: "Varicella", descEn: "Chickenpox", descSv: "Vattkoppor", start: 2027 },
-];
-
-// Return vaccines that were part of the Swedish programme at any point
-// while the patient was 0–18 years old.
-function programmeForBirthYear(year: number): Programme[] {
-  const lo = year;
-  const hi = year + 18;
-  return SE_PROGRAMME.filter((p) => p.start <= hi && (p.end ?? 9999) >= lo);
-}
 
 
 
@@ -155,9 +132,9 @@ const T: Record<Lang, Record<string, string>> = {
     s2: "Travel vaccines",
     s3: "Other vaccines",
     s4: "Contraindications",
-    info_sweden: "Based on the Swedish vaccination programme for someone born in {year}. Confirm or adjust as needed.",
-    info_other: "Adjust based on your country's vaccination programme.",
-    info_no_year: "We don't know your year of birth yet. All vaccines default to \"Unsure\" — please confirm.",
+    caveat_supported: "These suggestions are based on the national childhood vaccination programme of {country} for someone born in {year}. They are indicative only — programmes varied by region, individual circumstances, and over time. Please confirm vaccines you have received and remove or add any that do not apply. This is not medical advice.",
+    caveat_generic: "These suggestions are based on WHO guidelines{forYear} and may be less accurate, as your country of birth is not yet individually supported. Programmes varied by region, individual circumstances, and over time. Please confirm vaccines you have received and remove or add any that do not apply. This is not medical advice.",
+    caveat_no_year: "We don't know your year of birth yet, so suggestions cannot be tailored. All vaccines default to \"Unsure\" — please confirm.",
     likely: "Likely received",
     not_received: "Not received",
     unsure: "Unsure",
@@ -190,9 +167,9 @@ const T: Record<Lang, Record<string, string>> = {
     s2: "Resevaccin",
     s3: "Övriga vaccin",
     s4: "Kontraindikationer",
-    info_sweden: "Baserat på svenska vaccinationsprogrammet för någon född {year}. Bekräfta eller justera vid behov.",
-    info_other: "Justera utifrån ditt lands vaccinationsprogram.",
-    info_no_year: "Vi känner inte till ditt födelseår än. Alla vaccin är \"Osäker\" som standard — vänligen bekräfta.",
+    caveat_supported: "Dessa förslag baseras på det nationella barnvaccinationsprogrammet i {country} för någon född {year}. De är endast vägledande — program har varierat regionalt, individuellt och över tid. Bekräfta vilka vaccin du fått och lägg till eller ta bort de som inte stämmer. Detta är inte medicinsk rådgivning.",
+    caveat_generic: "Dessa förslag baseras på WHO:s riktlinjer{forYear} och kan vara mindre exakta, eftersom ditt födelseland inte stöds individuellt ännu. Program har varierat regionalt, individuellt och över tid. Bekräfta vilka vaccin du fått och lägg till eller ta bort de som inte stämmer. Detta är inte medicinsk rådgivning.",
+    caveat_no_year: "Vi känner inte till ditt födelseår än, så förslagen kan inte anpassas. Alla vaccin är \"Osäker\" som standard — vänligen bekräfta.",
     likely: "Troligen fått",
     not_received: "Inte fått",
     unsure: "Osäker",
@@ -263,20 +240,23 @@ export default function VaccinationsForm() {
       setNationality(country);
       setBirthYear(year);
 
-      // Build childhood list — filter to vaccines that were part of the Swedish
-      // programme while the patient was 0–18 (when Sweden + birth year known).
+      // Build childhood list — filter to vaccines that were part of the
+      // national programme while the patient was 0–18, using country of birth.
       const savedMap: Record<string, any> = {};
       (cv.data ?? []).forEach((r: any) => { savedMap[r.vaccine_name] = r; });
-      const isSweden = country === "Sweden";
+      const supported = isSupportedCountry(country);
       const yearNum = year ? parseInt(year, 10) : null;
+      const fullList: Programme[] = supported && country
+        ? COUNTRY_PROGRAMMES[country]
+        : WHO_GENERIC;
       const defs: { name: string; descEn: string; descSv: string }[] =
-        isSweden && yearNum !== null
-          ? programmeForBirthYear(yearNum).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
-          : SE_PROGRAMME.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
+        yearNum !== null
+          ? programmeForCountryAndYear(country, yearNum).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
+          : fullList.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
       // Include any previously-saved vaccine that isn't in the filtered list so user edits aren't lost
       Object.keys(savedMap).forEach((name) => {
         if (!defs.find((d) => d.name === name)) {
-          const orig = SE_PROGRAMME.find((p) => p.name === name);
+          const orig = fullList.find((p) => p.name === name);
           defs.push({
             name,
             descEn: orig?.descEn ?? "",
@@ -284,7 +264,7 @@ export default function VaccinationsForm() {
           });
         }
       });
-      const sweEligible = isSweden && yearNum !== null;
+      const programmeEligible = yearNum !== null;
       const list: ChildhoodVax[] = defs.map((d) => {
         if (savedMap[d.name]) {
           return {
@@ -295,7 +275,7 @@ export default function VaccinationsForm() {
             year_received: savedMap[d.name].year_received ?? "",
           };
         }
-        const defaultStatus: Status = sweEligible ? "likely_received" : "unsure";
+        const defaultStatus: Status = programmeEligible ? "likely_received" : "unsure";
         return { name: d.name, descEn: d.descEn, descSv: d.descSv, status: defaultStatus, year_received: "" };
       });
 
@@ -438,9 +418,12 @@ export default function VaccinationsForm() {
   const resolver = useLeaveGuard(() => dirty && !bypassGuardRef.current);
 
   const infoText = useMemo(() => {
-    if (!birthYear) return t("info_no_year");
-    if (nationality === "Sweden") return t("info_sweden").replace("{year}", birthYear);
-    return t("info_other");
+    if (!birthYear) return t("caveat_no_year");
+    if (nationality && isSupportedCountry(nationality)) {
+      return t("caveat_supported").replace("{country}", nationality).replace("{year}", birthYear);
+    }
+    const forYear = birthYear ? (lang === "sv" ? ` för någon född ${birthYear}` : ` for someone born in ${birthYear}`) : "";
+    return t("caveat_generic").replace("{forYear}", forYear);
   }, [birthYear, nationality, lang]);
 
   if (loading) return <div className="min-h-screen bg-white" />;
@@ -480,7 +463,6 @@ export default function VaccinationsForm() {
             {/* SECTION 1 — chip pill design, only show likely-received vaccines */}
             <section className="rounded-2xl border border-gray-200 p-4">
               <h2 className="text-base font-bold text-[#0D1B2A]">{t("s1")}</h2>
-              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {childhood
                   .filter((c) => c.status === "likely_received")
@@ -513,7 +495,11 @@ export default function VaccinationsForm() {
                     </button>
                   ))}
               </div>
+              <div className="mt-3 rounded-xl bg-[#E8F0FE] p-3 text-xs text-[#1B3A6B]">{infoText}</div>
             </section>
+
+
+
 
 
             {/* SECTION 2 */}
