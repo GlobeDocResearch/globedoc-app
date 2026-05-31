@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bell, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
   Plus, MessageCircle, Pencil, Trash2, FileUp, Image as ImageIcon, FlaskConical,
-  StickyNote, X, Download, ArrowLeft, Send,
+  StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays,
 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
