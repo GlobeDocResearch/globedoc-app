@@ -11,6 +11,7 @@ import { SaveButton } from "@/components/ui/save-button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
 import { searchIcd11, searchIchi, type Icd11Match, type IchiMatch } from "@/lib/icd11";
+import { searchIcd11Local } from "@/lib/icd11Local";
 import {
   upsertPassportEntry,
   deletePassportEntry,
