@@ -100,7 +100,7 @@ function HomePage() {
             <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#0D1B2A]">
+            <h1 className="text-xl font-bold text-[#1D438C]">
               {t("home.welcome").replace("{name}", displayName)}
             </h1>
             <p className="text-sm text-gray-500">{displayName}</p>
