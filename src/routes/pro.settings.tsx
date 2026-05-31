@@ -101,8 +101,6 @@ function SettingsTab() {
             </SaveButton>
           </div>
         )}
-          </form>
-        )}
 
         <ComingSoonRow icon="🏦" label="Connect BankID" />
         <ComingSoonRow icon="🔐" label="Three-factor verification" />
