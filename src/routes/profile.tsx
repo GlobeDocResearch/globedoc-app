@@ -411,9 +411,9 @@ function ProfilePage() {
         <Card>
           <h2 className="text-base font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
           <div className="mt-3 divide-y divide-gray-100">
-            <AdvancedComingSoonRow icon="🔗" label="GlobeDoc Chain" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
-            <AdvancedComingSoonRow icon="🔐" label="Homomorphic Encryption" subtitle="Your data can be analysed without ever being decrypted" />
-            <AdvancedComingSoonRow icon="🤖" label="Federated Learning" subtitle="AI that learns from your health data without it ever leaving your device" />
+            <ComingSoonRow icon="🔗" label="GlobeDoc Chain" badge="Coming Soon" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
+            <ComingSoonRow icon="🔐" label="Homomorphic Encryption" badge="Coming Soon" subtitle="Your data can be analysed without ever being decrypted" />
+            <ComingSoonRow icon="🤖" label="Federated Learning" badge="Coming Soon" subtitle="AI that learns from your health data without it ever leaving your device" />
           </div>
         </Card>
 
