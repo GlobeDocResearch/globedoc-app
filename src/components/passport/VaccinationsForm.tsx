@@ -242,34 +242,20 @@ export default function VaccinationsForm() {
       setBirthYear(year);
       setSex(bioSex);
 
-      // Build childhood list — filter to vaccines that were part of the
-      // national programme while the patient was 0–18, using country of birth.
+      // Build childhood list — ALL programme vaccines for the country;
+      // `likely` flag (from age-at-vaccination logic) determines initial state.
       const savedMap: Record<string, any> = {};
       (cv.data ?? []).forEach((r: any) => { savedMap[r.vaccine_name] = r; });
-      const supported = isSupportedCountry(country);
       const yearNum = year ? parseInt(year, 10) : null;
-      const fullList: Programme[] = supported && country
-        ? COUNTRY_PROGRAMMES[country]
-        : WHO_GENERIC;
-      const defs: { name: string; descEn: string; descSv: string }[] =
-        yearNum !== null
-          ? (country === "Sweden"
-              ? swedenProgrammeForYear(yearNum, bioSex)
-              : programmeForCountryAndYear(country, yearNum)
-            ).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
-          : fullList.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
-      // Include any previously-saved vaccine that isn't in the filtered list so user edits aren't lost
+      const eligible = eligibleProgrammeFor(country, yearNum, bioSex);
+      const defs: { name: string; descEn: string; descSv: string; likely: boolean }[] =
+        eligible.map((v) => ({ name: v.name, descEn: v.descEn, descSv: v.descSv, likely: v.likely }));
+      // Include any previously-saved vaccine not in the new list so user edits aren't lost
       Object.keys(savedMap).forEach((name) => {
         if (!defs.find((d) => d.name === name)) {
-          const orig = fullList.find((p) => p.name === name);
-          defs.push({
-            name,
-            descEn: orig?.descEn ?? "",
-            descSv: orig?.descSv ?? "",
-          });
+          defs.push({ name, descEn: "", descSv: "", likely: false });
         }
       });
-      const programmeEligible = yearNum !== null;
       const list: ChildhoodVax[] = defs.map((d) => {
         if (savedMap[d.name]) {
           return {
@@ -280,7 +266,7 @@ export default function VaccinationsForm() {
             year_received: savedMap[d.name].year_received ?? "",
           };
         }
-        const defaultStatus: Status = programmeEligible ? "likely_received" : "unsure";
+        const defaultStatus: Status = d.likely ? "likely_received" : "unsure";
         return { name: d.name, descEn: d.descEn, descSv: d.descSv, status: defaultStatus, year_received: "" };
       });
 
