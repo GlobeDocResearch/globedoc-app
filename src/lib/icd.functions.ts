@@ -58,17 +58,16 @@ export const whoSearch = createServerFn({ method: "POST" })
     const token = await getWhoToken();
     if (!token) return { results: [] as Array<{ code: string; title: string; description?: string }> };
 
+    const qs = new URLSearchParams({
+      q: data.q,
+      useFlexisearch: "true",
+      flatResults: "true",
+      highlightingEnabled: "false",
+    }).toString();
     const url =
       data.kind === "icd11"
-        ? "https://id.who.int/icd/release/11/2024-01/mms/search?" +
-          new URLSearchParams({ q: data.q, flatResults: "true", useFlexisearch: "true" }).toString()
-        : "https://id.who.int/icd/entity/search?" +
-          new URLSearchParams({
-            q: data.q,
-            useFlexisearch: "true",
-            flatResults: "true",
-            releaseId: "2024-01/ichi",
-          }).toString();
+        ? `https://id.who.int/icd/release/11/2024-01/mms/search?${qs}`
+        : `https://id.who.int/icd/release/11/2024-01/ichi/search?${qs}`;
 
     try {
       const res = await fetch(url, {

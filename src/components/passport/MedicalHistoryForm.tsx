@@ -24,6 +24,7 @@ type Stay = {
   event: string;
   ichi_code: string | null;
   diagnosis: string;
+  diagnosis_code: string | null;
   year: string;
   institution: string;
   city: string;
@@ -226,6 +227,7 @@ export default function MedicalHistoryForm() {
           event: r.event ?? "",
           ichi_code: r.ichi_code ?? null,
           diagnosis: r.diagnosis ?? "",
+          diagnosis_code: r.diagnosis_code ?? null,
           year: r.year ?? "",
           institution: r.institution ?? "",
           city: r.city ?? "",
@@ -352,7 +354,7 @@ export default function MedicalHistoryForm() {
     const id = crypto.randomUUID();
     setStays((s) => [
       ...s,
-      { id, event: "", ichi_code: null, diagnosis: "", year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
+      { id, event: "", ichi_code: null, diagnosis: "", diagnosis_code: null, year: "", institution: "", city: "", country: "", record_type: "", notes: "", collapsed: false, persisted: false },
     ]);
     markStayDirty(id);
   };
@@ -368,6 +370,7 @@ export default function MedicalHistoryForm() {
       event: stay.event,
       ichi_code: stay.ichi_code,
       diagnosis: stay.diagnosis,
+      diagnosis_code: stay.diagnosis_code,
       year: stay.year,
       institution: stay.institution,
       city: stay.city,
@@ -402,6 +405,8 @@ export default function MedicalHistoryForm() {
         title,
         body: stay.notes || null,
         eventYear: firstYear(stay.year),
+        codeIchi: stay.ichi_code,
+        codeIcd11: stay.diagnosis_code,
       });
     }
     clearStayDirty(stay.id);
@@ -420,6 +425,7 @@ export default function MedicalHistoryForm() {
         event: r.event ?? "",
         ichi_code: r.ichi_code ?? null,
         diagnosis: r.diagnosis ?? "",
+        diagnosis_code: r.diagnosis_code ?? null,
         year: r.year ?? "",
         institution: r.institution ?? "",
         city: r.city ?? "",
@@ -784,7 +790,14 @@ export default function MedicalHistoryForm() {
                         lang={lang}
                         onChange={(ev, code) => updateStay(stay.id, { event: ev, ichi_code: code })}
                       />
-                      <Field label={t("f_diagnosis")} value={stay.diagnosis} ph={t("f_diagnosis_ph")} onChange={(v) => updateStay(stay.id, { diagnosis: v })} />
+                      <DiagnosisField
+                        label={t("f_diagnosis")}
+                        value={stay.diagnosis}
+                        code={stay.diagnosis_code}
+                        ph={t("f_diagnosis_ph")}
+                        lang={lang}
+                        onChange={(v, code) => updateStay(stay.id, { diagnosis: v, diagnosis_code: code })}
+                      />
                       <Field label={t("f_year")} value={stay.year} ph="E.g. 2019 or 2018–2022" onChange={(v) => updateStay(stay.id, { year: v })} />
                       <Field label="Institution / Hospital name" value={stay.institution} ph="E.g. Karolinska University Hospital" onChange={(v) => updateStay(stay.id, { institution: v })} />
                       <Field label="City" value={stay.city} ph="E.g. Stockholm" onChange={(v) => updateStay(stay.id, { city: v })} />
@@ -1223,6 +1236,110 @@ function ConditionTagInput({
           </div>
         </SheetContent>
       </Sheet>
+    </div>
+  );
+}
+
+function DiagnosisField({
+  label, value, code, ph, lang, onChange,
+}: {
+  label: string;
+  value: string;
+  code: string | null;
+  ph: string;
+  lang: Lang;
+  onChange: (v: string, code: string | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<Icd11Match[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [browseOpen, setBrowseOpen] = useState(false);
+  const [browseQ, setBrowseQ] = useState("");
+  const [browseResults, setBrowseResults] = useState<Icd11Match[]>([]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const term = value.trim();
+    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const res = await searchIcd11(term, lang);
+      if (cancelled) return;
+      setResults(res);
+      setLoading(false);
+    }, 300);
+    return () => { cancelled = true; clearTimeout(handle); };
+  }, [value, lang]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <div ref={wrapRef} className="relative">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#5B6BD4]">
+          <input
+            value={value}
+            onChange={(e) => { onChange(e.target.value, null); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            placeholder={ph}
+            className="flex-1 bg-transparent text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:outline-none"
+          />
+          {code && (
+            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              {code}
+            </span>
+          )}
+        </div>
+        {open && value.trim().length >= 3 && (loading || results.length > 0) && (
+          <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+            <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              ICD-11 — WHO Global Disease Classification
+            </div>
+            {loading && results.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+            )}
+            {results.map((r) => (
+              <button
+                key={`${r.code}-${r.title}`}
+                type="button"
+                onClick={() => { onChange(r.title, r.code); setOpen(false); }}
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="truncate">{r.title}</span>
+                <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                  {r.code}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
+        className="mt-1 text-xs font-medium text-[#5B6BD4] hover:underline"
+      >
+        Browse ICD-11 — WHO Global Disease Classification →
+      </button>
+      <Icd11BrowserSheet
+        open={browseOpen}
+        onOpenChange={setBrowseOpen}
+        lang={lang}
+        q={browseQ}
+        setQ={setBrowseQ}
+        results={browseResults}
+        setResults={setBrowseResults}
+        used={new Set()}
+        onPick={(name, c) => { onChange(name, c); setBrowseOpen(false); }}
+      />
     </div>
   );
 }
