@@ -217,7 +217,7 @@ function LoginPage() {
                 Connect with Pairing Code
               </Link>
               <Link
-                to="/signin"
+                to="/signin-pro"
                 className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-muted px-6 py-3.5 text-base font-semibold text-foreground shadow-sm transition-opacity hover:opacity-95"
               >
                 Sign in
