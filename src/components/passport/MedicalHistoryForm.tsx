@@ -1207,6 +1207,99 @@ function Field({ label, value, ph, onChange }: { label: string; value: string; p
   );
 }
 
+function ProcedureField({
+  label,
+  value,
+  code,
+  ph,
+  lang,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  code: string | null;
+  ph: string;
+  lang: Lang;
+  onChange: (event: string, ichi_code: string | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<IchiMatch[]>([]);
+  const [loading, setLoading] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const term = value.trim();
+    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    const ctrl = new AbortController();
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const res = await searchIchi(term, lang, ctrl.signal);
+      setResults(res);
+      setLoading(false);
+    }, 300);
+    return () => { clearTimeout(handle); ctrl.abort(); };
+  }, [value, lang]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const infoNote =
+    lang === "sv"
+      ? "Ingrepp kan sökas med WHO:s ICHI-klassificering (International Classification of Health Interventions) — den globala standarden för medicinska procedurer, ingrepp och operationer. Sök på ditt föredragna språk. ICHI-koder hjälper kliniker världen över att förstå exakt vad som utfördes, oavsett lokal terminologi."
+      : "Procedures can be searched using the WHO ICHI classification (International Classification of Health Interventions) — the global standard for medical procedures, interventions and surgeries. Search in your preferred language. ICHI codes help clinicians anywhere in the world understand exactly what was performed, regardless of local terminology.";
+
+  return (
+    <div>
+      <label className="block text-xs text-gray-600">{label}</label>
+      <div ref={wrapRef} className="relative">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#5B6BD4]">
+          <input
+            value={value}
+            onChange={(e) => { onChange(e.target.value, null); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            placeholder={ph}
+            className="flex-1 bg-transparent text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:outline-none"
+          />
+          {code && (
+            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              {code}
+            </span>
+          )}
+        </div>
+        {open && value.trim().length >= 3 && (loading || results.length > 0) && (
+          <div className="absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+            <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              ICHI — WHO International Classification of Health Interventions
+            </div>
+            {loading && results.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+            )}
+            {results.map((r) => (
+              <button
+                key={`${r.code}-${r.title}`}
+                type="button"
+                onClick={() => { onChange(r.title, r.code); setOpen(false); }}
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="truncate">{r.title}</span>
+                <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                  {r.code}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <p className="pt-1 text-[11px] leading-snug text-gray-500">{infoNote}</p>
+    </div>
+  );
+}
+
 function YesNo({ label, value, onChange, yes, no }: { label: string; value: boolean | null; onChange: (v: boolean) => void; yes: string; no: string }) {
   return (
     <div>
