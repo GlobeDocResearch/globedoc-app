@@ -240,20 +240,23 @@ export default function VaccinationsForm() {
       setNationality(country);
       setBirthYear(year);
 
-      // Build childhood list — filter to vaccines that were part of the Swedish
-      // programme while the patient was 0–18 (when Sweden + birth year known).
+      // Build childhood list — filter to vaccines that were part of the
+      // national programme while the patient was 0–18, using country of birth.
       const savedMap: Record<string, any> = {};
       (cv.data ?? []).forEach((r: any) => { savedMap[r.vaccine_name] = r; });
-      const isSweden = country === "Sweden";
+      const supported = isSupportedCountry(country);
       const yearNum = year ? parseInt(year, 10) : null;
+      const fullList: Programme[] = supported && country
+        ? COUNTRY_PROGRAMMES[country]
+        : WHO_GENERIC;
       const defs: { name: string; descEn: string; descSv: string }[] =
-        isSweden && yearNum !== null
-          ? programmeForBirthYear(yearNum).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
-          : SE_PROGRAMME.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
+        yearNum !== null
+          ? programmeForCountryAndYear(country, yearNum).map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }))
+          : fullList.map((p) => ({ name: p.name, descEn: p.descEn, descSv: p.descSv }));
       // Include any previously-saved vaccine that isn't in the filtered list so user edits aren't lost
       Object.keys(savedMap).forEach((name) => {
         if (!defs.find((d) => d.name === name)) {
-          const orig = SE_PROGRAMME.find((p) => p.name === name);
+          const orig = fullList.find((p) => p.name === name);
           defs.push({
             name,
             descEn: orig?.descEn ?? "",
@@ -261,7 +264,7 @@ export default function VaccinationsForm() {
           });
         }
       });
-      const sweEligible = isSweden && yearNum !== null;
+      const programmeEligible = yearNum !== null;
       const list: ChildhoodVax[] = defs.map((d) => {
         if (savedMap[d.name]) {
           return {
@@ -272,7 +275,7 @@ export default function VaccinationsForm() {
             year_received: savedMap[d.name].year_received ?? "",
           };
         }
-        const defaultStatus: Status = sweEligible ? "likely_received" : "unsure";
+        const defaultStatus: Status = programmeEligible ? "likely_received" : "unsure";
         return { name: d.name, descEn: d.descEn, descSv: d.descSv, status: defaultStatus, year_received: "" };
       });
 
