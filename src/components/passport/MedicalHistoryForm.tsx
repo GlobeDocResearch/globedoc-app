@@ -366,6 +366,7 @@ export default function MedicalHistoryForm() {
     if (!userId) return;
     const payload: any = {
       event: stay.event,
+      ichi_code: stay.ichi_code,
       diagnosis: stay.diagnosis,
       year: stay.year,
       institution: stay.institution,
