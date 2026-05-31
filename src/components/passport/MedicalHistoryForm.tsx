@@ -985,7 +985,7 @@ function ConditionTagInput({
   // Debounced ICD-11 search at 3+ chars
   useEffect(() => {
     const term = q.trim();
-    if (term.length < 3) { setIcdResults([]); setIcdLoading(false); return; }
+    if (term.length < 1) { setIcdResults([]); setIcdLoading(false); return; }
     const ctrl = new AbortController();
     setIcdLoading(true);
     const handle = setTimeout(async () => {
@@ -1083,7 +1083,7 @@ function ConditionTagInput({
               </button>
             ))}
 
-            {q.trim().length >= 3 && (icdLoading || icdResults.length > 0) && (
+            {q.trim().length >= 1 && (icdLoading || icdResults.length > 0) && (
               <>
                 <div className="border-t border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
                   ICD-11 — WHO Global Disease Classification
@@ -1263,7 +1263,7 @@ function DiagnosisField({
 
   useEffect(() => {
     const term = value.trim();
-    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    if (term.length < 1) { setResults([]); setLoading(false); return; }
     let cancelled = false;
     setLoading(true);
     const handle = setTimeout(async () => {
@@ -1301,7 +1301,7 @@ function DiagnosisField({
             </span>
           )}
         </div>
-        {open && value.trim().length >= 3 && (loading || results.length > 0) && (
+        {open && value.trim().length >= 1 && (loading || results.length > 0) && (
           <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
               ICD-11 — WHO Global Disease Classification
@@ -1389,7 +1389,7 @@ function ProcedureField({
 
   useEffect(() => {
     const term = value.trim();
-    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    if (term.length < 1) { setResults([]); setLoading(false); return; }
     let cancelled = false;
     setLoading(true);
     const handle = setTimeout(async () => {
@@ -1404,7 +1404,7 @@ function ProcedureField({
   useEffect(() => {
     if (!browseOpen) return;
     const term = browseQ.trim();
-    if (term.length < 3) { setBrowseResults([]); setBrowseLoading(false); return; }
+    if (term.length < 1) { setBrowseResults([]); setBrowseLoading(false); return; }
     let cancelled = false;
     setBrowseLoading(true);
     const handle = setTimeout(async () => {
@@ -1447,7 +1447,7 @@ function ProcedureField({
             </span>
           )}
         </div>
-        {open && value.trim().length >= 3 && (loading || results.length > 0) && (
+        {open && value.trim().length >= 1 && (loading || results.length > 0) && (
           <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
               ICHI — WHO International Classification of Health Interventions
@@ -1505,7 +1505,7 @@ function ProcedureField({
                 {lang === "sv" ? "Söker…" : "Searching…"}
               </div>
             )}
-            {!browseLoading && browseQ.trim().length >= 3 && browseResults.length === 0 && (
+            {!browseLoading && browseQ.trim().length >= 1 && browseResults.length === 0 && (
               <div className="px-1 py-2 text-xs text-gray-500">
                 {lang === "sv" ? "Inga träffar." : "No matches."}
               </div>
@@ -1569,7 +1569,7 @@ function Icd11BrowserSheet({
   useEffect(() => {
     if (!open) return;
     const term = q.trim();
-    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    if (term.length < 1) { setResults([]); setLoading(false); return; }
     const ctrl = new AbortController();
     setLoading(true);
     const handle = setTimeout(async () => {
@@ -1611,7 +1611,7 @@ function Icd11BrowserSheet({
               {lang === "sv" ? "Söker…" : "Searching…"}
             </div>
           )}
-          {!loading && q.trim().length >= 3 && results.length === 0 && (
+          {!loading && q.trim().length >= 1 && results.length === 0 && (
             <div className="px-1 py-2 text-xs text-gray-500">
               {lang === "sv" ? "Inga träffar." : "No matches."}
             </div>
