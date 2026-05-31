@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
-import { LANGUAGES } from "@/lib/languages";
+import { useLanguages } from "@/lib/useLanguages";
 import { cn } from "@/lib/utils";
 
 /** Shared dialog that lists every supported UI language. */
@@ -19,6 +19,7 @@ export function LanguagePickerDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { langCode, setLangCode } = useI18n();
+  const LANGUAGES = useLanguages();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -85,6 +86,7 @@ export function LanguageGlobeButton({ className }: { className?: string }) {
 export function LanguagePickerRow() {
   const [open, setOpen] = useState(false);
   const { langCode } = useI18n();
+  const LANGUAGES = useLanguages();
   const current = LANGUAGES.find((l) => l.code === langCode) ?? LANGUAGES[0];
   return (
     <>
