@@ -205,10 +205,10 @@ export default function MedicalHistoryForm() {
       if (mc.data) {
         const rows = mc.data as any[];
         setCurrent(rows.filter((r) => !r.is_resolved).map((r) => ({
-          id: r.id, condition_name: r.condition_name, year: r.year ?? "", persisted: true,
+          id: r.id, condition_name: r.condition_name, year: r.year ?? "", icd11_code: r.icd11_code ?? null, persisted: true,
         })));
         setPast(rows.filter((r) => r.is_resolved).map((r) => ({
-          id: r.id, condition_name: r.condition_name, year: r.year ?? "", persisted: true,
+          id: r.id, condition_name: r.condition_name, year: r.year ?? "", icd11_code: r.icd11_code ?? null, persisted: true,
         })));
       }
       if (hs.data) {
