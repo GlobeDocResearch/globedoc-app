@@ -223,16 +223,16 @@ function PassportPage() {
               key={s.key}
               type="button"
               onClick={() => goSection(s.key)}
-              className="flex w-full items-center gap-4 rounded-2xl p-4 text-left transition-transform duration-200 hover:scale-[1.02]"
+              className="flex w-full items-center gap-4 rounded-r-xl bg-white p-4 text-left shadow-sm transition-transform duration-200 hover:scale-[1.02]"
               style={{
-                backgroundColor: isDone ? s.color : "transparent",
-                border: `2px solid ${s.color}`,
+                backgroundColor: isDone ? s.color : "#FFFFFF",
+                borderLeft: `6px solid ${s.color}`,
               }}
             >
               <span className="text-2xl">{s.emoji}</span>
               <div className="flex-1">
-                <h3 className="text-sm font-bold text-[#0D1B2A]">{s.title}</h3>
-                <p className="text-xs text-gray-600">{s.subtitle}</p>
+                <h3 className="text-sm font-bold" style={{ color: isDone ? "#FFFFFF" : s.color }}>{s.title}</h3>
+                <p className="text-xs" style={{ color: isDone ? "rgba(255,255,255,0.85)" : "#4B5563" }}>{s.subtitle}</p>
               </div>
             </button>
           );
