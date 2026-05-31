@@ -325,25 +325,60 @@ const dicts: Record<Lang, Record<string, string>> = { en, sv };
 
 export type TKey = keyof typeof en;
 
-type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: TKey) => string };
+type Ctx = {
+  /** Base dictionary lang. Only "en" or "sv". Other selected languages fall back to "en" and are translated at the DOM level. */
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  /** Currently selected display language code (any of LANGUAGES). */
+  langCode: string;
+  setLangCode: (code: string) => void;
+  t: (k: TKey) => string;
+};
 const I18nCtx = createContext<Ctx | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
+  const [langCode, setLangCodeState] = useState<string>("en");
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem("lang") as Lang | null) : null;
-    if (stored === "en" || stored === "sv") setLangState(stored);
+    if (typeof window === "undefined") return;
+    const storedCode = localStorage.getItem("langCode");
+    if (storedCode) {
+      setLangCodeState(storedCode);
+      setLangState(storedCode === "sv" ? "sv" : "en");
+    } else {
+      const stored = localStorage.getItem("lang") as Lang | null;
+      if (stored === "en" || stored === "sv") {
+        setLangState(stored);
+        setLangCodeState(stored);
+      }
+    }
   }, []);
 
   const setLang = (l: Lang) => {
     setLangState(l);
-    if (typeof window !== "undefined") localStorage.setItem("lang", l);
+    setLangCodeState(l);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lang", l);
+      localStorage.setItem("langCode", l);
+    }
+  };
+
+  const setLangCode = (code: string) => {
+    setLangCodeState(code);
+    const base: Lang = code === "sv" ? "sv" : "en";
+    setLangState(base);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("lang", base);
+      localStorage.setItem("langCode", code);
+    }
   };
 
   const t = (k: TKey) => dicts[lang][k] ?? en[k];
 
-  return <I18nCtx.Provider value={{ lang, setLang, t }}>{children}</I18nCtx.Provider>;
+  return (
+    <I18nCtx.Provider value={{ lang, setLang, langCode, setLangCode, t }}>{children}</I18nCtx.Provider>
+  );
 }
 
 export function useI18n() {
