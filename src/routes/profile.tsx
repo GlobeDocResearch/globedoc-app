@@ -407,6 +407,16 @@ function ProfilePage() {
           </div>
         </Card>
 
+        {/* Advanced Security & Privacy */}
+        <Card>
+          <h2 className="text-base font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
+          <div className="mt-3 divide-y divide-gray-100">
+            <ComingSoonRow icon="🔗" label="GlobeDoc Chain" badge="Coming Soon" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
+            <ComingSoonRow icon="🔐" label="Homomorphic Encryption" badge="Coming Soon" subtitle="Your data can be analysed without ever being decrypted" />
+            <ComingSoonRow icon="🤖" label="Federated Learning" badge="Coming Soon" subtitle="AI that learns from your health data without it ever leaving your device" />
+          </div>
+        </Card>
+
         <button onClick={handleSignOut} className="w-full rounded-full border border-red-500 px-5 py-3 text-sm font-semibold text-red-600 hover:bg-red-50">
           <LogOut className="mr-2 inline h-4 w-4" />{t.signOut}
         </button>
@@ -456,19 +466,23 @@ function FieldRow({ label, value, editing, edit, required }: { label: string; va
   );
 }
 
-function ComingSoonRow({ icon, label, badge }: { icon: string; label: string; badge: string }) {
+function ComingSoonRow({ icon, label, badge, subtitle }: { icon: string; label: string; badge: string; subtitle?: string }) {
   return (
-    <div aria-disabled className="flex items-center justify-between py-3 opacity-50 cursor-not-allowed select-none">
-      <div className="flex items-center gap-3">
-        <span className="text-lg" aria-hidden>{icon}</span>
-        <p className="text-sm font-semibold text-gray-500">{label}</p>
+    <div aria-disabled className="flex items-center justify-between gap-3 py-3 opacity-50 cursor-not-allowed select-none">
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="text-lg shrink-0" aria-hidden>{icon}</span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-gray-500">{label}</p>
+          {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+        </div>
       </div>
-      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+      <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
         {badge}
       </span>
     </div>
   );
 }
+
 
 function PrivacyRow({ icon, title, subtitle, action }: { icon: React.ReactNode; title: React.ReactNode; subtitle: string; action: React.ReactNode }) {
   return (

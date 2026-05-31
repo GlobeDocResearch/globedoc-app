@@ -129,6 +129,17 @@ function SettingsTab() {
         </Link>
       </section>
 
+      <section className="mt-6 rounded-2xl bg-white shadow-sm">
+        <div className="px-5 pt-4 pb-2">
+          <h2 className="text-sm font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
+        </div>
+        <div className="divide-y divide-gray-100">
+          <ComingSoonRow icon="🔗" label="GlobeDoc Chain" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
+          <ComingSoonRow icon="🔐" label="Homomorphic Encryption" subtitle="Your data can be analysed without ever being decrypted" />
+          <ComingSoonRow icon="🤖" label="Federated Learning" subtitle="AI that learns from your health data without it ever leaving your device" />
+        </div>
+      </section>
+
       <button
         type="button"
         onClick={onLogout}
@@ -140,16 +151,20 @@ function SettingsTab() {
   );
 }
 
-function ComingSoonRow({ icon, label }: { icon: string; label: string }) {
+function ComingSoonRow({ icon, label, subtitle }: { icon: string; label: string; subtitle?: string }) {
   return (
-    <div aria-disabled className="flex items-center justify-between px-5 py-4 opacity-50 cursor-not-allowed select-none">
-      <div className="flex items-center gap-3">
-        <span className="text-lg" aria-hidden>{icon}</span>
-        <p className="text-sm font-semibold text-gray-500">{label}</p>
+    <div aria-disabled className="flex items-center justify-between gap-3 px-5 py-4 opacity-50 cursor-not-allowed select-none">
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="text-lg shrink-0" aria-hidden>{icon}</span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-gray-500">{label}</p>
+          {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+        </div>
       </div>
-      <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+      <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
         Coming Soon
       </span>
     </div>
   );
 }
+
