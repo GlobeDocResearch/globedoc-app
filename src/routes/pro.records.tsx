@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { FileText, Plus, X, StickyNote, FileUp, Sparkles, MessageCircle, Loader2 } from "lucide-react";
+import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { loadPairings, type ProPairing } from "@/lib/proPairings";
 import { toast } from "sonner";
