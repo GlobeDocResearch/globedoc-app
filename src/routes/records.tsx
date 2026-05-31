@@ -68,6 +68,8 @@ const T = {
     viewFeed: "Feed",
     viewTimeline: "Timeline",
     timelineEmpty: "Your medical timeline will appear here as you fill in your Health Passport. Start by adding conditions and hospitalisations under Medical History.",
+    searchPh: "Search records…",
+    noMatches: "No records match your search.",
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
@@ -93,6 +95,8 @@ const T = {
     viewFeed: "Flöde",
     viewTimeline: "Tidslinje",
     timelineEmpty: "Din medicinska tidslinje visas här när du fyller i ditt Hälsopass. Börja med att lägga till tillstånd och sjukhusvistelser under Sjukdomshistorik.",
+    searchPh: "Sök i journal…",
+    noMatches: "Inga poster matchar din sökning.",
   },
 };
 
@@ -131,6 +135,7 @@ function RecordsPage() {
   const [editingEntry, setEditingEntry] = useState<RecordEntry | null>(null);
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
   const [view, setView] = useState<"feed" | "timeline">("feed");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -189,15 +194,41 @@ function RecordsPage() {
     await reload(userId);
   }
 
+  const typeLabel = (et: EntryType) => {
+    switch (et) {
+      case "note": return t.note;
+      case "document": return t.doc;
+      case "image": return t.image;
+      case "lab": return t.lab;
+      case "clinical_note": return "Clinical note";
+      default: return et;
+    }
+  };
+
+  const filteredEntries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return entries;
+    return entries.filter((e) => {
+      const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
+      return (
+        e.title.toLowerCase().includes(q) ||
+        (e.body ?? "").toLowerCase().includes(q) ||
+        dateStr.toLowerCase().includes(q) ||
+        typeLabel(e.entry_type).toLowerCase().includes(q) ||
+        e.entry_type.toLowerCase().includes(q)
+      );
+    });
+  }, [entries, searchQuery, lang, t]);
+
   // Timeline entries: anything with an event year (passport-derived rows always
   // carry one; manual rows are included if they happen to have an event_year).
   const timelineEntries = useMemo(
     () =>
-      entries
+      filteredEntries
         .filter((e) => (e.event_year ?? "").trim().length > 0)
         .slice()
         .sort((a, b) => Number(a.event_year) - Number(b.event_year)),
-    [entries],
+    [filteredEntries],
   );
   const timelineGroups = useMemo(() => {
     const map = new Map<string, RecordEntry[]>();
@@ -248,17 +279,25 @@ function RecordsPage() {
           </button>
         </div>
 
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t.searchPh}
+          className="mt-4 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+        />
+
         {loading ? null : view === "feed" ? (
-          entries.length === 0 ? (
+          filteredEntries.length === 0 ? (
             <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                 <FileText className="h-7 w-7 text-gray-400" />
               </div>
-              <p className="mt-4 text-sm text-gray-600">{t.empty}</p>
+              <p className="mt-4 text-sm text-gray-600">{searchQuery.trim() ? t.noMatches : t.empty}</p>
             </div>
           ) : (
             <ul className="mt-6 space-y-3">
-              {entries.map(e => (
+              {filteredEntries.map(e => (
                 <RecordEntryCard
                   key={e.id}
                   entry={e}
@@ -279,7 +318,7 @@ function RecordsPage() {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
               <CalendarDays className="h-7 w-7 text-gray-400" />
             </div>
-            <p className="mt-4 text-sm text-gray-600">{t.timelineEmpty}</p>
+            <p className="mt-4 text-sm text-gray-600">{searchQuery.trim() ? t.noMatches : t.timelineEmpty}</p>
           </div>
         ) : (
           <div className="mt-6">

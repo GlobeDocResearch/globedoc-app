@@ -904,6 +904,7 @@ export type Database = {
       }
       prescription_medications: {
         Row: {
+          atc_code: string | null
           brand_name: string | null
           created_at: string
           dose_form: string | null
@@ -916,6 +917,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          atc_code?: string | null
           brand_name?: string | null
           created_at?: string
           dose_form?: string | null
@@ -928,6 +930,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          atc_code?: string | null
           brand_name?: string | null
           created_at?: string
           dose_form?: string | null

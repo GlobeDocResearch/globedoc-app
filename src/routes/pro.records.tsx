@@ -50,6 +50,25 @@ function ProRecordsTab() {
   const [loading, setLoading] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [composer, setComposer] = useState<ProEntryType | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredEntries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return entries;
+    return entries.filter((e) => {
+      const dateStr = new Date(e.created_at).toLocaleString("en-GB");
+      const typeLabel = typeMeta(e.entry_type).label.toLowerCase();
+      return (
+        e.title.toLowerCase().includes(q) ||
+        (e.body ?? "").toLowerCase().includes(q) ||
+        dateStr.toLowerCase().includes(q) ||
+        e.entry_type.toLowerCase().includes(q) ||
+        typeLabel.includes(q) ||
+        (e.author_name ?? "").toLowerCase().includes(q) ||
+        patientName.toLowerCase().includes(q)
+      );
+    });
+  }, [entries, searchQuery, patientName]);
 
   useEffect(() => {
     (async () => {
@@ -107,15 +126,28 @@ function ProRecordsTab() {
           <FileText className="mx-auto h-7 w-7 text-gray-400" />
           <p className="mt-3 text-sm text-gray-600">Select a patient above to view their records.</p>
         </div>
-      ) : loading ? (
-        <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
-      ) : entries.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
-          <p className="text-sm text-gray-600">No records yet for {patientName}.</p>
-        </div>
       ) : (
-        <ul className="mt-6 space-y-3">
-          {entries.map(e => {
+        <>
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search records…"
+            className="mt-5 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+          />
+          {loading ? (
+            <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
+          ) : entries.length === 0 ? (
+            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+              <p className="text-sm text-gray-600">No records yet for {patientName}.</p>
+            </div>
+          ) : filteredEntries.length === 0 ? (
+            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+              <p className="text-sm text-gray-600">No records match your search.</p>
+            </div>
+          ) : (
+            <ul className="mt-6 space-y-3">
+              {filteredEntries.map(e => {
             const m = typeMeta(e.entry_type);
             return (
               <li key={e.id}>
@@ -149,7 +181,9 @@ function ProRecordsTab() {
               </li>
             );
           })}
-        </ul>
+            </ul>
+          )}
+        </>
       )}
 
       {selectedId && (

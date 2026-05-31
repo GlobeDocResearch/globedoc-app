@@ -7,12 +7,13 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
-import { MEDICATION_LABELS, findMedicationByLabel } from "@/lib/medications";
+import { MEDICATIONS } from "@/lib/medications";
+import { searchRxNorm, getBrandName, getAtcCode, type RxMatch } from "@/lib/rxnorm";
 
 const ACCENT = "#6BBF8E";
 const ACCENT_2 = "#4DA070";
 
-type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; collapsed: boolean; persisted: boolean };
+type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; atc_code: string; collapsed: boolean; persisted: boolean };
 type Otc = { id: string; product: string; dose: string; frequency: string; reason: string; collapsed: boolean; persisted: boolean };
 type Stopped = { id: string; drug_generic: string; dose: string; period: string; reason_stopped: string; collapsed: boolean; persisted: boolean };
 
@@ -148,6 +149,7 @@ export default function MedicationsForm() {
       if (pm.data) setRx(pm.data.map((r: any) => ({
         id: r.id, drug_generic: r.drug_generic ?? "", brand_name: r.brand_name ?? "",
         dose_form: r.dose_form ?? "", frequency: r.frequency ?? "", indication: r.indication ?? "", prescriber: r.prescriber ?? "",
+        atc_code: r.atc_code ?? "",
         collapsed: true, persisted: true,
       })));
       if (ot.data) setOtc(ot.data.map((r: any) => ({
@@ -181,11 +183,11 @@ export default function MedicationsForm() {
   };
 
   // Generic helpers per list
-  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", indication: "", prescriber: "", collapsed: false, persisted: false }]); markDirty(id); };
+  const addRx = () => { const id = crypto.randomUUID(); setRx((s) => [...s, { id, drug_generic: "", brand_name: "", dose_form: "", frequency: "", indication: "", prescriber: "", atc_code: "", collapsed: false, persisted: false }]); markDirty(id); };
   const updateRx = (id: string, p: Partial<Rx>, d = true) => { setRx((s) => s.map((x) => x.id === id ? { ...x, ...p } : x)); if (d) markDirty(id); };
   const saveRx = async (item: Rx) => {
     if (!userId) return;
-    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, indication: item.indication, prescriber: item.prescriber };
+    const payload = { drug_generic: item.drug_generic, brand_name: item.brand_name, dose_form: item.dose_form, frequency: item.frequency, indication: item.indication, prescriber: item.prescriber, atc_code: item.atc_code || null };
     if (item.persisted) {
       await supabase.from("prescription_medications").update(payload).eq("id", item.id);
       audit("prescription_medications", "update");
@@ -205,7 +207,7 @@ export default function MedicationsForm() {
   const discardRx = async (item: Rx) => {
     if (!item.persisted) { setRx((s) => s.filter((x) => x.id !== item.id)); clearDirty(item.id); return; }
     const { data } = await supabase.from("prescription_medications").select("*").eq("id", item.id).maybeSingle();
-    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", indication: data.indication ?? "", prescriber: data.prescriber ?? "", collapsed: true }, false);
+    if (data) updateRx(item.id, { drug_generic: data.drug_generic ?? "", brand_name: data.brand_name ?? "", dose_form: data.dose_form ?? "", frequency: data.frequency ?? "", indication: data.indication ?? "", prescriber: data.prescriber ?? "", atc_code: (data as any).atc_code ?? "", collapsed: true }, false);
     clearDirty(item.id);
   };
 
@@ -332,7 +334,7 @@ export default function MedicationsForm() {
               <h2 className="mb-2 text-sm font-bold text-[#0D1B2A]">{t("s1")}</h2>
               <div className="space-y-3">
                 {rx.map((item) => item.collapsed ? (
-                  <SummaryRow key={item.id} text={[item.drug_generic, item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
+                  <SummaryRow key={item.id} text={[item.drug_generic + (item.atc_code ? ` · ${item.atc_code}` : ""), item.dose_form, item.frequency].filter(Boolean).join(" · ")} onEdit={() => updateRx(item.id, { collapsed: false })} onDelete={() => deleteRx(item)} />
                 ) : (
                   <div
                     key={item.id}
@@ -343,11 +345,14 @@ export default function MedicationsForm() {
                       label={t("f_drug")}
                       ph={t("f_drug_ph")}
                       value={item.drug_generic}
-                      onChange={(v) => updateRx(item.id, { drug_generic: v })}
+                      code={item.atc_code}
+                      lang={lang}
+                      onChange={(v) => updateRx(item.id, { drug_generic: v, atc_code: "" })}
                       onSelectMed={(entry) => {
                         const patch: Partial<Rx> = { drug_generic: entry.generic };
                         if (entry.brand && !item.brand_name) patch.brand_name = entry.brand;
                         if (entry.indication && !item.indication) patch.indication = entry.indication;
+                        if (entry.atc_code !== undefined) patch.atc_code = entry.atc_code ?? "";
                         updateRx(item.id, patch);
                       }}
                     />
@@ -408,6 +413,8 @@ export default function MedicationsForm() {
                       label={t("f_drug")}
                       ph={t("f_drug_stopped_ph")}
                       value={item.drug_generic}
+                      code={null}
+                      lang={lang}
                       onChange={(v) => updateStopped(item.id, { drug_generic: v })}
                       onSelectMed={(entry) => updateStopped(item.id, { drug_generic: entry.generic })}
                     />
@@ -480,28 +487,132 @@ function MedicationDrugField({
   label,
   ph,
   value,
+  code,
+  lang,
   onChange,
   onSelectMed,
 }: {
   label: string;
   ph: string;
   value: string;
+  code: string | null;
+  lang: Lang;
   onChange: (v: string) => void;
-  onSelectMed: (entry: { generic: string; brand?: string; indication?: string }) => void;
+  onSelectMed: (entry: { generic: string; brand?: string; indication?: string; atc_code?: string | null }) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<Array<{ generic: string; brand?: string; rxcui?: string; indication?: string }>>([]);
+  const [loading, setLoading] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Local fallback lookup by lowercase substring.
+  const localMatches = (term: string) => {
+    const lc = term.toLowerCase();
+    return MEDICATIONS
+      .filter((m) => m.generic.toLowerCase().includes(lc) || (m.brand ?? "").toLowerCase().includes(lc))
+      .slice(0, 10)
+      .map((m) => ({ generic: m.generic, brand: m.brand, indication: m.indication }));
+  };
+
+  useEffect(() => {
+    const term = value.trim();
+    if (term.length < 2) { setResults([]); setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const rx = await searchRxNorm(term);
+      if (cancelled) return;
+      const local = localMatches(term);
+      const indicationByName = new Map(MEDICATIONS.map((m) => [m.generic.toLowerCase(), m.indication]));
+      let merged: Array<{ generic: string; brand?: string; rxcui?: string; indication?: string }>;
+      if (rx.length === 0) {
+        // RxNorm unavailable or no hits → fall back to local list.
+        merged = local;
+      } else {
+        merged = rx.map((m: RxMatch) => ({
+          generic: m.generic,
+          brand: m.brand,
+          rxcui: m.rxcui,
+          indication: indicationByName.get(m.generic.toLowerCase()),
+        }));
+      }
+      setResults(merged);
+      setLoading(false);
+    }, 300);
+    return () => { cancelled = true; clearTimeout(handle); };
+  }, [value]);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const note =
+    lang === "sv"
+      ? "Mediciner hämtas från NIH:s RxNorm-databas (100 000+ läkemedel, generiska och varumärken). ATC-klassificering tillhandahålls av WHO. Du kan också skriva valfritt läkemedelsnamn fritt."
+      : "Medications are sourced from the NIH RxNorm database (100,000+ drugs, generic and brand names). ATC classification codes are provided by the WHO. You may also type any medication name freely.";
+
+  const pick = async (r: { generic: string; brand?: string; rxcui?: string; indication?: string }) => {
+    // Optimistic commit first (works even if ATC fetch fails).
+    onSelectMed({ generic: r.generic, brand: r.brand, indication: r.indication, atc_code: null });
+    setOpen(false);
+    if (!r.rxcui) return;
+    const [brand, atc] = await Promise.all([
+      r.brand ? Promise.resolve(r.brand) : getBrandName(r.rxcui),
+      getAtcCode(r.rxcui),
+    ]);
+    onSelectMed({
+      generic: r.generic,
+      brand: brand ?? r.brand,
+      indication: r.indication,
+      atc_code: atc,
+    });
+  };
+
   return (
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
-      <AutocompleteInput
-        value={value}
-        placeholder={ph}
-        suggestions={MEDICATION_LABELS}
-        onChange={(v) => {
-          const entry = findMedicationByLabel(v);
-          if (entry) onSelectMed(entry);
-          else onChange(v);
-        }}
-      />
+      <div ref={wrapRef} className="relative">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#6BBF8E]">
+          <input
+            value={value}
+            onChange={(e) => { onChange(e.target.value); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            placeholder={ph}
+            className="flex-1 bg-transparent text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:outline-none"
+          />
+          {code && (
+            <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              {code}
+            </span>
+          )}
+        </div>
+        {open && value.trim().length >= 2 && (loading || results.length > 0) && (
+          <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+            <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              RxNorm — NIH drug database
+            </div>
+            {loading && results.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-500">Searching…</div>
+            )}
+            {results.map((r, i) => (
+              <button
+                key={`${r.rxcui ?? r.generic}-${i}`}
+                type="button"
+                onClick={() => pick(r)}
+                className="block w-full px-3 py-2 text-left text-sm text-[#0D1B2A] hover:bg-[#F8F9FA]"
+              >
+                <span className="font-medium">{r.generic}</span>
+                {r.brand && <span className="text-gray-500"> ({r.brand})</span>}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <p className="pt-1 text-[11px] leading-snug text-gray-500">{note}</p>
     </div>
   );
 }
