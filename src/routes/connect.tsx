@@ -159,7 +159,7 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
       <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-          <span className="text-lg font-bold text-[#0D1B2A]">GlobeDoc</span>
+          <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
         </div>
       </header>
 
@@ -465,7 +465,7 @@ function PassportView({
       <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-          <span className="text-lg font-bold text-[#0D1B2A]">GlobeDoc</span>
+          <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
         </div>
         <button
           type="button"
