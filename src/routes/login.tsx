@@ -1,237 +1,100 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { z } from "zod";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { BrandHeader } from "@/components/BrandHeader";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { useI18n } from "@/lib/i18n";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — GlobeDoc" },
-      { name: "description", content: "Sign in to your GlobeDoc Health Passport account." },
+      { title: "GlobeDoc — Your Deep Health" },
+      { name: "description", content: "GlobeDoc Health Passport — join or connect with a patient." },
     ],
   }),
-  component: LoginPage,
+  component: LandingPage,
 });
 
-const loginSchema = z.object({
-  email: z.string().trim().email().max(255),
-  password: z.string().min(1).max(128),
-});
-
-function LoginPage() {
-  const { t } = useI18n();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [mode, setMode] = useState<"login" | "forgot">("login");
-  const [resetEmail, setResetEmail] = useState("");
-  const [resetSent, setResetSent] = useState(false);
-  const [resetSubmitting, setResetSubmitting] = useState(false);
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const parsed = loginSchema.safeParse({ email, password });
-    if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
-      return;
-    }
-    setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword(parsed.data);
-    setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    navigate({ to: "/home" });
-  };
-
-  const onReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const parsed = z.string().trim().email().max(255).safeParse(resetEmail);
-    if (!parsed.success) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-    setResetSubmitting(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setResetSubmitting(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    setResetSent(true);
-  };
-
+function LandingPage() {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-start bg-background px-5 py-10">
+    <div className="relative flex min-h-screen flex-col bg-background">
       <LanguageToggle className="absolute right-4 top-4" />
 
-      <BrandHeader />
+      <main className="flex w-full flex-1 flex-col items-center px-5 pb-16 pt-10">
+        <BrandHeader />
 
-      {mode === "login" ? (
-        <form
-          onSubmit={onSubmit}
-          className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]"
-        >
-          <h2 className="text-center text-2xl font-bold text-foreground">{t("login.welcome")}</h2>
-
-          <div className="mt-6 space-y-5">
-            <Field
-              id="email"
-              label={t("login.email")}
-              icon={<Mail className="h-5 w-5" />}
-            >
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent pl-11 pr-3 py-3 text-foreground outline-none placeholder:text-muted-foreground/60"
-              />
-            </Field>
-
-            <Field id="password" label={t("login.password")} icon={<Lock className="h-5 w-5" />}>
-              <input
-                id="password"
-                type={showPw ? "text" : "password"}
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent pl-11 pr-11 py-3 text-foreground outline-none placeholder:text-muted-foreground/60"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showPw ? "Hide password" : "Show password"}
-              >
-                {showPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </Field>
-          </div>
-
-          <div className="mt-3 text-right">
-            <button
-              type="button"
-              onClick={() => { setResetEmail(email); setResetSent(false); setMode("forgot"); }}
-              className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
-            >
-              Forgot password?
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-4 w-full rounded-full bg-brand-blue px-4 py-3.5 text-base font-semibold text-brand-blue-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+        {/* Primary CTA */}
+        <div className="mt-12 flex w-full max-w-md flex-col items-center">
+          <Link
+            to="/signup"
+            className="flex w-full items-center justify-center rounded-full bg-emerald-600 px-6 py-4 text-lg font-semibold text-white shadow-[0_10px_30px_-10px_rgba(5,150,105,0.55)] transition-opacity hover:opacity-95"
           >
-            {t("login.submit")}
-          </button>
-
-          <p className="mt-5 text-center text-sm text-muted-foreground">
-            {t("login.new")}{" "}
-            <Link to="/signup" className="font-semibold text-brand-blue hover:underline">
-              {t("login.create")}
+            Join
+          </Link>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Already a member?{" "}
+            <Link to="/signin" className="font-semibold text-brand-blue hover:underline">
+              Log in
             </Link>
           </p>
-
-          <div className="mt-4 text-center">
-            <Link to="/legal" className="text-sm text-muted-foreground underline underline-offset-2">
-              {t("login.legal")}
-            </Link>
-          </div>
-        </form>
-      ) : (
-        <div className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]">
-          <h2 className="text-center text-2xl font-bold text-foreground">Reset your password</h2>
-
-          {resetSent ? (
-            <div className="mt-6 space-y-5 text-center">
-              <p className="text-sm text-foreground">
-                Check your email — we've sent you a password reset link.
-              </p>
-              <button
-                type="button"
-                onClick={() => setMode("login")}
-                className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
-              >
-                Back to login
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={onReset}>
-              <p className="mt-2 text-center text-sm text-muted-foreground">
-                Enter your email and we'll send you a reset link.
-              </p>
-              <div className="mt-6">
-                <Field id="reset-email" label={t("login.email")} icon={<Mail className="h-5 w-5" />}>
-                  <input
-                    id="reset-email"
-                    type="email"
-                    autoComplete="email"
-                    value={resetEmail}
-                    onChange={(e) => setResetEmail(e.target.value)}
-                    className="w-full bg-transparent pl-11 pr-3 py-3 text-foreground outline-none placeholder:text-muted-foreground/60"
-                  />
-                </Field>
-              </div>
-              <button
-                type="submit"
-                disabled={resetSubmitting}
-                className="mt-6 w-full rounded-full bg-brand-blue px-4 py-3.5 text-base font-semibold text-brand-blue-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
-              >
-                {resetSubmitting ? "Sending..." : "Send reset link"}
-              </button>
-              <div className="mt-4 text-center">
-                <button
-                  type="button"
-                  onClick={() => setMode("login")}
-                  className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
-                >
-                  Back to login
-                </button>
-              </div>
-            </form>
-          )}
         </div>
-      )}
-    </div>
-  );
-}
 
-function Field({
-  id,
-  label,
-  icon,
-  children,
-}: {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-foreground">
-        {label}
-      </label>
-      <div className="relative flex items-center rounded-full border border-input bg-card transition-colors focus-within:border-brand-blue">
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
-          {icon}
-        </span>
-        {children}
-      </div>
+        {/* Divider */}
+        <div className="mt-12 w-full max-w-md">
+          <div className="h-px w-full bg-border" />
+        </div>
+
+        {/* Connect section */}
+        <section className="mt-10 w-full max-w-md text-center">
+          <h2 className="text-xl font-bold text-foreground">Healthcare Professional?</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Enter a patient's pairing code to access their GlobeDoc Health Passport
+          </p>
+          <Link
+            to="/connect"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+          >
+            Connect with Patient
+          </Link>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-[#0f172a] text-slate-300">
+        <div className="mx-auto w-full max-w-5xl px-6 py-10">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Company</h3>
+              <ul className="mt-3 space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white">About</a></li>
+                <li><a href="#" className="hover:text-white">Mission</a></li>
+                <li><a href="#" className="hover:text-white">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Legal</h3>
+              <ul className="mt-3 space-y-2 text-sm">
+                <li><Link to="/legal" className="hover:text-white">Privacy Policy</Link></li>
+                <li><Link to="/legal" className="hover:text-white">Terms of Service</Link></li>
+                <li><Link to="/legal" className="hover:text-white">GDPR</Link></li>
+              </ul>
+            </div>
+            <div className="sm:text-right">
+              <p className="text-sm text-slate-400">
+                © 2026 GlobeDoc · Built for every patient on Earth
+              </p>
+            </div>
+          </div>
+          <div className="mt-8 border-t border-slate-800 pt-5 text-center">
+            <a
+              href="https://globedoc.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-slate-400 underline underline-offset-2 hover:text-white"
+            >
+              For full information visit globedoc.com
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
