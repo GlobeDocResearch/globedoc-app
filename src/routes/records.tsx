@@ -175,6 +175,10 @@ function RecordsPage() {
   }
 
   async function deleteEntry(entry: RecordEntry) {
+    if (entry.source_kind) {
+      toast.info(t.passportDeleteHint);
+      return;
+    }
     if (!confirm(t.confirmDelete)) return;
     if (entry.file_path) {
       await supabase.storage.from("records").remove([entry.file_path]);
@@ -184,6 +188,26 @@ function RecordsPage() {
     toast.success(t.deleted);
     await reload(userId);
   }
+
+  // Timeline entries: anything with an event year (passport-derived rows always
+  // carry one; manual rows are included if they happen to have an event_year).
+  const timelineEntries = useMemo(
+    () =>
+      entries
+        .filter((e) => (e.event_year ?? "").trim().length > 0)
+        .slice()
+        .sort((a, b) => Number(a.event_year) - Number(b.event_year)),
+    [entries],
+  );
+  const timelineGroups = useMemo(() => {
+    const map = new Map<string, RecordEntry[]>();
+    for (const e of timelineEntries) {
+      const y = e.event_year!;
+      if (!map.has(y)) map.set(y, []);
+      map.get(y)!.push(e);
+    }
+    return Array.from(map.entries());
+  }, [timelineEntries]);
 
   const openEntry = useMemo(() => entries.find(e => e.id === openEntryId) ?? null, [entries, openEntryId]);
 
