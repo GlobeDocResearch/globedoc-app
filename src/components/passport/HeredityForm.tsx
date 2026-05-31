@@ -616,7 +616,7 @@ export default function HeredityForm() {
                       onClick={() => toggleCondition(c.v)}
                       className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                         on
-                          ? "border-[#E0A066] bg-[#E0A066] text-white"
+                          ? "border-[#6B7280] bg-[#6B7280] text-white"
                           : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                       }`}
                     >
@@ -815,7 +815,7 @@ export default function HeredityForm() {
                               value={s.specifyByCondition[c.v] ?? ""}
                               onChange={(e) => setConditionSpecify(c.v, e.target.value)}
                               onKeyDown={onEnter}
-                              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#6B7280] focus:outline-none"
                             />
                           </div>
                         )}
@@ -843,7 +843,7 @@ export default function HeredityForm() {
                   onClick={toggleNoneOfAbove}
                   className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
                     s.noneOfAbove
-                      ? "border-[#E0A066] bg-[#FFF7EE] text-[#8a5a20]"
+                      ? "border-[#6B7280] bg-[#F3F4F6] text-[#374151]"
                       : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                   }`}
                 >
@@ -876,7 +876,7 @@ export default function HeredityForm() {
                       max={20}
                       value={s.sibling_count}
                       onChange={(e) => setField("sibling_count", e.target.value)}
-                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#6B7280] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -886,7 +886,7 @@ export default function HeredityForm() {
                       onChange={(e) => setField("sibling_conditions", e.target.value)}
                       placeholder={t("sibling_conditions_ph")}
                       rows={3}
-                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -915,7 +915,7 @@ export default function HeredityForm() {
                       onChange={(e) => setField("findings", e.target.value)}
                       placeholder={t("findings_ph")}
                       rows={3}
-                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
                     />
                   </div>
                   <YesNo
@@ -1062,7 +1062,7 @@ function ParentSection({
                   value={value.age_at_death}
                   onChange={(e) => onChange({ age_at_death: e.target.value })}
                   onKeyDown={onEnter}
-                  className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E0A066] focus:outline-none"
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#6B7280] focus:outline-none"
                 />
               </div>
               <div>
@@ -1073,7 +1073,7 @@ function ParentSection({
                   onChange={(e) => onChange({ cause_of_death: e.target.value })}
                   onKeyDown={onEnter}
                   placeholder={t("cause_ph")}
-                  className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
                 />
               </div>
             </div>
@@ -1087,7 +1087,7 @@ function ParentSection({
                 onChange={(e) => onChange({ year_born: e.target.value })}
                 onKeyDown={onEnter}
                 placeholder={t("year_born_ph")}
-                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
               />
             </div>
           )}
@@ -1099,7 +1099,7 @@ function ParentSection({
               onKeyDown={onEnter}
               placeholder={t("known_conditions_ph")}
               rows={3}
-              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
             />
           </div>
         </div>
@@ -1171,7 +1171,7 @@ function Txt({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
       />
     </div>
   );
@@ -1195,7 +1195,7 @@ function Pills({
           onClick={() => onChange(o.v)}
           className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
             value === o.v
-              ? "border-[#E0A066] bg-[#E0A066] text-white"
+              ? "border-[#6B7280] bg-[#6B7280] text-white"
               : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
           }`}
         >
@@ -1228,7 +1228,7 @@ function YesNo({
           onClick={() => onChange(true)}
           className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
             value === true
-              ? "border-[#E0A066] bg-[#E0A066] text-white"
+              ? "border-[#6B7280] bg-[#6B7280] text-white"
               : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
           }`}
         >
@@ -1239,7 +1239,7 @@ function YesNo({
           onClick={() => onChange(false)}
           className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
             value === false
-              ? "border-[#E0A066] bg-[#E0A066] text-white"
+              ? "border-[#6B7280] bg-[#6B7280] text-white"
               : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
           }`}
         >
@@ -1286,7 +1286,7 @@ function AddOtherCondition({
         type="button"
         disabled={disabled}
         onClick={() => setOpen(true)}
-        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#C4854A] hover:underline disabled:opacity-40"
+        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#6B7280] hover:underline disabled:opacity-40"
       >
         + {buttonLabel}
       </button>
@@ -1323,14 +1323,14 @@ function AddOtherCondition({
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } if (e.key === "Escape") cancel(); }}
           placeholder={whichConditionPh}
-          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
         />
       </div>
       <div className="flex gap-2">
         <button
           type="button"
           onClick={commit}
-          className="rounded-xl bg-[#E0A066] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#C4854A]"
+          className="rounded-xl bg-[#6B7280] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#6B7280]"
         >
           Add
         </button>
@@ -1382,7 +1382,7 @@ function RelativeChecklist({
           value={other}
           onChange={(e) => setOther(e.target.value)}
           placeholder={lang === "sv" ? "Specificera…" : "Specify…"}
-          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+          className="w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
         />
       )}
     </div>
@@ -1487,7 +1487,7 @@ function DnaSection({
             value={other}
             onChange={(e) => onChange({ dna_other: e.target.value })}
             placeholder={t("dna_other_ph")}
-            className="mt-2 w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#E0A066] focus:outline-none"
+            className="mt-2 w-full rounded-xl border border-[#E5E7EB] bg-white p-2 text-sm placeholder:text-gray-400 focus:border-[#6B7280] focus:outline-none"
           />
         )}
       </div>
@@ -1504,7 +1504,7 @@ function DnaSection({
           type="button"
           disabled={uploading || !userId}
           onClick={() => fileRef.current?.click()}
-          className="w-full rounded-xl border border-[#E0A066] bg-white py-2.5 text-sm font-semibold text-[#C4854A] hover:bg-[#FFF7EE] disabled:opacity-50"
+          className="w-full rounded-xl border border-[#6B7280] bg-white py-2.5 text-sm font-semibold text-[#6B7280] hover:bg-[#F3F4F6] disabled:opacity-50"
         >
           {uploading ? t("dna_uploading") : `+ ${t("dna_upload_btn")}`}
         </button>
@@ -1528,7 +1528,7 @@ function DnaSection({
         )}
       </div>
 
-      <p className="mt-4 rounded-xl bg-[#FFF7EE] p-3 text-[11px] leading-relaxed text-[#8a5a20]">
+      <p className="mt-4 rounded-xl bg-[#F3F4F6] p-3 text-[11px] leading-relaxed text-[#374151]">
         {t("dna_privacy")}
       </p>
     </section>
