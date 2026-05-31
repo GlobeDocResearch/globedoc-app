@@ -418,9 +418,12 @@ export default function VaccinationsForm() {
   const resolver = useLeaveGuard(() => dirty && !bypassGuardRef.current);
 
   const infoText = useMemo(() => {
-    if (!birthYear) return t("info_no_year");
-    if (nationality === "Sweden") return t("info_sweden").replace("{year}", birthYear);
-    return t("info_other");
+    if (!birthYear) return t("caveat_no_year");
+    if (nationality && isSupportedCountry(nationality)) {
+      return t("caveat_supported").replace("{country}", nationality).replace("{year}", birthYear);
+    }
+    const forYear = birthYear ? (lang === "sv" ? ` för någon född ${birthYear}` : ` for someone born in ${birthYear}`) : "";
+    return t("caveat_generic").replace("{forYear}", forYear);
   }, [birthYear, nationality, lang]);
 
   if (loading) return <div className="min-h-screen bg-white" />;
