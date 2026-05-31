@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
-import { MEDICATION_LABELS, findMedicationByLabel, MEDICATIONS } from "@/lib/medications";
+import { MEDICATIONS } from "@/lib/medications";
 import { searchRxNorm, getBrandName, getAtcCode, type RxMatch } from "@/lib/rxnorm";
 
 const ACCENT = "#6BBF8E";
