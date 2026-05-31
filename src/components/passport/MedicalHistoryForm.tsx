@@ -951,6 +951,9 @@ function ConditionTagInput({
   const [commonOpen, setCommonOpen] = useState(false);
   const [icdResults, setIcdResults] = useState<Icd11Match[]>([]);
   const [icdLoading, setIcdLoading] = useState(false);
+  const [icdBrowseOpen, setIcdBrowseOpen] = useState(false);
+  const [icdBrowseQ, setIcdBrowseQ] = useState("");
+  const [icdBrowseResults, setIcdBrowseResults] = useState<Icd11Match[]>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const used = useMemo(() => new Set(tags.map((t) => t.condition_name.toLowerCase())), [tags]);
@@ -1119,7 +1122,26 @@ function ConditionTagInput({
         >
           Browse by speciality →
         </button>
+        <button
+          type="button"
+          onClick={() => { setIcdBrowseQ(""); setIcdBrowseResults([]); setIcdBrowseOpen(true); }}
+          className="self-start text-xs font-medium text-[#5B6BD4] hover:underline"
+        >
+          Browse ICD-11 — WHO Global Classification →
+        </button>
       </div>
+
+      <Icd11BrowserSheet
+        open={icdBrowseOpen}
+        onOpenChange={setIcdBrowseOpen}
+        lang={lang}
+        q={icdBrowseQ}
+        setQ={setIcdBrowseQ}
+        results={icdBrowseResults}
+        setResults={setIcdBrowseResults}
+        used={used}
+        onPick={(name, code) => { commit(name, code); setIcdBrowseOpen(false); }}
+      />
 
       <Sheet open={commonOpen} onOpenChange={setCommonOpen}>
         <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
@@ -1323,5 +1345,113 @@ function YesNo({ label, value, onChange, yes, no }: { label: string; value: bool
         <button type="button" onClick={() => onChange(false)} className={`px-4 py-1.5 text-xs ${value === false ? "bg-[#5B6BD4] text-white" : "text-gray-700 hover:bg-[#F8F9FA]"}`}>{no}</button>
       </div>
     </div>
+  );
+}
+
+function Icd11BrowserSheet({
+  open, onOpenChange, lang, q, setQ, results, setResults, used, onPick,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  lang: Lang;
+  q: string;
+  setQ: (v: string) => void;
+  results: Icd11Match[];
+  setResults: (r: Icd11Match[]) => void;
+  used: Set<string>;
+  onPick: (name: string, code: string | null) => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const term = q.trim();
+    if (term.length < 3) { setResults([]); setLoading(false); return; }
+    const ctrl = new AbortController();
+    setLoading(true);
+    const handle = setTimeout(async () => {
+      const res = await searchIcd11(term, lang, ctrl.signal);
+      setResults(res);
+      setLoading(false);
+    }, 300);
+    return () => { clearTimeout(handle); ctrl.abort(); };
+  }, [q, lang, open, setResults]);
+
+  const placeholder =
+    lang === "sv"
+      ? "Sök ICD-11 (t.ex. astma, diabetes)…"
+      : "Search ICD-11 (e.g. asthma, diabetes)…";
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle>ICD-11 — WHO Global Classification</SheetTitle>
+        </SheetHeader>
+        <div className="mt-4">
+          <input
+            autoFocus
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={placeholder}
+            className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
+          />
+          <p className="mt-2 text-[11px] leading-snug text-gray-500">
+            {lang === "sv"
+              ? "Sök på ditt föredragna språk. Resultat hämtas direkt från WHO:s ICD-11."
+              : "Search in your preferred language. Results stream live from the WHO ICD-11 API."}
+          </p>
+        </div>
+        <div className="mt-3 space-y-1.5 pb-8">
+          {loading && results.length === 0 && (
+            <div className="px-1 py-2 text-xs text-gray-500">
+              {lang === "sv" ? "Söker…" : "Searching…"}
+            </div>
+          )}
+          {!loading && q.trim().length >= 3 && results.length === 0 && (
+            <div className="px-1 py-2 text-xs text-gray-500">
+              {lang === "sv" ? "Inga träffar." : "No matches."}
+            </div>
+          )}
+          {results.map((r) => {
+            const isUsed = used.has(r.title.toLowerCase());
+            return (
+              <button
+                key={`${r.code}-${r.title}`}
+                type="button"
+                disabled={isUsed}
+                onClick={() => onPick(r.title, r.code)}
+                className={`flex w-full flex-col gap-0.5 rounded-lg border px-3 py-2 text-left text-sm ${
+                  isUsed
+                    ? "cursor-not-allowed border-[#E5E7EB] bg-[#F1F2F6] text-gray-400"
+                    : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate font-medium">
+                    {isUsed ? `✓ ${r.title}` : r.title}
+                  </span>
+                  <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                    {r.code}
+                  </span>
+                </div>
+                {r.description && (
+                  <span className="truncate text-[11px] text-gray-500">{r.description}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="sticky bottom-0 -mx-6 border-t border-[#E5E7EB] bg-white px-6 py-3">
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            className="w-full rounded-md border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#0D1B2A] hover:bg-[#F8F9FA]"
+          >
+            {lang === "sv" ? "Stäng" : "Close"}
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
