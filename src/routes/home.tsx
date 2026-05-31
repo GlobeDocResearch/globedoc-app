@@ -22,6 +22,7 @@ function HomePage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [locations, setLocations] = useState<MapLocation[]>([]);
 
   useEffect(() => {
@@ -35,12 +36,13 @@ function HomePage() {
       if (!mounted) return;
       setEmail(user.email ?? "");
       const [{ data: profile }, hs, rl] = await Promise.all([
-        supabase.from("profiles").select("first_name").eq("user_id", user.id).maybeSingle(),
+        supabase.from("profiles").select("first_name, avatar_url").eq("user_id", user.id).maybeSingle(),
         supabase.from("hospital_stays").select("id, city, country, hospital_country").eq("user_id", user.id),
         (supabase as any).from("record_locations").select("id, city, country").eq("user_id", user.id),
       ]);
       if (!mounted) return;
       if (profile?.first_name) setFirstName(profile.first_name);
+      if ((profile as any)?.avatar_url) setAvatarUrl((profile as any).avatar_url);
       const locs: MapLocation[] = [];
       for (const r of (hs.data ?? []) as any[]) {
         locs.push({ id: `hs-${r.id}`, city: r.city, country: r.country ?? r.hospital_country });
@@ -94,8 +96,12 @@ function HomePage() {
         {/* User section */}
         <section className="flex items-center gap-4">
           <div className="relative">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-100">
-              <img src={logo} alt="" className="h-[3.75rem] w-[3.75rem]" />
+            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-100 shadow-sm ring-1 ring-gray-100">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-8 w-8 text-gray-400" />
+              )}
             </div>
             <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
           </div>
