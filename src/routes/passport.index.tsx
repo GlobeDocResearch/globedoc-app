@@ -222,6 +222,8 @@ function PassportPage() {
       <section className="mt-6 space-y-3 px-5">
         {SECTIONS.map((s) => {
           const isDone = done[s.key];
+          const filledText = DARK_TEXT_ON_FILL[s.key] ? DARK_TEXT : "#FFFFFF";
+          const filledSub = DARK_TEXT_ON_FILL[s.key] ? "rgba(27,58,107,0.75)" : "rgba(255,255,255,0.85)";
           return (
             <button
               key={s.key}
@@ -235,8 +237,8 @@ function PassportPage() {
             >
               <span className="text-2xl">{s.emoji}</span>
               <div className="flex-1">
-                <h3 className="text-sm font-bold" style={{ color: isDone ? "#FFFFFF" : s.color }}>{s.title}</h3>
-                <p className="text-xs" style={{ color: isDone ? "rgba(255,255,255,0.85)" : "#4B5563" }}>{s.subtitle}</p>
+                <h3 className="text-sm font-bold" style={{ color: isDone ? filledText : s.color }}>{s.title}</h3>
+                <p className="text-xs" style={{ color: isDone ? filledSub : "#4B5563" }}>{s.subtitle}</p>
               </div>
             </button>
           );
