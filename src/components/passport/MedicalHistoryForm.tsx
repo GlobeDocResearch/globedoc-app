@@ -24,6 +24,7 @@ type Stay = {
   event: string;
   ichi_code: string | null;
   diagnosis: string;
+  diagnosis_code: string | null;
   year: string;
   institution: string;
   city: string;
