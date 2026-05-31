@@ -227,6 +227,7 @@ export default function MedicalHistoryForm() {
           event: r.event ?? "",
           ichi_code: r.ichi_code ?? null,
           diagnosis: r.diagnosis ?? "",
+          diagnosis_code: r.diagnosis_code ?? null,
           year: r.year ?? "",
           institution: r.institution ?? "",
           city: r.city ?? "",
