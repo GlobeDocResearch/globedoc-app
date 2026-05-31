@@ -184,32 +184,32 @@ function PassportPage() {
           {/* Top-left: History */}
           <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">History</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["medical-history"] ? "#FFFFFF" : SECTIONS[0].color }}>History</span>
           </Hex>
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} color={SECTIONS[1].color} filled={done["medications"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Medications</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["medications"] ? "#FFFFFF" : SECTIONS[1].color }}>Medications</span>
           </Hex>
           {/* Right: Vaccinations */}
           <Hex style={{ left: 200, top: 86 }} color={SECTIONS[2].color} filled={done["vaccinations"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[2].key)}>
             <span className="text-xl">{SECTIONS[2].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Vaccinations</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["vaccinations"] ? "#FFFFFF" : SECTIONS[2].color }}>Vaccinations</span>
           </Hex>
           {/* Bottom-right: Lifestyle & Risk */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Lifestyle</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["lifestyle"] ? "#FFFFFF" : SECTIONS[3].color }}>Lifestyle</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Heredity</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? "#FFFFFF" : SECTIONS[4].color }}>Heredity</span>
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} color={SECTIONS[5].color} filled={done["allergies"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[5].key)}>
             <span className="text-xl">{SECTIONS[5].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Allergies</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["allergies"] ? "#FFFFFF" : SECTIONS[5].color }}>Allergies</span>
           </Hex>
         </div>
       </section>
