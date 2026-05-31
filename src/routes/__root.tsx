@@ -130,6 +130,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <AuthSync />
+        <DomTranslator />
         <Outlet />
         <Toaster />
       </I18nProvider>
