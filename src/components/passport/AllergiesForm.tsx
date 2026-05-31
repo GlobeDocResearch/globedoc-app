@@ -909,7 +909,7 @@ function AllergySection({
                         <button
                           type="button"
                           aria-label={t("details")}
-                          className="rounded-md px-2 py-1 text-[11px] font-medium text-[#C45A4A] hover:bg-red-50"
+                          className="rounded-md px-2 py-1 text-[11px] font-medium text-[#EF3638] hover:bg-red-50"
                         >
                           {t("details")}
                         </button>
@@ -953,7 +953,7 @@ function AllergySection({
       <button
         type="button"
         onClick={onAdd}
-        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#C45A4A] hover:underline"
+        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#EF3638] hover:underline"
       >
         <Plus className="h-4 w-4" />
         {addLabel.replace(/^\+\s*/, "")}
