@@ -538,10 +538,17 @@ export default function MedicalHistoryForm() {
   const saveAll = async () => {
     if (!userId) return false;
     try {
-      // Save dirty tag years
-      for (const tag of [...current, ...past]) {
+      // Save dirty tag years (and mirror into Records)
+      for (const tag of current) {
         if (dirtyTags.has(tag.id)) {
           await supabase.from("medical_conditions").update({ year: tag.year || null }).eq("id", tag.id);
+          await syncConditionEntry(tag, "current");
+        }
+      }
+      for (const tag of past) {
+        if (dirtyTags.has(tag.id)) {
+          await supabase.from("medical_conditions").update({ year: tag.year || null }).eq("id", tag.id);
+          await syncConditionEntry(tag, "past");
         }
       }
       // Save any open dirty stay cards
