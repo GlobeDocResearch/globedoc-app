@@ -435,6 +435,8 @@ function ProfilePage() {
         </Modal>
       )}
 
+      <BetaSurvey open={surveyOpen} onClose={() => setSurveyOpen(false)} userId={userId} role="patient" />
+
       <BottomNav />
     </div>
   );
