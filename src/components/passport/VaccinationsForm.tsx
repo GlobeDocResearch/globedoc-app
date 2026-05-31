@@ -486,33 +486,16 @@ export default function VaccinationsForm() {
                       {c.name}
                     </button>
                   ))}
-                {/* "Other" chip — quick free-text add */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const name = window.prompt(lang === "sv" ? "Vaccinets namn" : "Vaccine name");
-                    if (!name || !name.trim()) return;
-                    const n = name.trim();
-                    setChildhood((arr) =>
-                      arr.find((x) => x.name === n)
-                        ? arr
-                        : [...arr, { name: n, descEn: "", descSv: "", status: "likely_received", year_received: "" }],
-                    );
-                    markDirty();
-                  }}
-                  className="rounded-full border border-dashed border-[#9B7FD4] bg-white px-3 py-1.5 text-xs font-medium text-[#9B7FD4] hover:bg-[#F5F0FB]"
-                >
-                  {lang === "sv" ? "Annat" : "Other"}
-                </button>
-                {/* "+ Add vaccine" — opens inline form */}
-                <button
-                  type="button"
-                  onClick={() => setAddVaxOpen((v) => !v)}
-                  className="rounded-full border border-[#9B7FD4] bg-white px-3 py-1.5 text-xs font-medium text-[#9B7FD4] hover:bg-[#F5F0FB]"
-                >
-                  + {t("add_vaccine")}
-                </button>
               </div>
+              <button
+                type="button"
+                onClick={() => setAddVaxOpen((v) => !v)}
+                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold"
+                style={{ color: ACCENT_2 }}
+              >
+                <Plus className="h-4 w-4" />
+                {t("add_vaccine")}
+              </button>
               {addVaxOpen && (
                 <div className="mt-3 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
                   <Input
