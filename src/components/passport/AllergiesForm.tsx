@@ -12,8 +12,8 @@ import { useLeaveGuard, LeaveDialog } from "./unsaved";
 import { AutocompleteInput, COMMON_MEDICATIONS } from "./AutocompleteInput";
 
 
-const ACCENT = "#EF3638";
-const ACCENT_2 = "#EF3638";
+const ACCENT = "#C93535";
+const ACCENT_2 = "#C93535";
 
 type Detail = {
   reaction_type?: string | null; // Rash | Urticaria | Angioedema | Anaphylaxis | Other
@@ -682,7 +682,7 @@ function DetailEditor({
                 onClick={() => onChange({ reaction_type: on ? null : r })}
                 className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
                   on
-                    ? "bg-[#EF3638] text-white border-[#EF3638]"
+                    ? "bg-[#C93535] text-white border-[#C93535]"
                     : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                 }`}
               >
@@ -704,7 +704,7 @@ function DetailEditor({
                 onClick={() => onChange({ severity: on ? null : sv })}
                 className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
                   on
-                    ? "bg-[#EF3638] text-white border-[#EF3638]"
+                    ? "bg-[#C93535] text-white border-[#C93535]"
                     : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-gray-50"
                 }`}
               >
@@ -766,7 +766,7 @@ function AllergySection({
   onRemove: (id: string) => void;
   nameSuggestions?: string[];
 }) {
-  const toneOn = "bg-[#EF3638] text-white border-[#EF3638]";
+  const toneOn = "bg-[#C93535] text-white border-[#C93535]";
   void chipTone;
 
   return (
@@ -909,7 +909,7 @@ function AllergySection({
                         <button
                           type="button"
                           aria-label={t("details")}
-                          className="rounded-md px-2 py-1 text-[11px] font-medium text-[#EF3638] hover:bg-red-50"
+                          className="rounded-md px-2 py-1 text-[11px] font-medium text-[#C93535] hover:bg-red-50"
                         >
                           {t("details")}
                         </button>
@@ -953,7 +953,7 @@ function AllergySection({
       <button
         type="button"
         onClick={onAdd}
-        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#EF3638] hover:underline"
+        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#C93535] hover:underline"
       >
         <Plus className="h-4 w-4" />
         {addLabel.replace(/^\+\s*/, "")}

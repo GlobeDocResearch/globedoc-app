@@ -9,8 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
 
-const ACCENT = "#E8640C";
-const ACCENT_2 = "#E8640C";
+const ACCENT = "#64C8F0";
+const ACCENT_2 = "#64C8F0";
 
 type State = {
   nothing: boolean;
@@ -676,7 +676,7 @@ export default function LifestyleForm() {
                         placeholder={t("alc_drinks_ph")}
                         value={s.alcohol_drinks_per_week}
                         onChange={(e) => set("alcohol_drinks_per_week", e.target.value)}
-                        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E8640C] focus:outline-none"
+                        className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#64C8F0] focus:outline-none"
                       />
                     </div>
                   )}
@@ -783,7 +783,7 @@ export default function LifestyleForm() {
                     inputMode="decimal"
                     value={s.height_cm}
                     onChange={(e) => set("height_cm", e.target.value)}
-                    className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E8640C] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#64C8F0] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -793,7 +793,7 @@ export default function LifestyleForm() {
                     inputMode="decimal"
                     value={s.weight_kg}
                     onChange={(e) => set("weight_kg", e.target.value)}
-                    className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E8640C] focus:outline-none"
+                    className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#64C8F0] focus:outline-none"
                   />
                 </div>
               </div>
@@ -1104,7 +1104,7 @@ function Txt({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#E8640C] focus:outline-none"
+      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm placeholder:text-gray-400 focus:border-[#64C8F0] focus:outline-none"
     />
   );
 }
@@ -1122,7 +1122,7 @@ function Sel({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#E8640C] focus:outline-none"
+      className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm focus:border-[#64C8F0] focus:outline-none"
     >
       <option value="">—</option>
       {options.map((o) => (
@@ -1150,7 +1150,7 @@ function Radios({
           key={o.v}
           className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors ${
             value === o.v
-              ? "border-[#E8640C] bg-[#E8640C]/5"
+              ? "border-[#64C8F0] bg-[#64C8F0]/5"
               : "border-[#E5E7EB] bg-white hover:bg-[#F8F9FA]"
           }`}
         >
@@ -1158,7 +1158,7 @@ function Radios({
             type="radio"
             checked={value === o.v}
             onChange={() => onChange(o.v)}
-            className="h-4 w-4 accent-[#E8640C]"
+            className="h-4 w-4 accent-[#64C8F0]"
           />
           <span>{o.l}</span>
         </label>
@@ -1187,7 +1187,7 @@ function Chips({
             onClick={() => onToggle(o.v)}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               on
-                ? "border-[#E8640C] bg-[#E8640C] text-white"
+                ? "border-[#64C8F0] bg-[#64C8F0] text-[#1B3A6B]"
                 : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
             }`}
           >
@@ -1245,7 +1245,7 @@ function YesNo({
           onClick={() => onChange(true)}
           className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
             value === true
-              ? "border-[#E8640C] bg-[#E8640C] text-white"
+              ? "border-[#64C8F0] bg-[#64C8F0] text-[#1B3A6B]"
               : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
           }`}
         >
@@ -1256,7 +1256,7 @@ function YesNo({
           onClick={() => onChange(false)}
           className={`flex-1 rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
             value === false
-              ? "border-[#E8640C] bg-[#E8640C] text-white"
+              ? "border-[#64C8F0] bg-[#64C8F0] text-[#1B3A6B]"
               : "border-[#E5E7EB] bg-white text-[#0D1B2A] hover:bg-[#F8F9FA]"
           }`}
         >

@@ -11,8 +11,8 @@ import { AutocompleteInput, COMMON_SUPPLEMENTS } from "./AutocompleteInput";
 import { MEDICATIONS } from "@/lib/medications";
 import { searchRxNorm, getBrandName, getAtcCode, type RxMatch } from "@/lib/rxnorm";
 
-const ACCENT = "#00A550";
-const ACCENT_2 = "#00A550";
+const ACCENT = "#0F8BE8";
+const ACCENT_2 = "#0F8BE8";
 
 type Rx = { id: string; drug_generic: string; brand_name: string; dose_form: string; frequency: string; indication: string; prescriber: string; atc_code: string; collapsed: boolean; persisted: boolean };
 type Otc = { id: string; product: string; dose: string; frequency: string; reason: string; collapsed: boolean; persisted: boolean };
@@ -439,7 +439,7 @@ export default function MedicationsForm() {
                 onBlur={() => { saveIntolerances(); setDirty(false); }}
                 placeholder={t("intolerances_ph")}
                 rows={4}
-                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#00A550] focus:outline-none"
+                className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#0F8BE8] focus:outline-none"
               />
             </section>
           </>
@@ -455,7 +455,7 @@ export default function MedicationsForm() {
             else { bypassGuardRef.current = false; return false; }
           }}
           icon={<Check className="h-4 w-4" />}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00A550] to-[#00A550] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#0F8BE8] to-[#0F8BE8] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
         >
           {t("save")}
         </SaveButton>
@@ -473,7 +473,7 @@ function Field({ label, value, ph, onChange }: { label: string; value: string; p
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={ph}
-        className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#00A550] focus:outline-none"
+        className="mt-1 w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#0F8BE8] focus:outline-none"
       />
     </div>
   );
@@ -581,7 +581,7 @@ function MedicationDrugField({
     <div>
       <label className="block text-xs text-gray-600">{label}</label>
       <div ref={wrapRef} className="relative">
-        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#00A550]">
+        <div className="mt-1 flex items-center gap-2 rounded-md border border-[#E5E7EB] bg-white px-3 py-2 focus-within:border-[#0F8BE8]">
           <input
             value={value}
             onChange={(e) => { onChange(e.target.value); setOpen(true); }}
