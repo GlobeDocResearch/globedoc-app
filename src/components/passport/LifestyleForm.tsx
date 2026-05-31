@@ -9,8 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
 
-const ACCENT = "#5BB8A8";
-const ACCENT_2 = "#3D9A8A";
+const ACCENT = "#2C5282";
+const ACCENT_2 = "#2C5282";
 
 type State = {
   nothing: boolean;

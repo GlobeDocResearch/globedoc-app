@@ -25,12 +25,12 @@ const SECTIONS: {
   subtitle: string;
   color: string;
 }[] = [
-  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#EAF3FB" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#E6F6E8" },
-  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#EEEAF7" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#BFE6E2" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#F2D6BC" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#FADDD7" },
+  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#1B3A6B" },
+  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#1A6B4A" },
+  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#3D2B7A" },
+  { key: "lifestyle", emoji: "🏃", title: "Lifestyle", subtitle: "Habits that matter clinically", color: "#2C5282" },
+  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#2C3E50" },
+  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#8B1A1A" },
 ];
 
 function PassportPage() {
@@ -184,32 +184,32 @@ function PassportPage() {
           {/* Top-left: History */}
           <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
             <span className="text-xl">{SECTIONS[0].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">History</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["medical-history"] ? "#FFFFFF" : SECTIONS[0].color }}>History</span>
           </Hex>
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} color={SECTIONS[1].color} filled={done["medications"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[1].key)}>
             <span className="text-xl">{SECTIONS[1].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Medications</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["medications"] ? "#FFFFFF" : SECTIONS[1].color }}>Medications</span>
           </Hex>
           {/* Right: Vaccinations */}
           <Hex style={{ left: 200, top: 86 }} color={SECTIONS[2].color} filled={done["vaccinations"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[2].key)}>
             <span className="text-xl">{SECTIONS[2].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Vaccinations</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["vaccinations"] ? "#FFFFFF" : SECTIONS[2].color }}>Vaccinations</span>
           </Hex>
           {/* Bottom-right: Lifestyle & Risk */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
             <span className="text-xl">{SECTIONS[3].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Lifestyle</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["lifestyle"] ? "#FFFFFF" : SECTIONS[3].color }}>Lifestyle</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
             <span className="text-xl">{SECTIONS[4].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Heredity</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? "#FFFFFF" : SECTIONS[4].color }}>Heredity</span>
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} color={SECTIONS[5].color} filled={done["allergies"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[5].key)}>
             <span className="text-xl">{SECTIONS[5].emoji}</span>
-            <span className="mt-1 text-[11px] font-bold text-[#0D1B2A]">Allergies</span>
+            <span className="mt-1 text-[11px] font-bold" style={{ color: done["allergies"] ? "#FFFFFF" : SECTIONS[5].color }}>Allergies</span>
           </Hex>
         </div>
       </section>
@@ -223,16 +223,16 @@ function PassportPage() {
               key={s.key}
               type="button"
               onClick={() => goSection(s.key)}
-              className="flex w-full items-center gap-4 rounded-2xl p-4 text-left transition-transform duration-200 hover:scale-[1.02]"
+              className="flex w-full items-center gap-4 rounded-r-xl bg-white p-4 text-left shadow-sm transition-transform duration-200 hover:scale-[1.02]"
               style={{
-                backgroundColor: isDone ? s.color : "transparent",
-                border: `2px solid ${s.color}`,
+                backgroundColor: isDone ? s.color : "#FFFFFF",
+                borderLeft: `6px solid ${s.color}`,
               }}
             >
               <span className="text-2xl">{s.emoji}</span>
               <div className="flex-1">
-                <h3 className="text-sm font-bold text-[#0D1B2A]">{s.title}</h3>
-                <p className="text-xs text-gray-600">{s.subtitle}</p>
+                <h3 className="text-sm font-bold" style={{ color: isDone ? "#FFFFFF" : s.color }}>{s.title}</h3>
+                <p className="text-xs" style={{ color: isDone ? "rgba(255,255,255,0.85)" : "#4B5563" }}>{s.subtitle}</p>
               </div>
             </button>
           );
