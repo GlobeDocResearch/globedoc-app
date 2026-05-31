@@ -465,6 +465,20 @@ function RecordEntryCard({
 
             <button type="button" onClick={onOpen} className="mt-3 block w-full text-left">
               <h3 className="text-base font-bold text-[#0D1B2A]">{entry.title}</h3>
+              {(entry.code_icd11 || entry.code_ichi) && (
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {entry.code_icd11 && (
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                      ICD-11 · {entry.code_icd11}
+                    </span>
+                  )}
+                  {entry.code_ichi && (
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                      ICHI · {entry.code_ichi}
+                    </span>
+                  )}
+                </div>
+              )}
               {entry.body && (
                 <p className="mt-1 line-clamp-2 text-sm text-gray-600">{entry.body}</p>
               )}
@@ -478,6 +492,10 @@ function RecordEntryCard({
                 </div>
               )}
             </button>
+
+            {isPassport && (
+              <p className="mt-2 text-[11px] italic text-gray-500">{t.passportDeleteHint}</p>
+            )}
 
             <div className="mt-3 flex items-center gap-1 text-gray-500">
               <button type="button" onClick={onOpen} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-gray-100">
