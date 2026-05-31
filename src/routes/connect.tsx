@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Link as LinkIcon, ShieldCheck, FileText, X, Loader2 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { addPairing } from "@/lib/proPairings";
 
 export const Route = createFileRoute("/connect")({
   head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
@@ -62,6 +64,22 @@ function ConnectPage() {
         return;
       }
       setData(json);
+      // If the Pro is signed in, persist this pairing for their dashboard.
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          addPairing(user.id, {
+            id: t,
+            patient_name: json.patient?.name ?? "Patient",
+            patient_dob: json.patient?.date_of_birth ?? null,
+            paired_at: new Date().toISOString(),
+            last_activity_at: new Date().toISOString(),
+            expires_at: json.session?.expires_at ?? new Date().toISOString(),
+          });
+        }
+      } catch {
+        /* ignore */
+      }
     } catch {
       toast.error("Could not load passport");
     }
