@@ -264,16 +264,16 @@ function ProfilePage() {
       </header>
 
       <main className="mx-auto w-full max-w-3xl space-y-4 px-4 py-6">
-        <h1 className="text-center text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
+        <h1 className="text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
 
-        {/* Avatar */}
-        <div className="flex flex-col items-center">
+        {/* Avatar + name (left-aligned) */}
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={handleAvatarClick}
             disabled={uploadingAvatar}
             aria-label="Change profile photo"
-            className="relative h-24 w-24 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
+            className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
           >
             {profile?.avatar_url ? (
               <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
@@ -284,6 +284,12 @@ function ProfilePage() {
               <Camera className="h-3.5 w-3.5" />
             </span>
           </button>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-semibold text-[#0D1B2A]">
+              {[profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || (email ? email.split("@")[0] : "")}
+            </p>
+            {email && <p className="truncate text-sm text-gray-500">{email}</p>}
+          </div>
           <input
             ref={fileInputRef}
             type="file"
@@ -293,6 +299,7 @@ function ProfilePage() {
             onChange={handleAvatarChange}
           />
         </div>
+
 
 
         {/* Personal Information */}
