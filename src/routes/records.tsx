@@ -279,17 +279,25 @@ function RecordsPage() {
           </button>
         </div>
 
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t.searchPh}
+          className="mt-4 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+        />
+
         {loading ? null : view === "feed" ? (
-          entries.length === 0 ? (
+          filteredEntries.length === 0 ? (
             <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                 <FileText className="h-7 w-7 text-gray-400" />
               </div>
-              <p className="mt-4 text-sm text-gray-600">{t.empty}</p>
+              <p className="mt-4 text-sm text-gray-600">{searchQuery.trim() ? t.noMatches : t.empty}</p>
             </div>
           ) : (
             <ul className="mt-6 space-y-3">
-              {entries.map(e => (
+              {filteredEntries.map(e => (
                 <RecordEntryCard
                   key={e.id}
                   entry={e}
@@ -310,7 +318,7 @@ function RecordsPage() {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
               <CalendarDays className="h-7 w-7 text-gray-400" />
             </div>
-            <p className="mt-4 text-sm text-gray-600">{t.timelineEmpty}</p>
+            <p className="mt-4 text-sm text-gray-600">{searchQuery.trim() ? t.noMatches : t.timelineEmpty}</p>
           </div>
         ) : (
           <div className="mt-6">
