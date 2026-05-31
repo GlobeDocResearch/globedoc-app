@@ -30,6 +30,8 @@ type RecordEntry = {
   created_at: string;
   source_kind: string | null;
   event_year: string | null;
+  code_icd11: string | null;
+  code_ichi: string | null;
 };
 
 type Comment = {
