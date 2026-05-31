@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
 import { COUNTRIES } from "@/lib/countries";
 import {
-  WHO_GENERIC,
   isSupportedCountry,
   eligibleProgrammeFor,
 } from "@/lib/childhoodVaccines";
