@@ -1055,7 +1055,7 @@ function ConditionTagInput({
           className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
         />
         {open && q.trim() && (
-          <div className="absolute z-10 mt-1 max-h-80 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+          <div className="absolute z-50 mt-1 max-h-80 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             {matches.map((m) => (
               <button
                 key={m}
@@ -1261,20 +1261,40 @@ function ProcedureField({
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<IchiMatch[]>([]);
   const [loading, setLoading] = useState(false);
+  const [browseOpen, setBrowseOpen] = useState(false);
+  const [browseQ, setBrowseQ] = useState("");
+  const [browseResults, setBrowseResults] = useState<IchiMatch[]>([]);
+  const [browseLoading, setBrowseLoading] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const term = value.trim();
     if (term.length < 3) { setResults([]); setLoading(false); return; }
-    const ctrl = new AbortController();
+    let cancelled = false;
     setLoading(true);
     const handle = setTimeout(async () => {
-      const res = await searchIchi(term, lang, ctrl.signal);
+      const res = await searchIchi(term, lang);
+      if (cancelled) return;
       setResults(res);
       setLoading(false);
     }, 300);
-    return () => { clearTimeout(handle); ctrl.abort(); };
+    return () => { cancelled = true; clearTimeout(handle); };
   }, [value, lang]);
+
+  useEffect(() => {
+    if (!browseOpen) return;
+    const term = browseQ.trim();
+    if (term.length < 3) { setBrowseResults([]); setBrowseLoading(false); return; }
+    let cancelled = false;
+    setBrowseLoading(true);
+    const handle = setTimeout(async () => {
+      const res = await searchIchi(term, lang);
+      if (cancelled) return;
+      setBrowseResults(res);
+      setBrowseLoading(false);
+    }, 300);
+    return () => { cancelled = true; clearTimeout(handle); };
+  }, [browseQ, lang, browseOpen]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -1308,7 +1328,7 @@ function ProcedureField({
           )}
         </div>
         {open && value.trim().length >= 3 && (loading || results.length > 0) && (
-          <div className="absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
+          <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-lg">
             <div className="border-b border-[#E5E7EB] bg-[#F8F9FA] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
               ICHI — WHO International Classification of Health Interventions
             </div>
@@ -1332,6 +1352,69 @@ function ProcedureField({
         )}
       </div>
       <p className="pt-1 text-[11px] leading-snug text-gray-500">{infoNote}</p>
+      <button
+        type="button"
+        onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
+        className="mt-1 text-xs font-medium text-[#5B6BD4] hover:underline"
+      >
+        Browse ICHI — WHO Procedures Classification →
+      </button>
+
+      <Sheet open={browseOpen} onOpenChange={setBrowseOpen}>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>ICHI — WHO Procedures Classification</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4">
+            <input
+              autoFocus
+              value={browseQ}
+              onChange={(e) => setBrowseQ(e.target.value)}
+              placeholder={lang === "sv" ? "Sök ICHI (t.ex. appendektomi)…" : "Search ICHI (e.g. appendectomy)…"}
+              className="w-full rounded-xl border border-[#E5E7EB] bg-white p-3 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#5B6BD4] focus:outline-none"
+            />
+            <p className="mt-2 text-[11px] leading-snug text-gray-500">
+              {lang === "sv"
+                ? "Sök på ditt föredragna språk. Resultat hämtas direkt från WHO:s ICHI."
+                : "Search in your preferred language. Results stream live from the WHO ICHI API."}
+            </p>
+          </div>
+          <div className="mt-3 space-y-1.5 pb-8">
+            {browseLoading && browseResults.length === 0 && (
+              <div className="px-1 py-2 text-xs text-gray-500">
+                {lang === "sv" ? "Söker…" : "Searching…"}
+              </div>
+            )}
+            {!browseLoading && browseQ.trim().length >= 3 && browseResults.length === 0 && (
+              <div className="px-1 py-2 text-xs text-gray-500">
+                {lang === "sv" ? "Inga träffar." : "No matches."}
+              </div>
+            )}
+            {browseResults.map((r) => (
+              <button
+                key={`${r.code}-${r.title}`}
+                type="button"
+                onClick={() => { onChange(r.title, r.code); setBrowseOpen(false); }}
+                className="flex w-full items-center justify-between gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-left text-sm text-[#0D1B2A] hover:border-[#5B6BD4] hover:bg-[#EEF0FB]"
+              >
+                <span className="truncate font-medium">{r.title}</span>
+                <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                  {r.code}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="sticky bottom-0 -mx-6 border-t border-[#E5E7EB] bg-white px-6 py-3">
+            <button
+              type="button"
+              onClick={() => setBrowseOpen(false)}
+              className="w-full rounded-md border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#0D1B2A] hover:bg-[#F8F9FA]"
+            >
+              {lang === "sv" ? "Stäng" : "Close"}
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
