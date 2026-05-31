@@ -87,6 +87,12 @@ const T = {
     tooLarge: "Filen är större än 50 MB", uploading: "Laddar upp…",
     open: "Öppna fil", download: "Ladda ner",
     formats: "Format: PDF · JPEG · PNG · TXT — max 50 MB",
+    fromPassport: "Från Hälsopass",
+    passportDeleteHint: "För att ta bort denna post, uppdatera ditt Hälsopass",
+    addDetails: "Lägg till detaljer",
+    viewFeed: "Flöde",
+    viewTimeline: "Tidslinje",
+    timelineEmpty: "Din medicinska tidslinje visas här när du fyller i ditt Hälsopass. Börja med att lägga till tillstånd och sjukhusvistelser under Sjukdomshistorik.",
   },
 };
 
