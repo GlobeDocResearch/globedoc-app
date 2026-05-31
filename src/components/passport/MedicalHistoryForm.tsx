@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog, CardUnsavedBanner } from "./unsaved";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TOP_CONDITIONS, CONDITION_GROUPS, ALL_CONDITIONS } from "@/lib/medicalConditions";
+import { searchIcd11, type Icd11Match } from "@/lib/icd11";
 
 type Stay = {
   id: string;
