@@ -92,6 +92,45 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_survey_responses: {
+        Row: {
+          created_at: string
+          id: string
+          q1_impression: number | null
+          q2_real_problem: number | null
+          q3_likelihood: number | null
+          q4_recommend: number | null
+          q5_willingness_to_pay: string | null
+          q6_open_feedback: string | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          q1_impression?: number | null
+          q2_real_problem?: number | null
+          q3_likelihood?: number | null
+          q4_recommend?: number | null
+          q5_willingness_to_pay?: string | null
+          q6_open_feedback?: string | null
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          q1_impression?: number | null
+          q2_real_problem?: number | null
+          q3_likelihood?: number | null
+          q4_recommend?: number | null
+          q5_willingness_to_pay?: string | null
+          q6_open_feedback?: string | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       childhood_vaccines: {
         Row: {
           created_at: string
