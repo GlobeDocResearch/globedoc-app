@@ -1526,7 +1526,7 @@ function ProcedureField({
         onClick={() => { setBrowseQ(""); setBrowseResults([]); setBrowseOpen(true); }}
         className="mt-1 text-xs font-medium text-[#185FA5] hover:underline"
       >
-        Browse ICHI — WHO Procedures Classification →
+        Browse ICHI — WHO Procedures Classification
       </button>
 
       <Sheet open={browseOpen} onOpenChange={setBrowseOpen}>
