@@ -370,6 +370,7 @@ export default function MedicalHistoryForm() {
       event: stay.event,
       ichi_code: stay.ichi_code,
       diagnosis: stay.diagnosis,
+      diagnosis_code: stay.diagnosis_code,
       year: stay.year,
       institution: stay.institution,
       city: stay.city,
@@ -404,6 +405,8 @@ export default function MedicalHistoryForm() {
         title,
         body: stay.notes || null,
         eventYear: firstYear(stay.year),
+        codeIchi: stay.ichi_code,
+        codeIcd11: stay.diagnosis_code,
       });
     }
     clearStayDirty(stay.id);
