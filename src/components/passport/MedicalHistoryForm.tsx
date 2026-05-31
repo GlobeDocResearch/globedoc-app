@@ -70,13 +70,13 @@ const SUGGESTIONS = ALL_CONDITIONS;
 const T: Record<Lang, Record<string, string>> = {
   en: {
     title: "Medical History",
-    subtitle: "Diagnoses, hospitalisations, operations & record locations",
+    subtitle: "Diagnoses, hospitalisations, procedures & record locations",
     nothing: "Nothing to report",
     s1: "Current & chronic conditions",
     s1ph: "Search or type a condition…",
     s1_year_ph: "Year diagnosed, e.g. 2018",
-    s2: "Hospitalisations, Operations & Global Record Locations",
-    f_event: "Event / procedure",
+    s2: "Hospitalisations, Procedures & Global Record Locations",
+    f_event: "Event / procedure / intervention",
     f_event_ph: "E.g. Appendectomy",
     f_diagnosis: "Diagnosis / condition treated",
     f_diagnosis_ph: "E.g. Appendicitis, hip fracture",
