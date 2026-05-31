@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bell, Lock, FileText, Shield } from "lucide-react";
+import { Bell, Lock, FileText, Shield, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { LanguagePickerRow } from "@/components/LanguagePicker";
 
 export const Route = createFileRoute("/pro/settings")({
   head: () => ({ meta: [{ title: "Settings — GlobeDoc Pro" }] }),
