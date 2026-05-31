@@ -95,6 +95,8 @@ const T = {
     viewFeed: "Flöde",
     viewTimeline: "Tidslinje",
     timelineEmpty: "Din medicinska tidslinje visas här när du fyller i ditt Hälsopass. Börja med att lägga till tillstånd och sjukhusvistelser under Sjukdomshistorik.",
+    searchPh: "Sök i journal…",
+    noMatches: "Inga poster matchar din sökning.",
   },
 };
 
