@@ -9,6 +9,13 @@ import logo from "@/assets/globedoc-logo.svg";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
+import {
+  upsertPassportEntry,
+  titleForCondition,
+  titleForStay,
+  titleForLocation,
+  firstYear,
+} from "@/lib/passportRecords";
 
 export const Route = createFileRoute("/records")({
   head: () => ({ meta: [{ title: "Records — GlobeDoc" }] }),
