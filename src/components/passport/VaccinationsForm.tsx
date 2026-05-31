@@ -10,6 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useLeaveGuard, LeaveDialog } from "./unsaved";
 import { COUNTRIES } from "@/lib/countries";
+import {
+  PROGRAMMES as COUNTRY_PROGRAMMES,
+  WHO_GENERIC,
+  isSupportedCountry,
+  programmeForCountryAndYear,
+} from "@/lib/childhoodVaccines";
 
 const ACCENT = "#9B7FD4";
 const ACCENT_2 = "#7B5FB4";
