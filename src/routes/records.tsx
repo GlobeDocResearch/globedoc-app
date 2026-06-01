@@ -399,7 +399,7 @@ function RecordsPage() {
         </div>
 
         <div className="mt-3 -mx-5 px-5">
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {([
               { key: "all" as FilterChip, label: t.filterAll },
               { key: "note" as FilterChip, label: t.note },
