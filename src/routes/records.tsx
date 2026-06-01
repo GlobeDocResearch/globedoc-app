@@ -398,6 +398,35 @@ function RecordsPage() {
           </button>
         </div>
 
+        <div className="mt-3 -mx-5 px-5">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {([
+              { key: "all" as FilterChip, label: t.filterAll },
+              { key: "note" as FilterChip, label: t.note },
+              { key: "document" as FilterChip, label: t.doc },
+              { key: "image" as FilterChip, label: t.image },
+              { key: "lab" as FilterChip, label: t.lab },
+              { key: "passport" as FilterChip, label: t.filterPassport },
+            ]).map((chip) => {
+              const active = activeFilter === chip.key;
+              return (
+                <button
+                  key={chip.key}
+                  type="button"
+                  onClick={() => setActiveFilter(chip.key)}
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition whitespace-nowrap ${
+                    active
+                      ? "bg-[#2563EB] text-white"
+                      : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <input
           type="search"
           value={searchQuery}
