@@ -155,6 +155,8 @@ function RecordsPage() {
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
   const [view, setView] = useState<"feed" | "timeline">("feed");
   const [searchQuery, setSearchQuery] = useState("");
+  type FilterChip = "all" | "note" | "document" | "image" | "lab" | "passport";
+  const [activeFilter, setActiveFilter] = useState<FilterChip>("all");
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
