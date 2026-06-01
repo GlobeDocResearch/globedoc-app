@@ -84,7 +84,6 @@ const T = {
     filterAll: "All",
     filterPassport: "From Health Passport",
     filterClinical: "Clinical note",
-  };
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
