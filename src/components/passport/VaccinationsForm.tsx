@@ -213,6 +213,7 @@ export default function VaccinationsForm() {
   const [nothing, setNothing] = useState(false);
   const [childhood, setChildhood] = useState<ChildhoodVax[]>([]);
   const [travel, setTravel] = useState<TravelEntry[]>([]);
+  const [travelExtras, setTravelExtras] = useState<OtherEntry[]>([]);
   const [others, setOthers] = useState<OtherEntry[]>([]);
   const [contra, setContra] = useState("");
   const [contraOpen, setContraOpen] = useState(false);
