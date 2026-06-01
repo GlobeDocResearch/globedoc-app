@@ -80,6 +80,7 @@ const TRAVEL_SUGGESTIONS: Record<string, string[]> = {
   Pakistan: ["Hepatitis A", "Hepatitis B", "Typhoid", "Japanese encephalitis", "Rabies", "Cholera"],
 };
 const GENERIC_TRAVEL = ["Hepatitis A", "Hepatitis B", "Typhoid"];
+const GENERAL_DEST = "__general__";
 
 function suggestionsFor(country: string): string[] {
   return TRAVEL_SUGGESTIONS[country] ?? GENERIC_TRAVEL;
@@ -213,6 +214,7 @@ export default function VaccinationsForm() {
   const [nothing, setNothing] = useState(false);
   const [childhood, setChildhood] = useState<ChildhoodVax[]>([]);
   const [travel, setTravel] = useState<TravelEntry[]>([]);
+  const [travelExtras, setTravelExtras] = useState<OtherEntry[]>([]);
   const [others, setOthers] = useState<OtherEntry[]>([]);
   const [contra, setContra] = useState("");
   const [contraOpen, setContraOpen] = useState(false);
@@ -277,8 +279,19 @@ export default function VaccinationsForm() {
 
       // Travel — group rows by destination
       const groups = new Map<string, TravelEntry>();
+      const extras: OtherEntry[] = [];
       (tv.data ?? []).forEach((r: any) => {
         const dest = r.destination ?? "";
+        if (!dest || dest === GENERAL_DEST) {
+          extras.push({
+            uid: r.id ?? crypto.randomUUID(),
+            vaccine_name: r.vaccine_name ?? "",
+            date: r.date_received ?? "",
+            boosters: Array.isArray(r.booster_dates) ? r.booster_dates : [],
+            collapsed: true,
+          });
+          return;
+        }
         const key = dest.toLowerCase();
         if (!groups.has(key)) {
           groups.set(key, {
@@ -308,6 +321,7 @@ export default function VaccinationsForm() {
         return { ...g, vaccines: merged };
       });
       setTravel(groupArr);
+      setTravelExtras(extras);
 
       const ot: OtherEntry[] = (ov.data ?? []).map((r: any) => ({
         uid: r.id,
@@ -379,6 +393,16 @@ export default function VaccinationsForm() {
             });
           });
         });
+        travelExtras.forEach((o) => {
+          if (!o.vaccine_name.trim()) return;
+          tvRows.push({
+            user_id: userId,
+            destination: GENERAL_DEST,
+            vaccine_name: o.vaccine_name.trim(),
+            date_received: o.date.trim() || null,
+            booster_dates: o.boosters.filter((b) => b.trim().length > 0),
+          });
+        });
         if (tvRows.length > 0) await sb.from("travel_vaccines").insert(tvRows);
         audit("travel_vaccines", "insert");
       }
@@ -399,6 +423,7 @@ export default function VaccinationsForm() {
       }
 
       setTravel((arr) => arr.map((g) => ({ ...g, collapsed: !!g.destination })));
+      setTravelExtras((arr) => arr.map((o) => ({ ...o, collapsed: true })));
       setOthers((arr) => arr.map((o) => ({ ...o, collapsed: true })));
       setDirty(false);
       toast.success(t("saved"));
@@ -601,30 +626,63 @@ export default function VaccinationsForm() {
                     onSave={saveAll}
                   />
                 ))}
+                {travelExtras.map((o, idx) => (
+                  <OtherCard
+                    key={o.uid}
+                    entry={o}
+                    t={t}
+                    onChange={(patch) => {
+                      setTravelExtras((arr) => arr.map((x, i) => (i === idx ? { ...x, ...patch } : x)));
+                      markDirty();
+                    }}
+                    onDelete={() => {
+                      setTravelExtras((arr) => arr.filter((_, i) => i !== idx));
+                      markDirty();
+                    }}
+                    onSave={saveAll}
+                  />
+                ))}
 
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setTravel((arr) => [
-                    ...arr,
-                    {
-                      uid: crypto.randomUUID(),
-                      destination: "",
-                      countryQuery: "",
-                      vaccines: [],
-                      customDraft: "",
-                      collapsed: false,
-                    },
-                  ]);
-                  markDirty();
-                }}
-                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold"
-                style={{ color: ACCENT_2 }}
-              >
-                <Plus className="h-4 w-4" />
-                {t("add_destination")}
-              </button>
+              <div className="mt-3 flex flex-wrap gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTravel((arr) => [
+                      ...arr,
+                      {
+                        uid: crypto.randomUUID(),
+                        destination: "",
+                        countryQuery: "",
+                        vaccines: [],
+                        customDraft: "",
+                        collapsed: false,
+                      },
+                    ]);
+                    markDirty();
+                  }}
+                  className="inline-flex items-center gap-1 text-sm font-semibold"
+                  style={{ color: ACCENT_2 }}
+                >
+                  <Plus className="h-4 w-4" />
+                  {t("add_destination")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTravelExtras((arr) => [
+                      ...arr,
+                      { uid: crypto.randomUUID(), vaccine_name: "", date: "", boosters: [], collapsed: false },
+                    ]);
+                    markDirty();
+                  }}
+                  className="inline-flex items-center gap-1 text-sm font-semibold"
+                  style={{ color: ACCENT_2 }}
+                >
+                  <Plus className="h-4 w-4" />
+                  {t("add_vaccine")}
+                </button>
+              </div>
             </section>
 
             {/* SECTION 3 */}
