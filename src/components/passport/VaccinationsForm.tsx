@@ -279,8 +279,19 @@ export default function VaccinationsForm() {
 
       // Travel — group rows by destination
       const groups = new Map<string, TravelEntry>();
+      const extras: OtherEntry[] = [];
       (tv.data ?? []).forEach((r: any) => {
         const dest = r.destination ?? "";
+        if (!dest || dest === GENERAL_DEST) {
+          extras.push({
+            uid: r.id ?? crypto.randomUUID(),
+            vaccine_name: r.vaccine_name ?? "",
+            date: r.date_received ?? "",
+            boosters: Array.isArray(r.booster_dates) ? r.booster_dates : [],
+            collapsed: true,
+          });
+          return;
+        }
         const key = dest.toLowerCase();
         if (!groups.has(key)) {
           groups.set(key, {
@@ -310,6 +321,7 @@ export default function VaccinationsForm() {
         return { ...g, vaccines: merged };
       });
       setTravel(groupArr);
+      setTravelExtras(extras);
 
       const ot: OtherEntry[] = (ov.data ?? []).map((r: any) => ({
         uid: r.id,
