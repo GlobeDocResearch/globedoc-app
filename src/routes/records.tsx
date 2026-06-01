@@ -306,19 +306,25 @@ function RecordsPage() {
   };
 
   const filteredEntries = useMemo(() => {
+    let base = entries;
+    if (activeFilter !== "all") {
+      base = base.filter((e) =>
+        activeFilter === "passport" ? Boolean(e.source_kind) : e.entry_type === activeFilter
+      );
+    }
     const q = searchQuery.trim().toLowerCase();
-    const base = !q
-      ? entries
-      : entries.filter((e) => {
-          const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
-          return (
-            e.title.toLowerCase().includes(q) ||
-            (e.body ?? "").toLowerCase().includes(q) ||
-            dateStr.toLowerCase().includes(q) ||
-            typeLabel(e.entry_type).toLowerCase().includes(q) ||
-            e.entry_type.toLowerCase().includes(q)
-          );
-        });
+    if (q) {
+      base = base.filter((e) => {
+        const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
+        return (
+          e.title.toLowerCase().includes(q) ||
+          (e.body ?? "").toLowerCase().includes(q) ||
+          dateStr.toLowerCase().includes(q) ||
+          typeLabel(e.entry_type).toLowerCase().includes(q) ||
+          e.entry_type.toLowerCase().includes(q)
+        );
+      });
+    }
     // Chronological sort: passport entries use event_year; manual entries fall
     // back to created_at. Newest first.
     return base.slice().sort((a, b) => {
@@ -326,7 +332,7 @@ function RecordsPage() {
       const kb = b.event_year ? new Date(`${b.event_year}-12-31`).getTime() : new Date(b.created_at).getTime();
       return kb - ka;
     });
-  }, [entries, searchQuery, lang, t]);
+  }, [entries, searchQuery, lang, t, activeFilter]);
 
   // Timeline entries: anything with an event year (passport-derived rows always
   // carry one; manual rows are included if they happen to have an event_year).
