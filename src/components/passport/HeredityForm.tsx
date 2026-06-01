@@ -187,6 +187,8 @@ const T: Record<Lang, Record<string, string>> = {
     age_at_first_stroke: "Age at first stroke?",
     age_at_onset: "Age at onset?",
     please_specify: "Please specify…",
+    done_confirm: "Done — press Enter or click to confirm",
+    no_relative_specified: "No relative specified",
     none_of_above: "None of the above",
     add_other_condition: "Add other condition",
     other_condition_ph: "Type a condition…",
