@@ -115,7 +115,6 @@ const T = {
     filterPassport: "Från Hälsopass",
     filterClinical: "Klinisk notis",
   },
-  },
 };
 
 function typeMeta(type: EntryType, t: typeof T.en) {
