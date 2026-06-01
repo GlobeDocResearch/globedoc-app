@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tan
 import { useEffect, useState } from "react";
 import { Users, LinkIcon, User, Settings as SettingsIcon, FileText } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
+import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/pro")({

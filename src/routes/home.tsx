@@ -5,6 +5,7 @@ type NavTo = "/home" | "/pairing" | "/passport" | "/profile" | "/travel" | "/rec
 import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
+import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import WorldMap, { type MapLocation } from "@/components/WorldMap";

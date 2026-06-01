@@ -6,6 +6,7 @@ import {
   StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays,
 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
+import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
