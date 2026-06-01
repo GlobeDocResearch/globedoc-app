@@ -63,6 +63,18 @@ function TravelPage() {
 
   const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
 
+  const handleFindClinics = () => {
+    const fallback = () => window.open("https://www.google.com/maps/search/vaccination+clinic", "_blank", "noopener,noreferrer");
+    if (!navigator.geolocation) { fallback(); return; }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        window.open(`https://www.google.com/maps/search/vaccination+clinic/@${latitude},${longitude},14z`, "_blank", "noopener,noreferrer");
+      },
+      () => fallback(),
+    );
+  };
+
   const userVaccineNames = useMemo(
     () => [...childhood, ...travel, ...other].map((v) => v.vaccine_name).filter(Boolean) as string[],
     [childhood, travel, other],
@@ -207,15 +219,14 @@ function TravelPage() {
             </ul>
           )}
 
-          <a
-            href="https://www.google.com/maps/search/vaccination+clinic+near+me"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 flex items-center gap-2 rounded-lg border border-gray-100 bg-[#F8F9FA] px-3 py-2.5 text-sm font-medium text-[#2563EB] hover:bg-gray-100"
+          <button
+            type="button"
+            onClick={handleFindClinics}
+            className="mt-4 flex w-full items-center gap-2 rounded-lg border border-gray-100 bg-[#F8F9FA] px-3 py-2.5 text-sm font-medium text-[#2563EB] hover:bg-gray-100"
           >
             <MapPin className="h-4 w-4" />
             Find vaccination clinics near you
-          </a>
+          </button>
         </section>
 
         {/* B) Vaccination card */}
