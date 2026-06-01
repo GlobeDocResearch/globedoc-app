@@ -626,30 +626,63 @@ export default function VaccinationsForm() {
                     onSave={saveAll}
                   />
                 ))}
+                {travelExtras.map((o, idx) => (
+                  <OtherCard
+                    key={o.uid}
+                    entry={o}
+                    t={t}
+                    onChange={(patch) => {
+                      setTravelExtras((arr) => arr.map((x, i) => (i === idx ? { ...x, ...patch } : x)));
+                      markDirty();
+                    }}
+                    onDelete={() => {
+                      setTravelExtras((arr) => arr.filter((_, i) => i !== idx));
+                      markDirty();
+                    }}
+                    onSave={saveAll}
+                  />
+                ))}
 
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setTravel((arr) => [
-                    ...arr,
-                    {
-                      uid: crypto.randomUUID(),
-                      destination: "",
-                      countryQuery: "",
-                      vaccines: [],
-                      customDraft: "",
-                      collapsed: false,
-                    },
-                  ]);
-                  markDirty();
-                }}
-                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold"
-                style={{ color: ACCENT_2 }}
-              >
-                <Plus className="h-4 w-4" />
-                {t("add_destination")}
-              </button>
+              <div className="mt-3 flex flex-wrap gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTravel((arr) => [
+                      ...arr,
+                      {
+                        uid: crypto.randomUUID(),
+                        destination: "",
+                        countryQuery: "",
+                        vaccines: [],
+                        customDraft: "",
+                        collapsed: false,
+                      },
+                    ]);
+                    markDirty();
+                  }}
+                  className="inline-flex items-center gap-1 text-sm font-semibold"
+                  style={{ color: ACCENT_2 }}
+                >
+                  <Plus className="h-4 w-4" />
+                  {t("add_destination")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTravelExtras((arr) => [
+                      ...arr,
+                      { uid: crypto.randomUUID(), vaccine_name: "", date: "", boosters: [], collapsed: false },
+                    ]);
+                    markDirty();
+                  }}
+                  className="inline-flex items-center gap-1 text-sm font-semibold"
+                  style={{ color: ACCENT_2 }}
+                >
+                  <Plus className="h-4 w-4" />
+                  {t("add_vaccine")}
+                </button>
+              </div>
             </section>
 
             {/* SECTION 3 */}
