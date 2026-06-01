@@ -81,6 +81,10 @@ const T = {
     timelineEmpty: "Your medical timeline will appear here as you fill in your Health Passport. Start by adding conditions and hospitalisations under Medical History.",
     searchPh: "Search records…",
     noMatches: "No records match your search.",
+    filterAll: "All",
+    filterPassport: "From Health Passport",
+    filterClinical: "Clinical note",
+  };
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
