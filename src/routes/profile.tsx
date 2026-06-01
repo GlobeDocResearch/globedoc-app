@@ -422,7 +422,7 @@ function ProfilePage() {
 
     // Lifestyle (light blue)
     const lifestyleRows: { value: string }[] = [];
-    const l = lr[0];
+    const l: any = lr[0];
     if (l) {
       if (nonEmpty(l.tobacco_status)) lifestyleRows.push(row(`Tobacco: ${l.tobacco_status}`));
       if (nonEmpty(l.alcohol_frequency)) lifestyleRows.push(row(`Alcohol: ${l.alcohol_frequency}`));
