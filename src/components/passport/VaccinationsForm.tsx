@@ -393,6 +393,16 @@ export default function VaccinationsForm() {
             });
           });
         });
+        travelExtras.forEach((o) => {
+          if (!o.vaccine_name.trim()) return;
+          tvRows.push({
+            user_id: userId,
+            destination: GENERAL_DEST,
+            vaccine_name: o.vaccine_name.trim(),
+            date_received: o.date.trim() || null,
+            booster_dates: o.boosters.filter((b) => b.trim().length > 0),
+          });
+        });
         if (tvRows.length > 0) await sb.from("travel_vaccines").insert(tvRows);
         audit("travel_vaccines", "insert");
       }
