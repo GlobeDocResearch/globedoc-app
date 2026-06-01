@@ -68,16 +68,16 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-24">
       {/* Top bar */}
-      <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
+      <header className="flex items-center justify-between bg-[#1D3A6B] px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-          <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
+          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
+          <span className="text-lg font-bold text-white">GlobeDoc</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             aria-label="Notifications"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
           >
             <Bell className="h-5 w-5" />
           </button>
@@ -85,7 +85,7 @@ function HomePage() {
             type="button"
             onClick={handleLogout}
             aria-label="Log out"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
           >
             <LogOut className="h-5 w-5" />
           </button>
