@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link as LinkIcon, ShieldCheck, FileText, X, Loader2 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
+import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { addPairing, loadPairings, removePairing, type ProPairing } from "@/lib/proPairings";
@@ -156,10 +157,10 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
 
   return (
     <div className="min-h-screen bg-[#F8F9FA]">
-      <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
+      <header className="flex items-center justify-between bg-[#1D3A6B] px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-          <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
+          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
+          <span className="text-lg font-bold text-white">GlobeDoc</span>
         </div>
       </header>
 
@@ -462,15 +463,15 @@ function PassportView({
   const expires = new Date(data.session.expires_at);
   return (
     <div className="min-h-screen bg-[#F8F9FA]">
-      <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
+      <header className="flex items-center justify-between bg-[#1D3A6B] px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-          <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
+          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
+          <span className="text-lg font-bold text-white">GlobeDoc</span>
         </div>
         <button
           type="button"
           onClick={onEnd}
-          className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-50"
+          className="rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10"
         >
           End session
         </button>

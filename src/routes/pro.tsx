@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tan
 import { useEffect, useState } from "react";
 import { Users, LinkIcon, User, Settings as SettingsIcon, FileText } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
+import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/pro")({
@@ -39,10 +40,10 @@ function ProLayout() {
 
 export function ProHeader() {
   return (
-    <header className="flex items-center justify-between bg-white px-5 py-3 shadow-sm">
+    <header className="flex items-center justify-between bg-[#1D3A6B] px-5 py-3 shadow-sm">
       <div className="flex items-center gap-2.5">
-        <img src={logo} alt="GlobeDoc" className="h-11 w-11" />
-        <span className="text-lg font-bold text-[#1D438C]">GlobeDoc</span>
+        <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
+        <span className="text-lg font-bold text-white">GlobeDoc</span>
         <span className="ml-1 rounded-full bg-[#2563EB] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
           Pro
         </span>
