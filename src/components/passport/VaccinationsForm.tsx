@@ -80,6 +80,7 @@ const TRAVEL_SUGGESTIONS: Record<string, string[]> = {
   Pakistan: ["Hepatitis A", "Hepatitis B", "Typhoid", "Japanese encephalitis", "Rabies", "Cholera"],
 };
 const GENERIC_TRAVEL = ["Hepatitis A", "Hepatitis B", "Typhoid"];
+const GENERAL_DEST = "__general__";
 
 function suggestionsFor(country: string): string[] {
   return TRAVEL_SUGGESTIONS[country] ?? GENERIC_TRAVEL;
