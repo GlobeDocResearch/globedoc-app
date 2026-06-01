@@ -207,7 +207,7 @@ function LoginPage() {
             <section className="mt-8 w-full max-w-md text-center">
               <h2 className="text-xl font-bold text-foreground">Healthcare Professionals</h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                Enter a patient's pairing code to access their GlobeDoc Health Passport
+                Enter your patient's pairing code to connect to their GlobeDoc
               </p>
               <Link
                 to="/connect"
@@ -221,11 +221,6 @@ function LoginPage() {
               >
                 Sign in
               </Link>
-              <p className="mt-3 text-center">
-                <Link to="/signin-pro" className="text-base text-muted-foreground hover:text-foreground">
-                  Forgot password?
-                </Link>
-              </p>
               <p className="mt-5 text-center">
                 <Link to="/signup-pro" className="text-base font-semibold text-[#00A550] hover:opacity-90">
                   Create a Professional Account
