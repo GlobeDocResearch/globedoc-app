@@ -651,9 +651,9 @@ export default function HeredityForm() {
                         >
                           <div className="min-w-0 flex-1 text-sm text-[#0D1B2A]">
                             <div className="font-medium">{label}</div>
-                            {parts.length > 0 && (
-                              <div className="mt-0.5 text-xs text-gray-600">{parts.join(" · ")}</div>
-                            )}
+                            <div className="mt-0.5 text-xs text-gray-600">
+                              {parts.length > 0 ? parts.join(" · ") : t("no_relative_specified")}
+                            </div>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">
                             <button
