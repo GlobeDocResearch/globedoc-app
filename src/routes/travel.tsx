@@ -219,15 +219,14 @@ function TravelPage() {
             </ul>
           )}
 
-          <a
-            href="https://www.google.com/maps/search/vaccination+clinic+near+me"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 flex items-center gap-2 rounded-lg border border-gray-100 bg-[#F8F9FA] px-3 py-2.5 text-sm font-medium text-[#2563EB] hover:bg-gray-100"
+          <button
+            type="button"
+            onClick={handleFindClinics}
+            className="mt-4 flex w-full items-center gap-2 rounded-lg border border-gray-100 bg-[#F8F9FA] px-3 py-2.5 text-sm font-medium text-[#2563EB] hover:bg-gray-100"
           >
             <MapPin className="h-4 w-4" />
             Find vaccination clinics near you
-          </a>
+          </button>
         </section>
 
         {/* B) Vaccination card */}
