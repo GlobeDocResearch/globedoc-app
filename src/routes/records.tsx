@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Bell, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
+  Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
   Plus, MessageCircle, Pencil, Trash2, FileUp, Image as ImageIcon, FlaskConical,
   StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays,
 } from "lucide-react";
@@ -134,6 +134,8 @@ function initials(name: string) {
 function RecordsPage() {
   const { lang } = useI18n();
   const t = T[lang];
+  const navigate = useNavigate();
+  const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
   const [userId, setUserId] = useState<string>("");
   const [authorName, setAuthorName] = useState<string>(t.you);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -347,9 +349,14 @@ function RecordsPage() {
           <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
           <span className="text-lg font-bold text-white">GlobeDoc</span>
         </div>
-        <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
-          <Bell className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+            <Bell className="h-5 w-5" />
+          </button>
+          <button type="button" onClick={handleLogout} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+            <LogOut className="h-5 w-5" />
+          </button>
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 py-6">

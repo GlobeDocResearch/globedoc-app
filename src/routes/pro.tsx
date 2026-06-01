@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Users, LinkIcon, User, Settings as SettingsIcon, FileText } from "lucide-react";
+import { Users, LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +39,8 @@ function ProLayout() {
 }
 
 export function ProHeader() {
+  const navigate = useNavigate();
+  const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/signin" }); };
   return (
     <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
       <div className="flex items-center gap-2.5">
@@ -47,6 +49,14 @@ export function ProHeader() {
         <span className="ml-1 rounded-full bg-[#2563EB] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
           Pro
         </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <Bell className="h-5 w-5" />
+        </button>
+        <button type="button" onClick={handleLogout} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <LogOut className="h-5 w-5" />
+        </button>
       </div>
     </header>
   );
