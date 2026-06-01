@@ -135,7 +135,7 @@ function HomePage() {
         </section>
 
         {/* World map of record locations */}
-        <section className="mt-6 h-[420px]">
+        <section className="mt-6 aspect-[800/380] w-full">
           <WorldMap locations={locations} />
         </section>
       </main>
