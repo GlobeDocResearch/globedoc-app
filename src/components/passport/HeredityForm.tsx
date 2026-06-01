@@ -242,6 +242,8 @@ const T: Record<Lang, Record<string, string>> = {
     which_condition: "Vilket tillstånd?",
     which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
     please_specify: "Vänligen specificera…",
+    done_confirm: "Klar — tryck Enter eller klicka för att bekräfta",
+    no_relative_specified: "Ingen släkting angiven",
     age_at_first_stroke: "Ålder vid första stroke?",
     age_at_onset: "Ålder vid debut?",
     none_of_above: "Inget av ovanstående",
