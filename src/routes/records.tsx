@@ -81,6 +81,9 @@ const T = {
     timelineEmpty: "Your medical timeline will appear here as you fill in your Health Passport. Start by adding conditions and hospitalisations under Medical History.",
     searchPh: "Search records…",
     noMatches: "No records match your search.",
+    filterAll: "All",
+    filterPassport: "From Health Passport",
+    filterClinical: "Clinical note",
   },
   sv: {
     title: "Journal", sub: "Din personliga hälsodagbok",
@@ -108,6 +111,9 @@ const T = {
     timelineEmpty: "Din medicinska tidslinje visas här när du fyller i ditt Hälsopass. Börja med att lägga till tillstånd och sjukhusvistelser under Sjukdomshistorik.",
     searchPh: "Sök i journal…",
     noMatches: "Inga poster matchar din sökning.",
+    filterAll: "Alla",
+    filterPassport: "Från Hälsopass",
+    filterClinical: "Klinisk notis",
   },
 };
 
@@ -149,6 +155,8 @@ function RecordsPage() {
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
   const [view, setView] = useState<"feed" | "timeline">("feed");
   const [searchQuery, setSearchQuery] = useState("");
+  type FilterChip = "all" | "note" | "document" | "image" | "lab" | "passport";
+  const [activeFilter, setActiveFilter] = useState<FilterChip>("all");
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
@@ -298,19 +306,25 @@ function RecordsPage() {
   };
 
   const filteredEntries = useMemo(() => {
+    let base = entries;
+    if (activeFilter !== "all") {
+      base = base.filter((e) =>
+        activeFilter === "passport" ? Boolean(e.source_kind) : e.entry_type === activeFilter
+      );
+    }
     const q = searchQuery.trim().toLowerCase();
-    const base = !q
-      ? entries
-      : entries.filter((e) => {
-          const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
-          return (
-            e.title.toLowerCase().includes(q) ||
-            (e.body ?? "").toLowerCase().includes(q) ||
-            dateStr.toLowerCase().includes(q) ||
-            typeLabel(e.entry_type).toLowerCase().includes(q) ||
-            e.entry_type.toLowerCase().includes(q)
-          );
-        });
+    if (q) {
+      base = base.filter((e) => {
+        const dateStr = new Date(e.created_at).toLocaleString(lang === "sv" ? "sv-SE" : "en-GB");
+        return (
+          e.title.toLowerCase().includes(q) ||
+          (e.body ?? "").toLowerCase().includes(q) ||
+          dateStr.toLowerCase().includes(q) ||
+          typeLabel(e.entry_type).toLowerCase().includes(q) ||
+          e.entry_type.toLowerCase().includes(q)
+        );
+      });
+    }
     // Chronological sort: passport entries use event_year; manual entries fall
     // back to created_at. Newest first.
     return base.slice().sort((a, b) => {
@@ -318,7 +332,7 @@ function RecordsPage() {
       const kb = b.event_year ? new Date(`${b.event_year}-12-31`).getTime() : new Date(b.created_at).getTime();
       return kb - ka;
     });
-  }, [entries, searchQuery, lang, t]);
+  }, [entries, searchQuery, lang, t, activeFilter]);
 
   // Timeline entries: anything with an event year (passport-derived rows always
   // carry one; manual rows are included if they happen to have an event_year).
@@ -382,6 +396,35 @@ function RecordsPage() {
           >
             <CalendarDays className="h-4 w-4" /> {t.viewTimeline}
           </button>
+        </div>
+
+        <div className="mt-3 -mx-5 px-5">
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {([
+              { key: "all" as FilterChip, label: t.filterAll },
+              { key: "note" as FilterChip, label: t.note },
+              { key: "document" as FilterChip, label: t.doc },
+              { key: "image" as FilterChip, label: t.image },
+              { key: "lab" as FilterChip, label: t.lab },
+              { key: "passport" as FilterChip, label: t.filterPassport },
+            ]).map((chip) => {
+              const active = activeFilter === chip.key;
+              return (
+                <button
+                  key={chip.key}
+                  type="button"
+                  onClick={() => setActiveFilter(chip.key)}
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition whitespace-nowrap ${
+                    active
+                      ? "bg-[#2563EB] text-white"
+                      : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <input
