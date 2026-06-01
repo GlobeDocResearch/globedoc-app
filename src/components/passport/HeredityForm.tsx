@@ -799,7 +799,11 @@ export default function HeredityForm() {
                       }
                     };
                     return (
-                      <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+                      <div
+                        key={c.v}
+                        className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3"
+                        onKeyDown={onEnter}
+                      >
                         <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
                           {lang === "sv" ? c.l_sv : c.l_en}
                         </div>
@@ -834,6 +838,15 @@ export default function HeredityForm() {
                             />
                           </div>
                         )}
+                        <div className="mt-3 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => confirmCondition(c.v)}
+                            className="rounded-full border border-[#9E9E9E] bg-white px-3 py-1.5 text-xs font-medium text-[#0D1B2A] hover:bg-gray-50"
+                          >
+                            {t("done_confirm")}
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
