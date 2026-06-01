@@ -63,6 +63,18 @@ function TravelPage() {
 
   const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
 
+  const handleFindClinics = () => {
+    const fallback = () => window.open("https://www.google.com/maps/search/vaccination+clinic", "_blank", "noopener,noreferrer");
+    if (!navigator.geolocation) { fallback(); return; }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        window.open(`https://www.google.com/maps/search/vaccination+clinic/@${latitude},${longitude},14z`, "_blank", "noopener,noreferrer");
+      },
+      () => fallback(),
+    );
+  };
+
   const userVaccineNames = useMemo(
     () => [...childhood, ...travel, ...other].map((v) => v.vaccine_name).filter(Boolean) as string[],
     [childhood, travel, other],
