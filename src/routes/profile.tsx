@@ -258,8 +258,11 @@ function ProfilePage() {
           <span className="text-lg font-bold text-white">GlobeDoc</span>
         </div>
         <div className="flex items-center gap-2">
-          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
+          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
             <Bell className="h-5 w-5" />
+          </button>
+          <button type="button" onClick={handleSignOut} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+            <LogOut className="h-5 w-5" />
           </button>
         </div>
       </header>

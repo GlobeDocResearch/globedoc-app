@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User, FileText, Trash2, Clock } from "lucide-react";
+import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User, FileText, Trash2, Clock, Bell, LogOut } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
@@ -142,6 +142,19 @@ function PairingPage() {
         <div className="flex items-center gap-2.5">
           <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
           <span className="text-lg font-bold text-white">GlobeDoc</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+            <Bell className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
+            aria-label="Log out"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
       </header>
 
