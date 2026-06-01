@@ -121,7 +121,7 @@ function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setResetEmail(email); setResetSent(false); setMode("forgot"); }}
-                className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                className="text-base text-muted-foreground hover:text-foreground"
               >
                 Forgot password?
               </button>
@@ -135,9 +135,8 @@ function LoginPage() {
               {t("login.submit")}
             </button>
 
-            <p className="mt-5 text-center text-sm text-muted-foreground">
-              New to GlobeDoc?{" "}
-              <Link to="/signup" className="font-semibold text-brand-blue hover:underline">
+            <p className="mt-5 text-center">
+              <Link to="/signup" className="text-base font-semibold text-[#00A550] hover:opacity-90">
                 Create an account
               </Link>
             </p>
@@ -218,13 +217,18 @@ function LoginPage() {
               </Link>
               <Link
                 to="/signin-pro"
-                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-muted px-6 py-3.5 text-base font-semibold text-foreground shadow-sm transition-opacity hover:opacity-95"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#1D3F7C] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
               >
                 Sign in
               </Link>
-              <p className="mt-5 text-sm text-muted-foreground">
-                <Link to="/signup-pro" className="font-semibold text-brand-blue hover:underline">
-                  Or Create a Professional Account
+              <p className="mt-3 text-center">
+                <Link to="/signin-pro" className="text-base text-muted-foreground hover:text-foreground">
+                  Forgot password?
+                </Link>
+              </p>
+              <p className="mt-5 text-center">
+                <Link to="/signup-pro" className="text-base font-semibold text-[#00A550] hover:opacity-90">
+                  Create a Professional Account
                 </Link>
               </p>
             </section>

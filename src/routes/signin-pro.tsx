@@ -108,9 +108,9 @@ function ProSignInPage() {
             {submitting ? "Signing in..." : "Sign in"}
           </button>
 
-          <p className="mt-5 text-center text-sm text-muted-foreground">
-            <Link to="/signup-pro" className="font-semibold text-brand-blue hover:underline">
-              Or Create a Professional Account
+          <p className="mt-5 text-center">
+            <Link to="/signup-pro" className="text-base font-semibold text-[#00A550] hover:opacity-90">
+              Create a Professional Account
             </Link>
           </p>
           <p className="mt-3 text-center text-sm text-muted-foreground">
