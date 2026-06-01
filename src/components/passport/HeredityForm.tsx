@@ -187,6 +187,8 @@ const T: Record<Lang, Record<string, string>> = {
     age_at_first_stroke: "Age at first stroke?",
     age_at_onset: "Age at onset?",
     please_specify: "Please specify…",
+    done_confirm: "Done — press Enter or click to confirm",
+    no_relative_specified: "No relative specified",
     none_of_above: "None of the above",
     add_other_condition: "Add other condition",
     other_condition_ph: "Type a condition…",
@@ -240,6 +242,8 @@ const T: Record<Lang, Record<string, string>> = {
     which_condition: "Vilket tillstånd?",
     which_condition_ph: "T.ex. Kronisk njursjukdom, polycystisk njursjukdom…",
     please_specify: "Vänligen specificera…",
+    done_confirm: "Klar — tryck Enter eller klicka för att bekräfta",
+    no_relative_specified: "Ingen släkting angiven",
     age_at_first_stroke: "Ålder vid första stroke?",
     age_at_onset: "Ålder vid debut?",
     none_of_above: "Inget av ovanstående",
@@ -647,9 +651,9 @@ export default function HeredityForm() {
                         >
                           <div className="min-w-0 flex-1 text-sm text-[#0D1B2A]">
                             <div className="font-medium">{label}</div>
-                            {parts.length > 0 && (
-                              <div className="mt-0.5 text-xs text-gray-600">{parts.join(" · ")}</div>
-                            )}
+                            <div className="mt-0.5 text-xs text-gray-600">
+                              {parts.length > 0 ? parts.join(" · ") : t("no_relative_specified")}
+                            </div>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">
                             <button
@@ -795,7 +799,11 @@ export default function HeredityForm() {
                       }
                     };
                     return (
-                      <div key={c.v} className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3">
+                      <div
+                        key={c.v}
+                        className="rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] p-3"
+                        onKeyDown={onEnter}
+                      >
                         <div className="mb-2 text-xs font-semibold text-[#0D1B2A]">
                           {lang === "sv" ? c.l_sv : c.l_en}
                         </div>
@@ -830,6 +838,15 @@ export default function HeredityForm() {
                             />
                           </div>
                         )}
+                        <div className="mt-3 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => confirmCondition(c.v)}
+                            className="rounded-full border border-[#9E9E9E] bg-white px-3 py-1.5 text-xs font-medium text-[#0D1B2A] hover:bg-gray-50"
+                          >
+                            {t("done_confirm")}
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
