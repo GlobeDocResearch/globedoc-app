@@ -342,7 +342,7 @@ function RecordsPage() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-28">
-      <header className="flex items-center justify-between bg-[#1D3A6B] px-5 py-3 shadow-sm">
+      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
           <span className="text-lg font-bold text-white">GlobeDoc</span>
@@ -490,7 +490,7 @@ function RecordsPage() {
         />
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D438C] bg-[#1D438C]">
+      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
           <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label="Passport" />

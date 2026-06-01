@@ -40,7 +40,7 @@ function ProLayout() {
 
 export function ProHeader() {
   return (
-    <header className="flex items-center justify-between bg-[#1D3A6B] px-5 py-3 shadow-sm">
+    <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
       <div className="flex items-center gap-2.5">
         <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
         <span className="text-lg font-bold text-white">GlobeDoc</span>
@@ -62,7 +62,7 @@ export function ProBottomNav() {
     { to: "/pro/settings" as const, icon: <SettingsIcon className="h-5 w-5" />, label: "Settings", match: (p: string) => p.startsWith("/pro/settings") },
   ];
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D438C] bg-[#1D438C]">
+    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
       <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
         {tabs.map((t) => {
           const active = t.match(pathname);
