@@ -423,6 +423,7 @@ export default function VaccinationsForm() {
       }
 
       setTravel((arr) => arr.map((g) => ({ ...g, collapsed: !!g.destination })));
+      setTravelExtras((arr) => arr.map((o) => ({ ...o, collapsed: true })));
       setOthers((arr) => arr.map((o) => ({ ...o, collapsed: true })));
       setDirty(false);
       toast.success(t("saved"));
