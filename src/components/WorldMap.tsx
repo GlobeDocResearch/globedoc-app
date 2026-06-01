@@ -75,7 +75,7 @@ export default function WorldMap({ locations }: { locations: MapLocation[] }) {
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="h-full w-full"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label="World map of your record locations"
       >
