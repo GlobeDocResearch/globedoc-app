@@ -841,16 +841,6 @@ export default function MedicalHistoryForm() {
                 Add clinical contact, hospitalisation or record location
               </button>
 
-              <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#E5E7EB] bg-[#FFF8E1] p-3 text-xs text-[#0D1B2A]">
-                <span className="text-base leading-none">📎</span>
-                <p>
-                  We will notify you when this feature becomes operational in your area. In the meantime, you can manually upload records, scans and images under{" "}
-                  <Link to="/records" className="font-semibold text-[#1D3A6B] underline">
-                    Records
-                  </Link>{" "}
-                  in GlobeDoc.
-                </p>
-              </div>
             </section>
 
 
