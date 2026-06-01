@@ -71,7 +71,7 @@ export default function WorldMap({ locations }: { locations: MapLocation[] }) {
   }, [locations]);
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-gray-100">
+    <div className="overflow-hidden rounded-2xl bg-white p-0 ring-1 ring-gray-100">
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="h-auto w-full"
