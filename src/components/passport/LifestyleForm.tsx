@@ -910,11 +910,17 @@ export default function LifestyleForm() {
             <Section title={t("s_sleep")}>
               <Radios
                 value={s.sleep_status}
-                onChange={(v) => set("sleep_status", v)}
+                onChange={(v) => {
+                  set("sleep_status", v);
+                  if (v === "none") {
+                    set("sleep_issues", []);
+                    set("sleep_other", "");
+                  }
+                }}
                 options={[
                   { v: "none", l: t("sleep_none") },
-                  { v: "occasional", l: t("sleep_occ") },
-                  { v: "significant", l: t("sleep_sig") },
+                  { v: "occasional", l: t("sleep_occ"), sub: t("sleep_occ_sub") },
+                  { v: "frequent", l: t("sleep_freq"), sub: t("sleep_freq_sub") },
                 ]}
               />
               {showSleepIssues && (
@@ -922,23 +928,18 @@ export default function LifestyleForm() {
                   <CheckList
                     values={s.sleep_issues}
                     onToggle={(v) => toggleArr("sleep_issues", v)}
-                    options={
-                      s.sleep_status === "significant"
-                        ? [
-                            { v: "insomnia", l: t("sleep_insomnia") },
-                            { v: "apnoea", l: t("sleep_apnoea") },
-                            { v: "rls", l: t("sleep_rls") },
-                            { v: "narcolepsy", l: t("sleep_narco") },
-                            { v: "shift", l: t("sleep_shift") },
-                            { v: "other", l: t("other") },
-                          ]
-                        : [
-                            { v: "dfa", l: t("sleep_dfa") },
-                            { v: "fnw", l: t("sleep_fnw") },
-                            { v: "other", l: t("other") },
-                          ]
-                    }
+                    options={[
+                      { v: "dfa", l: t("sleep_dfa") },
+                      { v: "fnw", l: t("sleep_fnw") },
+                      { v: "insomnia", l: t("sleep_insomnia") },
+                      { v: "apnoea", l: t("sleep_apnoea") },
+                      { v: "rls", l: t("sleep_rls") },
+                      { v: "narcolepsy", l: t("sleep_narco") },
+                      { v: "shift", l: t("sleep_shift") },
+                      { v: "other", l: t("other") },
+                    ]}
                   />
+
                   {s.sleep_issues.includes("other") && (
                     <Txt
                       value={s.sleep_other}
