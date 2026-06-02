@@ -75,7 +75,7 @@ function PatientsTab() {
         <p className="mt-6 text-center text-sm text-gray-500">No patients match your search.</p>
       ) : (
         <ul className="mt-6 space-y-3">
-          {pairings.map((p) => (
+          {filtered.map((p) => (
             <li key={p.id} className="rounded-2xl bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
