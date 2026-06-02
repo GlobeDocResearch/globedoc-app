@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-type NavTo = "/home" | "/pairing" | "/passport" | "/profile" | "/travel" | "/records";
+type NavTo = "/home" | "/pairing" | "/health-pass" | "/profile" | "/travel" | "/records";
 import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
@@ -126,7 +126,7 @@ function HomePage() {
             </div>
           </div>
           <Link
-            to="/passport"
+            to="/health-pass"
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95"
           >
             <Sparkles className="h-4 w-4" />
@@ -145,7 +145,7 @@ function HomePage() {
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} active />
-          <NavTab to="/passport" icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
+          <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
           <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label={t("nav.travel")} />
           <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label={t("nav.records")} />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
