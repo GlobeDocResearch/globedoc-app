@@ -407,7 +407,7 @@ export default function AllergiesForm() {
   const saveAndExit = async () => {
     bypassGuardRef.current = true;
     const ok = await saveAll();
-    if (ok) navigate({ to: "/passport" });
+    if (ok) navigate({ to: "/health-pass" });
     else bypassGuardRef.current = false;
     return ok;
   };
@@ -506,7 +506,7 @@ export default function AllergiesForm() {
             </div>
           </div>
           <Link
-            to="/passport"
+            to="/health-pass"
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30"
           >

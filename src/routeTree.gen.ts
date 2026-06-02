@@ -28,11 +28,11 @@ import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProIndexRouteImport } from './routes/pro.index'
-import { Route as PassportIndexRouteImport } from './routes/passport.index'
+import { Route as HealthPassIndexRouteImport } from './routes/health-pass.index'
 import { Route as ProSettingsRouteImport } from './routes/pro.settings'
 import { Route as ProRecordsRouteImport } from './routes/pro.records'
 import { Route as ProProfileRouteImport } from './routes/pro.profile'
-import { Route as PassportSectionRouteImport } from './routes/passport.$section'
+import { Route as HealthPassSectionRouteImport } from './routes/health-pass.$section'
 import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
 import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
 import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
@@ -133,9 +133,9 @@ const ProIndexRoute = ProIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProRoute,
 } as any)
-const PassportIndexRoute = PassportIndexRouteImport.update({
-  id: '/passport/',
-  path: '/passport/',
+const HealthPassIndexRoute = HealthPassIndexRouteImport.update({
+  id: '/health-pass/',
+  path: '/health-pass/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProSettingsRoute = ProSettingsRouteImport.update({
@@ -153,9 +153,9 @@ const ProProfileRoute = ProProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => ProRoute,
 } as any)
-const PassportSectionRoute = PassportSectionRouteImport.update({
-  id: '/passport/$section',
-  path: '/passport/$section',
+const HealthPassSectionRoute = HealthPassSectionRouteImport.update({
+  id: '/health-pass/$section',
+  path: '/health-pass/$section',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicConnectPassportRoute =
@@ -199,11 +199,11 @@ export interface FileRoutesByFullPath {
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/verified-pro': typeof VerifiedProRoute
-  '/passport/$section': typeof PassportSectionRoute
+  '/health-pass/$section': typeof HealthPassSectionRoute
   '/pro/profile': typeof ProProfileRoute
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
-  '/passport/': typeof PassportIndexRoute
+  '/health-pass/': typeof HealthPassIndexRoute
   '/pro/': typeof ProIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
@@ -228,11 +228,11 @@ export interface FileRoutesByTo {
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/verified-pro': typeof VerifiedProRoute
-  '/passport/$section': typeof PassportSectionRoute
+  '/health-pass/$section': typeof HealthPassSectionRoute
   '/pro/profile': typeof ProProfileRoute
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
-  '/passport': typeof PassportIndexRoute
+  '/health-pass': typeof HealthPassIndexRoute
   '/pro': typeof ProIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
@@ -259,11 +259,11 @@ export interface FileRoutesById {
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/verified-pro': typeof VerifiedProRoute
-  '/passport/$section': typeof PassportSectionRoute
+  '/health-pass/$section': typeof HealthPassSectionRoute
   '/pro/profile': typeof ProProfileRoute
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
-  '/passport/': typeof PassportIndexRoute
+  '/health-pass/': typeof HealthPassIndexRoute
   '/pro/': typeof ProIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
@@ -291,11 +291,11 @@ export interface FileRouteTypes {
     | '/travel'
     | '/verified'
     | '/verified-pro'
-    | '/passport/$section'
+    | '/health-pass/$section'
     | '/pro/profile'
     | '/pro/records'
     | '/pro/settings'
-    | '/passport/'
+    | '/health-pass/'
     | '/pro/'
     | '/api/public/connect/entry'
     | '/api/public/connect/note'
@@ -320,11 +320,11 @@ export interface FileRouteTypes {
     | '/travel'
     | '/verified'
     | '/verified-pro'
-    | '/passport/$section'
+    | '/health-pass/$section'
     | '/pro/profile'
     | '/pro/records'
     | '/pro/settings'
-    | '/passport'
+    | '/health-pass'
     | '/pro'
     | '/api/public/connect/entry'
     | '/api/public/connect/note'
@@ -350,11 +350,11 @@ export interface FileRouteTypes {
     | '/travel'
     | '/verified'
     | '/verified-pro'
-    | '/passport/$section'
+    | '/health-pass/$section'
     | '/pro/profile'
     | '/pro/records'
     | '/pro/settings'
-    | '/passport/'
+    | '/health-pass/'
     | '/pro/'
     | '/api/public/connect/entry'
     | '/api/public/connect/note'
@@ -381,8 +381,8 @@ export interface RootRouteChildren {
   TravelRoute: typeof TravelRoute
   VerifiedRoute: typeof VerifiedRoute
   VerifiedProRoute: typeof VerifiedProRoute
-  PassportSectionRoute: typeof PassportSectionRoute
-  PassportIndexRoute: typeof PassportIndexRoute
+  HealthPassSectionRoute: typeof HealthPassSectionRoute
+  HealthPassIndexRoute: typeof HealthPassIndexRoute
   ApiPublicConnectEntryRoute: typeof ApiPublicConnectEntryRoute
   ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
   ApiPublicConnectPairRoute: typeof ApiPublicConnectPairRoute
@@ -524,11 +524,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProIndexRouteImport
       parentRoute: typeof ProRoute
     }
-    '/passport/': {
-      id: '/passport/'
-      path: '/passport'
-      fullPath: '/passport/'
-      preLoaderRoute: typeof PassportIndexRouteImport
+    '/health-pass/': {
+      id: '/health-pass/'
+      path: '/health-pass'
+      fullPath: '/health-pass/'
+      preLoaderRoute: typeof HealthPassIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pro/settings': {
@@ -552,11 +552,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProProfileRouteImport
       parentRoute: typeof ProRoute
     }
-    '/passport/$section': {
-      id: '/passport/$section'
-      path: '/passport/$section'
-      fullPath: '/passport/$section'
-      preLoaderRoute: typeof PassportSectionRouteImport
+    '/health-pass/$section': {
+      id: '/health-pass/$section'
+      path: '/health-pass/$section'
+      fullPath: '/health-pass/$section'
+      preLoaderRoute: typeof HealthPassSectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/connect/passport': {
@@ -625,8 +625,8 @@ const rootRouteChildren: RootRouteChildren = {
   TravelRoute: TravelRoute,
   VerifiedRoute: VerifiedRoute,
   VerifiedProRoute: VerifiedProRoute,
-  PassportSectionRoute: PassportSectionRoute,
-  PassportIndexRoute: PassportIndexRoute,
+  HealthPassSectionRoute: HealthPassSectionRoute,
+  HealthPassIndexRoute: HealthPassIndexRoute,
   ApiPublicConnectEntryRoute: ApiPublicConnectEntryRoute,
   ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
   ApiPublicConnectPairRoute: ApiPublicConnectPairRoute,
@@ -635,3 +635,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

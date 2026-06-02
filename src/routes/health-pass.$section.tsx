@@ -7,7 +7,7 @@ import LifestyleForm from "@/components/passport/LifestyleForm";
 import HeredityForm from "@/components/passport/HeredityForm";
 import AllergiesForm from "@/components/passport/AllergiesForm";
 
-export const Route = createFileRoute("/passport/$section")({
+export const Route = createFileRoute("/health-pass/$section")({
   head: () => ({ meta: [{ title: "Passport Section — GlobeDoc" }] }),
   component: SectionPage,
 });
@@ -22,7 +22,7 @@ const TITLES: Record<string, string> = {
 };
 
 function SectionPage() {
-  const { section } = useParams({ from: "/passport/$section" });
+  const { section } = useParams({ from: "/health-pass/$section" });
 
   if (section === "medical-history") return <MedicalHistoryForm />;
   if (section === "medications") return <MedicationsForm />;
@@ -34,7 +34,7 @@ function SectionPage() {
   const title = TITLES[section] ?? "Section";
   return (
     <div className="min-h-screen bg-[#0D1B2A] px-5 pt-6 text-white">
-      <Link to="/passport" className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white">
+      <Link to="/health-pass" className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white">
         <ArrowLeft className="h-4 w-4" />
         Back to Passport
       </Link>

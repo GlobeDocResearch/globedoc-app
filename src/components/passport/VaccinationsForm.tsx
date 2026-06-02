@@ -459,7 +459,7 @@ export default function VaccinationsForm() {
             </div>
           </div>
           <Link
-            to="/passport"
+            to="/health-pass"
             aria-label="Close"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10 hover:bg-black/20"
             style={{ color: HEADER_TEXT }}
@@ -764,7 +764,7 @@ export default function VaccinationsForm() {
             bypassGuardRef.current = true;
             const ok = await saveAll();
             if (ok) {
-              navigate({ to: "/passport" });
+              navigate({ to: "/health-pass" });
             } else {
               bypassGuardRef.current = false;
               return false;

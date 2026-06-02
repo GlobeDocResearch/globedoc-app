@@ -285,7 +285,7 @@ export default function MedicationsForm() {
   const handleSaveAndExit = async () => {
     bypassGuardRef.current = true;
     const ok = await saveAll();
-    if (ok) navigate({ to: "/passport" });
+    if (ok) navigate({ to: "/health-pass" });
     else bypassGuardRef.current = false;
   };
   const resolver = useLeaveGuard(() => anyDirty && !bypassGuardRef.current);
@@ -304,7 +304,7 @@ export default function MedicationsForm() {
               <p className="mt-1 text-sm text-white/90">{t("subtitle")}</p>
             </div>
           </div>
-          <Link to="/passport" aria-label="Close" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30">
+          <Link to="/health-pass" aria-label="Close" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30">
             <X className="h-5 w-5" />
           </Link>
         </div>
@@ -451,7 +451,7 @@ export default function MedicationsForm() {
           onSave={async () => {
             bypassGuardRef.current = true;
             const ok = await saveAll();
-            if (ok) navigate({ to: "/passport" });
+            if (ok) navigate({ to: "/health-pass" });
             else { bypassGuardRef.current = false; return false; }
           }}
           icon={<Check className="h-4 w-4" />}
