@@ -42,12 +42,6 @@ function ConnectPageWrapper() {
   );
 }
 
-const ACCESS_OPTIONS = [
-  { value: "passport_records", label: "Full Passport + Records" },
-  { value: "records_only", label: "Records only" },
-  { value: "records_add", label: "Records + can add entries" },
-  { value: "passport_suggest", label: "Passport read + can suggest edits" },
-];
 
 
 
