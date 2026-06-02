@@ -42,12 +42,6 @@ function ConnectPageWrapper() {
   );
 }
 
-const ACCESS_OPTIONS = [
-  { value: "passport_records", label: "Full Passport + Records" },
-  { value: "records_only", label: "Records only" },
-  { value: "records_add", label: "Records + can add entries" },
-  { value: "passport_suggest", label: "Passport read + can suggest edits" },
-];
 
 
 
@@ -165,7 +159,9 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
       </header>
 
       <main className="mx-auto w-full max-w-xl px-5 py-8">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">Connect with Patient</h1>
+        <h1 className="text-2xl font-bold text-[#0D1B2A]">
+          Connect with a pairing code to your patient's GlobeDoc
+        </h1>
         <p className="mt-1 text-sm text-gray-500">
           Enter the 6-character pairing code shared by the patient.
         </p>
@@ -209,12 +205,11 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
 
 function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (t: string) => Promise<void> }) {
   const [code, setCode] = useState("");
-  const [accessLevel, setAccessLevel] = useState("passport_records");
-  const [gdpr, setGdpr] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (code.trim().length !== 6) { toast.error("Enter the 6-character code"); return; }
     setSubmitting(true);
     try {
       const res = await fetch("/api/public/connect/pair", {
@@ -225,8 +220,8 @@ function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (t: st
           pro_name: proMeta?.full_name || "Healthcare Professional",
           pro_title: proMeta?.pro_title || proMeta?.specialty || null,
           institution: proMeta?.institution || null,
-          access_level: accessLevel,
-          gdpr_consent: gdpr,
+          access_level: "passport_records",
+          gdpr_consent: true,
         }),
       });
       const json = await res.json();
@@ -249,200 +244,185 @@ function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (t: st
           className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#2563EB] focus:outline-none"
         />
       </div>
-      <div>
-        <label className="text-sm font-semibold text-[#0D1B2A]">Requested access level</label>
-        <select
-          value={accessLevel}
-          onChange={(e) => setAccessLevel(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
-        >
-          {ACCESS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-      </div>
-      <label className="flex items-start gap-2 text-xs text-gray-600">
-        <input type="checkbox" checked={gdpr} onChange={(e) => setGdpr(e.target.checked)} className="mt-0.5" />
-        <span>
-          I confirm I have a legitimate clinical reason for accessing this patient's records and will handle their data in accordance with GDPR. All access is audit-logged.
-        </span>
-      </label>
       <button
         type="submit"
-        disabled={submitting || !gdpr}
+        disabled={submitting || code.trim().length !== 6}
         className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
       >
         {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
-        {submitting ? "Connecting..." : "Access patient passport"}
+        {submitting ? "Connecting..." : "Connect"}
       </button>
     </form>
   );
 }
 
+const TITLES = ["Dr", "Prof", "Nurse", "Physiotherapist", "Other"] as const;
+
 function UnauthedConnectFlow({ onPaired, navigate }: { onPaired: (t: string) => Promise<void>; navigate: ReturnType<typeof useNavigate> }) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [code, setCode] = useState("");
-  const [accessLevel, setAccessLevel] = useState("passport_records");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [licensed, setLicensed] = useState(false);
+  // Signup-only fields
+  const [fullName, setFullName] = useState("");
+  const [title, setTitle] = useState<(typeof TITLES)[number] | "">("");
+  const [institution, setInstitution] = useState("");
   const [gdpr, setGdpr] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const goStep2 = (e: React.FormEvent) => {
+  const pair = async (proName: string, proTitle: string | null, inst: string | null) => {
+    const res = await fetch("/api/public/connect/pair", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code: code.trim().toUpperCase(),
+        pro_name: proName,
+        pro_title: proTitle,
+        institution: inst,
+        access_level: "passport_records",
+        gdpr_consent: true,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok) { toast.error(json.error || "Could not pair"); return false; }
+    await onPaired(json.session_token);
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (code.trim().length !== 6) { toast.error("Enter the 6-character code"); return; }
-    setStep(2);
-  };
-
-  const goStep3 = (e: React.FormEvent) => {
-    e.preventDefault();
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) { toast.error("Enter a valid email"); return; }
-    setStep(3);
-  };
-
-  const finalize = async (e: React.FormEvent) => {
-    e.preventDefault();
     if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
-    if (!licensed) { toast.error("Please confirm you are a licensed professional"); return; }
-    if (!gdpr) { toast.error("GDPR consent required"); return; }
+    if (mode === "signup") {
+      if (!fullName.trim()) { toast.error("Full name is required"); return; }
+      if (!title) { toast.error("Please select a title"); return; }
+      if (!institution.trim()) { toast.error("Institution is required"); return; }
+      if (!gdpr) { toast.error("Please confirm the professional declaration"); return; }
+    }
     setBusy(true);
     try {
-      // Create the Pro account
-      const { error: signUpErr } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/verified-pro`,
-          data: { account_type: "professional", licensed_confirmed_at: new Date().toISOString() },
-        },
-      });
-      if (signUpErr && !/registered|exists/i.test(signUpErr.message)) {
-        toast.error(signUpErr.message);
-        setBusy(false);
-        return;
+      if (mode === "signin") {
+        const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) { toast.error(error.message); return; }
+        const u = data.user;
+        if (u?.user_metadata?.account_type !== "professional") {
+          await supabase.auth.signOut();
+          toast.error("This account is not a Professional account.");
+          return;
+        }
+        const m = u.user_metadata || {};
+        await pair(m.full_name || email.trim(), m.pro_title || m.specialty || null, m.institution || null);
+      } else {
+        const { error: signUpErr } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/verified-pro`,
+            data: {
+              account_type: "professional",
+              full_name: fullName.trim(),
+              pro_title: title,
+              institution: institution.trim(),
+              consent_pro_declaration_at: new Date().toISOString(),
+            },
+          },
+        });
+        if (signUpErr) { toast.error(signUpErr.message); return; }
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (signInErr) {
+          toast.success("Account created. Please confirm your email to finish connecting.");
+          navigate({ to: "/confirm-email-pro" });
+          return;
+        }
+        await pair(fullName.trim(), title || null, institution.trim());
       }
-      // Sign in (works if email confirmation isn't required, or for an existing account)
-      const { error: signInErr } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (signInErr) {
-        toast.success("Account created. Please confirm your email, then sign in.");
-        navigate({ to: "/confirm-email-pro", search: { email: email.trim() } as any });
-        return;
-      }
-      const { data: { user } } = await supabase.auth.getUser();
-      const proName = user?.user_metadata?.full_name || email.trim();
-      const proTitle = user?.user_metadata?.pro_title || null;
-      const institution = user?.user_metadata?.institution || null;
-
-      const res = await fetch("/api/public/connect/pair", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code: code.trim().toUpperCase(),
-          pro_name: proName,
-          pro_title: proTitle,
-          institution,
-          access_level: accessLevel,
-          gdpr_consent: true,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) { toast.error(json.error || "Could not pair"); return; }
-      await onPaired(json.session_token);
     } finally { setBusy(false); }
   };
 
   return (
-    <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
-      <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-500">Step {step} of 3</p>
+    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-white p-6 shadow-sm">
+      <div>
+        <label className="text-sm font-semibold text-[#0D1B2A]">Pairing code</label>
+        <input
+          type="text"
+          required
+          maxLength={6}
+          value={code}
+          onChange={(e) => setCode(e.target.value.toUpperCase())}
+          placeholder="ABC123"
+          className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#2563EB] focus:outline-none"
+        />
+      </div>
 
-      {step === 1 && (
-        <form onSubmit={goStep2} className="space-y-5">
-          <div>
-            <label className="text-sm font-semibold text-[#0D1B2A]">Pairing code</label>
-            <input
-              type="text"
-              required
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="ABC123"
-              className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#2563EB] focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-[#0D1B2A]">Requested access level</label>
-            <select
-              value={accessLevel}
-              onChange={(e) => setAccessLevel(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
-            >
-              {ACCESS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      {mode === "signup" && (
+        <>
+          <Field label="Full name">
+            <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputCls} />
+          </Field>
+          <Field label="Title">
+            <select value={title} onChange={(e) => setTitle(e.target.value as (typeof TITLES)[number])} className={inputCls} required>
+              <option value="">Select a title</option>
+              {TITLES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
-          </div>
-          <button
-            type="submit"
-            className="w-full rounded-full bg-[#2563EB] px-5 py-3 text-sm font-semibold text-white hover:opacity-95"
-          >
-            Continue
-          </button>
-        </form>
+          </Field>
+          <Field label="Institution / Hospital">
+            <input type="text" required value={institution} onChange={(e) => setInstitution(e.target.value)} className={inputCls} />
+          </Field>
+        </>
       )}
 
-      {step === 2 && (
-        <form onSubmit={goStep3} className="space-y-5">
-          <div>
-            <label className="text-sm font-semibold text-[#0D1B2A]">Professional email address</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@hospital.org"
-              className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
-            />
-            <p className="mt-1 text-xs text-gray-500">We'll create a Pro account for you with this email.</p>
-          </div>
-          <div className="flex gap-2">
-            <button type="button" onClick={() => setStep(1)} className="rounded-full border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50">Back</button>
-            <button type="submit" className="flex-1 rounded-full bg-[#2563EB] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95">Continue</button>
-          </div>
-        </form>
+      <Field label={mode === "signup" ? "Professional email" : "Email"}>
+        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} />
+      </Field>
+      <Field label="Password">
+        <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className={inputCls} />
+      </Field>
+
+      {mode === "signup" && (
+        <label className="flex items-start gap-2 text-xs text-gray-600">
+          <input type="checkbox" checked={gdpr} onChange={(e) => setGdpr(e.target.checked)} className="mt-0.5" />
+          <span>
+            I confirm I am a licensed healthcare professional and will handle patient data in accordance with GDPR. All access is audit-logged.
+          </span>
+        </label>
       )}
 
-      {step === 3 && (
-        <form onSubmit={finalize} className="space-y-5">
-          <div>
-            <label className="text-sm font-semibold text-[#0D1B2A]">Choose a password</label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-              className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
-            />
-          </div>
-          <label className="flex items-start gap-2 text-xs text-gray-600">
-            <input type="checkbox" checked={licensed} onChange={(e) => setLicensed(e.target.checked)} className="mt-0.5" />
-            <span>I confirm I am a licensed healthcare professional.</span>
-          </label>
-          <label className="flex items-start gap-2 text-xs text-gray-600">
-            <input type="checkbox" checked={gdpr} onChange={(e) => setGdpr(e.target.checked)} className="mt-0.5" />
-            <span>I will handle this patient's data in accordance with GDPR. All access is audit-logged.</span>
-          </label>
-          <div className="flex gap-2">
-            <button type="button" onClick={() => setStep(2)} className="rounded-full border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50">Back</button>
-            <button
-              type="submit"
-              disabled={busy}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
-            >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
-              {busy ? "Setting up..." : "Create account & access passport"}
+      <button
+        type="submit"
+        disabled={busy}
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+      >
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
+        {busy ? "Connecting..." : mode === "signin" ? "Sign in & connect" : "Create account & connect"}
+      </button>
+
+      <p className="text-center text-xs text-gray-500">
+        {mode === "signin" ? (
+          <>Don't have a Pro account?{" "}
+            <button type="button" onClick={() => setMode("signup")} className="font-semibold text-[#2563EB] hover:underline">
+              Create one
             </button>
-          </div>
-        </form>
-      )}
+          </>
+        ) : (
+          <>Already have a Pro account?{" "}
+            <button type="button" onClick={() => setMode("signin")} className="font-semibold text-[#2563EB] hover:underline">
+              Sign in
+            </button>
+          </>
+        )}
+      </p>
+    </form>
+  );
+}
+
+const inputCls = "mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none";
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="text-sm font-semibold text-[#0D1B2A]">{label}</label>
+      {children}
     </div>
   );
 }
