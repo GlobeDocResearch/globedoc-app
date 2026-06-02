@@ -175,7 +175,7 @@ const sv: Record<keyof typeof en, string> = {
   "home.passportSubtitle": "Skapa ditt globala hälsopass",
   "home.passportCta": "Skapa ditt Health Passport",
   "nav.home": "Hem",
-  "nav.passport": "Pass",
+  "nav.passport": "Health Pass",
   "nav.travel": "Resa",
   "nav.records": "Journal",
   "nav.pairing": "Parkoppling",
