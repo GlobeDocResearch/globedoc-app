@@ -1141,14 +1141,14 @@ function Radios({
 }: {
   value: string;
   onChange: (v: string) => void;
-  options: { v: string; l: string }[];
+  options: { v: string; l: string; sub?: string }[];
 }) {
   return (
     <div className="flex flex-col gap-2">
       {options.map((o) => (
         <label
           key={o.v}
-          className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors ${
+          className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-colors ${
             value === o.v
               ? "border-[#64C8F0] bg-[#64C8F0]/5"
               : "border-[#E5E7EB] bg-white hover:bg-[#F8F9FA]"
@@ -1158,9 +1158,12 @@ function Radios({
             type="radio"
             checked={value === o.v}
             onChange={() => onChange(o.v)}
-            className="h-4 w-4 accent-[#64C8F0]"
+            className="mt-0.5 h-4 w-4 accent-[#64C8F0]"
           />
-          <span>{o.l}</span>
+          <span className="flex flex-col">
+            <span>{o.l}</span>
+            {o.sub && <span className="text-xs text-gray-500">{o.sub}</span>}
+          </span>
         </label>
       ))}
     </div>
