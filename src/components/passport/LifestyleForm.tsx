@@ -193,7 +193,10 @@ const T: Record<Lang, Record<string, string>> = {
     diet_keto: "Carnivore/Keto",
     s_sleep: "Sleep",
     sleep_none: "No issues",
-    sleep_occ: "Occasional issues",
+    sleep_occ: "Occasionally",
+    sleep_occ_sub: "Rarely affects daily life",
+    sleep_freq: "Frequently",
+    sleep_freq_sub: "Often enough to affect daily life",
     sleep_sig: "Significant issues",
     sleep_dfa: "Difficulty falling asleep",
     sleep_fnw: "Frequent night wakings",
@@ -343,7 +346,10 @@ const T: Record<Lang, Record<string, string>> = {
     diet_keto: "Carnivore/Keto",
     s_sleep: "Sömn",
     sleep_none: "Inga problem",
-    sleep_occ: "Tillfälliga problem",
+    sleep_occ: "Ibland",
+    sleep_occ_sub: "Påverkar sällan vardagen",
+    sleep_freq: "Ofta",
+    sleep_freq_sub: "Ofta nog att påverka vardagen",
     sleep_sig: "Betydande problem",
     sleep_dfa: "Svårt att somna",
     sleep_fnw: "Vaknar ofta på natten",
@@ -910,11 +916,17 @@ export default function LifestyleForm() {
             <Section title={t("s_sleep")}>
               <Radios
                 value={s.sleep_status}
-                onChange={(v) => set("sleep_status", v)}
+                onChange={(v) => {
+                  set("sleep_status", v);
+                  if (v === "none") {
+                    set("sleep_issues", []);
+                    set("sleep_other", "");
+                  }
+                }}
                 options={[
                   { v: "none", l: t("sleep_none") },
-                  { v: "occasional", l: t("sleep_occ") },
-                  { v: "significant", l: t("sleep_sig") },
+                  { v: "occasional", l: t("sleep_occ"), sub: t("sleep_occ_sub") },
+                  { v: "frequent", l: t("sleep_freq"), sub: t("sleep_freq_sub") },
                 ]}
               />
               {showSleepIssues && (
@@ -922,23 +934,18 @@ export default function LifestyleForm() {
                   <CheckList
                     values={s.sleep_issues}
                     onToggle={(v) => toggleArr("sleep_issues", v)}
-                    options={
-                      s.sleep_status === "significant"
-                        ? [
-                            { v: "insomnia", l: t("sleep_insomnia") },
-                            { v: "apnoea", l: t("sleep_apnoea") },
-                            { v: "rls", l: t("sleep_rls") },
-                            { v: "narcolepsy", l: t("sleep_narco") },
-                            { v: "shift", l: t("sleep_shift") },
-                            { v: "other", l: t("other") },
-                          ]
-                        : [
-                            { v: "dfa", l: t("sleep_dfa") },
-                            { v: "fnw", l: t("sleep_fnw") },
-                            { v: "other", l: t("other") },
-                          ]
-                    }
+                    options={[
+                      { v: "dfa", l: t("sleep_dfa") },
+                      { v: "fnw", l: t("sleep_fnw") },
+                      { v: "insomnia", l: t("sleep_insomnia") },
+                      { v: "apnoea", l: t("sleep_apnoea") },
+                      { v: "rls", l: t("sleep_rls") },
+                      { v: "narcolepsy", l: t("sleep_narco") },
+                      { v: "shift", l: t("sleep_shift") },
+                      { v: "other", l: t("other") },
+                    ]}
                   />
+
                   {s.sleep_issues.includes("other") && (
                     <Txt
                       value={s.sleep_other}
@@ -1141,14 +1148,14 @@ function Radios({
 }: {
   value: string;
   onChange: (v: string) => void;
-  options: { v: string; l: string }[];
+  options: { v: string; l: string; sub?: string }[];
 }) {
   return (
     <div className="flex flex-col gap-2">
       {options.map((o) => (
         <label
           key={o.v}
-          className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors ${
+          className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-colors ${
             value === o.v
               ? "border-[#64C8F0] bg-[#64C8F0]/5"
               : "border-[#E5E7EB] bg-white hover:bg-[#F8F9FA]"
@@ -1158,9 +1165,12 @@ function Radios({
             type="radio"
             checked={value === o.v}
             onChange={() => onChange(o.v)}
-            className="h-4 w-4 accent-[#64C8F0]"
+            className="mt-0.5 h-4 w-4 accent-[#64C8F0]"
           />
-          <span>{o.l}</span>
+          <span className="flex flex-col">
+            <span>{o.l}</span>
+            {o.sub && <span className="text-xs text-gray-500">{o.sub}</span>}
+          </span>
         </label>
       ))}
     </div>
