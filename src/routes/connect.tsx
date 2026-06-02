@@ -165,7 +165,9 @@ function ConnectPage({ isPro, userId, proMeta }: { isPro: boolean; userId: strin
       </header>
 
       <main className="mx-auto w-full max-w-xl px-5 py-8">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">Connect with Patient</h1>
+        <h1 className="text-2xl font-bold text-[#0D1B2A]">
+          Connect with a pairing code to your patient's GlobeDoc
+        </h1>
         <p className="mt-1 text-sm text-gray-500">
           Enter the 6-character pairing code shared by the patient.
         </p>
