@@ -1,18 +1,12 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
-import { getRequestHost } from "@tanstack/react-start/server";
 
 import { LaunchPage } from "@/components/LaunchPage";
+import { getCurrentRequestHost } from "@/lib/host.functions";
 
 const getHost = createIsomorphicFn()
   .client(() => window.location.hostname)
-  .server(() => {
-    try {
-      return getRequestHost({ xForwardedHost: true });
-    } catch {
-      return "";
-    }
-  });
+  .server(() => getCurrentRequestHost());
 
 function isMarketingHost(host: string): boolean {
   const h = host.toLowerCase().split(":")[0];
@@ -28,8 +22,8 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "GlobeDoc is launching soon — a new way to own your health, wherever you are in the world." },
     ],
   }),
-  beforeLoad: () => {
-    const host = getHost();
+  beforeLoad: async () => {
+    const host = await getHost();
     if (!isMarketingHost(host)) {
       throw redirect({ to: "/signin" });
     }
