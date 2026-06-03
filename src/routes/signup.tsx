@@ -5,7 +5,8 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 import { BrandHeader } from "@/components/BrandHeader";
-import { LanguageToggle } from "@/components/LanguageToggle";
+import { AuthHeader } from "@/components/AuthHeader";
+import { AuthFooter } from "@/components/AuthFooter";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -48,28 +49,30 @@ function SignupPage() {
   const [details, setDetails] = useState<Details | null>(null);
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center bg-background px-5 py-10">
-      <LanguageToggle className="absolute right-4 top-4" />
+    <div className="flex min-h-screen flex-col bg-background">
+      <AuthHeader />
+      <main className="flex w-full flex-1 flex-col items-center px-5 py-10">
+        <BrandHeader tagline={false} />
 
-      <BrandHeader tagline={false} />
+        <div className="mt-6 w-full max-w-md">
+          <p className="text-center text-base text-muted-foreground">{t("signup.title")}</p>
+          <StepIndicator step={step} />
+        </div>
 
-      <div className="mt-6 w-full max-w-md">
-        <p className="text-center text-base text-muted-foreground">{t("signup.title")}</p>
-        <StepIndicator step={step} />
-      </div>
-
-      {step === 1 ? (
-        <DetailsStep
-          onContinue={(d) => {
-            setDetails(d);
-            setStep(2);
-            window.scrollTo({ top: 0 });
-          }}
-          initial={details}
-        />
-      ) : (
-        <ConsentStep details={details!} onBack={() => setStep(1)} />
-      )}
+        {step === 1 ? (
+          <DetailsStep
+            onContinue={(d) => {
+              setDetails(d);
+              setStep(2);
+              window.scrollTo({ top: 0 });
+            }}
+            initial={details}
+          />
+        ) : (
+          <ConsentStep details={details!} onBack={() => setStep(1)} />
+        )}
+      </main>
+      <AuthFooter />
     </div>
   );
 }
