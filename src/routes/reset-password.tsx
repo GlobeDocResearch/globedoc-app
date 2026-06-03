@@ -4,7 +4,8 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import { z } from "zod";
 
 import { BrandHeader } from "@/components/BrandHeader";
-import { LanguageToggle } from "@/components/LanguageToggle";
+import { AuthHeader } from "@/components/AuthHeader";
+import { AuthFooter } from "@/components/AuthFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -55,9 +56,11 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-start bg-background px-5 py-10">
-      <LanguageToggle className="absolute right-4 top-4" />
-      <BrandHeader />
+    <div className="flex min-h-screen flex-col bg-background">
+      <AuthHeader />
+      <main className="flex w-full flex-1 flex-col items-center px-5 py-10">
+        <BrandHeader />
+
 
       <form
         onSubmit={onSubmit}
@@ -114,6 +117,8 @@ function ResetPasswordPage() {
           </Link>
         </div>
       </form>
+      </main>
+      <AuthFooter />
     </div>
   );
 }
