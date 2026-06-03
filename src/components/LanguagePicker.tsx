@@ -75,7 +75,7 @@ export function LanguageGlobeButton({ className }: { className?: string }) {
           className,
         )}
       >
-        <Globe className="h-4 w-4" />
+        <Globe className="h-4 w-4" style={{ color: "#FFFFFF" }} />
       </button>
       <LanguagePickerDialog open={open} onOpenChange={setOpen} />
     </>
