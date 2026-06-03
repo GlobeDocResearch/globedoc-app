@@ -6,8 +6,11 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  redirect,
 } from "@tanstack/react-router";
+import { getRequest } from "@tanstack/react-start/server";
 import { useEffect } from "react";
+
 
 import appCss from "../styles.css?url";
 import { I18nProvider } from "@/lib/i18n";
@@ -72,6 +75,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: ({ location }) => {
+    // Server-side: detect hostname from request and redirect marketing domain to /launch
+    if (typeof window === "undefined") {
+      try {
+        const req = getRequest();
+        const host = req?.headers.get("host")?.toLowerCase() ?? "";
+        const isMarketing = host === "globedoc.com" || host === "www.globedoc.com";
+        if (isMarketing && location.pathname !== "/launch") {
+          throw redirect({ to: "/launch" });
+        }
+      } catch (e) {
+        if (e && typeof e === "object" && "isRedirect" in e) throw e;
+      }
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -131,16 +149,30 @@ function AuthSync() {
   return null;
 }
 
+function MarketingDomainGuard() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const host = window.location.hostname.toLowerCase();
+    const isMarketing = host === "globedoc.com" || host === "www.globedoc.com";
+    if (isMarketing && window.location.pathname !== "/launch") {
+      window.location.replace("/launch");
+    }
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
+        <MarketingDomainGuard />
         <AuthSync />
         <DomTranslator />
         <Outlet />
         <Toaster />
       </I18nProvider>
     </QueryClientProvider>
+
   );
 }
