@@ -13,7 +13,7 @@ export function AuthHeader() {
           </Hexagon>
           <span className="text-lg font-semibold tracking-tight">GlobeDoc</span>
         </Link>
-        <LanguageToggle />
+        <LanguageToggle className="text-white" />
       </div>
     </header>
   );
