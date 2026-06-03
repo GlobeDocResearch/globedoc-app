@@ -6,9 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  redirect,
 } from "@tanstack/react-router";
-import { getRequest } from "@tanstack/react-start/server";
 import { useEffect } from "react";
 
 
@@ -75,21 +73,6 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  beforeLoad: ({ location }) => {
-    // Server-side: detect hostname from request and redirect marketing domain to /launch
-    if (typeof window === "undefined") {
-      try {
-        const req = getRequest();
-        const host = req?.headers.get("host")?.toLowerCase() ?? "";
-        const isMarketing = host === "globedoc.com" || host === "www.globedoc.com";
-        if (isMarketing && location.pathname !== "/launch") {
-          throw redirect({ to: "/launch" });
-        }
-      } catch (e) {
-        if (e && typeof e === "object" && "isRedirect" in e) throw e;
-      }
-    }
-  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
