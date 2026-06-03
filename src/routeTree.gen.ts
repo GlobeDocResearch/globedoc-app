@@ -23,6 +23,7 @@ import { Route as ProRouteImport } from './routes/pro'
 import { Route as PairingRouteImport } from './routes/pairing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
+import { Route as LaunchRouteImport } from './routes/launch'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
@@ -108,6 +109,11 @@ const LegalRoute = LegalRouteImport.update({
   path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LaunchRoute = LaunchRouteImport.update({
+  id: '/launch',
+  path: '/launch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
+  '/launch': typeof LaunchRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
+  '/launch': typeof LaunchRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
+  '/launch': typeof LaunchRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
@@ -277,6 +286,7 @@ export interface FileRouteTypes {
     | '/confirm-email-pro'
     | '/connect'
     | '/home'
+    | '/launch'
     | '/legal'
     | '/login'
     | '/pairing'
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/confirm-email-pro'
     | '/connect'
     | '/home'
+    | '/launch'
     | '/legal'
     | '/login'
     | '/pairing'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/confirm-email-pro'
     | '/connect'
     | '/home'
+    | '/launch'
     | '/legal'
     | '/login'
     | '/pairing'
@@ -367,6 +379,7 @@ export interface RootRouteChildren {
   ConfirmEmailProRoute: typeof ConfirmEmailProRoute
   ConnectRoute: typeof ConnectRoute
   HomeRoute: typeof HomeRoute
+  LaunchRoute: typeof LaunchRoute
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
   PairingRoute: typeof PairingRoute
@@ -487,6 +500,13 @@ declare module '@tanstack/react-router' {
       path: '/legal'
       fullPath: '/legal'
       preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/launch': {
+      id: '/launch'
+      path: '/launch'
+      fullPath: '/launch'
+      preLoaderRoute: typeof LaunchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home': {
@@ -611,6 +631,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfirmEmailProRoute: ConfirmEmailProRoute,
   ConnectRoute: ConnectRoute,
   HomeRoute: HomeRoute,
+  LaunchRoute: LaunchRoute,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
   PairingRoute: PairingRoute,
