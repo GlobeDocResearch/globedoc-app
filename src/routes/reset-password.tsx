@@ -4,8 +4,6 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import { z } from "zod";
 
 import { BrandHeader } from "@/components/BrandHeader";
-import { AuthHeader } from "@/components/AuthHeader";
-import { AuthFooter } from "@/components/AuthFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -57,10 +55,8 @@ function ResetPasswordPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <AuthHeader />
       <main className="flex w-full flex-1 flex-col items-center px-5 py-10">
         <BrandHeader />
-
 
       <form
         onSubmit={onSubmit}
@@ -118,7 +114,6 @@ function ResetPasswordPage() {
         </div>
       </form>
       </main>
-      <AuthFooter />
     </div>
   );
 }
