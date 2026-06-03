@@ -4,6 +4,7 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 
 import { BrandHeader } from "@/components/BrandHeader";
+import { LanguageGlobeButton } from "@/components/LanguagePicker";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -75,6 +76,7 @@ function LoginPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <main className="flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
+        <LanguageGlobeButton className="absolute right-4 top-4 text-muted-foreground" />
         <BrandHeader tagline={false} />
 
 
