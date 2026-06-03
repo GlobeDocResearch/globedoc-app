@@ -4,8 +4,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 import { BrandHeader } from "@/components/BrandHeader";
-import { AuthHeader } from "@/components/AuthHeader";
-import { AuthFooter } from "@/components/AuthFooter";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/signup-pro")({
@@ -92,7 +90,6 @@ function ProSignupPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      <AuthHeader />
       <main className="flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
         <BrandHeader tagline={false} />
 
@@ -195,7 +192,6 @@ function ProSignupPage() {
           </p>
         </form>
       </main>
-      <AuthFooter />
     </div>
   );
 }
