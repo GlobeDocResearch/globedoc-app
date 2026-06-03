@@ -2,11 +2,21 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
 
 import { LaunchPage } from "@/components/LaunchPage";
-import { getCurrentRequestHost } from "@/lib/host.functions";
 
 const getHost = createIsomorphicFn()
   .client(() => window.location.hostname)
-  .server(() => getCurrentRequestHost());
+  .server(() => {
+    // Imported inside .server() so it's stripped from the client bundle.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getRequestHost } = require("@tanstack/react-start/server") as {
+      getRequestHost: (opts?: { xForwardedHost?: boolean }) => string;
+    };
+    try {
+      return getRequestHost({ xForwardedHost: true }) ?? "";
+    } catch {
+      return "";
+    }
+  });
 
 function isMarketingHost(host: string): boolean {
   const h = host.toLowerCase().split(":")[0];
@@ -22,8 +32,8 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "GlobeDoc is launching soon — a new way to own your health, wherever you are in the world." },
     ],
   }),
-  beforeLoad: async () => {
-    const host = await getHost();
+  beforeLoad: () => {
+    const host = getHost();
     if (!isMarketingHost(host)) {
       throw redirect({ to: "/signin" });
     }
