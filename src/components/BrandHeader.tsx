@@ -1,4 +1,4 @@
-import logo from "@/assets/globedoc-logo.svg";
+import logo from "@/assets/globedoc-logo-clean.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { useI18n } from "@/lib/i18n";
 
