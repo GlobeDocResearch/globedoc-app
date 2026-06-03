@@ -9,30 +9,6 @@ type ServerEntry = {
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
-function isMarketingDomain(hostname: string): boolean {
-  return hostname === "globedoc.com" || hostname === "www.globedoc.com";
-}
-
-function isPageRequest(request: Request, pathname: string): boolean {
-  if (request.method !== "GET" && request.method !== "HEAD") return false;
-  if (pathname.includes(".")) return false;
-
-  const accept = request.headers.get("accept") ?? "";
-  return accept.includes("text/html") || accept === "" || accept.includes("*/*");
-}
-
-function redirectMarketingDomainToLaunch(request: Request): Response | undefined {
-  const url = new URL(request.url);
-  if (
-    !isMarketingDomain(url.hostname.toLowerCase()) ||
-    url.pathname === "/launch" ||
-    !isPageRequest(request, url.pathname)
-  ) {
-    return undefined;
-  }
-
-  return Response.redirect(new URL("/launch", url), 302);
-}
 
 async function getServerEntry(): Promise<ServerEntry> {
   if (!serverEntryPromise) {
