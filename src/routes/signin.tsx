@@ -243,19 +243,19 @@ function LoginPage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="px-5 pb-6 pt-4">
-        <div className="mx-auto flex max-w-md flex-col items-center gap-1 text-center text-xs text-muted-foreground">
+      {/* Navy footer — edge to edge */}
+      <footer className="bg-[#1D3F7C] px-5 py-6 text-white">
+        <div className="mx-auto flex max-w-md flex-col items-center gap-1 text-center text-xs text-white/70">
           <div className="flex flex-wrap items-center justify-center gap-x-2">
-            <Link to="/legal" className="hover:text-foreground">Privacy Policy</Link>
+            <Link to="/legal" className="hover:text-white">Privacy Policy</Link>
             <span aria-hidden>·</span>
-            <Link to="/legal" className="hover:text-foreground">Terms of Service</Link>
+            <Link to="/legal" className="hover:text-white">Terms of Service</Link>
             <span aria-hidden>·</span>
             <a
               href="https://globedoc.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-foreground"
+              className="hover:text-white"
             >
               globedoc.com
             </a>
