@@ -42,7 +42,7 @@
   --radius: 0.875rem;
 
   /* Light-blue page background from mock */
-  --brand-bg: #EBF2FF;
+  --brand-bg: #EEF2FF;
   --brand-blue: oklch(0.62 0.18 262);            /* Sign in button blue */
   --brand-blue-foreground: oklch(1 0 0);
   --brand-navy: oklch(0.32 0.12 264);            /* Create account / continue button */
