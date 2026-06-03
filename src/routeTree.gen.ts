@@ -27,6 +27,7 @@ import { Route as LaunchRouteImport } from './routes/launch'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProIndexRouteImport } from './routes/pro.index'
 import { Route as HealthPassIndexRouteImport } from './routes/health-pass.index'
@@ -129,6 +130,11 @@ const ConfirmEmailProRoute = ConfirmEmailProRouteImport.update({
   path: '/confirm-email-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -188,6 +194,7 @@ const ApiPublicConnectEntryRoute = ApiPublicConnectEntryRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
@@ -250,6 +258,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/confirm-email-pro': typeof ConfirmEmailProRoute
   '/connect': typeof ConnectRoute
   '/home': typeof HomeRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/app'
     | '/confirm-email-pro'
     | '/connect'
     | '/home'
@@ -314,6 +324,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app'
     | '/confirm-email-pro'
     | '/connect'
     | '/home'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/app'
     | '/confirm-email-pro'
     | '/connect'
     | '/home'
@@ -376,6 +388,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   ConfirmEmailProRoute: typeof ConfirmEmailProRoute
   ConnectRoute: typeof ConnectRoute
   HomeRoute: typeof HomeRoute
@@ -530,6 +543,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmEmailProRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -628,6 +648,7 @@ const ProRouteWithChildren = ProRoute._addFileChildren(ProRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   ConfirmEmailProRoute: ConfirmEmailProRoute,
   ConnectRoute: ConnectRoute,
   HomeRoute: HomeRoute,
