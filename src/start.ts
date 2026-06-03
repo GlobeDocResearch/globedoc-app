@@ -16,14 +16,6 @@ function isFrameworkControlFlow(error: unknown): boolean {
   return false;
 }
 
-const requestHostMiddleware = createMiddleware().server(async ({ next, request }) => {
-  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
-  const requestHost = forwardedHost || request.headers.get("host") || new URL(request.url).host;
-
-  return next({
-    context: { requestHost },
-  });
-});
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -41,6 +33,6 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 });
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware, requestHostMiddleware],
+  requestMiddleware: [errorMiddleware],
   functionMiddleware: [attachSupabaseAuth],
 }));
