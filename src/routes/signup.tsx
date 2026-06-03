@@ -77,6 +77,8 @@ function SignupPage() {
           <Link to="/legal" className="hover:text-foreground">Privacy Policy</Link>
           <span aria-hidden>·</span>
           <Link to="/legal" className="hover:text-foreground">Terms of Service</Link>
+          <span aria-hidden>·</span>
+          <a href="https://globedoc.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">globedoc.com</a>
         </div>
       </footer>
     </div>
