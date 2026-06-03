@@ -4,7 +4,9 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 
 import { BrandHeader } from "@/components/BrandHeader";
+import { Hexagon } from "@/components/Hexagon";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import logo from "@/assets/globedoc-logo.svg";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -75,10 +77,20 @@ function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      <LanguageToggle className="absolute right-4 top-4" />
+      {/* Navy header — edge to edge */}
+      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <Hexagon className="h-[50px] w-[50px]">
+            <img src={logo} alt="GlobeDoc" className="h-9 w-9" />
+          </Hexagon>
+          <span className="text-lg font-bold text-white">GlobeDoc</span>
+        </div>
+        <LanguageToggle className="!static [&>button]:bg-white/10 [&>button]:text-white [&>button]:hover:bg-white/20" />
+      </header>
 
       <main className="flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
         <BrandHeader tagline={false} />
+
 
         {mode === "login" ? (
           <form
@@ -231,19 +243,19 @@ function LoginPage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="px-5 pb-6 pt-4">
-        <div className="mx-auto flex max-w-md flex-col items-center gap-1 text-center text-xs text-muted-foreground">
+      {/* Navy footer — edge to edge */}
+      <footer className="bg-[#1D3F7C] px-5 py-6 text-white">
+        <div className="mx-auto flex max-w-md flex-col items-center gap-1 text-center text-xs text-white/70">
           <div className="flex flex-wrap items-center justify-center gap-x-2">
-            <Link to="/legal" className="hover:text-foreground">Privacy Policy</Link>
+            <Link to="/legal" className="hover:text-white">Privacy Policy</Link>
             <span aria-hidden>·</span>
-            <Link to="/legal" className="hover:text-foreground">Terms of Service</Link>
+            <Link to="/legal" className="hover:text-white">Terms of Service</Link>
             <span aria-hidden>·</span>
             <a
               href="https://globedoc.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-foreground"
+              className="hover:text-white"
             >
               globedoc.com
             </a>
