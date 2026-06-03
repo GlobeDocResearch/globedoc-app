@@ -149,16 +149,30 @@ function AuthSync() {
   return null;
 }
 
+function MarketingDomainGuard() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const host = window.location.hostname.toLowerCase();
+    const isMarketing = host === "globedoc.com" || host === "www.globedoc.com";
+    if (isMarketing && window.location.pathname !== "/launch") {
+      window.location.replace("/launch");
+    }
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
+        <MarketingDomainGuard />
         <AuthSync />
         <DomTranslator />
         <Outlet />
         <Toaster />
       </I18nProvider>
     </QueryClientProvider>
+
   );
 }
