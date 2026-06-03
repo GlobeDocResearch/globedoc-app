@@ -5,8 +5,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 import { BrandHeader } from "@/components/BrandHeader";
-import { AuthHeader } from "@/components/AuthHeader";
-import { AuthFooter } from "@/components/AuthFooter";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -50,7 +48,6 @@ function SignupPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <AuthHeader />
       <main className="flex w-full flex-1 flex-col items-center px-5 py-10">
         <BrandHeader tagline={false} />
 
@@ -72,7 +69,6 @@ function SignupPage() {
           <ConsentStep details={details!} onBack={() => setStep(1)} />
         )}
       </main>
-      <AuthFooter />
     </div>
   );
 }

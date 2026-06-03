@@ -4,8 +4,6 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 
 import { BrandHeader } from "@/components/BrandHeader";
-import { AuthHeader } from "@/components/AuthHeader";
-import { AuthFooter } from "@/components/AuthFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -79,9 +77,6 @@ function ProSignInPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      <AuthHeader />
-
-
       <main className="flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
         <BrandHeader tagline={false} />
 
@@ -212,7 +207,6 @@ function ProSignInPage() {
           </div>
         )}
       </main>
-      <AuthFooter />
     </div>
   );
 }

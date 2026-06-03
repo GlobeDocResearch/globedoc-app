@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
 import { BrandHeader } from "@/components/BrandHeader";
-import { AuthHeader } from "@/components/AuthHeader";
-import { AuthFooter } from "@/components/AuthFooter";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/verified")({
@@ -31,7 +29,6 @@ function VerifiedPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <AuthHeader />
       <main className="flex w-full flex-1 flex-col items-center px-5 py-10">
         <BrandHeader />
         <div className="mt-8 w-full max-w-md rounded-2xl bg-card p-8 text-center shadow-[var(--shadow-card)]">
@@ -48,7 +45,6 @@ function VerifiedPage() {
           </Link>
         </div>
       </main>
-      <AuthFooter />
     </div>
   );
 }
