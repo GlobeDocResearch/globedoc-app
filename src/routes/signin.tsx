@@ -77,10 +77,20 @@ function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      <LanguageToggle className="absolute right-4 top-4" />
+      {/* Navy header — edge to edge */}
+      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <Hexagon className="h-[50px] w-[50px]">
+            <img src={logo} alt="GlobeDoc" className="h-9 w-9" />
+          </Hexagon>
+          <span className="text-lg font-bold text-white">GlobeDoc</span>
+        </div>
+        <LanguageToggle className="!static [&>button]:bg-white/10 [&>button]:text-white [&>button]:hover:bg-white/20" />
+      </header>
 
       <main className="flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
         <BrandHeader tagline={false} />
+
 
         {mode === "login" ? (
           <form
