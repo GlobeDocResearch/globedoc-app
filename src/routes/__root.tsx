@@ -6,8 +6,11 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  redirect,
 } from "@tanstack/react-router";
+import { getRequest } from "@tanstack/react-start/server";
 import { useEffect } from "react";
+
 
 import appCss from "../styles.css?url";
 import { I18nProvider } from "@/lib/i18n";
