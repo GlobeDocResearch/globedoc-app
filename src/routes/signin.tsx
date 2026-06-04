@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { Hexagon } from "@/components/Hexagon";
 import { LanguageGlobeButton } from "@/components/LanguagePicker";
-import { AuthFooter } from "@/components/AuthFooter";
+
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
