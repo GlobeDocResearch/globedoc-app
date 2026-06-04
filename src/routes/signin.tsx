@@ -254,7 +254,7 @@ function LoginPage() {
         )}
       </main>
 
-      <footer className="w-full bg-brand-navy text-brand-navy-foreground">
+      <footer className="w-full bg-[#1D3F7C] text-white">
         <div className="mx-auto flex w-full max-w-md flex-col items-center gap-1 px-4 py-5 text-center text-xs">
           <div className="flex flex-wrap items-center justify-center gap-x-2 text-white/80">
             <span>© 2026 GlobeDoc</span>
