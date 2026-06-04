@@ -153,7 +153,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-4 w-full rounded-full bg-[#2e4482] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+              className="mt-4 w-full rounded-full bg-[#3B6CF6] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
             >
               {t("login.submit")}
             </button>
