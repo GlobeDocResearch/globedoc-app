@@ -230,7 +230,7 @@ const sv: Record<keyof typeof en, string> = {
   "legal.contactTitle": "Kontakta oss",
   "legal.contactCompany": "GlobeDoc Health AB",
   "legal.contactEmailLabel": "E-post:",
-  "legal.footer1": "GlobeDoc Health Passport · Version 1.0 Beta",
+  "legal.footer1": "GlobeDoc HP · Version 1.0 Beta",
   "legal.footer2":
     "All data är självrapporterad och krypterad · Dela endast via autentiserad parkopplingskod",
 
