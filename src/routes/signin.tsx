@@ -3,11 +3,14 @@ import { useState } from "react";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 
-import { BrandHeader } from "@/components/BrandHeader";
+import { Hexagon } from "@/components/Hexagon";
 import { LanguageGlobeButton } from "@/components/LanguagePicker";
+import { AuthFooter } from "@/components/AuthFooter";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import globeLogo from "@/assets/globedoc-globe.svg";
+
 
 export const Route = createFileRoute("/signin")({
   head: () => ({
