@@ -234,7 +234,7 @@ function LoginPage() {
               </p>
               <Link
                 to="/connect"
-                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#2e4482] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#3B6CF6] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
               >
                 Connect with Pairing Code
               </Link>
