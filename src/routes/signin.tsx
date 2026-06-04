@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { Hexagon } from "@/components/Hexagon";
 import { LanguageGlobeButton } from "@/components/LanguagePicker";
-import { AuthFooter } from "@/components/AuthFooter";
+
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -79,7 +79,7 @@ function LoginPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       {/* Site header (matches globedoc.com) */}
-      <header className="w-full bg-brand-navy text-white">
+      <header className="w-full bg-[#2e4482] text-white">
         <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3">
           <Hexagon style={{ height: "2.75rem", width: "2.75rem" }}>
             <img src={globeLogo} alt="GlobeDoc" className="h-8 w-8" />
@@ -95,7 +95,7 @@ function LoginPage() {
           <Hexagon style={{ height: "6.04rem", width: "6.04rem" }}>
             <img src={globeLogo} alt="GlobeDoc" className="h-[4.62rem] w-[4.62rem]" />
           </Hexagon>
-          <h1 className="mt-4 text-3xl font-normal tracking-tight text-[#1D438C]">GlobeDoc</h1>
+          <h1 className="mt-4 text-3xl font-normal tracking-tight text-[#2e4482]">GlobeDoc</h1>
         </div>
 
 
@@ -153,7 +153,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-4 w-full rounded-full bg-[#2563EB] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+              className="mt-4 w-full rounded-full bg-[#2e4482] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
             >
               {t("login.submit")}
             </button>
@@ -201,7 +201,7 @@ function LoginPage() {
                 <button
                   type="submit"
                   disabled={resetSubmitting}
-                  className="mt-6 w-full rounded-full bg-[#2563EB] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+                  className="mt-6 w-full rounded-full bg-[#2e4482] px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
                 >
                   {resetSubmitting ? "Sending..." : "Send reset link"}
                 </button>
@@ -234,13 +234,13 @@ function LoginPage() {
               </p>
               <Link
                 to="/connect"
-                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#2563EB] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#2e4482] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
               >
                 Connect with Pairing Code
               </Link>
               <Link
                 to="/signin-pro"
-                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#1D3F7C] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#2e4482] px-6 py-3.5 text-base font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
               >
                 Sign in
               </Link>
@@ -254,7 +254,17 @@ function LoginPage() {
         )}
       </main>
 
-      <AuthFooter />
+      <footer className="w-full bg-[#2e4482] text-white">
+        <div className="mx-auto flex w-full max-w-md flex-col items-center gap-1 px-4 py-5 text-center text-xs">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 text-white/80">
+            <span>© 2026 GlobeDoc</span>
+            <span aria-hidden>·</span>
+            <Link to="/legal" className="hover:text-white">Privacy Policy</Link>
+            <span aria-hidden>·</span>
+            <Link to="/legal" className="hover:text-white">Terms of Service</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
