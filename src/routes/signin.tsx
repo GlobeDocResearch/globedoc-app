@@ -254,17 +254,11 @@ function LoginPage() {
         )}
       </main>
 
-      <footer className="w-full py-5 text-center text-xs text-muted-foreground">
-        <div className="flex flex-wrap items-center justify-center gap-x-2">
-          <span>© 2026 GlobeDoc</span>
-          <span aria-hidden>·</span>
-          <Link to="/legal" className="hover:text-foreground">Privacy Policy</Link>
-          <span aria-hidden>·</span>
-          <Link to="/legal" className="hover:text-foreground">Terms of Service</Link>
-          <span aria-hidden>·</span>
-          <a href="https://globedoc.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">globedoc.com</a>
-        </div>
-      </footer>
+      <AuthFooter />
+    </div>
+  );
+}
+
     </div>
   );
 }
