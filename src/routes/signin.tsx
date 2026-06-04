@@ -259,9 +259,7 @@ function LoginPage() {
   );
 }
 
-    </div>
-  );
-}
+
 
 function Field({
   id,
