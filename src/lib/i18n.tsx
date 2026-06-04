@@ -75,7 +75,7 @@ const en = {
   "legal.contactTitle": "Contact us",
   "legal.contactCompany": "GlobeDoc Health AB",
   "legal.contactEmailLabel": "Email:",
-  "legal.footer1": "GlobeDoc Health Passport · Version 1.0 Beta",
+  "legal.footer1": "GlobeDoc HP · Version 1.0 Beta",
   "legal.footer2": "All data is self-reported and encrypted · Share only via authenticated pairing code",
 
   "legal.tos.updated": "Last updated: May 2026",
@@ -230,7 +230,7 @@ const sv: Record<keyof typeof en, string> = {
   "legal.contactTitle": "Kontakta oss",
   "legal.contactCompany": "GlobeDoc Health AB",
   "legal.contactEmailLabel": "E-post:",
-  "legal.footer1": "GlobeDoc Health Passport · Version 1.0 Beta",
+  "legal.footer1": "GlobeDoc HP · Version 1.0 Beta",
   "legal.footer2":
     "All data är självrapporterad och krypterad · Dela endast via autentiserad parkopplingskod",
 
