@@ -79,7 +79,7 @@ function LoginPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       {/* Site header (matches globedoc.com) */}
-      <header className="w-full bg-[#2e4482] text-white">
+      <header className="m-0 w-full rounded-none border-0 bg-brand-navy px-0 text-brand-navy-foreground">
         <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3">
           <Hexagon style={{ height: "2.75rem", width: "2.75rem" }}>
             <img src={globeLogo} alt="GlobeDoc" className="h-8 w-8" />
