@@ -79,7 +79,7 @@ function LoginPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       {/* Site header (matches globedoc.com) */}
-      <header className="m-0 w-full rounded-none border-0 bg-brand-navy px-0 text-brand-navy-foreground">
+      <header className="m-0 w-full rounded-none border-0 bg-[#1D3F7C] px-0 text-white">
         <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3">
           <Hexagon style={{ height: "2.75rem", width: "2.75rem" }}>
             <img src={globeLogo} alt="GlobeDoc" className="h-8 w-8" />
@@ -254,7 +254,7 @@ function LoginPage() {
         )}
       </main>
 
-      <footer className="w-full bg-brand-navy text-brand-navy-foreground">
+      <footer className="w-full bg-[#1D3F7C] text-white">
         <div className="mx-auto flex w-full max-w-md flex-col items-center gap-1 px-4 py-5 text-center text-xs">
           <div className="flex flex-wrap items-center justify-center gap-x-2 text-white/80">
             <span>© 2026 GlobeDoc</span>
