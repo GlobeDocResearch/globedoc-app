@@ -3,11 +3,14 @@ import { useState } from "react";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 
-import { BrandHeader } from "@/components/BrandHeader";
+import { Hexagon } from "@/components/Hexagon";
 import { LanguageGlobeButton } from "@/components/LanguagePicker";
+import { AuthFooter } from "@/components/AuthFooter";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import globeLogo from "@/assets/globedoc-globe.svg";
+
 
 export const Route = createFileRoute("/signin")({
   head: () => ({
@@ -75,9 +78,27 @@ function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      <main className="flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
+      {/* Site header (matches globedoc.com) */}
+      <header className="w-full bg-brand-navy text-white">
+        <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3">
+          <Hexagon style={{ height: "2.75rem", width: "2.75rem" }}>
+            <img src={globeLogo} alt="GlobeDoc" className="h-8 w-8" />
+          </Hexagon>
+          <span className="text-lg font-semibold tracking-tight">GlobeDoc</span>
+        </div>
+      </header>
+
+      <main className="relative flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
         <LanguageGlobeButton className="absolute right-4 top-4 text-muted-foreground" />
-        <BrandHeader tagline={false} />
+
+        <div className="flex flex-col items-center text-center">
+          <Hexagon style={{ height: "6.04rem", width: "6.04rem" }}>
+            <img src={globeLogo} alt="GlobeDoc" className="h-[4.62rem] w-[4.62rem]" />
+          </Hexagon>
+          <h1 className="mt-4 text-3xl font-normal tracking-tight text-[#1D438C]">GlobeDoc</h1>
+        </div>
+
+
 
 
 
@@ -233,20 +254,12 @@ function LoginPage() {
         )}
       </main>
 
-      <footer className="w-full py-5 text-center text-xs text-muted-foreground">
-        <div className="flex flex-wrap items-center justify-center gap-x-2">
-          <span>© 2026 GlobeDoc</span>
-          <span aria-hidden>·</span>
-          <Link to="/legal" className="hover:text-foreground">Privacy Policy</Link>
-          <span aria-hidden>·</span>
-          <Link to="/legal" className="hover:text-foreground">Terms of Service</Link>
-          <span aria-hidden>·</span>
-          <a href="https://globedoc.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">globedoc.com</a>
-        </div>
-      </footer>
+      <AuthFooter />
     </div>
   );
 }
+
+
 
 function Field({
   id,
