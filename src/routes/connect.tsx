@@ -5,7 +5,7 @@ import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { addPairing, loadPairings, refreshActivePairings, removePairing, type ProPairing } from "@/lib/proPairings";
+import { addPairing, loadPairings, refreshPairingsWithPast, removePairing, type ProPairing, type PastPairing } from "@/lib/proPairings";
 import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
@@ -72,6 +72,17 @@ function formatRemaining(ms: number) {
   return `${h}h ${m}m`;
 }
 
+function formatDuration(pairedAt: string, expiresAt: string) {
+  const ms = new Date(expiresAt).getTime() - new Date(pairedAt).getTime();
+  if (ms <= 0) return "—";
+  const minutes = Math.round(ms / 60000);
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"}`;
+  const days = Math.round(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"}`;
+}
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);
@@ -86,10 +97,17 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     return () => clearInterval(id);
   }, []);
 
+  const [past, setPast] = useState<PastPairing[]>([]);
+
   useEffect(() => {
     if (isAuthed && userId) {
       setPairings(loadPairings(userId).filter(p => new Date(p.expires_at).getTime() > Date.now()));
-      refreshActivePairings(userId).then(setPairings).catch(() => {});
+      refreshPairingsWithPast(userId)
+        .then(({ active, past }) => {
+          setPairings(active);
+          setPast(past);
+        })
+        .catch(() => {});
     }
   }, [isAuthed, userId, lastConnection]);
 
@@ -222,6 +240,33 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
                 })}
               </ul>
             )}
+          </section>
+        )}
+
+        {isAuthed && past.length > 0 && (
+          <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+            <h2 className="text-base font-bold text-[#0D1B2A]">Past connections</h2>
+            <ul className="mt-3 space-y-2">
+              {past.map((p) => (
+                <li
+                  key={p.id}
+                  className="rounded-xl border border-gray-100 p-3"
+                >
+                  <p className="truncate text-sm font-semibold text-[#0D1B2A]">{p.patient_name}</p>
+                  <p className="text-xs text-gray-500">
+                    Paired: {new Date(p.paired_at).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Duration granted: {formatDuration(p.paired_at, p.expires_at)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {p.revoked_at
+                      ? "Access revoked"
+                      : `Expired ${new Date(p.expires_at).toLocaleString()}`}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
       </main>

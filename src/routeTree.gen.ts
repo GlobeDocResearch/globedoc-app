@@ -34,6 +34,7 @@ import { Route as ProSettingsRouteImport } from './routes/pro.settings'
 import { Route as ProRecordsRouteImport } from './routes/pro.records'
 import { Route as ProProfileRouteImport } from './routes/pro.profile'
 import { Route as HealthPassSectionRouteImport } from './routes/health-pass.$section'
+import { Route as ApiPublicConnectStatusRouteImport } from './routes/api/public/connect.status'
 import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
 import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
 import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
@@ -167,6 +168,11 @@ const HealthPassSectionRoute = HealthPassSectionRouteImport.update({
   path: '/health-pass/$section',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicConnectStatusRoute = ApiPublicConnectStatusRouteImport.update({
+  id: '/api/public/connect/status',
+  path: '/api/public/connect/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicConnectPassportRoute =
   ApiPublicConnectPassportRouteImport.update({
     id: '/api/public/connect/passport',
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
+  '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
+  '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
+  '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -342,6 +351,7 @@ export interface FileRouteTypes {
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
+    | '/api/public/connect/status'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
+    | '/api/public/connect/status'
   id:
     | '__root__'
     | '/'
@@ -410,6 +421,7 @@ export interface FileRouteTypes {
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
+    | '/api/public/connect/status'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -442,6 +454,7 @@ export interface RootRouteChildren {
   ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
   ApiPublicConnectPairRoute: typeof ApiPublicConnectPairRoute
   ApiPublicConnectPassportRoute: typeof ApiPublicConnectPassportRoute
+  ApiPublicConnectStatusRoute: typeof ApiPublicConnectStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -621,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HealthPassSectionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/connect/status': {
+      id: '/api/public/connect/status'
+      path: '/api/public/connect/status'
+      fullPath: '/api/public/connect/status'
+      preLoaderRoute: typeof ApiPublicConnectStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/connect/passport': {
       id: '/api/public/connect/passport'
       path: '/api/public/connect/passport'
@@ -717,6 +737,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
   ApiPublicConnectPairRoute: ApiPublicConnectPairRoute,
   ApiPublicConnectPassportRoute: ApiPublicConnectPassportRoute,
+  ApiPublicConnectStatusRoute: ApiPublicConnectStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
