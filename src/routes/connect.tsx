@@ -64,6 +64,14 @@ const EXTEND_OPTIONS = [
   { value: 60 * 24 * 7, label: "7 days" },
 ];
 
+function formatRemaining(ms: number) {
+  if (ms <= 0) return "Expired";
+  const totalMinutes = Math.ceil(ms / 60000);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${h}h ${m}m`;
+}
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);
@@ -71,6 +79,12 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
   const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
   const [extendMinutes, setExtendMinutes] = useState(60);
   const [extending, setExtending] = useState(false);
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (isAuthed && userId) {
@@ -183,21 +197,29 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
               <p className="mt-2 text-sm text-gray-500">No active connections yet.</p>
             ) : (
               <ul className="mt-3 space-y-2">
-                {pairings.map(p => (
-                  <li key={p.id} className="flex items-center justify-between gap-2 rounded-xl border border-gray-100 p-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-[#0D1B2A]">{p.patient_name}</p>
-                      <p className="text-xs text-gray-500">Expires {new Date(p.expires_at).toLocaleString()}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeConnection(p.id)}
-                      className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600"
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
+                {pairings.map(p => {
+                  const remaining = new Date(p.expires_at).getTime() - now;
+                  return (
+                    <li key={p.id} className="flex items-center justify-between gap-2 rounded-xl border border-gray-100 p-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-[#0D1B2A]">{p.patient_name}</p>
+                        <p className="text-xs text-gray-500">
+                          Expires: {new Date(p.expires_at).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Time remaining: {formatRemaining(remaining)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeConnection(p.id)}
+                        className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
