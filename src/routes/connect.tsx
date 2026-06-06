@@ -261,7 +261,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
 
 type PairResult = { session_token: string; patient_name: string; expires_at: string };
 
-function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (r: PairResult) => void }) {
+function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void }) {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -270,20 +270,34 @@ function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (r: Pa
     if (code.trim().length !== 6) { toast.error("Enter the 6-character code"); return; }
     setSubmitting(true);
     try {
+      const proName = proMeta?.full_name || "Healthcare Professional";
+      const proTitle = proMeta?.pro_title || proMeta?.specialty || null;
+      const inst = proMeta?.institution || null;
       const res = await fetch("/api/public/connect/pair", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: code.trim().toUpperCase(),
-          pro_name: proMeta?.full_name || "Healthcare Professional",
-          pro_title: proMeta?.pro_title || proMeta?.specialty || null,
-          institution: proMeta?.institution || null,
+          pro_name: proName,
+          pro_title: proTitle,
+          institution: inst,
           access_level: "passport_records",
           gdpr_consent: true,
         }),
       });
       const json = await res.json();
       if (!res.ok) { toast.error(json.error || "Could not connect"); return; }
+      if (json.duplicate) {
+        onDuplicate({
+          code: json.code,
+          pro_name: proName,
+          pro_title: proTitle,
+          institution: inst,
+          existing_pro_name: json.pro_name,
+          current_expires_at: json.current_expires_at,
+        });
+        return;
+      }
       onPaired({
         session_token: json.session_token,
         patient_name: json.patient_name || "Patient",
