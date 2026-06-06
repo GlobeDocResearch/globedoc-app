@@ -370,14 +370,23 @@ function PairingPage() {
             {loading ? "Generating..." : "Generate pairing code"}
           </button>
         ) : (
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={loading}
-            className="mt-4 w-full text-center text-sm font-semibold text-[#2563EB] hover:underline"
-          >
-            Generate new code
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={loading}
+              className="mt-4 w-full text-center text-sm font-semibold text-[#2563EB] hover:underline"
+            >
+              Generate new code
+            </button>
+            <button
+              type="button"
+              onClick={handleCancelCode}
+              className="mt-2 w-full text-center text-sm font-semibold text-red-600 hover:underline"
+            >
+              Cancel code
+            </button>
+          </>
         )}
 
         {/* My paired professionals */}
