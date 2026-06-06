@@ -86,10 +86,17 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     return () => clearInterval(id);
   }, []);
 
+  const [past, setPast] = useState<PastPairing[]>([]);
+
   useEffect(() => {
     if (isAuthed && userId) {
       setPairings(loadPairings(userId).filter(p => new Date(p.expires_at).getTime() > Date.now()));
-      refreshActivePairings(userId).then(setPairings).catch(() => {});
+      refreshPairingsWithPast(userId)
+        .then(({ active, past }) => {
+          setPairings(active);
+          setPast(past);
+        })
+        .catch(() => {});
     }
   }, [isAuthed, userId, lastConnection]);
 
