@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Link as LinkIcon, ShieldCheck, FileText, X, Loader2 } from "lucide-react";
+import { Link as LinkIcon, CheckCircle2, Loader2 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { addPairing, loadPairings, removePairing, type ProPairing } from "@/lib/proPairings";
 import { ProBottomNav } from "./pro";
-import { SaveButton } from "@/components/ui/save-button";
+
 
 export const Route = createFileRoute("/connect")({
   head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
