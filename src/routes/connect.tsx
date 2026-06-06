@@ -231,6 +231,33 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
             )}
           </section>
         )}
+
+        {isAuthed && past.length > 0 && (
+          <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+            <h2 className="text-base font-bold text-[#0D1B2A]">Past connections</h2>
+            <ul className="mt-3 space-y-2">
+              {past.map((p) => (
+                <li
+                  key={p.id}
+                  className="rounded-xl border border-gray-100 p-3"
+                >
+                  <p className="truncate text-sm font-semibold text-[#0D1B2A]">{p.patient_name}</p>
+                  <p className="text-xs text-gray-500">
+                    Paired: {new Date(p.paired_at).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Duration granted: {formatDuration(p.paired_at, p.expires_at)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {p.revoked_at
+                      ? "Access revoked"
+                      : `Expired ${new Date(p.expires_at).toLocaleString()}`}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </main>
 
       {duplicate && (
