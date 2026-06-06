@@ -53,6 +53,7 @@ function PairingPage() {
   const [copied, setCopied] = useState(false);
   const [validity, setValidity] = useState(10);
   const [pros, setPros] = useState<ProSession[]>([]);
+  const [pastPros, setPastPros] = useState<ProSession[]>([]);
   const [revokeId, setRevokeId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,19 +64,55 @@ function PairingPage() {
   const loadPros = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const { data } = await (supabase as any)
-      .from("pro_sessions")
-      .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
-      .eq("user_id", user.id)
-      .is("revoked_at", null)
-      .gt("expires_at", new Date().toISOString())
-      .order("paired_at", { ascending: false });
-    setPros((data as ProSession[]) || []);
+    const nowIso = new Date().toISOString();
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const [{ data: active }, { data: past }] = await Promise.all([
+      (supabase as any)
+        .from("pro_sessions")
+        .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
+        .eq("user_id", user.id)
+        .is("revoked_at", null)
+        .gt("expires_at", nowIso)
+        .order("paired_at", { ascending: false }),
+      (supabase as any)
+        .from("pro_sessions")
+        .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
+        .eq("user_id", user.id)
+        .lte("expires_at", nowIso)
+        .gte("expires_at", thirtyDaysAgo)
+        .order("expires_at", { ascending: false }),
+    ]);
+    setPros((active as ProSession[]) || []);
+    setPastPros((past as ProSession[]) || []);
   };
 
   useEffect(() => {
     loadPros();
   }, []);
+
+  const formatDuration = (fromIso: string, toIso: string) => {
+    const ms = Math.max(0, new Date(toIso).getTime() - new Date(fromIso).getTime());
+    const mins = Math.round(ms / 60000);
+    if (mins < 60) return `${mins} minute${mins === 1 ? "" : "s"}`;
+    const hrs = Math.round(mins / 60);
+    if (hrs < 48) return `${hrs} hour${hrs === 1 ? "" : "s"}`;
+    const days = Math.round(hrs / 24);
+    return `${days} day${days === 1 ? "" : "s"}`;
+  };
+
+  const formatRemaining = (toIso: string) => {
+    const ms = new Date(toIso).getTime() - now;
+    if (ms <= 0) return "Expired";
+    const totalMin = Math.floor(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h >= 24) {
+      const d = Math.floor(h / 24);
+      const rh = h % 24;
+      return `${d}d ${rh}h ${m}m`;
+    }
+    return `${h}h ${m}m`;
+  };
 
   const remainingMs = expiresAt ? Math.max(0, expiresAt - now) : 0;
   const expired = code !== null && remainingMs <= 0;
