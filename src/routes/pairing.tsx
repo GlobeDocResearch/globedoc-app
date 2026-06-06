@@ -53,6 +53,7 @@ function PairingPage() {
   const [copied, setCopied] = useState(false);
   const [validity, setValidity] = useState(10);
   const [pros, setPros] = useState<ProSession[]>([]);
+  const [pastPros, setPastPros] = useState<ProSession[]>([]);
   const [revokeId, setRevokeId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,19 +64,55 @@ function PairingPage() {
   const loadPros = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const { data } = await (supabase as any)
-      .from("pro_sessions")
-      .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
-      .eq("user_id", user.id)
-      .is("revoked_at", null)
-      .gt("expires_at", new Date().toISOString())
-      .order("paired_at", { ascending: false });
-    setPros((data as ProSession[]) || []);
+    const nowIso = new Date().toISOString();
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const [{ data: active }, { data: past }] = await Promise.all([
+      (supabase as any)
+        .from("pro_sessions")
+        .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
+        .eq("user_id", user.id)
+        .is("revoked_at", null)
+        .gt("expires_at", nowIso)
+        .order("paired_at", { ascending: false }),
+      (supabase as any)
+        .from("pro_sessions")
+        .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
+        .eq("user_id", user.id)
+        .lte("expires_at", nowIso)
+        .gte("expires_at", thirtyDaysAgo)
+        .order("expires_at", { ascending: false }),
+    ]);
+    setPros((active as ProSession[]) || []);
+    setPastPros((past as ProSession[]) || []);
   };
 
   useEffect(() => {
     loadPros();
   }, []);
+
+  const formatDuration = (fromIso: string, toIso: string) => {
+    const ms = Math.max(0, new Date(toIso).getTime() - new Date(fromIso).getTime());
+    const mins = Math.round(ms / 60000);
+    if (mins < 60) return `${mins} minute${mins === 1 ? "" : "s"}`;
+    const hrs = Math.round(mins / 60);
+    if (hrs < 48) return `${hrs} hour${hrs === 1 ? "" : "s"}`;
+    const days = Math.round(hrs / 24);
+    return `${days} day${days === 1 ? "" : "s"}`;
+  };
+
+  const formatRemaining = (toIso: string) => {
+    const ms = new Date(toIso).getTime() - now;
+    if (ms <= 0) return "Expired";
+    const totalMin = Math.floor(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h >= 24) {
+      const d = Math.floor(h / 24);
+      const rh = h % 24;
+      return `${d}d ${rh}h ${m}m`;
+    }
+    return `${h}h ${m}m`;
+  };
 
   const remainingMs = expiresAt ? Math.max(0, expiresAt - now) : 0;
   const expired = code !== null && remainingMs <= 0;
@@ -270,9 +307,14 @@ function PairingPage() {
                         {p.pro_title ? <span className="font-normal text-gray-600"> · {p.pro_title}</span> : null}
                       </h3>
                       {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
-                      <p className="mt-2 text-xs text-gray-500">Paired since {fmtDate(p.paired_at)}</p>
+                      <p className="mt-2 text-xs text-gray-500">
+                        Access granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span>
+                      </p>
                       <p className="text-xs text-gray-500">
-                        Access: <span className="font-medium text-[#0D1B2A]">{ACCESS_LABELS[p.access_level] || p.access_level}</span>
+                        Time remaining: <span className="font-medium text-[#0D1B2A]">{formatRemaining(p.expires_at)}</span>
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Access level: <span className="font-medium text-[#0D1B2A]">{ACCESS_LABELS[p.access_level] || p.access_level}</span>
                       </p>
                       <p className="text-xs text-gray-500">
                         Last accessed: {p.last_accessed_at ? fmtDateTime(p.last_accessed_at) : "—"}
@@ -286,6 +328,32 @@ function PairingPage() {
                       <Trash2 className="h-3.5 w-3.5" /> Revoke
                     </button>
                   </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Past connections */}
+        <section className="mt-8">
+          <h2 className="text-lg font-bold text-[#0D1B2A]">Past connections</h2>
+          <p className="mt-1 text-xs text-gray-500">Expired pairings from the last 30 days</p>
+          {pastPros.length === 0 ? (
+            <div className="mt-3 rounded-2xl bg-white p-5 text-center shadow-sm">
+              <p className="text-sm text-gray-500">No past connections in the last 30 days.</p>
+            </div>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {pastPros.map((p) => (
+                <li key={p.id} className="rounded-2xl bg-white p-4 shadow-sm opacity-90">
+                  <h3 className="text-sm font-bold text-[#0D1B2A]">
+                    {p.pro_name}
+                    {p.pro_title ? <span className="font-normal text-gray-600"> · {p.pro_title}</span> : null}
+                  </h3>
+                  {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
+                  <p className="mt-2 text-xs text-gray-500">Date paired: <span className="font-medium text-[#0D1B2A]">{fmtDate(p.paired_at)}</span></p>
+                  <p className="text-xs text-gray-500">Duration granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span></p>
+                  <p className="text-xs text-gray-500">Access expired: <span className="font-medium text-[#0D1B2A]">{fmtDateTime(p.expires_at)}</span></p>
                 </li>
               ))}
             </ul>
