@@ -211,6 +211,22 @@ function PairingPage() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const handleCancelCode = async () => {
+    if (!codeId) return;
+    const { error } = await (supabase as any)
+      .from("pairing_codes")
+      .update({ expires_at: new Date().toISOString() })
+      .eq("id", codeId);
+    if (error) {
+      toast.error("Could not cancel code");
+      return;
+    }
+    setCode(null);
+    setCodeId(null);
+    setExpiresAt(null);
+    toast.success("Code cancelled");
+  };
+
   const confirmRevoke = async () => {
     if (!revokeId) return;
     const { error } = await (supabase as any)
