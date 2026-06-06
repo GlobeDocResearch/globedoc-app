@@ -83,7 +83,7 @@ function PairingPage() {
         .eq("user_id", user.id)
         .or(`expires_at.lte.${nowIso},revoked_at.not.is.null`)
         .gte("paired_at", thirtyDaysAgo)
-        .order("expires_at", { ascending: false }),
+        .order("paired_at", { ascending: false }),
     ]);
     setPros((active as ProSession[]) || []);
     setPastPros((past as ProSession[]) || []);
@@ -134,6 +134,17 @@ function PairingPage() {
     if (hrs < 48) return `${hrs} hour${hrs === 1 ? "" : "s"}`;
     const days = Math.round(hrs / 24);
     return `${days} day${days === 1 ? "" : "s"}`;
+  };
+
+  const formatActualDuration = (pairedAt: string, expiresAt: string, revokedAt: string | null) => {
+    const end = revokedAt ? new Date(revokedAt).getTime() : new Date(expiresAt).getTime();
+    const ms = Math.max(0, end - new Date(pairedAt).getTime());
+    const totalMin = Math.round(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h === 0) return `${m} minute${m === 1 ? "" : "s"}`;
+    if (m === 0) return `${h} hour${h === 1 ? "" : "s"}`;
+    return `${h} hour${h === 1 ? "" : "s"} ${m} minute${m === 1 ? "" : "s"}`;
   };
 
   const formatRemaining = (toIso: string) => {
@@ -461,6 +472,7 @@ function PairingPage() {
                   {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
                   <p className="mt-2 text-xs text-gray-500">Date paired: <span className="font-medium text-[#0D1B2A]">{fmtDate(p.paired_at)}</span></p>
                   <p className="text-xs text-gray-500">Duration granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span></p>
+                  <p className="text-xs text-gray-500">Active for: <span className="font-medium text-[#0D1B2A]">{formatActualDuration(p.paired_at, p.expires_at, p.revoked_at)}</span></p>
                   {p.revoked_at ? (
                     <p className="text-xs text-gray-500">Access revoked</p>
                   ) : (
