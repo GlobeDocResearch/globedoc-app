@@ -47,10 +47,29 @@ type LastConnection = {
   expires_at: string;
 };
 
+type DuplicateInfo = {
+  code: string;
+  pro_name: string;
+  pro_title: string | null;
+  institution: string | null;
+  existing_pro_name: string;
+  current_expires_at: string;
+};
+
+const EXTEND_OPTIONS = [
+  { value: 10, label: "10 minutes" },
+  { value: 60, label: "1 hour" },
+  { value: 60 * 24, label: "24 hours" },
+  { value: 60 * 24 * 7, label: "7 days" },
+];
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);
   const [lastConnection, setLastConnection] = useState<LastConnection | null>(null);
+  const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
+  const [extendMinutes, setExtendMinutes] = useState(60);
+  const [extending, setExtending] = useState(false);
 
   useEffect(() => {
     if (isAuthed && userId) {
@@ -75,6 +94,32 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
       expires_at: result.expires_at,
     });
     toast.success(`Connected to ${result.patient_name}`);
+  };
+
+  const handleExtend = async () => {
+    if (!duplicate) return;
+    setExtending(true);
+    try {
+      const res = await fetch("/api/public/connect/extend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: duplicate.code,
+          pro_name: duplicate.pro_name,
+          institution: duplicate.institution,
+          minutes: extendMinutes,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error || "Could not extend"); return; }
+      handlePaired({
+        session_token: json.session_token,
+        patient_name: json.patient_name || "Patient",
+        expires_at: json.expires_at,
+      });
+      toast.success("Access extended");
+      setDuplicate(null);
+    } finally { setExtending(false); }
   };
 
   const removeConnection = (id: string) => {
@@ -122,9 +167,9 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         )}
 
         {isAuthed ? (
-          <SignedInProForm proMeta={proMeta} onPaired={handlePaired} />
+          <SignedInProForm proMeta={proMeta} onPaired={handlePaired} onDuplicate={setDuplicate} />
         ) : (
-          <UnauthedConnectFlow onPaired={handlePaired} navigate={navigate} />
+          <UnauthedConnectFlow onPaired={handlePaired} onDuplicate={setDuplicate} navigate={navigate} />
         )}
 
         {isAuthed && (
@@ -154,13 +199,69 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
           </section>
         )}
       </main>
+
+      {duplicate && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-5">
+          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+            <h3 className="text-base font-bold text-[#0D1B2A]">Active connection already exists</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              You already have an active connection with{" "}
+              <span className="font-semibold text-[#0D1B2A]">{duplicate.existing_pro_name}</span>.
+              Would you like to extend their access instead?
+            </p>
+            <p className="mt-2 text-xs text-gray-500">
+              Current access expires {new Date(duplicate.current_expires_at).toLocaleString()}
+            </p>
+
+            <div className="mt-4">
+              <p className="text-xs font-semibold text-[#0D1B2A]">Extend by</p>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {EXTEND_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setExtendMinutes(opt.value)}
+                    className={`rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
+                      extendMinutes === opt.value
+                        ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                        : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDuplicate(null)}
+                disabled={extending}
+                className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExtend}
+                disabled={extending}
+                className="flex items-center gap-2 rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {extending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Extend access
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 type PairResult = { session_token: string; patient_name: string; expires_at: string };
 
-function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (r: PairResult) => void }) {
+function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void }) {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -169,20 +270,34 @@ function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (r: Pa
     if (code.trim().length !== 6) { toast.error("Enter the 6-character code"); return; }
     setSubmitting(true);
     try {
+      const proName = proMeta?.full_name || "Healthcare Professional";
+      const proTitle = proMeta?.pro_title || proMeta?.specialty || null;
+      const inst = proMeta?.institution || null;
       const res = await fetch("/api/public/connect/pair", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: code.trim().toUpperCase(),
-          pro_name: proMeta?.full_name || "Healthcare Professional",
-          pro_title: proMeta?.pro_title || proMeta?.specialty || null,
-          institution: proMeta?.institution || null,
+          pro_name: proName,
+          pro_title: proTitle,
+          institution: inst,
           access_level: "passport_records",
           gdpr_consent: true,
         }),
       });
       const json = await res.json();
       if (!res.ok) { toast.error(json.error || "Could not connect"); return; }
+      if (json.duplicate) {
+        onDuplicate({
+          code: json.code,
+          pro_name: proName,
+          pro_title: proTitle,
+          institution: inst,
+          existing_pro_name: json.pro_name,
+          current_expires_at: json.current_expires_at,
+        });
+        return;
+      }
       onPaired({
         session_token: json.session_token,
         patient_name: json.patient_name || "Patient",
@@ -220,7 +335,7 @@ function SignedInProForm({ proMeta, onPaired }: { proMeta: any; onPaired: (r: Pa
 
 const TITLES = ["Dr", "Prof", "Nurse", "Physiotherapist", "Other"] as const;
 
-function UnauthedConnectFlow({ onPaired, navigate }: { onPaired: (r: PairResult) => void; navigate: ReturnType<typeof useNavigate> }) {
+function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void; navigate: ReturnType<typeof useNavigate> }) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [code, setCode] = useState("");
   const [email, setEmail] = useState("");
@@ -246,6 +361,17 @@ function UnauthedConnectFlow({ onPaired, navigate }: { onPaired: (r: PairResult)
     });
     const json = await res.json();
     if (!res.ok) { toast.error(json.error || "Could not pair"); return false; }
+    if (json.duplicate) {
+      onDuplicate({
+        code: json.code,
+        pro_name: proName,
+        pro_title: proTitle,
+        institution: inst,
+        existing_pro_name: json.pro_name,
+        current_expires_at: json.current_expires_at,
+      });
+      return true;
+    }
     onPaired({
       session_token: json.session_token,
       patient_name: json.patient_name || "Patient",
