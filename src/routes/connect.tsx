@@ -34,7 +34,8 @@ function ConnectPageWrapper() {
   if (!checked) return <div className="min-h-screen bg-[#F8F9FA]" />;
 
   return (
-    <div className={isAuthed ? "pb-24" : ""}>
+    <div className={isAuthed ? "min-h-screen bg-[#F8F9FA] pb-24" : ""}>
+      {isAuthed && <ProHeader />}
       <ConnectPage isAuthed={isAuthed} userId={userId} proMeta={meta} />
       {isAuthed && <ProBottomNav />}
     </div>
