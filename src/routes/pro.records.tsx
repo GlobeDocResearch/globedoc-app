@@ -16,6 +16,7 @@ type Entry = {
   entry_type: string;
   title: string;
   body: string | null;
+  file_path: string | null;
   file_name: string | null;
   file_mime: string | null;
   author_name: string | null;
