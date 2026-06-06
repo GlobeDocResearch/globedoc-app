@@ -54,6 +54,28 @@ function ProRecordsTab() {
   const [composer, setComposer] = useState<ProEntryType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
+  const [lightbox, setLightbox] = useState<{ url: string; name: string } | null>(null);
+  const [opening, setOpening] = useState<string | null>(null);
+
+  const openAttachment = async (e: Entry) => {
+    if (!e.file_path || !token) return;
+    setOpening(e.id);
+    try {
+      const res = await fetch(`/api/public/connect/file?entry_id=${encodeURIComponent(e.id)}`, {
+        headers: { "x-session-token": token },
+      });
+      const json = await res.json();
+      if (!res.ok || !json.url) { toast.error(json.error || "Could not open file"); return; }
+      const isImage = (e.file_mime || "").startsWith("image/");
+      if (isImage) {
+        setLightbox({ url: json.url, name: e.file_name || "Image" });
+      } else {
+        window.open(json.url, "_blank", "noopener,noreferrer");
+      }
+    } finally {
+      setOpening(null);
+    }
+  };
 
   const filterChips = [
     { key: "all", label: "All" },
