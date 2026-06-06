@@ -52,6 +52,15 @@ function ProRecordsTab() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [composer, setComposer] = useState<ProEntryType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+
+  const filterChips = [
+    { key: "all", label: "All" },
+    { key: "note", label: "Note" },
+    { key: "clinical_note", label: "Clinical note" },
+    { key: "document", label: "Document" },
+    { key: "image", label: "Image" },
+  ];
 
   const filteredEntries = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
