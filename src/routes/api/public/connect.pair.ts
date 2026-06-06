@@ -33,6 +33,38 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           if (pc.used) return json({ error: "Code already used" }, 410);
           if (new Date(pc.expires_at).getTime() < Date.now()) return json({ error: "Code expired" }, 410);
 
+          // Duplicate prevention: check for an existing active session with same pro identity
+          const nowIso = new Date().toISOString();
+          const { data: existing } = await supabaseAdmin
+            .from("pro_sessions")
+            .select("id, pro_name, pro_title, institution, expires_at")
+            .eq("user_id", pc.user_id)
+            .eq("pro_name", proName)
+            .is("revoked_at", null)
+            .gt("expires_at", nowIso)
+            .order("expires_at", { ascending: false })
+            .limit(1);
+          const match = (existing || []).find(
+            (r: any) => (r.institution || null) === institution,
+          );
+          if (match) {
+            // Fetch patient name for the dialog message
+            const { data: profile } = await supabaseAdmin
+              .from("profiles")
+              .select("first_name, last_name")
+              .eq("user_id", pc.user_id)
+              .maybeSingle();
+            const patientName = [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || "Patient";
+            return json({
+              duplicate: true,
+              existing_session_id: match.id,
+              pro_name: match.pro_name,
+              current_expires_at: match.expires_at,
+              patient_name: patientName,
+              code,
+            }, 200);
+          }
+
           // Session expires after the same validity window the patient chose for the code
           const validityMin = (pc as any).validity_minutes || 60;
           const sessionExpires = new Date(Date.now() + validityMin * 60 * 1000).toISOString();
