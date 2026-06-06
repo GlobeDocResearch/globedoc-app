@@ -35,6 +35,7 @@ import { Route as ProRecordsRouteImport } from './routes/pro.records'
 import { Route as ProProfileRouteImport } from './routes/pro.profile'
 import { Route as HealthPassSectionRouteImport } from './routes/health-pass.$section'
 import { Route as ApiPublicConnectStatusRouteImport } from './routes/api/public/connect.status'
+import { Route as ApiPublicConnectRevokeRouteImport } from './routes/api/public/connect.revoke'
 import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
 import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
 import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
@@ -173,6 +174,11 @@ const ApiPublicConnectStatusRoute = ApiPublicConnectStatusRouteImport.update({
   path: '/api/public/connect/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicConnectRevokeRoute = ApiPublicConnectRevokeRouteImport.update({
+  id: '/api/public/connect/revoke',
+  path: '/api/public/connect/revoke',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicConnectPassportRoute =
   ApiPublicConnectPassportRouteImport.update({
     id: '/api/public/connect/passport',
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
+  '/api/public/connect/revoke': typeof ApiPublicConnectRevokeRoute
   '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
 }
 export interface FileRoutesByTo {
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
+  '/api/public/connect/revoke': typeof ApiPublicConnectRevokeRoute
   '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
 }
 export interface FileRoutesById {
@@ -314,6 +322,7 @@ export interface FileRoutesById {
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
+  '/api/public/connect/revoke': typeof ApiPublicConnectRevokeRoute
   '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
 }
 export interface FileRouteTypes {
@@ -351,6 +360,7 @@ export interface FileRouteTypes {
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
+    | '/api/public/connect/revoke'
     | '/api/public/connect/status'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
+    | '/api/public/connect/revoke'
     | '/api/public/connect/status'
   id:
     | '__root__'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
     | '/api/public/connect/passport'
+    | '/api/public/connect/revoke'
     | '/api/public/connect/status'
   fileRoutesById: FileRoutesById
 }
@@ -454,6 +466,7 @@ export interface RootRouteChildren {
   ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
   ApiPublicConnectPairRoute: typeof ApiPublicConnectPairRoute
   ApiPublicConnectPassportRoute: typeof ApiPublicConnectPassportRoute
+  ApiPublicConnectRevokeRoute: typeof ApiPublicConnectRevokeRoute
   ApiPublicConnectStatusRoute: typeof ApiPublicConnectStatusRoute
 }
 
@@ -641,6 +654,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicConnectStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/connect/revoke': {
+      id: '/api/public/connect/revoke'
+      path: '/api/public/connect/revoke'
+      fullPath: '/api/public/connect/revoke'
+      preLoaderRoute: typeof ApiPublicConnectRevokeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/connect/passport': {
       id: '/api/public/connect/passport'
       path: '/api/public/connect/passport'
@@ -737,8 +757,19 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
   ApiPublicConnectPairRoute: ApiPublicConnectPairRoute,
   ApiPublicConnectPassportRoute: ApiPublicConnectPassportRoute,
+  ApiPublicConnectRevokeRoute: ApiPublicConnectRevokeRoute,
   ApiPublicConnectStatusRoute: ApiPublicConnectStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
