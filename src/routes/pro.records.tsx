@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { loadPairings, type ProPairing } from "@/lib/proPairings";
+import { loadPairings, refreshActivePairings, type ProPairing } from "@/lib/proPairings";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 
@@ -111,8 +111,20 @@ function ProRecordsTab() {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const ps = loadPairings(user.id).filter(p => new Date(p.expires_at).getTime() > Date.now());
-      setPairings(ps);
+      const initial = loadPairings(user.id).filter(p => new Date(p.expires_at).getTime() > Date.now());
+      setPairings(initial);
+      const fresh = await refreshActivePairings(user.id);
+      setPairings(fresh);
+      const activeIds = new Set(fresh.map(p => p.id));
+      setSelectedId(prev => {
+        if (prev && !activeIds.has(prev)) {
+          setToken("");
+          setPatientName("");
+          setEntries([]);
+          return "";
+        }
+        return prev;
+      });
     })();
   }, []);
 

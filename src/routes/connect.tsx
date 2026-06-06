@@ -5,7 +5,7 @@ import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { addPairing, loadPairings, removePairing, type ProPairing } from "@/lib/proPairings";
+import { addPairing, loadPairings, refreshActivePairings, removePairing, type ProPairing } from "@/lib/proPairings";
 import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
@@ -75,6 +75,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
   useEffect(() => {
     if (isAuthed && userId) {
       setPairings(loadPairings(userId).filter(p => new Date(p.expires_at).getTime() > Date.now()));
+      refreshActivePairings(userId).then(setPairings).catch(() => {});
     }
   }, [isAuthed, userId, lastConnection]);
 

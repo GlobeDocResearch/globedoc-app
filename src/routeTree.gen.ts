@@ -40,6 +40,7 @@ import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/co
 import { Route as ApiPublicConnectFileRouteImport } from './routes/api/public/connect.file'
 import { Route as ApiPublicConnectExtendRouteImport } from './routes/api/public/connect.extend'
 import { Route as ApiPublicConnectEntryRouteImport } from './routes/api/public/connect.entry'
+import { Route as ApiPublicConnectActiveRouteImport } from './routes/api/public/connect.active'
 
 const VerifiedProRoute = VerifiedProRouteImport.update({
   id: '/verified-pro',
@@ -197,6 +198,11 @@ const ApiPublicConnectEntryRoute = ApiPublicConnectEntryRouteImport.update({
   path: '/api/public/connect/entry',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicConnectActiveRoute = ApiPublicConnectActiveRouteImport.update({
+  id: '/api/public/connect/active',
+  path: '/api/public/connect/active',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass/': typeof HealthPassIndexRoute
+  '/api/public/connect/active': typeof ApiPublicConnectActiveRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/extend': typeof ApiPublicConnectExtendRoute
   '/api/public/connect/file': typeof ApiPublicConnectFileRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass': typeof HealthPassIndexRoute
+  '/api/public/connect/active': typeof ApiPublicConnectActiveRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/extend': typeof ApiPublicConnectExtendRoute
   '/api/public/connect/file': typeof ApiPublicConnectFileRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass/': typeof HealthPassIndexRoute
+  '/api/public/connect/active': typeof ApiPublicConnectActiveRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/extend': typeof ApiPublicConnectExtendRoute
   '/api/public/connect/file': typeof ApiPublicConnectFileRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/pro/records'
     | '/pro/settings'
     | '/health-pass/'
+    | '/api/public/connect/active'
     | '/api/public/connect/entry'
     | '/api/public/connect/extend'
     | '/api/public/connect/file'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/pro/records'
     | '/pro/settings'
     | '/health-pass'
+    | '/api/public/connect/active'
     | '/api/public/connect/entry'
     | '/api/public/connect/extend'
     | '/api/public/connect/file'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/pro/records'
     | '/pro/settings'
     | '/health-pass/'
+    | '/api/public/connect/active'
     | '/api/public/connect/entry'
     | '/api/public/connect/extend'
     | '/api/public/connect/file'
@@ -423,6 +435,7 @@ export interface RootRouteChildren {
   VerifiedProRoute: typeof VerifiedProRoute
   HealthPassSectionRoute: typeof HealthPassSectionRoute
   HealthPassIndexRoute: typeof HealthPassIndexRoute
+  ApiPublicConnectActiveRoute: typeof ApiPublicConnectActiveRoute
   ApiPublicConnectEntryRoute: typeof ApiPublicConnectEntryRoute
   ApiPublicConnectExtendRoute: typeof ApiPublicConnectExtendRoute
   ApiPublicConnectFileRoute: typeof ApiPublicConnectFileRoute
@@ -650,6 +663,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicConnectEntryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/connect/active': {
+      id: '/api/public/connect/active'
+      path: '/api/public/connect/active'
+      fullPath: '/api/public/connect/active'
+      preLoaderRoute: typeof ApiPublicConnectActiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -690,6 +710,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifiedProRoute: VerifiedProRoute,
   HealthPassSectionRoute: HealthPassSectionRoute,
   HealthPassIndexRoute: HealthPassIndexRoute,
+  ApiPublicConnectActiveRoute: ApiPublicConnectActiveRoute,
   ApiPublicConnectEntryRoute: ApiPublicConnectEntryRoute,
   ApiPublicConnectExtendRoute: ApiPublicConnectExtendRoute,
   ApiPublicConnectFileRoute: ApiPublicConnectFileRoute,
@@ -700,13 +721,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
