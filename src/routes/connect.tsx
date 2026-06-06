@@ -197,21 +197,29 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
               <p className="mt-2 text-sm text-gray-500">No active connections yet.</p>
             ) : (
               <ul className="mt-3 space-y-2">
-                {pairings.map(p => (
-                  <li key={p.id} className="flex items-center justify-between gap-2 rounded-xl border border-gray-100 p-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-[#0D1B2A]">{p.patient_name}</p>
-                      <p className="text-xs text-gray-500">Expires {new Date(p.expires_at).toLocaleString()}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeConnection(p.id)}
-                      className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600"
-                    >
-                      Remove
-                    </button>
-                  </li>
-                ))}
+                {pairings.map(p => {
+                  const remaining = new Date(p.expires_at).getTime() - now;
+                  return (
+                    <li key={p.id} className="flex items-center justify-between gap-2 rounded-xl border border-gray-100 p-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-[#0D1B2A]">{p.patient_name}</p>
+                        <p className="text-xs text-gray-500">
+                          Expires: {new Date(p.expires_at).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Time remaining: {formatRemaining(remaining)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeConnection(p.id)}
+                        className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
