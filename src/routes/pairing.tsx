@@ -428,7 +428,11 @@ function PairingPage() {
                   {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
                   <p className="mt-2 text-xs text-gray-500">Date paired: <span className="font-medium text-[#0D1B2A]">{fmtDate(p.paired_at)}</span></p>
                   <p className="text-xs text-gray-500">Duration granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span></p>
-                  <p className="text-xs text-gray-500">Access expired: <span className="font-medium text-[#0D1B2A]">{fmtDateTime(p.expires_at)}</span></p>
+                  {p.revoked_at ? (
+                    <p className="text-xs text-gray-500">Access revoked</p>
+                  ) : (
+                    <p className="text-xs text-gray-500">Access expired: <span className="font-medium text-[#0D1B2A]">{fmtDateTime(p.expires_at)}</span></p>
+                  )}
                 </li>
               ))}
             </ul>
