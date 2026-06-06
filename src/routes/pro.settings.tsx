@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bell, Lock, FileText, Shield, Globe } from "lucide-react";
+import { Bell, Lock, FileText, Shield, Globe, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguagePickerRow } from "@/components/LanguagePicker";
 import { SaveButton } from "@/components/ui/save-button";
+import { deleteMyAccount } from "@/lib/account.functions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/pro/settings")({
   head: () => ({ meta: [{ title: "Settings — GlobeDoc Pro" }] }),
@@ -16,6 +19,22 @@ function SettingsTab() {
   const [notifications, setNotifications] = useState(true);
   const [pwOpen, setPwOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const onDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteMyAccount();
+      await supabase.auth.signOut();
+      toast.success("Account deleted");
+      navigate({ to: "/signin" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not delete account");
+      setDeleting(false);
+    }
+  };
+
   
 
   const onChangePassword = async () => {
@@ -134,6 +153,20 @@ function SettingsTab() {
         </div>
       </section>
 
+      <section className="mt-6 rounded-2xl bg-white shadow-sm">
+        <button
+          type="button"
+          onClick={() => setDeleteOpen(true)}
+          className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-red-50"
+        >
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+          <div>
+            <p className="text-sm font-semibold text-red-600">Delete my account</p>
+            <p className="text-xs text-gray-500">Permanently erase all your data (GDPR Art. 17)</p>
+          </div>
+        </button>
+      </section>
+
       <button
         type="button"
         onClick={onLogout}
@@ -141,6 +174,23 @@ function SettingsTab() {
       >
         Log out
       </button>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete my account</DialogTitle>
+            <DialogDescription>
+              This will permanently delete your account and all associated data. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleting}>Cancel</Button>
+            <Button variant="destructive" onClick={onDeleteAccount} disabled={deleting}>
+              {deleting ? "Deleting…" : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

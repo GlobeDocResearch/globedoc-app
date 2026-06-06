@@ -6,7 +6,7 @@ import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { addPairing, loadPairings, removePairing, type ProPairing } from "@/lib/proPairings";
-import { ProBottomNav } from "./pro";
+import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
   head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
@@ -34,7 +34,8 @@ function ConnectPageWrapper() {
   if (!checked) return <div className="min-h-screen bg-[#F8F9FA]" />;
 
   return (
-    <div className={isAuthed ? "pb-24" : ""}>
+    <div className={isAuthed ? "min-h-screen bg-[#F8F9FA] pb-24" : ""}>
+      {isAuthed && <ProHeader />}
       <ConnectPage isAuthed={isAuthed} userId={userId} proMeta={meta} />
       {isAuthed && <ProBottomNav />}
     </div>
@@ -130,13 +131,15 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
-      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-          <span className="text-lg font-bold text-white">GlobeDoc</span>
-        </div>
-      </header>
+    <div className={isAuthed ? "" : "min-h-screen bg-[#F8F9FA]"}>
+      {!isAuthed && (
+        <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
+            <span className="text-lg font-bold text-white">GlobeDoc</span>
+          </div>
+        </header>
+      )}
 
       <main className="mx-auto w-full max-w-xl px-5 py-8">
         <h1 className="text-2xl font-bold text-[#0D1B2A]">
