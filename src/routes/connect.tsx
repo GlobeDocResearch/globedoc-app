@@ -335,7 +335,7 @@ function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onP
 
 const TITLES = ["Dr", "Prof", "Nurse", "Physiotherapist", "Other"] as const;
 
-function UnauthedConnectFlow({ onPaired, navigate }: { onPaired: (r: PairResult) => void; navigate: ReturnType<typeof useNavigate> }) {
+function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void; navigate: ReturnType<typeof useNavigate> }) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [code, setCode] = useState("");
   const [email, setEmail] = useState("");
@@ -361,6 +361,17 @@ function UnauthedConnectFlow({ onPaired, navigate }: { onPaired: (r: PairResult)
     });
     const json = await res.json();
     if (!res.ok) { toast.error(json.error || "Could not pair"); return false; }
+    if (json.duplicate) {
+      onDuplicate({
+        code: json.code,
+        pro_name: proName,
+        pro_title: proTitle,
+        institution: inst,
+        existing_pro_name: json.pro_name,
+        current_expires_at: json.current_expires_at,
+      });
+      return true;
+    }
     onPaired({
       session_token: json.session_token,
       patient_name: json.patient_name || "Patient",
