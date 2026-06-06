@@ -5,7 +5,7 @@ import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { addPairing, loadPairings, refreshActivePairings, removePairing, type ProPairing } from "@/lib/proPairings";
+import { addPairing, loadPairings, refreshPairingsWithPast, removePairing, type ProPairing, type PastPairing } from "@/lib/proPairings";
 import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
