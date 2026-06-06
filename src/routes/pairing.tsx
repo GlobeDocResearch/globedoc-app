@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User, FileText, Trash2, Clock, Bell, LogOut } from "lucide-react";
+import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User, FileText, Trash2, Clock, Bell, LogOut, RefreshCw } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,6 +55,9 @@ function PairingPage() {
   const [pros, setPros] = useState<ProSession[]>([]);
   const [pastPros, setPastPros] = useState<ProSession[]>([]);
   const [revokeId, setRevokeId] = useState<string | null>(null);
+  const [extendId, setExtendId] = useState<string | null>(null);
+  const [extendMinutes, setExtendMinutes] = useState(60);
+  const [extending, setExtending] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -169,6 +172,25 @@ function PairingPage() {
     else toast.success("Access revoked");
     setRevokeId(null);
     loadPros();
+  };
+
+  const handleExtendConfirm = async (sessionId: string, minutes: number) => {
+    setExtending(true);
+    try {
+      const newExpires = new Date(Date.now() + minutes * 60 * 1000).toISOString();
+      const { error } = await (supabase as any)
+        .from("pro_sessions")
+        .update({ expires_at: newExpires })
+        .eq("id", sessionId);
+      if (error) throw error;
+      toast.success("Access extended");
+      setExtendId(null);
+      loadPros();
+    } catch {
+      toast.error("Could not extend access");
+    } finally {
+      setExtending(false);
+    }
   };
 
   const fmtDate = (s: string) => new Date(s).toLocaleDateString();
@@ -320,14 +342,61 @@ function PairingPage() {
                         Last accessed: {p.last_accessed_at ? fmtDateTime(p.last_accessed_at) : "—"}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setRevokeId(p.id)}
-                      className="flex shrink-0 items-center gap-1 rounded-full border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" /> Revoke
-                    </button>
+                    <div className="flex shrink-0 flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setRevokeId(p.id)}
+                        className="flex items-center gap-1 rounded-full border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Revoke
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setExtendId(p.id); setExtendMinutes(60); }}
+                        className="flex items-center gap-1 rounded-full border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5" /> Extend access
+                      </button>
+                    </div>
                   </div>
+                  {extendId === p.id && (
+                    <div className="mt-3 border-t border-gray-100 pt-3">
+                      <p className="text-xs font-medium text-[#0D1B2A]">Extend by:</p>
+                      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {VALIDITY_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setExtendMinutes(opt.value)}
+                            className={`rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
+                              extendMinutes === opt.value
+                                ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                                : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setExtendId(null)}
+                          className="rounded-full border border-gray-200 px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleExtendConfirm(p.id, extendMinutes)}
+                          disabled={extending}
+                          className="rounded-full bg-[#2563EB] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                        >
+                          {extending ? "Saving..." : "Confirm extend"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
