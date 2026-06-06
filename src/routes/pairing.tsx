@@ -81,8 +81,8 @@ function PairingPage() {
         .from("pro_sessions")
         .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
         .eq("user_id", user.id)
-        .lte("expires_at", nowIso)
-        .gte("expires_at", thirtyDaysAgo)
+        .or(`expires_at.lte.${nowIso},revoked_at.not.is.null`)
+        .gte("paired_at", thirtyDaysAgo)
         .order("expires_at", { ascending: false }),
     ]);
     setPros((active as ProSession[]) || []);
@@ -428,7 +428,11 @@ function PairingPage() {
                   {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
                   <p className="mt-2 text-xs text-gray-500">Date paired: <span className="font-medium text-[#0D1B2A]">{fmtDate(p.paired_at)}</span></p>
                   <p className="text-xs text-gray-500">Duration granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span></p>
-                  <p className="text-xs text-gray-500">Access expired: <span className="font-medium text-[#0D1B2A]">{fmtDateTime(p.expires_at)}</span></p>
+                  {p.revoked_at ? (
+                    <p className="text-xs text-gray-500">Access revoked</p>
+                  ) : (
+                    <p className="text-xs text-gray-500">Access expired: <span className="font-medium text-[#0D1B2A]">{fmtDateTime(p.expires_at)}</span></p>
+                  )}
                 </li>
               ))}
             </ul>
