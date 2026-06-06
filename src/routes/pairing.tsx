@@ -182,14 +182,18 @@ function PairingPage() {
       }
       const newCode = generateCode();
       const exp = new Date(Date.now() + validity * 60 * 1000);
-      const { error } = await supabase.from("pairing_codes").insert({
-        user_id: user.id,
-        code: newCode,
-        expires_at: exp.toISOString(),
-        validity_minutes: validity,
-      } as any);
+      const { data, error } = await (supabase as any)
+        .from("pairing_codes")
+        .insert({
+          user_id: user.id,
+          code: newCode,
+          expires_at: exp.toISOString(),
+          validity_minutes: validity,
+        })
+        .select("id");
       if (error) throw error;
       setCode(newCode);
+      setCodeId((data?.[0]?.id as string) ?? null);
       setExpiresAt(exp.getTime());
       setCopied(false);
     } catch {
