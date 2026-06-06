@@ -63,9 +63,13 @@ function ProRecordsTab() {
   ];
 
   const filteredEntries = useMemo(() => {
+    let result = entries;
+    if (filterType !== "all") {
+      result = result.filter((e) => e.entry_type === filterType);
+    }
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return entries;
-    return entries.filter((e) => {
+    if (!q) return result;
+    return result.filter((e) => {
       const dateStr = new Date(e.created_at).toLocaleString("en-GB");
       const typeLabel = typeMeta(e.entry_type).label.toLowerCase();
       return (
@@ -78,7 +82,7 @@ function ProRecordsTab() {
         patientName.toLowerCase().includes(q)
       );
     });
-  }, [entries, searchQuery, patientName]);
+  }, [entries, searchQuery, patientName, filterType]);
 
   useEffect(() => {
     (async () => {
