@@ -68,6 +68,7 @@ function PairingPage() {
       .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
       .eq("user_id", user.id)
       .is("revoked_at", null)
+      .gt("expires_at", new Date().toISOString())
       .order("paired_at", { ascending: false });
     setPros((data as ProSession[]) || []);
   };
