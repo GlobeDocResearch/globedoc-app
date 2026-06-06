@@ -47,6 +47,7 @@ type ProSession = {
 function PairingPage() {
   const navigate = useNavigate();
   const [code, setCode] = useState<string | null>(null);
+  const [codeId, setCodeId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
   const [loading, setLoading] = useState(false);
@@ -181,14 +182,18 @@ function PairingPage() {
       }
       const newCode = generateCode();
       const exp = new Date(Date.now() + validity * 60 * 1000);
-      const { error } = await supabase.from("pairing_codes").insert({
-        user_id: user.id,
-        code: newCode,
-        expires_at: exp.toISOString(),
-        validity_minutes: validity,
-      } as any);
+      const { data, error } = await (supabase as any)
+        .from("pairing_codes")
+        .insert({
+          user_id: user.id,
+          code: newCode,
+          expires_at: exp.toISOString(),
+          validity_minutes: validity,
+        })
+        .select("id");
       if (error) throw error;
       setCode(newCode);
+      setCodeId((data?.[0]?.id as string) ?? null);
       setExpiresAt(exp.getTime());
       setCopied(false);
     } catch {
@@ -204,6 +209,22 @@ function PairingPage() {
     setCopied(true);
     toast.success("Copied");
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handleCancelCode = async () => {
+    if (!codeId) return;
+    const { error } = await (supabase as any)
+      .from("pairing_codes")
+      .update({ expires_at: new Date().toISOString() })
+      .eq("id", codeId);
+    if (error) {
+      toast.error("Could not cancel code");
+      return;
+    }
+    setCode(null);
+    setCodeId(null);
+    setExpiresAt(null);
+    toast.success("Code cancelled");
   };
 
   const confirmRevoke = async () => {
@@ -349,14 +370,23 @@ function PairingPage() {
             {loading ? "Generating..." : "Generate pairing code"}
           </button>
         ) : (
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={loading}
-            className="mt-4 w-full text-center text-sm font-semibold text-[#2563EB] hover:underline"
-          >
-            Generate new code
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={loading}
+              className="mt-4 w-full text-center text-sm font-semibold text-[#2563EB] hover:underline"
+            >
+              Generate new code
+            </button>
+            <button
+              type="button"
+              onClick={handleCancelCode}
+              className="mt-2 w-full text-center text-sm font-semibold text-red-600 hover:underline"
+            >
+              Cancel code
+            </button>
+          </>
         )}
 
         {/* My paired professionals */}
