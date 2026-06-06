@@ -156,11 +156,27 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     } finally { setExtending(false); }
   };
 
-  const removeConnection = (id: string) => {
+  const removeConnection = async (id: string) => {
     if (!userId) return;
-    removePairing(userId, id);
-    setPairings(loadPairings(userId).filter(p => new Date(p.expires_at).getTime() > Date.now()));
-    if (lastConnection?.id === id) setLastConnection(null);
+    try {
+      const res = await fetch("/api/public/connect/revoke", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_token: id }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        toast.error(json.error || "Could not revoke access");
+        return;
+      }
+      const { active, past } = await refreshPairingsWithPast(userId);
+      setPairings(active);
+      setPast(past);
+      if (lastConnection?.id === id) setLastConnection(null);
+      toast.success("Access revoked");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not revoke access");
+    }
   };
 
   return (
