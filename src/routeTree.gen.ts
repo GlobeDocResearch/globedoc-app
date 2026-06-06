@@ -29,7 +29,6 @@ import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProIndexRouteImport } from './routes/pro.index'
 import { Route as HealthPassIndexRouteImport } from './routes/health-pass.index'
 import { Route as ProSettingsRouteImport } from './routes/pro.settings'
 import { Route as ProRecordsRouteImport } from './routes/pro.records'
@@ -140,11 +139,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProIndexRoute = ProIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ProRoute,
-} as any)
 const HealthPassIndexRoute = HealthPassIndexRouteImport.update({
   id: '/health-pass/',
   path: '/health-pass/',
@@ -218,7 +212,6 @@ export interface FileRoutesByFullPath {
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass/': typeof HealthPassIndexRoute
-  '/pro/': typeof ProIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
@@ -234,6 +227,7 @@ export interface FileRoutesByTo {
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/pairing': typeof PairingRoute
+  '/pro': typeof ProRouteWithChildren
   '/profile': typeof ProfileRoute
   '/records': typeof RecordsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -249,7 +243,6 @@ export interface FileRoutesByTo {
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass': typeof HealthPassIndexRoute
-  '/pro': typeof ProIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
@@ -282,7 +275,6 @@ export interface FileRoutesById {
   '/pro/records': typeof ProRecordsRoute
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass/': typeof HealthPassIndexRoute
-  '/pro/': typeof ProIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
@@ -316,7 +308,6 @@ export interface FileRouteTypes {
     | '/pro/records'
     | '/pro/settings'
     | '/health-pass/'
-    | '/pro/'
     | '/api/public/connect/entry'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
@@ -332,6 +323,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/login'
     | '/pairing'
+    | '/pro'
     | '/profile'
     | '/records'
     | '/reset-password'
@@ -347,7 +339,6 @@ export interface FileRouteTypes {
     | '/pro/records'
     | '/pro/settings'
     | '/health-pass'
-    | '/pro'
     | '/api/public/connect/entry'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
@@ -379,7 +370,6 @@ export interface FileRouteTypes {
     | '/pro/records'
     | '/pro/settings'
     | '/health-pass/'
-    | '/pro/'
     | '/api/public/connect/entry'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
@@ -557,13 +547,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pro/': {
-      id: '/pro/'
-      path: '/'
-      fullPath: '/pro/'
-      preLoaderRoute: typeof ProIndexRouteImport
-      parentRoute: typeof ProRoute
-    }
     '/health-pass/': {
       id: '/health-pass/'
       path: '/health-pass'
@@ -634,14 +617,12 @@ interface ProRouteChildren {
   ProProfileRoute: typeof ProProfileRoute
   ProRecordsRoute: typeof ProRecordsRoute
   ProSettingsRoute: typeof ProSettingsRoute
-  ProIndexRoute: typeof ProIndexRoute
 }
 
 const ProRouteChildren: ProRouteChildren = {
   ProProfileRoute: ProProfileRoute,
   ProRecordsRoute: ProRecordsRoute,
   ProSettingsRoute: ProSettingsRoute,
-  ProIndexRoute: ProIndexRoute,
 }
 
 const ProRouteWithChildren = ProRoute._addFileChildren(ProRouteChildren)
