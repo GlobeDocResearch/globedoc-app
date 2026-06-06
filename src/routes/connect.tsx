@@ -287,6 +287,9 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
                     Duration granted: {formatDuration(p.paired_at, p.expires_at)}
                   </p>
                   <p className="text-xs text-gray-500">
+                    Active for: {formatActualDuration(p.paired_at, p.expires_at, p.revoked_at)}
+                  </p>
+                  <p className="text-xs text-gray-500">
                     {p.revoked_at
                       ? "Access revoked"
                       : `Expired ${new Date(p.expires_at).toLocaleString()}`}
