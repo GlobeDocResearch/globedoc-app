@@ -83,6 +83,17 @@ function formatDuration(pairedAt: string, expiresAt: string) {
   return `${days} day${days === 1 ? "" : "s"}`;
 }
 
+function formatActualDuration(pairedAt: string, expiresAt: string, revokedAt: string | null) {
+  const end = revokedAt ? new Date(revokedAt).getTime() : new Date(expiresAt).getTime();
+  const ms = Math.max(0, end - new Date(pairedAt).getTime());
+  const totalMin = Math.round(ms / 60000);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  if (h === 0) return `${m} minute${m === 1 ? "" : "s"}`;
+  if (m === 0) return `${h} hour${h === 1 ? "" : "s"}`;
+  return `${h} hour${h === 1 ? "" : "s"} ${m} minute${m === 1 ? "" : "s"}`;
+}
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);

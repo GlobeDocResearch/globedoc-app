@@ -136,6 +136,17 @@ function PairingPage() {
     return `${days} day${days === 1 ? "" : "s"}`;
   };
 
+  const formatActualDuration = (pairedAt: string, expiresAt: string, revokedAt: string | null) => {
+    const end = revokedAt ? new Date(revokedAt).getTime() : new Date(expiresAt).getTime();
+    const ms = Math.max(0, end - new Date(pairedAt).getTime());
+    const totalMin = Math.round(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h === 0) return `${m} minute${m === 1 ? "" : "s"}`;
+    if (m === 0) return `${h} hour${h === 1 ? "" : "s"}`;
+    return `${h} hour${h === 1 ? "" : "s"} ${m} minute${m === 1 ? "" : "s"}`;
+  };
+
   const formatRemaining = (toIso: string) => {
     const ms = new Date(toIso).getTime() - now;
     if (ms <= 0) return "Expired";
