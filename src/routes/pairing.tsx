@@ -83,7 +83,7 @@ function PairingPage() {
         .eq("user_id", user.id)
         .or(`expires_at.lte.${nowIso},revoked_at.not.is.null`)
         .gte("paired_at", thirtyDaysAgo)
-        .order("expires_at", { ascending: false }),
+        .order("paired_at", { ascending: false }),
     ]);
     setPros((active as ProSession[]) || []);
     setPastPros((past as ProSession[]) || []);
