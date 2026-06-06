@@ -131,13 +131,15 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
-      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-          <span className="text-lg font-bold text-white">GlobeDoc</span>
-        </div>
-      </header>
+    <div className={isAuthed ? "" : "min-h-screen bg-[#F8F9FA]"}>
+      {!isAuthed && (
+        <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
+            <span className="text-lg font-bold text-white">GlobeDoc</span>
+          </div>
+        </header>
+      )}
 
       <main className="mx-auto w-full max-w-xl px-5 py-8">
         <h1 className="text-2xl font-bold text-[#0D1B2A]">
