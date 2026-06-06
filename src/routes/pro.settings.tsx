@@ -153,6 +153,20 @@ function SettingsTab() {
         </div>
       </section>
 
+      <section className="mt-6 rounded-2xl bg-white shadow-sm">
+        <button
+          type="button"
+          onClick={() => setDeleteOpen(true)}
+          className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-red-50"
+        >
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+          <div>
+            <p className="text-sm font-semibold text-red-600">Delete my account</p>
+            <p className="text-xs text-gray-500">Permanently erase all your data (GDPR Art. 17)</p>
+          </div>
+        </button>
+      </section>
+
       <button
         type="button"
         onClick={onLogout}
@@ -160,6 +174,23 @@ function SettingsTab() {
       >
         Log out
       </button>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete my account</DialogTitle>
+            <DialogDescription>
+              This will permanently delete your account and all associated data. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleting}>Cancel</Button>
+            <Button variant="destructive" onClick={onDeleteAccount} disabled={deleting}>
+              {deleting ? "Deleting…" : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
