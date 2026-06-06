@@ -47,6 +47,7 @@ type ProSession = {
 function PairingPage() {
   const navigate = useNavigate();
   const [code, setCode] = useState<string | null>(null);
+  const [codeId, setCodeId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
   const [loading, setLoading] = useState(false);
