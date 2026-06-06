@@ -72,6 +72,17 @@ function formatRemaining(ms: number) {
   return `${h}h ${m}m`;
 }
 
+function formatDuration(pairedAt: string, expiresAt: string) {
+  const ms = new Date(expiresAt).getTime() - new Date(pairedAt).getTime();
+  if (ms <= 0) return "—";
+  const minutes = Math.round(ms / 60000);
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"}`;
+  const days = Math.round(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"}`;
+}
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);
