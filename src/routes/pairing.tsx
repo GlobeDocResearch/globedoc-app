@@ -307,9 +307,14 @@ function PairingPage() {
                         {p.pro_title ? <span className="font-normal text-gray-600"> · {p.pro_title}</span> : null}
                       </h3>
                       {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
-                      <p className="mt-2 text-xs text-gray-500">Paired since {fmtDate(p.paired_at)}</p>
+                      <p className="mt-2 text-xs text-gray-500">
+                        Access granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span>
+                      </p>
                       <p className="text-xs text-gray-500">
-                        Access: <span className="font-medium text-[#0D1B2A]">{ACCESS_LABELS[p.access_level] || p.access_level}</span>
+                        Time remaining: <span className="font-medium text-[#0D1B2A]">{formatRemaining(p.expires_at)}</span>
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Access level: <span className="font-medium text-[#0D1B2A]">{ACCESS_LABELS[p.access_level] || p.access_level}</span>
                       </p>
                       <p className="text-xs text-gray-500">
                         Last accessed: {p.last_accessed_at ? fmtDateTime(p.last_accessed_at) : "—"}
@@ -323,6 +328,32 @@ function PairingPage() {
                       <Trash2 className="h-3.5 w-3.5" /> Revoke
                     </button>
                   </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Past connections */}
+        <section className="mt-8">
+          <h2 className="text-lg font-bold text-[#0D1B2A]">Past connections</h2>
+          <p className="mt-1 text-xs text-gray-500">Expired pairings from the last 30 days</p>
+          {pastPros.length === 0 ? (
+            <div className="mt-3 rounded-2xl bg-white p-5 text-center shadow-sm">
+              <p className="text-sm text-gray-500">No past connections in the last 30 days.</p>
+            </div>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {pastPros.map((p) => (
+                <li key={p.id} className="rounded-2xl bg-white p-4 shadow-sm opacity-90">
+                  <h3 className="text-sm font-bold text-[#0D1B2A]">
+                    {p.pro_name}
+                    {p.pro_title ? <span className="font-normal text-gray-600"> · {p.pro_title}</span> : null}
+                  </h3>
+                  {p.institution && <p className="text-xs text-gray-600">{p.institution}</p>}
+                  <p className="mt-2 text-xs text-gray-500">Date paired: <span className="font-medium text-[#0D1B2A]">{fmtDate(p.paired_at)}</span></p>
+                  <p className="text-xs text-gray-500">Duration granted: <span className="font-medium text-[#0D1B2A]">{formatDuration(p.paired_at, p.expires_at)}</span></p>
+                  <p className="text-xs text-gray-500">Access expired: <span className="font-medium text-[#0D1B2A]">{fmtDateTime(p.expires_at)}</span></p>
                 </li>
               ))}
             </ul>
