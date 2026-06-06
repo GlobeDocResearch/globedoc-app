@@ -1,6 +1,6 @@
-import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useNavigate, useRouterState, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Stethoscope, LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from "lucide-react";
+import { LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
