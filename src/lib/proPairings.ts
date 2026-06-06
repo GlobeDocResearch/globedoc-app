@@ -38,6 +38,31 @@ export function removePairing(userId: string, id: string) {
   savePairings(userId, loadPairings(userId).filter((p) => p.id !== id));
 }
 
+// Sync local pairings with backend: only keep sessions still active
+// (revoked_at IS NULL AND expires_at > now()) in pro_sessions.
+export async function refreshActivePairings(userId: string): Promise<ProPairing[]> {
+  const local = loadPairings(userId).filter((p) => new Date(p.expires_at).getTime() > Date.now());
+  if (local.length === 0) {
+    savePairings(userId, []);
+    return [];
+  }
+  try {
+    const res = await fetch("/api/public/connect/active", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tokens: local.map((p) => p.id) }),
+    });
+    const json = await res.json();
+    if (!res.ok) return local;
+    const activeSet = new Set<string>(json.active || []);
+    const next = local.filter((p) => activeSet.has(p.id));
+    savePairings(userId, next);
+    return next;
+  } catch {
+    return local;
+  }
+}
+
 export function ageFromDob(dob: string | null): string {
   if (!dob) return "—";
   const d = new Date(dob);
