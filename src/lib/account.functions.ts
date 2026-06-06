@@ -23,6 +23,7 @@ const TABLES = [
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { userId } = context;
     for (const tbl of TABLES) {
       await supabaseAdmin.from(tbl).delete().eq("user_id", userId);
