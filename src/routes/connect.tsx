@@ -47,10 +47,29 @@ type LastConnection = {
   expires_at: string;
 };
 
+type DuplicateInfo = {
+  code: string;
+  pro_name: string;
+  pro_title: string | null;
+  institution: string | null;
+  existing_pro_name: string;
+  current_expires_at: string;
+};
+
+const EXTEND_OPTIONS = [
+  { value: 10, label: "10 minutes" },
+  { value: 60, label: "1 hour" },
+  { value: 60 * 24, label: "24 hours" },
+  { value: 60 * 24 * 7, label: "7 days" },
+];
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);
   const [lastConnection, setLastConnection] = useState<LastConnection | null>(null);
+  const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
+  const [extendMinutes, setExtendMinutes] = useState(60);
+  const [extending, setExtending] = useState(false);
 
   useEffect(() => {
     if (isAuthed && userId) {
@@ -75,6 +94,32 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
       expires_at: result.expires_at,
     });
     toast.success(`Connected to ${result.patient_name}`);
+  };
+
+  const handleExtend = async () => {
+    if (!duplicate) return;
+    setExtending(true);
+    try {
+      const res = await fetch("/api/public/connect/extend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: duplicate.code,
+          pro_name: duplicate.pro_name,
+          institution: duplicate.institution,
+          minutes: extendMinutes,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error || "Could not extend"); return; }
+      handlePaired({
+        session_token: json.session_token,
+        patient_name: json.patient_name || "Patient",
+        expires_at: json.expires_at,
+      });
+      toast.success("Access extended");
+      setDuplicate(null);
+    } finally { setExtending(false); }
   };
 
   const removeConnection = (id: string) => {
@@ -122,9 +167,9 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         )}
 
         {isAuthed ? (
-          <SignedInProForm proMeta={proMeta} onPaired={handlePaired} />
+          <SignedInProForm proMeta={proMeta} onPaired={handlePaired} onDuplicate={setDuplicate} />
         ) : (
-          <UnauthedConnectFlow onPaired={handlePaired} navigate={navigate} />
+          <UnauthedConnectFlow onPaired={handlePaired} onDuplicate={setDuplicate} navigate={navigate} />
         )}
 
         {isAuthed && (
@@ -154,6 +199,62 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
           </section>
         )}
       </main>
+
+      {duplicate && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-5">
+          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+            <h3 className="text-base font-bold text-[#0D1B2A]">Active connection already exists</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              You already have an active connection with{" "}
+              <span className="font-semibold text-[#0D1B2A]">{duplicate.existing_pro_name}</span>.
+              Would you like to extend their access instead?
+            </p>
+            <p className="mt-2 text-xs text-gray-500">
+              Current access expires {new Date(duplicate.current_expires_at).toLocaleString()}
+            </p>
+
+            <div className="mt-4">
+              <p className="text-xs font-semibold text-[#0D1B2A]">Extend by</p>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {EXTEND_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setExtendMinutes(opt.value)}
+                    className={`rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
+                      extendMinutes === opt.value
+                        ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                        : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDuplicate(null)}
+                disabled={extending}
+                className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExtend}
+                disabled={extending}
+                className="flex items-center gap-2 rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {extending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Extend access
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

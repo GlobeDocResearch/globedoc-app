@@ -38,6 +38,7 @@ import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/publi
 import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
 import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
 import { Route as ApiPublicConnectFileRouteImport } from './routes/api/public/connect.file'
+import { Route as ApiPublicConnectExtendRouteImport } from './routes/api/public/connect.extend'
 import { Route as ApiPublicConnectEntryRouteImport } from './routes/api/public/connect.entry'
 
 const VerifiedProRoute = VerifiedProRouteImport.update({
@@ -186,6 +187,11 @@ const ApiPublicConnectFileRoute = ApiPublicConnectFileRouteImport.update({
   path: '/api/public/connect/file',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicConnectExtendRoute = ApiPublicConnectExtendRouteImport.update({
+  id: '/api/public/connect/extend',
+  path: '/api/public/connect/extend',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicConnectEntryRoute = ApiPublicConnectEntryRouteImport.update({
   id: '/api/public/connect/entry',
   path: '/api/public/connect/entry',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass/': typeof HealthPassIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
+  '/api/public/connect/extend': typeof ApiPublicConnectExtendRoute
   '/api/public/connect/file': typeof ApiPublicConnectFileRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
@@ -251,6 +258,7 @@ export interface FileRoutesByTo {
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass': typeof HealthPassIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
+  '/api/public/connect/extend': typeof ApiPublicConnectExtendRoute
   '/api/public/connect/file': typeof ApiPublicConnectFileRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/pro/settings': typeof ProSettingsRoute
   '/health-pass/': typeof HealthPassIndexRoute
   '/api/public/connect/entry': typeof ApiPublicConnectEntryRoute
+  '/api/public/connect/extend': typeof ApiPublicConnectExtendRoute
   '/api/public/connect/file': typeof ApiPublicConnectFileRoute
   '/api/public/connect/note': typeof ApiPublicConnectNoteRoute
   '/api/public/connect/pair': typeof ApiPublicConnectPairRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/pro/settings'
     | '/health-pass/'
     | '/api/public/connect/entry'
+    | '/api/public/connect/extend'
     | '/api/public/connect/file'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/pro/settings'
     | '/health-pass'
     | '/api/public/connect/entry'
+    | '/api/public/connect/extend'
     | '/api/public/connect/file'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/pro/settings'
     | '/health-pass/'
     | '/api/public/connect/entry'
+    | '/api/public/connect/extend'
     | '/api/public/connect/file'
     | '/api/public/connect/note'
     | '/api/public/connect/pair'
@@ -412,6 +424,7 @@ export interface RootRouteChildren {
   HealthPassSectionRoute: typeof HealthPassSectionRoute
   HealthPassIndexRoute: typeof HealthPassIndexRoute
   ApiPublicConnectEntryRoute: typeof ApiPublicConnectEntryRoute
+  ApiPublicConnectExtendRoute: typeof ApiPublicConnectExtendRoute
   ApiPublicConnectFileRoute: typeof ApiPublicConnectFileRoute
   ApiPublicConnectNoteRoute: typeof ApiPublicConnectNoteRoute
   ApiPublicConnectPairRoute: typeof ApiPublicConnectPairRoute
@@ -623,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicConnectFileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/connect/extend': {
+      id: '/api/public/connect/extend'
+      path: '/api/public/connect/extend'
+      fullPath: '/api/public/connect/extend'
+      preLoaderRoute: typeof ApiPublicConnectExtendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/connect/entry': {
       id: '/api/public/connect/entry'
       path: '/api/public/connect/entry'
@@ -671,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   HealthPassSectionRoute: HealthPassSectionRoute,
   HealthPassIndexRoute: HealthPassIndexRoute,
   ApiPublicConnectEntryRoute: ApiPublicConnectEntryRoute,
+  ApiPublicConnectExtendRoute: ApiPublicConnectExtendRoute,
   ApiPublicConnectFileRoute: ApiPublicConnectFileRoute,
   ApiPublicConnectNoteRoute: ApiPublicConnectNoteRoute,
   ApiPublicConnectPairRoute: ApiPublicConnectPairRoute,
