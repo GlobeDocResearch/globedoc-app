@@ -178,15 +178,21 @@ function PairingPage() {
     setExtending(true);
     try {
       const newExpires = new Date(Date.now() + minutes * 60 * 1000).toISOString();
-      const { error } = await (supabase as any)
+      const { data, error } = await (supabase as any)
         .from("pro_sessions")
         .update({ expires_at: newExpires })
-        .eq("id", sessionId);
+        .eq("id", sessionId)
+        .select("id, expires_at");
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error("No row updated");
+      const committedExpires = (data[0] as any).expires_at as string;
+      setPros((prev) => prev.map((p) => p.id === sessionId ? { ...p, expires_at: committedExpires } : p));
+      setNow(Date.now());
       toast.success("Access extended");
       setExtendId(null);
-      loadPros();
-    } catch {
+      await loadPros();
+    } catch (e) {
+      console.error("Extend access failed", e);
       toast.error("Could not extend access");
     } finally {
       setExtending(false);
