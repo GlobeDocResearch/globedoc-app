@@ -81,8 +81,8 @@ function PairingPage() {
         .from("pro_sessions")
         .select("id, pro_name, pro_title, institution, access_level, paired_at, last_accessed_at, expires_at, revoked_at")
         .eq("user_id", user.id)
-        .lte("expires_at", nowIso)
-        .gte("expires_at", thirtyDaysAgo)
+        .or(`expires_at.lte.${nowIso},revoked_at.not.is.null`)
+        .gte("paired_at", thirtyDaysAgo)
         .order("expires_at", { ascending: false }),
     ]);
     setPros((active as ProSession[]) || []);
