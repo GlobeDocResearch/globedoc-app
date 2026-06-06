@@ -223,10 +223,15 @@ function ProRecordsTab() {
                   <h3 className="mt-3 text-base font-bold text-[#0D1B2A]">{e.title}</h3>
                   {e.body && <p className="mt-1 line-clamp-3 text-sm text-gray-600">{e.body}</p>}
                   {e.file_name && (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg border border-gray-200 p-2 text-xs text-gray-600">
-                      <FileUp className="h-4 w-4" />
+                    <button
+                      type="button"
+                      onClick={() => openAttachment(e)}
+                      disabled={opening === e.id}
+                      className="mt-3 flex w-full items-center gap-2 rounded-lg border border-gray-200 p-2 text-left text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-60"
+                    >
+                      {opening === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
                       <span className="truncate">{e.file_name}</span>
-                    </div>
+                    </button>
                   )}
                   <div className="mt-3 flex items-center text-gray-400">
                     <button type="button" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-gray-100">
