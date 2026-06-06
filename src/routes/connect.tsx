@@ -64,6 +64,14 @@ const EXTEND_OPTIONS = [
   { value: 60 * 24 * 7, label: "7 days" },
 ];
 
+function formatRemaining(ms: number) {
+  if (ms <= 0) return "Expired";
+  const totalMinutes = Math.ceil(ms / 60000);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${h}h ${m}m`;
+}
+
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
   const [pairings, setPairings] = useState<ProPairing[]>([]);
@@ -71,6 +79,12 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
   const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
   const [extendMinutes, setExtendMinutes] = useState(60);
   const [extending, setExtending] = useState(false);
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (isAuthed && userId) {
