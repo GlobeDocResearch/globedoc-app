@@ -273,6 +273,27 @@ function ProRecordsTab() {
           onSaved={async () => { setComposer(null); await refresh(); toast.success("Entry added"); }}
         />
       )}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setLightbox(null)}
+            aria-label="Close"
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={lightbox.url}
+            alt={lightbox.name}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
+          />
+        </div>
+      )}
     </main>
   );
 }
