@@ -56,7 +56,7 @@ export const Route = createFileRoute("/api/public/connect/passport")({
           sb.from("environmental_allergies").select("*").eq("user_id", uid),
           sb.from("contrast_allergies").select("*").eq("user_id", uid),
           sb.from("allergy_drug_intolerances").select("*").eq("user_id", uid),
-          supabaseAdmin.from("record_entries").select("id, entry_type, title, body, file_name, file_mime, author_name, author_role, created_at").eq("user_id", uid).order("created_at", { ascending: false }),
+          supabaseAdmin.from("record_entries").select("id, entry_type, title, body, file_path, file_name, file_mime, author_name, author_role, created_at").eq("user_id", uid).order("created_at", { ascending: false }),
         ]);
 
         const patientName = [profile.data?.first_name, profile.data?.last_name].filter(Boolean).join(" ") || "Patient";
