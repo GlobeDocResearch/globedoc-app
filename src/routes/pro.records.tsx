@@ -52,11 +52,24 @@ function ProRecordsTab() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [composer, setComposer] = useState<ProEntryType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+
+  const filterChips = [
+    { key: "all", label: "All" },
+    { key: "note", label: "Note" },
+    { key: "clinical_note", label: "Clinical note" },
+    { key: "document", label: "Document" },
+    { key: "image", label: "Image" },
+  ];
 
   const filteredEntries = useMemo(() => {
+    let result = entries;
+    if (filterType !== "all") {
+      result = result.filter((e) => e.entry_type === filterType);
+    }
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return entries;
-    return entries.filter((e) => {
+    if (!q) return result;
+    return result.filter((e) => {
       const dateStr = new Date(e.created_at).toLocaleString("en-GB");
       const typeLabel = typeMeta(e.entry_type).label.toLowerCase();
       return (
@@ -69,7 +82,7 @@ function ProRecordsTab() {
         patientName.toLowerCase().includes(q)
       );
     });
-  }, [entries, searchQuery, patientName]);
+  }, [entries, searchQuery, patientName, filterType]);
 
   useEffect(() => {
     (async () => {
@@ -129,12 +142,31 @@ function ProRecordsTab() {
         </div>
       ) : (
         <>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {filterChips.map((chip) => {
+              const active = filterType === chip.key;
+              return (
+                <button
+                  key={chip.key}
+                  type="button"
+                  onClick={() => setFilterType(chip.key)}
+                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                    active
+                      ? "bg-[#2563EB] text-white"
+                      : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search records…"
-            className="mt-5 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+            className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
           />
           {loading ? (
             <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
