@@ -19,6 +19,22 @@ function SettingsTab() {
   const [notifications, setNotifications] = useState(true);
   const [pwOpen, setPwOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const onDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteMyAccount();
+      await supabase.auth.signOut();
+      toast.success("Account deleted");
+      navigate({ to: "/signin" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not delete account");
+      setDeleting(false);
+    }
+  };
+
   
 
   const onChangePassword = async () => {
