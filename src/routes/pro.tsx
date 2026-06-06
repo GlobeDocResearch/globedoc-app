@@ -7,6 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/pro")({
   head: () => ({ meta: [{ title: "GlobeDoc Pro" }] }),
+  beforeLoad: ({ location }) => {
+    if (location.pathname === "/pro" || location.pathname === "/pro/") {
+      throw redirect({ to: "/connect" });
+    }
+  },
   component: ProLayout,
 });
 
