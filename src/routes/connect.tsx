@@ -6,7 +6,7 @@ import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { addPairing, loadPairings, removePairing, type ProPairing } from "@/lib/proPairings";
-import { ProBottomNav } from "./pro";
+import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
   head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
