@@ -16,6 +16,7 @@ type Entry = {
   entry_type: string;
   title: string;
   body: string | null;
+  file_path: string | null;
   file_name: string | null;
   file_mime: string | null;
   author_name: string | null;
@@ -53,6 +54,28 @@ function ProRecordsTab() {
   const [composer, setComposer] = useState<ProEntryType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
+  const [lightbox, setLightbox] = useState<{ url: string; name: string } | null>(null);
+  const [opening, setOpening] = useState<string | null>(null);
+
+  const openAttachment = async (e: Entry) => {
+    if (!e.file_path || !token) return;
+    setOpening(e.id);
+    try {
+      const res = await fetch(`/api/public/connect/file?entry_id=${encodeURIComponent(e.id)}`, {
+        headers: { "x-session-token": token },
+      });
+      const json = await res.json();
+      if (!res.ok || !json.url) { toast.error(json.error || "Could not open file"); return; }
+      const isImage = (e.file_mime || "").startsWith("image/");
+      if (isImage) {
+        setLightbox({ url: json.url, name: e.file_name || "Image" });
+      } else {
+        window.open(json.url, "_blank", "noopener,noreferrer");
+      }
+    } finally {
+      setOpening(null);
+    }
+  };
 
   const filterChips = [
     { key: "all", label: "All" },
@@ -200,10 +223,15 @@ function ProRecordsTab() {
                   <h3 className="mt-3 text-base font-bold text-[#0D1B2A]">{e.title}</h3>
                   {e.body && <p className="mt-1 line-clamp-3 text-sm text-gray-600">{e.body}</p>}
                   {e.file_name && (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg border border-gray-200 p-2 text-xs text-gray-600">
-                      <FileUp className="h-4 w-4" />
+                    <button
+                      type="button"
+                      onClick={() => openAttachment(e)}
+                      disabled={opening === e.id}
+                      className="mt-3 flex w-full items-center gap-2 rounded-lg border border-gray-200 p-2 text-left text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-60"
+                    >
+                      {opening === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
                       <span className="truncate">{e.file_name}</span>
-                    </div>
+                    </button>
                   )}
                   <div className="mt-3 flex items-center text-gray-400">
                     <button type="button" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-gray-100">
@@ -244,6 +272,27 @@ function ProRecordsTab() {
           onClose={() => setComposer(null)}
           onSaved={async () => { setComposer(null); await refresh(); toast.success("Entry added"); }}
         />
+      )}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setLightbox(null)}
+            aria-label="Close"
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={lightbox.url}
+            alt={lightbox.name}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
+          />
+        </div>
       )}
     </main>
   );
