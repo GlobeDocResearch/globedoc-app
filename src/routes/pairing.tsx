@@ -93,6 +93,39 @@ function PairingPage() {
     loadPros();
   }, []);
 
+  useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel>;
+
+    const setup = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      channel = supabase
+        .channel("pro_sessions_changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "pro_sessions",
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            loadPros();
+          }
+        )
+        .subscribe();
+    };
+
+    setup();
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, []);
+
   const formatDuration = (fromIso: string, toIso: string) => {
     const ms = Math.max(0, new Date(toIso).getTime() - new Date(fromIso).getTime());
     const mins = Math.round(ms / 60000);
