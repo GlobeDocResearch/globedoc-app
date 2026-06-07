@@ -146,13 +146,32 @@ export function ageFromDob(dob: string | null): string {
 async function patientNamesByUserId(userIds: string[]): Promise<Map<string, string>> {
   const map = new Map<string, string>();
   if (userIds.length === 0) return map;
+  // Try direct profiles read first (RLS may restrict this for pros; that's OK — we'll fall back to the server fn).
   const { data } = await supabase
     .from("profiles")
     .select("user_id, first_name, last_name")
     .in("user_id", userIds);
   for (const p of data || []) {
-    const name = [p.first_name, p.last_name].filter(Boolean).join(" ") || "Patient";
-    map.set(p.user_id, name);
+    const name = [p.first_name, p.last_name].filter(Boolean).join(" ");
+    if (name) map.set(p.user_id, name);
+  }
+  const missing = userIds.filter((id) => !map.has(id));
+  if (missing.length > 0) {
+    try {
+      const { getPatientDisplayInfo } = await import("./proPatients.functions");
+      const res: any = await getPatientDisplayInfo({ data: { userIds: missing } });
+      const patients = res?.patients || {};
+      for (const id of missing) {
+        const info = patients[id];
+        if (info?.name) map.set(id, info.name);
+        else if (info?.email) map.set(id, info.email);
+      }
+    } catch {
+      // ignore — fall back to "Patient" below
+    }
+  }
+  for (const id of userIds) {
+    if (!map.has(id)) map.set(id, "Patient");
   }
   return map;
 }
