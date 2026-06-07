@@ -1,6 +1,8 @@
-// Local persistence for a Pro's paired patients.
-// We don't have a DB link from the pro user id to pro_sessions, so we keep
-// a lightweight cache keyed by the Pro's auth user id.
+// Source of truth for a Pro's paired patients is Supabase (pro_sessions table,
+// scoped by pro_user_id via RLS). LocalStorage is kept only as an optional
+// cache for offline hints — never as the primary render source.
+
+import { supabase } from "@/integrations/supabase/client";
 
 export type ProPairing = {
   id: string; // pairing/session id (we use session_token as a stable key)
