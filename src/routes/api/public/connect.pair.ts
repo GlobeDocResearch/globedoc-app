@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           // Look up the pairing code
           const { data: pc, error: pcErr } = await supabaseAdmin
             .from("pairing_codes")
-            .select("id, user_id, expires_at, used, validity_minutes")
+            .select("id, user_id, expires_at, used, validity_minutes, reason_chips, reason_text")
             .eq("code", code)
             .maybeSingle();
           if (pcErr) throw pcErr;
@@ -84,6 +84,8 @@ export const Route = createFileRoute("/api/public/connect/pair")({
               session_token: sessionToken,
               expires_at: sessionExpires,
               last_accessed_at: new Date().toISOString(),
+              reason_chips: (pc as any).reason_chips ?? null,
+              reason_text: (pc as any).reason_text ?? null,
             })
             .select("id, expires_at")
             .single();
