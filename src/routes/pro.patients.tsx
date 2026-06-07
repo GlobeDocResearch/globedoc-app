@@ -6,6 +6,8 @@ import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPair
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 import { PatientHealthPassportView } from "@/components/PatientHealthPassportView";
+import { translateDeepl } from "@/lib/deeplTranslate.functions";
+import { Languages } from "lucide-react";
 
 export const Route = createFileRoute("/pro/patients")({
   head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }] }),
@@ -195,7 +197,17 @@ function ProPatientsTab() {
         </select>
       </div>
 
+      {selectedId && (() => {
+        const sel = pairings.find((p) => p.id === selectedId);
+        if (!sel) return null;
+        const hasChips = (sel.reason_chips?.length ?? 0) > 0;
+        const hasText = !!(sel.reason_text && sel.reason_text.trim());
+        if (!hasChips && !hasText) return null;
+        return <ReasonBanner chips={sel.reason_chips || []} text={sel.reason_text || ""} />;
+      })()}
+
       <div className="mt-5 flex gap-1 rounded-xl bg-gray-100 p-1">
+
         {([
           { key: "passport", label: "Health Passport" },
           { key: "records", label: "Records" },
@@ -486,6 +498,65 @@ function ProEntryComposer({
           </SaveButton>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ReasonBanner({ chips, text }: { chips: string[]; text: string }) {
+  const [translated, setTranslated] = useState<string | null>(null);
+  const [translating, setTranslating] = useState(false);
+  const targetLang = (typeof navigator !== "undefined" ? navigator.language : "en").slice(0, 5);
+
+  const handleTranslate = async () => {
+    if (!text.trim()) return;
+    setTranslating(true);
+    try {
+      const res: any = await translateDeepl({ data: { target: targetLang, text } });
+      if (res?.error) {
+        toast.error("Could not translate");
+      } else {
+        setTranslated(res?.translation || "");
+      }
+    } catch {
+      toast.error("Could not translate");
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  return (
+    <div className="mt-5 rounded-xl border border-gray-200 border-l-4 border-l-[#0D1B2A] bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="text-sm font-bold text-[#0D1B2A]">Reason for visit</h2>
+        {text.trim() && (
+          <button
+            type="button"
+            onClick={handleTranslate}
+            disabled={translating}
+            className="inline-flex items-center gap-1 rounded-full border border-gray-200 px-2.5 py-1 text-xs font-medium text-[#0D1B2A] hover:bg-gray-50 disabled:opacity-60"
+          >
+            {translating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Languages className="h-3 w-3" />}
+            Translate
+          </button>
+        )}
+      </div>
+      {chips.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {chips.map((c) => (
+            <span key={c} className="rounded-full bg-[#0D1B2A]/5 px-2.5 py-0.5 text-xs font-semibold text-[#0D1B2A]">
+              {c}
+            </span>
+          ))}
+        </div>
+      )}
+      {text.trim() && (
+        <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{text}</p>
+      )}
+      {translated !== null && (
+        <p className="mt-2 whitespace-pre-wrap border-t border-gray-100 pt-2 text-sm italic text-gray-600">
+          {translated}
+        </p>
+      )}
     </div>
   );
 }

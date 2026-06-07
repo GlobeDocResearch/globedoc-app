@@ -188,6 +188,8 @@ export type ActiveSession = {
   expires_at: string;
   revoked_at: string | null;
   access_level: string;
+  reason_chips: string[] | null;
+  reason_text: string | null;
 };
 
 export type PastSession = {
@@ -206,7 +208,7 @@ export async function getActiveSessionsFromSupabase(userId: string): Promise<Act
   const nowIso = new Date().toISOString();
   const { data, error } = await supabase
     .from("pro_sessions")
-    .select("id, session_token, user_id, paired_at, expires_at, revoked_at, access_level, last_accessed_at")
+    .select("id, session_token, user_id, paired_at, expires_at, revoked_at, access_level, last_accessed_at, reason_chips, reason_text")
     .eq("pro_user_id", userId)
     .is("revoked_at", null)
     .gt("expires_at", nowIso)
@@ -225,6 +227,8 @@ export async function getActiveSessionsFromSupabase(userId: string): Promise<Act
     expires_at: r.expires_at,
     revoked_at: r.revoked_at,
     access_level: r.access_level,
+    reason_chips: (r.reason_chips as string[] | null) ?? null,
+    reason_text: (r.reason_text as string | null) ?? null,
   }));
 }
 
