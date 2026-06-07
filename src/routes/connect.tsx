@@ -96,7 +96,7 @@ function formatActualDuration(pairedAt: string, expiresAt: string, revokedAt: st
 
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
-  const [pairings, setPairings] = useState<ProPairing[]>([]);
+  const [pairings, setPairings] = useState<ActiveSession[]>([]);
   const [lastConnection, setLastConnection] = useState<LastConnection | null>(null);
   const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
   const [extendMinutes, setExtendMinutes] = useState(60);
@@ -108,18 +108,21 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     return () => clearInterval(id);
   }, []);
 
-  const [past, setPast] = useState<PastPairing[]>([]);
+  const [past, setPast] = useState<PastSession[]>([]);
 
   useEffect(() => {
-    if (isAuthed && userId) {
-      setPairings(loadPairings(userId).filter(p => new Date(p.expires_at).getTime() > Date.now()));
-      refreshPairingsWithPast(userId)
-        .then(({ active, past }) => {
-          setPairings(active);
-          setPast(past);
-        })
-        .catch(() => {});
-    }
+    if (!isAuthed || !userId) return;
+    let cancelled = false;
+    (async () => {
+      const [active, pastRows] = await Promise.all([
+        getActiveSessionsFromSupabase(userId),
+        getPastSessionsFromSupabase(userId),
+      ]);
+      if (cancelled) return;
+      setPairings(active);
+      setPast(pastRows);
+    })();
+    return () => { cancelled = true; };
   }, [isAuthed, userId, lastConnection]);
 
   const handlePaired = (result: { session_token: string; patient_name: string; expires_at: string }) => {
