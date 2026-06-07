@@ -6,9 +6,9 @@ import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPair
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 
-export const Route = createFileRoute("/pro/records")({
-  head: () => ({ meta: [{ title: "Records — GlobeDoc Pro" }] }),
-  component: ProRecordsTab,
+export const Route = createFileRoute("/pro/patients")({
+  head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }] }),
+  component: ProPatientsTab,
 });
 
 type Entry = {
@@ -43,7 +43,7 @@ function formatDate(iso: string) {
   });
 }
 
-function ProRecordsTab() {
+function ProPatientsTab() {
   const [pairings, setPairings] = useState<ActiveSession[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
   const [token, setToken] = useState<string>("");
@@ -173,7 +173,7 @@ function ProRecordsTab() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-6">
-      <h1 className="text-2xl font-bold text-[#0D1B2A]">Records</h1>
+      <h1 className="text-2xl font-bold text-[#0D1B2A]">Patients</h1>
       <p className="mt-1 text-sm text-gray-500">View and contribute to your patients' records.</p>
 
       <div className="mt-5">

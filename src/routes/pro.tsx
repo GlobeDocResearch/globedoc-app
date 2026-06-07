@@ -71,7 +71,7 @@ export function ProBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const tabs = [
     { to: "/connect" as const, icon: <LinkIcon className="h-5 w-5" />, label: "Connect", match: (p: string) => p.startsWith("/connect") },
-    { to: "/pro/records" as const, icon: <FileText className="h-5 w-5" />, label: "Records", match: (p: string) => p.startsWith("/pro/records") },
+    { to: "/pro/patients" as const, icon: <FileText className="h-5 w-5" />, label: "Patients", match: (p: string) => p.startsWith("/pro/patients") },
     { to: "/pro/profile" as const, icon: <User className="h-5 w-5" />, label: "Profile", match: (p: string) => p.startsWith("/pro/profile") },
     { to: "/pro/settings" as const, icon: <SettingsIcon className="h-5 w-5" />, label: "Settings", match: (p: string) => p.startsWith("/pro/settings") },
   ];
