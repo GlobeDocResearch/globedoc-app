@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPairings";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
+import { PatientHealthPassportView } from "@/components/PatientHealthPassportView";
 
 export const Route = createFileRoute("/pro/patients")({
   head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }] }),
@@ -48,6 +49,8 @@ function ProPatientsTab() {
   const [selectedId, setSelectedId] = useState<string>("");
   const [token, setToken] = useState<string>("");
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [passport, setPassport] = useState<any | null>(null);
+  const [activeTab, setActiveTab] = useState<"passport" | "records">("passport");
   const [patientName, setPatientName] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
