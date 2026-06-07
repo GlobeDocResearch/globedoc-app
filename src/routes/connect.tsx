@@ -236,7 +236,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         )}
 
         {isAuthed ? (
-          <SignedInProForm proMeta={proMeta} proUserId={userId} onPaired={handlePaired} onDuplicate={setDuplicate} />)
+          <SignedInProForm proMeta={proMeta} proUserId={userId} onPaired={handlePaired} onDuplicate={setDuplicate} />
         ) : (
           <UnauthedConnectFlow onPaired={handlePaired} onDuplicate={setDuplicate} navigate={navigate} />
         )}
