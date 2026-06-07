@@ -71,6 +71,14 @@ function PairingPage() {
   const [extendId, setExtendId] = useState<string | null>(null);
   const [extendMinutes, setExtendMinutes] = useState(60);
   const [extending, setExtending] = useState(false);
+  const [reasonChips, setReasonChips] = useState<string[]>([]);
+  const [reasonText, setReasonText] = useState("");
+
+  const toggleReasonChip = (chip: string) => {
+    setReasonChips((prev) =>
+      prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip],
+    );
+  };
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
