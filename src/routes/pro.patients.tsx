@@ -6,8 +6,6 @@ import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPair
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 import { PatientHealthPassportView } from "@/components/PatientHealthPassportView";
-import { translateDeepl } from "@/lib/deeplTranslate.functions";
-import { Languages } from "lucide-react";
 
 export const Route = createFileRoute("/pro/patients")({
   head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }] }),
