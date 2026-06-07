@@ -124,6 +124,7 @@ function ProPatientsTab() {
           setToken("");
           setPatientName("");
           setEntries([]);
+          setPassport(null);
           return "";
         }
         return prev;
