@@ -84,6 +84,8 @@ export const Route = createFileRoute("/api/public/connect/pair")({
               session_token: sessionToken,
               expires_at: sessionExpires,
               last_accessed_at: new Date().toISOString(),
+              reason_chips: (pc as any).reason_chips ?? null,
+              reason_text: (pc as any).reason_text ?? null,
             })
             .select("id, expires_at")
             .single();
