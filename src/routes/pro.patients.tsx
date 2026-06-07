@@ -197,7 +197,17 @@ function ProPatientsTab() {
         </select>
       </div>
 
+      {selectedId && (() => {
+        const sel = pairings.find((p) => p.id === selectedId);
+        if (!sel) return null;
+        const hasChips = (sel.reason_chips?.length ?? 0) > 0;
+        const hasText = !!(sel.reason_text && sel.reason_text.trim());
+        if (!hasChips && !hasText) return null;
+        return <ReasonBanner chips={sel.reason_chips || []} text={sel.reason_text || ""} />;
+      })()}
+
       <div className="mt-5 flex gap-1 rounded-xl bg-gray-100 p-1">
+
         {([
           { key: "passport", label: "Health Passport" },
           { key: "records", label: "Records" },
