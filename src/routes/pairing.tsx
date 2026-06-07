@@ -209,6 +209,8 @@ function PairingPage() {
           code: newCode,
           expires_at: exp.toISOString(),
           validity_minutes: validity,
+          reason_chips: reasonChips.length > 0 ? reasonChips : null,
+          reason_text: reasonText.trim() ? reasonText.trim().slice(0, 500) : null,
         })
         .select("id");
       if (error) throw error;
