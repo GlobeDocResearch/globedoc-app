@@ -165,8 +165,9 @@ function ProPatientsTab() {
     try {
       const res = await fetch("/api/public/connect/passport", { headers: { "x-session-token": t } });
       const json = await res.json();
-      if (!res.ok) { toast.error(json.error || "Could not load records"); setEntries([]); return; }
+      if (!res.ok) { toast.error(json.error || "Could not load records"); setEntries([]); setPassport(null); return; }
       setEntries(json.records || []);
+      setPassport(json);
     } finally {
       setLoading(false);
     }
