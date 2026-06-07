@@ -25,6 +25,18 @@ const VALIDITY_OPTIONS = [
   { value: 60 * 24 * 7, label: "7 days" },
 ];
 
+const REASON_CHIPS = [
+  "Fever",
+  "Pain",
+  "Skin",
+  "Stomach",
+  "Breathing",
+  "Mental health",
+  "Injury",
+  "Chronic condition",
+  "Other",
+];
+
 const ACCESS_LABELS: Record<string, string> = {
   passport_records: "Full Passport + Records",
   records_only: "Records only",
