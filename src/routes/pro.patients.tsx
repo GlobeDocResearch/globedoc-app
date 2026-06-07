@@ -195,10 +195,43 @@ function ProPatientsTab() {
         </select>
       </div>
 
+      <div className="mt-5 flex gap-1 rounded-xl bg-gray-100 p-1">
+        {([
+          { key: "passport", label: "Health Passport" },
+          { key: "records", label: "Records" },
+        ] as const).map((t) => {
+          const active = activeTab === t.key;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setActiveTab(t.key)}
+              className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                active ? "bg-white text-[#0D1B2A] shadow-sm" : "text-gray-500 hover:text-[#0D1B2A]"
+              }`}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
       {!selectedId ? (
         <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
           <FileText className="mx-auto h-7 w-7 text-gray-400" />
-          <p className="mt-3 text-sm text-gray-600">Select a patient above to view their records.</p>
+          <p className="mt-3 text-sm text-gray-600">
+            {activeTab === "passport"
+              ? "Select a patient from the dropdown to view their Health Passport."
+              : "Select a patient above to view their records."}
+          </p>
+        </div>
+      ) : activeTab === "passport" ? (
+        <div className="mt-5">
+          {loading || !passport ? (
+            <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
+          ) : (
+            <PatientHealthPassportView passport={passport} />
+          )}
         </div>
       ) : (
         <>
@@ -283,6 +316,7 @@ function ProPatientsTab() {
           )}
         </>
       )}
+
 
       {selectedId && (
         <button
