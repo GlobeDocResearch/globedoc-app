@@ -368,7 +368,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
 
 type PairResult = { session_token: string; patient_name: string; expires_at: string };
 
-function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void }) {
+function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMeta: any; proUserId: string; onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void }) {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -390,6 +390,7 @@ function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onP
           institution: inst,
           access_level: "passport_records",
           gdpr_consent: true,
+          pro_user_id: proUserId || undefined,
         }),
       });
       const json = await res.json();
