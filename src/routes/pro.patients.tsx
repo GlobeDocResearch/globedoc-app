@@ -318,7 +318,7 @@ function ProPatientsTab() {
       )}
 
 
-      {selectedId && (
+      {selectedId && activeTab === "records" && (
         <button
           type="button"
           onClick={() => setPickerOpen(true)}
