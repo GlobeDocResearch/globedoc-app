@@ -6,7 +6,7 @@ import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPair
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 
-export const Route = createFileRoute("/pro/records")({
+export const Route = createFileRoute("/pro/patients")({
   head: () => ({ meta: [{ title: "Records — GlobeDoc Pro" }] }),
   component: ProRecordsTab,
 });
