@@ -14,6 +14,7 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           const institution = String(body.institution || "").trim() || null;
           const accessLevel = String(body.access_level || "passport_records");
           const gdpr = !!body.gdpr_consent;
+          const proUserId = typeof body.pro_user_id === "string" && body.pro_user_id.length > 0 ? body.pro_user_id : null;
 
           if (code.length !== 6) return json({ error: "Invalid code" }, 400);
           if (!proName) return json({ error: "Name required" }, 400);
@@ -74,6 +75,7 @@ export const Route = createFileRoute("/api/public/connect/pair")({
             .from("pro_sessions")
             .insert({
               user_id: pc.user_id,
+              pro_user_id: proUserId,
               pairing_code_id: pc.id,
               pro_name: proName,
               pro_title: proTitle,

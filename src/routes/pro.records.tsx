@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { loadPairings, refreshActivePairings, type ProPairing } from "@/lib/proPairings";
+import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPairings";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 
@@ -44,7 +44,7 @@ function formatDate(iso: string) {
 }
 
 function ProRecordsTab() {
-  const [pairings, setPairings] = useState<ProPairing[]>([]);
+  const [pairings, setPairings] = useState<ActiveSession[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
   const [token, setToken] = useState<string>("");
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -108,15 +108,15 @@ function ProRecordsTab() {
   }, [entries, searchQuery, patientName, filterType]);
 
   useEffect(() => {
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const initial = loadPairings(user.id).filter(p => new Date(p.expires_at).getTime() > Date.now());
-      setPairings(initial);
-      const fresh = await refreshActivePairings(user.id);
+    let cancelled = false;
+    let currentUserId: string | null = null;
+
+    const load = async (uid: string) => {
+      const fresh = await getActiveSessionsFromSupabase(uid);
+      if (cancelled) return;
       setPairings(fresh);
-      const activeIds = new Set(fresh.map(p => p.id));
-      setSelectedId(prev => {
+      const activeIds = new Set(fresh.map((p) => p.id));
+      setSelectedId((prev) => {
         if (prev && !activeIds.has(prev)) {
           setToken("");
           setPatientName("");
@@ -125,7 +125,27 @@ function ProRecordsTab() {
         }
         return prev;
       });
+    };
+
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || cancelled) return;
+      currentUserId = user.id;
+      await load(user.id);
     })();
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && currentUserId) {
+        void load(currentUserId);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+    };
   }, []);
 
   const onSelect = async (id: string) => {

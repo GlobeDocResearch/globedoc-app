@@ -959,6 +959,7 @@ export type Database = {
           pairing_code_id: string | null
           pro_name: string
           pro_title: string | null
+          pro_user_id: string | null
           revoked_at: string | null
           session_token: string
           updated_at: string
@@ -975,6 +976,7 @@ export type Database = {
           pairing_code_id?: string | null
           pro_name: string
           pro_title?: string | null
+          pro_user_id?: string | null
           revoked_at?: string | null
           session_token: string
           updated_at?: string
@@ -991,6 +993,7 @@ export type Database = {
           pairing_code_id?: string | null
           pro_name?: string
           pro_title?: string | null
+          pro_user_id?: string | null
           revoked_at?: string | null
           session_token?: string
           updated_at?: string

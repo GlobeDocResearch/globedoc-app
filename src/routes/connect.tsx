@@ -5,7 +5,7 @@ import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { addPairing, loadPairings, refreshPairingsWithPast, type ProPairing, type PastPairing } from "@/lib/proPairings";
+import { addPairing, getActiveSessionsFromSupabase, getPastSessionsFromSupabase, type ActiveSession, type PastSession } from "@/lib/proPairings";
 import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
@@ -96,7 +96,7 @@ function formatActualDuration(pairedAt: string, expiresAt: string, revokedAt: st
 
 function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId: string; proMeta: any }) {
   const navigate = useNavigate();
-  const [pairings, setPairings] = useState<ProPairing[]>([]);
+  const [pairings, setPairings] = useState<ActiveSession[]>([]);
   const [lastConnection, setLastConnection] = useState<LastConnection | null>(null);
   const [duplicate, setDuplicate] = useState<DuplicateInfo | null>(null);
   const [extendMinutes, setExtendMinutes] = useState(60);
@@ -108,18 +108,21 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     return () => clearInterval(id);
   }, []);
 
-  const [past, setPast] = useState<PastPairing[]>([]);
+  const [past, setPast] = useState<PastSession[]>([]);
 
   useEffect(() => {
-    if (isAuthed && userId) {
-      setPairings(loadPairings(userId).filter(p => new Date(p.expires_at).getTime() > Date.now()));
-      refreshPairingsWithPast(userId)
-        .then(({ active, past }) => {
-          setPairings(active);
-          setPast(past);
-        })
-        .catch(() => {});
-    }
+    if (!isAuthed || !userId) return;
+    let cancelled = false;
+    (async () => {
+      const [active, pastRows] = await Promise.all([
+        getActiveSessionsFromSupabase(userId),
+        getPastSessionsFromSupabase(userId),
+      ]);
+      if (cancelled) return;
+      setPairings(active);
+      setPast(pastRows);
+    })();
+    return () => { cancelled = true; };
   }, [isAuthed, userId, lastConnection]);
 
   const handlePaired = (result: { session_token: string; patient_name: string; expires_at: string }) => {
@@ -180,9 +183,12 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         toast.error(json.error || "Could not revoke access");
         return;
       }
-      const { active, past } = await refreshPairingsWithPast(userId);
+      const [active, pastRows] = await Promise.all([
+        getActiveSessionsFromSupabase(userId),
+        getPastSessionsFromSupabase(userId),
+      ]);
       setPairings(active);
-      setPast(past);
+      setPast(pastRows);
       if (lastConnection?.id === id) setLastConnection(null);
       toast.success("Access revoked");
     } catch (e: any) {
@@ -230,7 +236,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         )}
 
         {isAuthed ? (
-          <SignedInProForm proMeta={proMeta} onPaired={handlePaired} onDuplicate={setDuplicate} />
+          <SignedInProForm proMeta={proMeta} proUserId={userId} onPaired={handlePaired} onDuplicate={setDuplicate} />
         ) : (
           <UnauthedConnectFlow onPaired={handlePaired} onDuplicate={setDuplicate} navigate={navigate} />
         )}
@@ -362,7 +368,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
 
 type PairResult = { session_token: string; patient_name: string; expires_at: string };
 
-function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void }) {
+function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMeta: any; proUserId: string; onPaired: (r: PairResult) => void; onDuplicate: (d: DuplicateInfo) => void }) {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -384,6 +390,7 @@ function SignedInProForm({ proMeta, onPaired, onDuplicate }: { proMeta: any; onP
           institution: inst,
           access_level: "passport_records",
           gdpr_consent: true,
+          pro_user_id: proUserId || undefined,
         }),
       });
       const json = await res.json();

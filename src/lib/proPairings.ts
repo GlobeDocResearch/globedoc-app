@@ -1,6 +1,8 @@
-// Local persistence for a Pro's paired patients.
-// We don't have a DB link from the pro user id to pro_sessions, so we keep
-// a lightweight cache keyed by the Pro's auth user id.
+// Source of truth for a Pro's paired patients is Supabase (pro_sessions table,
+// scoped by pro_user_id via RLS). LocalStorage is kept only as an optional
+// cache for offline hints — never as the primary render source.
+
+import { supabase } from "@/integrations/supabase/client";
 
 export type ProPairing = {
   id: string; // pairing/session id (we use session_token as a stable key)
@@ -137,4 +139,97 @@ export function ageFromDob(dob: string | null): string {
   const diff = Date.now() - d.getTime();
   const years = Math.floor(diff / (365.25 * 24 * 3600 * 1000));
   return `${years} yrs`;
+}
+
+// --- Supabase-backed source of truth ---------------------------------------
+
+async function patientNamesByUserId(userIds: string[]): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  if (userIds.length === 0) return map;
+  const { data } = await supabase
+    .from("profiles")
+    .select("user_id, first_name, last_name")
+    .in("user_id", userIds);
+  for (const p of data || []) {
+    const name = [p.first_name, p.last_name].filter(Boolean).join(" ") || "Patient";
+    map.set(p.user_id, name);
+  }
+  return map;
+}
+
+export type ActiveSession = {
+  id: string; // session_token (kept as key for existing UI/handlers)
+  session_id: string; // pro_sessions.id
+  session_token: string;
+  patient_name: string;
+  patient_user_id: string;
+  patient_dob: string | null;
+  paired_at: string;
+  last_activity_at: string;
+  expires_at: string;
+  revoked_at: string | null;
+  access_level: string;
+};
+
+export type PastSession = {
+  id: string; // session_token
+  session_id: string;
+  patient_name: string;
+  patient_user_id: string;
+  paired_at: string;
+  expires_at: string;
+  revoked_at: string | null;
+  access_level: string;
+};
+
+export async function getActiveSessionsFromSupabase(userId: string): Promise<ActiveSession[]> {
+  if (!userId) return [];
+  const nowIso = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("pro_sessions")
+    .select("id, session_token, user_id, paired_at, expires_at, revoked_at, access_level, last_accessed_at")
+    .eq("pro_user_id", userId)
+    .is("revoked_at", null)
+    .gt("expires_at", nowIso)
+    .order("paired_at", { ascending: false });
+  if (error || !data) return [];
+  const names = await patientNamesByUserId(Array.from(new Set(data.map((r: any) => r.user_id))));
+  return data.map((r: any) => ({
+    id: r.session_token,
+    session_id: r.id,
+    session_token: r.session_token,
+    patient_name: names.get(r.user_id) || "Patient",
+    patient_user_id: r.user_id,
+    patient_dob: null,
+    paired_at: r.paired_at,
+    last_activity_at: r.last_accessed_at || r.paired_at,
+    expires_at: r.expires_at,
+    revoked_at: r.revoked_at,
+    access_level: r.access_level,
+  }));
+}
+
+export async function getPastSessionsFromSupabase(userId: string): Promise<PastSession[]> {
+  if (!userId) return [];
+  const nowIso = new Date().toISOString();
+  const thirtyDaysAgoIso = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from("pro_sessions")
+    .select("id, session_token, user_id, paired_at, expires_at, revoked_at, access_level")
+    .eq("pro_user_id", userId)
+    .or(`revoked_at.not.is.null,expires_at.lt.${nowIso}`)
+    .gte("paired_at", thirtyDaysAgoIso)
+    .order("paired_at", { ascending: false });
+  if (error || !data) return [];
+  const names = await patientNamesByUserId(Array.from(new Set(data.map((r: any) => r.user_id))));
+  return data.map((r: any) => ({
+    id: r.session_token,
+    session_id: r.id,
+    patient_name: names.get(r.user_id) || "Patient",
+    patient_user_id: r.user_id,
+    paired_at: r.paired_at,
+    expires_at: r.expires_at,
+    revoked_at: r.revoked_at,
+    access_level: r.access_level,
+  }));
 }
