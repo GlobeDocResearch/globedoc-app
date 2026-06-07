@@ -226,7 +226,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
                 Access expires {new Date(lastConnection.expires_at).toLocaleString()}
               </p>
               <Link
-                to="/pro/records"
+                to="/pro/patients"
                 className="mt-2 inline-block text-xs font-semibold text-[#1D3F7C] underline underline-offset-2"
               >
                 View patient records →
