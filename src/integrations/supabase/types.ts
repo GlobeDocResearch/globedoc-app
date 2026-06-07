@@ -881,6 +881,8 @@ export type Database = {
           created_at: string
           expires_at: string
           id: string
+          reason_chips: string[] | null
+          reason_text: string | null
           used: boolean
           user_id: string
           validity_minutes: number
@@ -890,6 +892,8 @@ export type Database = {
           created_at?: string
           expires_at: string
           id?: string
+          reason_chips?: string[] | null
+          reason_text?: string | null
           used?: boolean
           user_id: string
           validity_minutes?: number
@@ -899,6 +903,8 @@ export type Database = {
           created_at?: string
           expires_at?: string
           id?: string
+          reason_chips?: string[] | null
+          reason_text?: string | null
           used?: boolean
           user_id?: string
           validity_minutes?: number
@@ -960,6 +966,8 @@ export type Database = {
           pro_name: string
           pro_title: string | null
           pro_user_id: string | null
+          reason_chips: string[] | null
+          reason_text: string | null
           revoked_at: string | null
           session_token: string
           updated_at: string
@@ -977,6 +985,8 @@ export type Database = {
           pro_name: string
           pro_title?: string | null
           pro_user_id?: string | null
+          reason_chips?: string[] | null
+          reason_text?: string | null
           revoked_at?: string | null
           session_token: string
           updated_at?: string
@@ -994,6 +1004,8 @@ export type Database = {
           pro_name?: string
           pro_title?: string | null
           pro_user_id?: string | null
+          reason_chips?: string[] | null
+          reason_text?: string | null
           revoked_at?: string | null
           session_token?: string
           updated_at?: string
