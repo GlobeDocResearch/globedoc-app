@@ -183,9 +183,12 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         toast.error(json.error || "Could not revoke access");
         return;
       }
-      const { active, past } = await refreshPairingsWithPast(userId);
+      const [active, pastRows] = await Promise.all([
+        getActiveSessionsFromSupabase(userId),
+        getPastSessionsFromSupabase(userId),
+      ]);
       setPairings(active);
-      setPast(past);
+      setPast(pastRows);
       if (lastConnection?.id === id) setLastConnection(null);
       toast.success("Access revoked");
     } catch (e: any) {
