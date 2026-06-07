@@ -381,6 +381,55 @@ function PairingPage() {
           </div>
         )}
 
+        {/* Reason for visit (optional) */}
+        {(!code || expired) && (
+          <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+            <h3 className="text-sm font-semibold text-[#0D1B2A]">Reason for visit (optional)</h3>
+            <p className="mt-0.5 text-xs text-gray-500">
+              Help your clinician prepare — you can also explain verbally
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {REASON_CHIPS.map((chip) => {
+                const active = reasonChips.includes(chip);
+                return (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => toggleReasonChip(chip)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                      active
+                        ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                        : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {chip}
+                  </button>
+                );
+              })}
+            </div>
+            <textarea
+              value={reasonText}
+              onChange={(e) => setReasonText(e.target.value.slice(0, 500))}
+              maxLength={500}
+              rows={3}
+              placeholder="Describe your symptoms or reason for visit..."
+              className="mt-3 w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+            />
+            <div className="mt-1 flex items-center justify-between">
+              <span className="text-[11px] text-gray-400">{reasonText.length}/500</span>
+              {(reasonChips.length > 0 || reasonText.length > 0) && (
+                <button
+                  type="button"
+                  onClick={() => { setReasonChips([]); setReasonText(""); }}
+                  className="text-xs font-semibold text-[#2563EB] hover:underline"
+                >
+                  Skip
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {!code || expired ? (
           <button
             type="button"
