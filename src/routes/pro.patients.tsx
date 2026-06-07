@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/pro/patients")({
-  head: () => ({ meta: [{ title: "Records — GlobeDoc Pro" }] }),
-  component: ProRecordsTab,
+  head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }] }),
+  component: ProPatientsTab,
 });
 
 type Entry = {
