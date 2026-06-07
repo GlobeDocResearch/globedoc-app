@@ -75,6 +75,7 @@ export const Route = createFileRoute("/api/public/connect/pair")({
             .from("pro_sessions")
             .insert({
               user_id: pc.user_id,
+              pro_user_id: proUserId,
               pairing_code_id: pc.id,
               pro_name: proName,
               pro_title: proTitle,
