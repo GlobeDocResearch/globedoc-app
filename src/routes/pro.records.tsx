@@ -44,7 +44,7 @@ function formatDate(iso: string) {
 }
 
 function ProRecordsTab() {
-  const [pairings, setPairings] = useState<ProPairing[]>([]);
+  const [pairings, setPairings] = useState<ActiveSession[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
   const [token, setToken] = useState<string>("");
   const [entries, setEntries] = useState<Entry[]>([]);
