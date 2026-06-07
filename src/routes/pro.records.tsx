@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { loadPairings, refreshActivePairings, type ProPairing } from "@/lib/proPairings";
+import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPairings";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 
