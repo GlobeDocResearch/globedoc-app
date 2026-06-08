@@ -22,7 +22,7 @@ export function DomTranslator() {
 
   useEffect(() => {
     const target = langCode;
-    if (target === "en" || target === "sv") {
+    if (target === "en") {
       // Restore originals when switching back.
       restoreAll(originalRef.current);
       return;
