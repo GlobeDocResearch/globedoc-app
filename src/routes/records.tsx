@@ -138,7 +138,7 @@ function initials(name: string) {
 }
 
 function RecordsPage() {
-  const { lang } = useI18n();
+  const { lang, t: i18nT } = useI18n();
   const t = T[lang];
   const navigate = useNavigate();
   const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
