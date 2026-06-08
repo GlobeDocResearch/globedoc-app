@@ -4,6 +4,7 @@ import { LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pro")({
   head: () => ({ meta: [{ title: "GlobeDoc Pro" }] }),
