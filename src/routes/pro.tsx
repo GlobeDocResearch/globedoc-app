@@ -4,6 +4,7 @@ import { LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pro")({
   head: () => ({ meta: [{ title: "GlobeDoc Pro" }] }),
@@ -69,27 +70,28 @@ export function ProHeader() {
 
 export function ProBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useI18n();
   const tabs = [
-    { to: "/connect" as const, icon: <LinkIcon className="h-5 w-5" />, label: "Connect", match: (p: string) => p.startsWith("/connect") },
-    { to: "/pro/patients" as const, icon: <FileText className="h-5 w-5" />, label: "Patients", match: (p: string) => p.startsWith("/pro/patients") },
-    { to: "/pro/profile" as const, icon: <User className="h-5 w-5" />, label: "Profile", match: (p: string) => p.startsWith("/pro/profile") },
-    { to: "/pro/settings" as const, icon: <SettingsIcon className="h-5 w-5" />, label: "Settings", match: (p: string) => p.startsWith("/pro/settings") },
+    { to: "/connect" as const, icon: <LinkIcon className="h-5 w-5" />, label: t("nav.connect"), match: (p: string) => p.startsWith("/connect") },
+    { to: "/pro/patients" as const, icon: <FileText className="h-5 w-5" />, label: t("nav.patients"), match: (p: string) => p.startsWith("/pro/patients") },
+    { to: "/pro/profile" as const, icon: <User className="h-5 w-5" />, label: t("nav.profile"), match: (p: string) => p.startsWith("/pro/profile") },
+    { to: "/pro/settings" as const, icon: <SettingsIcon className="h-5 w-5" />, label: t("nav.settings"), match: (p: string) => p.startsWith("/pro/settings") },
   ];
   return (
     <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
       <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
-        {tabs.map((t) => {
-          const active = t.match(pathname);
+        {tabs.map((tab) => {
+          const active = tab.match(pathname);
           return (
-            <li key={t.to}>
+            <li key={tab.to}>
               <Link
-                to={t.to}
+                to={tab.to}
                 className={`flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
                   active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"
                 }`}
               >
-                {t.icon}
-                <span>{t.label}</span>
+                {tab.icon}
+                <span data-no-translate>{tab.label}</span>
               </Link>
             </li>
           );

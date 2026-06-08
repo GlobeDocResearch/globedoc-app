@@ -131,10 +131,15 @@ export function DomTranslator() {
       const nodes: Text[] = [];
       for (const m of mutations) {
         if (m.type === "characterData" && m.target.nodeType === Node.TEXT_NODE) {
+          // Ignore mutations we caused ourselves — any node we've already
+          // tracked an original for is something we wrote. Re-translating
+          // would loop forever.
+          if (originalRef.current.has(m.target as Text)) continue;
           if (!shouldSkip(m.target)) nodes.push(m.target as Text);
         } else if (m.type === "childList") {
           m.addedNodes.forEach((n) => {
             if (n.nodeType === Node.TEXT_NODE) {
+              if (originalRef.current.has(n as Text)) return;
               if (!shouldSkip(n)) nodes.push(n as Text);
             } else if (n.nodeType === Node.ELEMENT_NODE) {
               collect(n, nodes);
