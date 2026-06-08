@@ -165,12 +165,12 @@ function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: str
       {to ? (
         <Link to={to} className={className}>
           {icon}
-          <span>{label}</span>
+          <span data-no-translate>{label}</span>
         </Link>
       ) : (
         <button type="button" className={className}>
           {icon}
-          <span>{label}</span>
+          <span data-no-translate>{label}</span>
         </button>
       )}
     </li>
