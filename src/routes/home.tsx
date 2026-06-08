@@ -145,7 +145,7 @@ function HomePage() {
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} active />
-          <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={t("nav.passport")} />
+          <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={t("nav.health")} />
           <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label={t("nav.travel")} />
           <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label={t("nav.records")} />
           <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={t("nav.pairing")} />
