@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { COUNTRIES } from "@/lib/countries";
 import { recommendedFor, userHasVaccine, TRIP_LENGTHS, type TripLength } from "@/lib/travelVaccines";
 import { computeBoosterStatus, type BoosterStatus } from "@/lib/boosterIntervals";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/travel")({
   head: () => ({ meta: [{ title: "Travel — GlobeDoc" }] }),
