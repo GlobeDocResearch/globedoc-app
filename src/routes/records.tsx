@@ -542,12 +542,12 @@ function RecordsPage() {
 
       <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
-          <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
-          <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label="Health" />
-          <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label="Travel" />
-          <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label="Records" active />
-          <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label="Pairing" />
-          <NavTab to="/profile" icon={<User className="h-5 w-5" />} label="Profile" />
+          <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={i18nT("nav.home")} />
+          <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={i18nT("nav.health")} />
+          <NavTab to="/travel" icon={<Plane className="h-5 w-5" />} label={i18nT("nav.travel")} />
+          <NavTab to="/records" icon={<FileText className="h-5 w-5" />} label={i18nT("nav.records")} active />
+          <NavTab to="/pairing" icon={<LinkIcon className="h-5 w-5" />} label={i18nT("nav.pairing")} />
+          <NavTab to="/profile" icon={<User className="h-5 w-5" />} label={i18nT("nav.profile")} />
         </ul>
       </nav>
     </div>
