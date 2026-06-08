@@ -340,39 +340,84 @@ const I18nCtx = createContext<Ctx | null>(null);
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
   const [langCode, setLangCodeState] = useState<string>("en");
+  const userIdRef = useRef<string | null>(null);
 
+  const applyCode = (code: string) => {
+    setLangCodeState((prev) => (prev === code ? prev : code));
+    const base: Lang = code === "sv" ? "sv" : "en";
+    setLangState((prev) => (prev === base ? prev : base));
+  };
+
+  // Load from localStorage immediately for fast paint.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const storedCode = localStorage.getItem("langCode");
     if (storedCode) {
-      setLangCodeState(storedCode);
-      setLangState(storedCode === "sv" ? "sv" : "en");
+      applyCode(storedCode);
     } else {
-      const stored = localStorage.getItem("lang") as Lang | null;
-      if (stored === "en" || stored === "sv") {
-        setLangState(stored);
-        setLangCodeState(stored);
-      }
+      const stored = localStorage.getItem("lang");
+      if (stored === "en" || stored === "sv") applyCode(stored);
     }
   }, []);
 
-  const setLang = (l: Lang) => {
-    setLangState(l);
-    setLangCodeState(l);
+  // Pull language from profiles on auth, and on initial session.
+  useEffect(() => {
+    let cancelled = false;
+    const loadFromProfile = async (uid: string) => {
+      userIdRef.current = uid;
+      const { data } = await supabase
+        .from("profiles")
+        .select("language")
+        .eq("user_id", uid)
+        .maybeSingle();
+      if (cancelled) return;
+      const remote = (data as { language?: string | null } | null)?.language;
+      if (remote) {
+        applyCode(remote);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("langCode", remote);
+          localStorage.setItem("lang", remote === "sv" ? "sv" : "en");
+        }
+      }
+    };
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) await loadFromProfile(data.user.id);
+    })();
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        userIdRef.current = null;
+        return;
+      }
+      if (session?.user) void loadFromProfile(session.user.id);
+    });
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const persist = (code: string) => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("lang", l);
-      localStorage.setItem("langCode", l);
+      localStorage.setItem("lang", code === "sv" ? "sv" : "en");
+      localStorage.setItem("langCode", code);
+    }
+    const uid = userIdRef.current;
+    if (uid) {
+      void supabase.from("profiles").update({ language: code }).eq("user_id", uid);
     }
   };
 
+  const setLang = (l: Lang) => {
+    if (langCode === l && lang === l) return;
+    applyCode(l);
+    persist(l);
+  };
+
   const setLangCode = (code: string) => {
-    setLangCodeState(code);
-    const base: Lang = code === "sv" ? "sv" : "en";
-    setLangState(base);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lang", base);
-      localStorage.setItem("langCode", code);
-    }
+    if (langCode === code) return;
+    applyCode(code);
+    persist(code);
   };
 
   const t = (k: TKey) => dicts[lang][k] ?? en[k];
