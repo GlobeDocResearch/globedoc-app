@@ -349,6 +349,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
   const [langCode, setLangCodeState] = useState<string>("en");
   const userIdRef = useRef<string | null>(null);
+  const initializedRef = useRef(false);
 
   const applyCode = (code: string) => {
     setLangCodeState((prev) => (prev === code ? prev : code));
@@ -356,49 +357,59 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLangState((prev) => (prev === base ? prev : base));
   };
 
-  // Load from localStorage immediately for fast paint.
+  // Initialize ONCE on mount: read localStorage first, then verify against
+  // profiles.language. Local selection always wins so navigation / token
+  // refresh never overwrites the user's choice.
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
     if (typeof window === "undefined") return;
-    const storedCode = localStorage.getItem("langCode");
-    if (storedCode) {
-      applyCode(storedCode);
-    } else {
-      const stored = localStorage.getItem("lang");
-      if (stored === "en" || stored === "sv") applyCode(stored);
-    }
-  }, []);
 
-  // Pull language from profiles on auth, and on initial session.
-  useEffect(() => {
+    const storedCode =
+      localStorage.getItem("langCode") ?? localStorage.getItem("lang");
+    if (storedCode) applyCode(storedCode);
+
     let cancelled = false;
-    const loadFromProfile = async (uid: string) => {
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      const uid = data.user?.id;
+      if (!uid || cancelled) return;
       userIdRef.current = uid;
-      const { data } = await supabase
+
+      const { data: profile } = await supabase
         .from("profiles")
         .select("language")
         .eq("user_id", uid)
         .maybeSingle();
       if (cancelled) return;
-      const remote = (data as { language?: string | null } | null)?.language;
-      if (remote) {
-        applyCode(remote);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("langCode", remote);
-          localStorage.setItem("lang", remote === "sv" ? "sv" : "en");
+      const remote = (profile as { language?: string | null } | null)?.language;
+
+      if (storedCode) {
+        // Local preference wins; sync to remote if it differs.
+        if (remote && remote !== storedCode) {
+          void supabase
+            .from("profiles")
+            .update({ language: storedCode })
+            .eq("user_id", uid);
         }
+      } else if (remote) {
+        applyCode(remote);
+        localStorage.setItem("langCode", remote);
+        localStorage.setItem("lang", remote === "sv" ? "sv" : "en");
       }
-    };
-    (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) await loadFromProfile(data.user.id);
     })();
+
+    // Track user id across sign-in/out so future setLangCode calls can persist
+    // to profiles. Do NOT re-read profile.language here — that would overwrite
+    // the user's selection on token refresh or navigation.
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT") {
         userIdRef.current = null;
         return;
       }
-      if (session?.user) void loadFromProfile(session.user.id);
+      if (session?.user) userIdRef.current = session.user.id;
     });
+
     return () => {
       cancelled = true;
       sub.subscription.unsubscribe();
