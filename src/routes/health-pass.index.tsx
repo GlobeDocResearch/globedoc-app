@@ -5,6 +5,7 @@ import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
 import { PassportSetupModal } from "@/components/PassportSetupModal";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/health-pass/")({
   head: () => ({ meta: [{ title: "Health Passport — GlobeDoc" }] }),
