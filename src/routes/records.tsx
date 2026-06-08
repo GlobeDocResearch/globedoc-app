@@ -967,7 +967,7 @@ function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: str
   const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"}`;
   return (
     <li>
-      <Link to={to} className={className}>{icon}<span>{label}</span></Link>
+      <Link to={to} className={className}>{icon}<span data-no-translate>{label}</span></Link>
     </li>
   );
 }
