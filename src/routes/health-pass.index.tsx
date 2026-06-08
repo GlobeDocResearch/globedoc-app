@@ -41,6 +41,7 @@ const DARK_TEXT = "#1B3A6B";
 
 function PassportPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [userId, setUserId] = useState<string>("");
   const [showSetup, setShowSetup] = useState(false);
   const [setupInitial, setSetupInitial] = useState<any>({});
