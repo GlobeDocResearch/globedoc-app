@@ -35,6 +35,8 @@ import { Route as ProProfileRouteImport } from './routes/pro.profile'
 import { Route as ProPatientsRouteImport } from './routes/pro.patients'
 import { Route as HealthPassSectionRouteImport } from './routes/health-pass.$section'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicConnectStatusRouteImport } from './routes/api/public/connect.status'
 import { Route as ApiPublicConnectRevokeRouteImport } from './routes/api/public/connect.revoke'
 import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
@@ -176,6 +178,16 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicConnectStatusRoute = ApiPublicConnectStatusRouteImport.update({
   id: '/api/public/connect/status',
   path: '/api/public/connect/status',
@@ -258,6 +270,8 @@ export interface FileRoutesByFullPath {
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
   '/api/public/connect/revoke': typeof ApiPublicConnectRevokeRoute
   '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
@@ -295,6 +309,8 @@ export interface FileRoutesByTo {
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
   '/api/public/connect/revoke': typeof ApiPublicConnectRevokeRoute
   '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
@@ -333,6 +349,8 @@ export interface FileRoutesById {
   '/api/public/connect/passport': typeof ApiPublicConnectPassportRoute
   '/api/public/connect/revoke': typeof ApiPublicConnectRevokeRoute
   '/api/public/connect/status': typeof ApiPublicConnectStatusRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
@@ -372,6 +390,8 @@ export interface FileRouteTypes {
     | '/api/public/connect/passport'
     | '/api/public/connect/revoke'
     | '/api/public/connect/status'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -409,6 +429,8 @@ export interface FileRouteTypes {
     | '/api/public/connect/passport'
     | '/api/public/connect/revoke'
     | '/api/public/connect/status'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   id:
     | '__root__'
@@ -446,6 +468,8 @@ export interface FileRouteTypes {
     | '/api/public/connect/passport'
     | '/api/public/connect/revoke'
     | '/api/public/connect/status'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
@@ -481,6 +505,8 @@ export interface RootRouteChildren {
   ApiPublicConnectPassportRoute: typeof ApiPublicConnectPassportRoute
   ApiPublicConnectRevokeRoute: typeof ApiPublicConnectRevokeRoute
   ApiPublicConnectStatusRoute: typeof ApiPublicConnectStatusRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
@@ -668,6 +694,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/connect/status': {
       id: '/api/public/connect/status'
       path: '/api/public/connect/status'
@@ -780,6 +820,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicConnectPassportRoute: ApiPublicConnectPassportRoute,
   ApiPublicConnectRevokeRoute: ApiPublicConnectRevokeRoute,
   ApiPublicConnectStatusRoute: ApiPublicConnectStatusRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
