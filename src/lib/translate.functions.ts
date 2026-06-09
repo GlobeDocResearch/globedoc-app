@@ -67,7 +67,9 @@ export const translateBatch = createServerFn({ method: "POST" })
         data?: { translations?: Array<{ translatedText: string }> };
       };
       const out =
-        json.data?.translations?.map((t) => t.translatedText) ?? data.texts;
+        json.data?.translations?.map((t, i) =>
+          applyOverride(data.target, data.texts[i] ?? "", t.translatedText),
+        ) ?? data.texts.map((s) => applyOverride(data.target, s, s));
       return { translations: out, error: null };
     } catch (e) {
       return { translations: data.texts, error: "request_failed" as const };
