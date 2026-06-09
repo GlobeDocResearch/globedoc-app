@@ -7,6 +7,33 @@ const InputSchema = z.object({
 });
 
 /**
+ * Manual overrides for terms that Google Translate gets wrong in a UI
+ * context. e.g. "Save" → "Ahorrar" (save money) instead of "Guardar"
+ * (save data).
+ */
+const OVERRIDES: Record<string, Record<string, string>> = {
+  es: {
+    "save": "Guardar",
+    "save changes": "Guardar cambios",
+    "save and continue": "Guardar y continuar",
+    "save and close": "Guardar y cerrar",
+    "saving...": "Guardando...",
+    "saving": "Guardando",
+    "saved ✓": "Guardado ✓",
+    "saved": "Guardado",
+    "leave and save": "Salir y guardar",
+    "you have unsaved changes — save or discard?": "Tienes cambios sin guardar, ¿guardar o descartar?",
+  },
+};
+
+function applyOverride(target: string, source: string, translated: string): string {
+  const map = OVERRIDES[target.toLowerCase()];
+  if (!map) return translated;
+  const key = source.trim().toLowerCase();
+  return map[key] ?? translated;
+}
+
+/**
  * Translate a batch of strings to a target language via Google Cloud
  * Translation API v2. Returns translated strings in the same order.
  * Source is assumed to be English.
@@ -40,7 +67,9 @@ export const translateBatch = createServerFn({ method: "POST" })
         data?: { translations?: Array<{ translatedText: string }> };
       };
       const out =
-        json.data?.translations?.map((t) => t.translatedText) ?? data.texts;
+        json.data?.translations?.map((t, i) =>
+          applyOverride(data.target, data.texts[i] ?? "", t.translatedText),
+        ) ?? data.texts.map((s) => applyOverride(data.target, s, s));
       return { translations: out, error: null };
     } catch (e) {
       return { translations: data.texts, error: "request_failed" as const };
