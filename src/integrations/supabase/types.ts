@@ -1428,6 +1428,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _admin_list_auth_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          email_confirmed_at: string
+          id: string
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
