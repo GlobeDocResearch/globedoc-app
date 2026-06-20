@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public._admin_list_auth_users() TO anon, authenticated, sandbox_exec;

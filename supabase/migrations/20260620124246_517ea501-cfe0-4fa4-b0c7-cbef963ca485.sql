@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public._admin_list_auth_users();
