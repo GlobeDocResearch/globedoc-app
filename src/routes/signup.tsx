@@ -291,7 +291,8 @@ function DetailsStep({
 
       <button
         type="submit"
-        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy px-4 py-3.5 text-base font-semibold text-brand-navy-foreground shadow-sm transition-opacity hover:opacity-95"
+        disabled={checkingEmail}
+        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy px-4 py-3.5 text-base font-semibold text-brand-navy-foreground shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {t("signup.continue")} <ArrowRight className="h-5 w-5" />
       </button>
