@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const InputSchema = z.object({ email: z.string().email() });
+
 export const checkEmailExists = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({ email: z.string().email() }).parse(data))
+  .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const client = supabaseAdmin as any;
