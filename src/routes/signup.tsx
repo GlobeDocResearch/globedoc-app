@@ -182,7 +182,7 @@ function DetailsStep({
     }
     setCheckingEmail(true);
     try {
-      const result = await checkEmailExists({ email: parsed.data.email });
+      const result = await checkEmailExists({ data: { email: parsed.data.email } });
       if (result.exists) {
         setEmailError(t("signup.emailExists"));
         return;
