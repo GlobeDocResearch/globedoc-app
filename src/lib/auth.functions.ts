@@ -7,14 +7,14 @@ export const checkEmailExists = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const client = supabaseAdmin as any;
-    const { data: users, error } = await client
-      .schema("auth")
-      .from("users")
-      .select("id")
-      .eq("email", data.email)
-      .limit(1);
-
+    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000,
+    });
     if (error) throw new Error(error.message);
-    return { exists: Array.isArray(users) && users.length > 0 };
+    const emailLower = data.email.toLowerCase().trim();
+    const exists = (list.users || []).some(
+      (u: any) => (u.email ?? "").toLowerCase().trim() === emailLower,
+    );
+    return { exists };
   });
