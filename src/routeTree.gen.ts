@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as VerifiedProRouteImport } from './routes/verified-pro'
 import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as TravelRouteImport } from './routes/travel'
@@ -47,6 +48,11 @@ import { Route as ApiPublicConnectExtendRouteImport } from './routes/api/public/
 import { Route as ApiPublicConnectEntryRouteImport } from './routes/api/public/connect.entry'
 import { Route as ApiPublicConnectActiveRouteImport } from './routes/api/public/connect.active'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerifiedProRoute = VerifiedProRouteImport.update({
   id: '/verified-pro',
   path: '/verified-pro',
@@ -256,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/verified-pro': typeof VerifiedProRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/health-pass/$section': typeof HealthPassSectionRoute
   '/pro/patients': typeof ProPatientsRoute
   '/pro/profile': typeof ProProfileRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/verified-pro': typeof VerifiedProRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/health-pass/$section': typeof HealthPassSectionRoute
   '/pro/patients': typeof ProPatientsRoute
   '/pro/profile': typeof ProProfileRoute
@@ -335,6 +343,7 @@ export interface FileRoutesById {
   '/travel': typeof TravelRoute
   '/verified': typeof VerifiedRoute
   '/verified-pro': typeof VerifiedProRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/health-pass/$section': typeof HealthPassSectionRoute
   '/pro/patients': typeof ProPatientsRoute
   '/pro/profile': typeof ProProfileRoute
@@ -376,6 +385,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/verified'
     | '/verified-pro'
+    | '/verify-email'
     | '/health-pass/$section'
     | '/pro/patients'
     | '/pro/profile'
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/verified'
     | '/verified-pro'
+    | '/verify-email'
     | '/health-pass/$section'
     | '/pro/patients'
     | '/pro/profile'
@@ -454,6 +465,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/verified'
     | '/verified-pro'
+    | '/verify-email'
     | '/health-pass/$section'
     | '/pro/patients'
     | '/pro/profile'
@@ -494,6 +506,7 @@ export interface RootRouteChildren {
   TravelRoute: typeof TravelRoute
   VerifiedRoute: typeof VerifiedRoute
   VerifiedProRoute: typeof VerifiedProRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   HealthPassSectionRoute: typeof HealthPassSectionRoute
   HealthPassIndexRoute: typeof HealthPassIndexRoute
   ApiPublicConnectActiveRoute: typeof ApiPublicConnectActiveRoute
@@ -512,6 +525,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verified-pro': {
       id: '/verified-pro'
       path: '/verified-pro'
@@ -809,6 +829,7 @@ const rootRouteChildren: RootRouteChildren = {
   TravelRoute: TravelRoute,
   VerifiedRoute: VerifiedRoute,
   VerifiedProRoute: VerifiedProRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   HealthPassSectionRoute: HealthPassSectionRoute,
   HealthPassIndexRoute: HealthPassIndexRoute,
   ApiPublicConnectActiveRoute: ApiPublicConnectActiveRoute,
