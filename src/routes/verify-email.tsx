@@ -33,7 +33,7 @@ function VerifyEmailPage() {
         resend: "Skicka verifieringsmejl igen",
         sending: "Skickar…",
         didnt: "Fick du inget mejl?",
-        spam: "eller kolla i skräpposten.",
+        spam: "Kolla i skräpposten.",
         sent: "Verifieringsmejlet har skickats igen.",
         missing: "Ingen e-postadress sparad. Vänligen registrera dig igen.",
       }
@@ -43,7 +43,7 @@ function VerifyEmailPage() {
         resend: "Resend verification email",
         sending: "Sending…",
         didnt: "Didn't get an email?",
-        spam: "or check your spam folder.",
+        spam: "Check your spam folder.",
         sent: "Verification email resent.",
         missing: "No email on file. Please sign up again.",
       };
@@ -86,16 +86,7 @@ function VerifyEmailPage() {
             {sending ? t.sending : t.resend}
           </button>
           <p className="mt-4 text-xs text-muted-foreground">
-            {t.didnt}{" "}
-            <button
-              type="button"
-              onClick={onResend}
-              disabled={sending}
-              className="font-semibold text-brand-blue hover:underline disabled:opacity-60"
-            >
-              {t.resend}
-            </button>{" "}
-            {t.spam}
+            {t.didnt} {t.spam}
           </p>
         </div>
       </main>
