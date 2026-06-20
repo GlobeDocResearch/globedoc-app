@@ -86,16 +86,7 @@ function VerifyEmailPage() {
             {sending ? t.sending : t.resend}
           </button>
           <p className="mt-4 text-xs text-muted-foreground">
-            {t.didnt}{" "}
-            <button
-              type="button"
-              onClick={onResend}
-              disabled={sending}
-              className="font-semibold text-brand-blue hover:underline disabled:opacity-60"
-            >
-              {t.resend}
-            </button>{" "}
-            {t.spam}
+            {t.didnt} {t.spam}
           </p>
         </div>
       </main>
