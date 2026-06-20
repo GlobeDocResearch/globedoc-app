@@ -230,10 +230,21 @@ function DetailsStep({
             type="email"
             autoComplete="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError(null);
+            }}
             className="w-full bg-transparent pl-11 pr-3 py-3 text-foreground outline-none"
           />
         </Field>
+        {emailError && (
+          <p className="text-sm text-destructive">
+            {emailError}{" "}
+            <Link to="/login" className="font-semibold underline underline-offset-2">
+              {t("signup.signInInstead")}
+            </Link>
+          </p>
+        )}
 
         <Field id="password" label={t("login.password")} icon={<Lock className="h-5 w-5" />}>
           <input
