@@ -43,7 +43,7 @@ function VerifyEmailPage() {
         resend: "Resend verification email",
         sending: "Sending…",
         didnt: "Didn't get an email?",
-        spam: "or check your spam folder.",
+        spam: "Check your spam folder.",
         sent: "Verification email resent.",
         missing: "No email on file. Please sign up again.",
       };
