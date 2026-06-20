@@ -64,6 +64,8 @@ const en = {
     "By creating an account you confirm the consents above. Your consent record is saved with a timestamp. You may withdraw consent at any time in Settings → Privacy & Data.",
 
   "common.passwordsMismatch": "Passwords do not match",
+  "signup.emailExists": "An account with this email already exists.",
+  "signup.signInInstead": "Sign in instead",
 
   // Legal page
   "legal.back": "Back to login",
@@ -224,6 +226,8 @@ const sv: Record<keyof typeof en, string> = {
     "Genom att skapa ett konto bekräftar du samtyckena ovan. Ditt samtycke sparas med en tidsstämpel. Du kan när som helst återkalla samtycket under Inställningar → Integritet & Data.",
 
   "common.passwordsMismatch": "Lösenorden matchar inte",
+  "signup.emailExists": "Ett konto med den här e-postadressen finns redan.",
+  "signup.signInInstead": "Logga in i stället",
 
   "legal.back": "Tillbaka till inloggning",
   "legal.title": "Juridik & Integritet",

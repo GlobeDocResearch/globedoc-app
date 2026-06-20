@@ -8,6 +8,7 @@ import { BrandHeader } from "@/components/BrandHeader";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { checkEmailExists } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -157,9 +158,12 @@ function DetailsStep({
   const [confirmPassword, setConfirmPassword] = useState(initial?.confirmPassword ?? "");
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [checkingEmail, setCheckingEmail] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEmailError(null);
     const parsed = detailsSchema.safeParse({
       firstName,
       lastName,
@@ -176,7 +180,19 @@ function DetailsStep({
       }
       return;
     }
-    onContinue(parsed.data);
+    setCheckingEmail(true);
+    try {
+      const result = await checkEmailExists({ data: { email: parsed.data.email } });
+      if (result.exists) {
+        setEmailError(t("signup.emailExists"));
+        return;
+      }
+      onContinue(parsed.data);
+    } catch {
+      onContinue(parsed.data);
+    } finally {
+      setCheckingEmail(false);
+    }
   };
 
   return (
@@ -214,10 +230,21 @@ function DetailsStep({
             type="email"
             autoComplete="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError(null);
+            }}
             className="w-full bg-transparent pl-11 pr-3 py-3 text-foreground outline-none"
           />
         </Field>
+        {emailError && (
+          <p className="text-sm text-destructive">
+            {emailError}{" "}
+            <Link to="/login" className="font-semibold underline underline-offset-2">
+              {t("signup.signInInstead")}
+            </Link>
+          </p>
+        )}
 
         <Field id="password" label={t("login.password")} icon={<Lock className="h-5 w-5" />}>
           <input
@@ -264,7 +291,8 @@ function DetailsStep({
 
       <button
         type="submit"
-        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy px-4 py-3.5 text-base font-semibold text-brand-navy-foreground shadow-sm transition-opacity hover:opacity-95"
+        disabled={checkingEmail}
+        className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy px-4 py-3.5 text-base font-semibold text-brand-navy-foreground shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {t("signup.continue")} <ArrowRight className="h-5 w-5" />
       </button>
