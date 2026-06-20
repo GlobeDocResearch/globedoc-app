@@ -33,7 +33,7 @@ function VerifyEmailPage() {
         resend: "Skicka verifieringsmejl igen",
         sending: "Skickar…",
         didnt: "Fick du inget mejl?",
-        spam: "eller kolla i skräpposten.",
+        spam: "Kolla i skräpposten.",
         sent: "Verifieringsmejlet har skickats igen.",
         missing: "Ingen e-postadress sparad. Vänligen registrera dig igen.",
       }
