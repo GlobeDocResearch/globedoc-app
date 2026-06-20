@@ -64,6 +64,8 @@ const en = {
     "By creating an account you confirm the consents above. Your consent record is saved with a timestamp. You may withdraw consent at any time in Settings → Privacy & Data.",
 
   "common.passwordsMismatch": "Passwords do not match",
+  "signup.emailExists": "An account with this email already exists.",
+  "signup.signInInstead": "Sign in instead",
 
   // Legal page
   "legal.back": "Back to login",
