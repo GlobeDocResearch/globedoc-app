@@ -250,6 +250,9 @@ function DetailsStep({
           <input
             id="password"
             type={showPw ? "text" : "password"}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={t("signup.passwordHint")}
@@ -273,6 +276,9 @@ function DetailsStep({
           <input
             id="confirmPassword"
             type={showPw2 ? "text" : "password"}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder={t("signup.confirmPassword")}
