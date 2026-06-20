@@ -310,8 +310,10 @@ function ConsentStep({ details, onBack }: { details: Details; onBack: () => void
       toast.error(error.message);
       return;
     }
-    toast.success("Account created. Check your email to confirm.");
-    navigate({ to: "/login" });
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem("pendingVerificationEmail", details.email);
+    }
+    navigate({ to: "/verify-email" });
   };
 
   return (
