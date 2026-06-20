@@ -158,9 +158,12 @@ function DetailsStep({
   const [confirmPassword, setConfirmPassword] = useState(initial?.confirmPassword ?? "");
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [checkingEmail, setCheckingEmail] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEmailError(null);
     const parsed = detailsSchema.safeParse({
       firstName,
       lastName,
@@ -177,7 +180,19 @@ function DetailsStep({
       }
       return;
     }
-    onContinue(parsed.data);
+    setCheckingEmail(true);
+    try {
+      const result = await checkEmailExists({ email: parsed.data.email });
+      if (result.exists) {
+        setEmailError(t("signup.emailExists"));
+        return;
+      }
+      onContinue(parsed.data);
+    } catch {
+      onContinue(parsed.data);
+    } finally {
+      setCheckingEmail(false);
+    }
   };
 
   return (
