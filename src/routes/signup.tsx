@@ -8,7 +8,7 @@ import { BrandHeader } from "@/components/BrandHeader";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { checkEmailExists } from "@/lib/auth.functions";
+
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
