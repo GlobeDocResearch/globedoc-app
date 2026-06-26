@@ -180,20 +180,9 @@ function DetailsStep({
       }
       return;
     }
-    setCheckingEmail(true);
-    try {
-      const result = await checkEmailExists({ data: { email: parsed.data.email } });
-      if (result.exists) {
-        setEmailError(t("signup.emailExists"));
-        return;
-      }
-      onContinue(parsed.data);
-    } catch {
-      onContinue(parsed.data);
-    } finally {
-      setCheckingEmail(false);
-    }
+    onContinue(parsed.data);
   };
+
 
   return (
     <form
