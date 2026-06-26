@@ -55,7 +55,9 @@ const InputSchema = z.object({
 });
 
 export const whoSearch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
+
   .handler(async ({ data }) => {
     const qs = new URLSearchParams({
       q: data.q,
