@@ -100,7 +100,7 @@ export const Route = createFileRoute("/api/public/connect/entry")({
               body: text || null,
               file_path,
               file_name: fileName || null,
-              file_mime: fileMime || null,
+              file_mime: safeMime,
               file_size,
               author_name: session.pro_name,
               author_role: session.pro_title || "Clinician",
