@@ -41,7 +41,9 @@ function applyOverride(target: string, source: string, translated: string): stri
  * Source is assumed to be English.
  */
 export const translateBatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
+
   .handler(async ({ data }) => {
     const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
     if (!apiKey) {
