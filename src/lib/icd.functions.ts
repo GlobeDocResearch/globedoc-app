@@ -3,6 +3,8 @@
 // sees the WHO secret and CORS is bypassed.
 
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 import { z } from "zod";
 
 type WhoToken = { token: string; expiresAt: number };
