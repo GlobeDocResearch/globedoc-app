@@ -15,12 +15,18 @@ export const Route = createFileRoute("/api/public/connect/note")({
 
         const { data: session } = await supabaseAdmin
           .from("pro_sessions")
-          .select("id, user_id, pro_name, pro_title, expires_at, revoked_at")
+          .select("id, user_id, pro_name, pro_title, access_level, expires_at, revoked_at")
           .eq("session_token", token)
           .maybeSingle();
         if (!session) return json({ error: "Invalid session" }, 401);
         if (session.revoked_at) return json({ error: "Access revoked" }, 403);
         if (new Date(session.expires_at).getTime() < Date.now()) return json({ error: "Session expired" }, 403);
+        // Write access required: only records_add and passport_suggest may add notes.
+        const level = String(session.access_level || "");
+        if (level !== "records_add" && level !== "passport_suggest") {
+          return json({ error: "Insufficient access level to add notes" }, 403);
+        }
+
 
         const { data: entry, error } = await supabaseAdmin
           .from("record_entries")

@@ -3,6 +3,8 @@
 // sees the WHO secret and CORS is bypassed.
 
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 import { z } from "zod";
 
 type WhoToken = { token: string; expiresAt: number };
@@ -53,7 +55,9 @@ const InputSchema = z.object({
 });
 
 export const whoSearch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
+
   .handler(async ({ data }) => {
     const qs = new URLSearchParams({
       q: data.q,

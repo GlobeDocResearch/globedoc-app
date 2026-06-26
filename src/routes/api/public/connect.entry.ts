@@ -25,29 +25,64 @@ export const Route = createFileRoute("/api/public/connect/entry")({
 
           const { data: session } = await supabaseAdmin
             .from("pro_sessions")
-            .select("id, user_id, pro_name, pro_title, expires_at, revoked_at")
+            .select("id, user_id, pro_name, pro_title, access_level, expires_at, revoked_at")
             .eq("session_token", token)
             .maybeSingle();
           if (!session) return json({ error: "Invalid session" }, 401);
           if (session.revoked_at) return json({ error: "Access revoked" }, 403);
           if (new Date(session.expires_at).getTime() < Date.now()) return json({ error: "Session expired" }, 403);
 
+          // Access level enforcement for writes.
+          const level = String(session.access_level || "");
+          const canAddRecords = level === "records_add" || level === "passport_suggest";
+          const canSuggest = level === "passport_suggest";
+          if ((type === "clinical_note" || type === "document") && !canAddRecords) {
+            return json({ error: "Insufficient access level to add records" }, 403);
+          }
+          if (type === "suggestion" && !canSuggest) {
+            return json({ error: "Insufficient access level to suggest passport changes" }, 403);
+          }
+
+          // Allowlist of permitted upload MIME types — prevents uploading
+          // executable content like text/html that would render in the
+          // patient's browser when retrieved.
+          const ALLOWED_MIME = new Set([
+            "application/pdf",
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+            "image/heic",
+            "image/heif",
+            "text/plain",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          ]);
+
           let file_path: string | null = null;
           let file_size: number | null = null;
+          let safeMime: string | null = null;
           if (type === "document") {
             if (!fileBase64 || !fileName) return json({ error: "File required" }, 400);
+            if (!fileMime || !ALLOWED_MIME.has(fileMime.toLowerCase())) {
+              return json({ error: "Unsupported file type" }, 400);
+            }
+            safeMime = fileMime.toLowerCase();
             const buf = Buffer.from(fileBase64, "base64");
             if (buf.byteLength > 25 * 1024 * 1024) return json({ error: "File too large" }, 400);
             const ext = fileName.includes(".") ? fileName.split(".").pop() : "";
             const path = `${session.user_id}/pro-${crypto.randomUUID()}${ext ? "." + ext : ""}`;
             const { error: upErr } = await supabaseAdmin.storage.from("records").upload(path, buf, {
-              contentType: fileMime || "application/octet-stream",
+              contentType: safeMime,
               upsert: false,
             });
             if (upErr) return json({ error: upErr.message }, 500);
             file_path = path;
             file_size = buf.byteLength;
           }
+
 
           const labelMap: Record<string, string> = {
             clinical_note: "clinical_note",
@@ -65,7 +100,7 @@ export const Route = createFileRoute("/api/public/connect/entry")({
               body: text || null,
               file_path,
               file_name: fileName || null,
-              file_mime: fileMime || null,
+              file_mime: safeMime,
               file_size,
               author_name: session.pro_name,
               author_role: session.pro_title || "Clinician",

@@ -16,6 +16,12 @@ export const Route = createFileRoute("/api/public/connect/passport")({
         if (!session) return json({ error: "Invalid session" }, 401);
         if (session.revoked_at) return json({ error: "Access revoked" }, 403);
         if (new Date(session.expires_at).getTime() < Date.now()) return json({ error: "Session expired" }, 403);
+        // Access level enforcement: passport tab requires passport-level access.
+        const level = String(session.access_level || "");
+        if (level === "records_only" || level === "records_add") {
+          return json({ error: "Insufficient access level for passport" }, 403);
+        }
+
 
         await supabaseAdmin
           .from("pro_sessions")

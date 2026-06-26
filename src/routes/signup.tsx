@@ -8,7 +8,7 @@ import { BrandHeader } from "@/components/BrandHeader";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { checkEmailExists } from "@/lib/auth.functions";
+
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -159,7 +159,7 @@ function DetailsStep({
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [checkingEmail, setCheckingEmail] = useState(false);
+  
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,20 +180,9 @@ function DetailsStep({
       }
       return;
     }
-    setCheckingEmail(true);
-    try {
-      const result = await checkEmailExists({ data: { email: parsed.data.email } });
-      if (result.exists) {
-        setEmailError(t("signup.emailExists"));
-        return;
-      }
-      onContinue(parsed.data);
-    } catch {
-      onContinue(parsed.data);
-    } finally {
-      setCheckingEmail(false);
-    }
+    onContinue(parsed.data);
   };
+
 
   return (
     <form
@@ -297,8 +286,8 @@ function DetailsStep({
 
       <button
         type="submit"
-        disabled={checkingEmail}
         className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy px-4 py-3.5 text-base font-semibold text-brand-navy-foreground shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+
       >
         {t("signup.continue")} <ArrowRight className="h-5 w-5" />
       </button>
