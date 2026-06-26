@@ -159,7 +159,7 @@ function DetailsStep({
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [checkingEmail, setCheckingEmail] = useState(false);
+  
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
