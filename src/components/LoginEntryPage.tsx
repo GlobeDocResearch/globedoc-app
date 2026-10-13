@@ -69,11 +69,6 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
-      {audience !== "combined" && (
-        <div className="w-full border-b border-border bg-muted px-4 py-2 text-center text-xs text-muted-foreground">
-          Research demo: please do not enter real patient data.
-        </div>
-      )}
       {/* Site header (matches globedoc.com) */}
       <header className="m-0 w-full rounded-none border-0 bg-auth-header px-0 text-auth-header-foreground">
         <div className="mx-auto flex w-full max-w-6xl items-center px-4 py-3">
