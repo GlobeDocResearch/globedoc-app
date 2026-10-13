@@ -21,14 +21,17 @@ function AuthenticatedProLayout() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      if (cancelled) return;
       if (!user) {
         navigate({ to: "/signin" });
         return;
       }
       setReady(true);
     })();
+    return () => { cancelled = true; };
   }, [navigate]);
 
   if (!ready) {
