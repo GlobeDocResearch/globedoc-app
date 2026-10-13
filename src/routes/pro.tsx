@@ -12,8 +12,8 @@ export const Route = createFileRoute("/pro")({
 });
 
 function ProLayout() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  return pathname === "/pro" || pathname === "/pro/" ? <Outlet /> : <AuthenticatedProLayout />;
+  const isEntry = useRouterState({ select: (s) => s.matches.some((match) => match.routeId === "/pro/") });
+  return isEntry ? <Outlet /> : <AuthenticatedProLayout />;
 }
 
 function AuthenticatedProLayout() {
