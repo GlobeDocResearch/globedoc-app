@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, Link, useNavigate, useRouterState, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
@@ -8,15 +8,15 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pro")({
   head: () => ({ meta: [{ title: "GlobeDoc Pro" }] }),
-  beforeLoad: ({ location }) => {
-    if (location.pathname === "/pro" || location.pathname === "/pro/") {
-      throw redirect({ to: "/connect" });
-    }
-  },
   component: ProLayout,
 });
 
 function ProLayout() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  return pathname === "/pro" || pathname === "/pro/" ? <Outlet /> : <AuthenticatedProLayout />;
+}
+
+function AuthenticatedProLayout() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
 

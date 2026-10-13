@@ -83,8 +83,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "GlobeDoc" },
       { property: "og:description", content: "Your Deep Health" },
       { name: "twitter:description", content: "Your Deep Health" },
-      { property: "og:image", content: "https://ai.globedoc.com/og-image.png" },
-      { name: "twitter:image", content: "https://ai.globedoc.com/og-image.png" },
       { property: "og:url", content: "https://ai.globedoc.com" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },

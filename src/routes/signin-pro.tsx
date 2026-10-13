@@ -53,7 +53,7 @@ function ProSignInPage() {
       toast.error("This account is not a Professional account. Please use the patient login.");
       return;
     }
-    navigate({ to: "/pro" });
+    navigate({ to: "/connect" });
   };
 
   const onReset = async (e: React.FormEvent) => {

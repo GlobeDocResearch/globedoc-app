@@ -36,9 +36,19 @@
   --color-brand-navy: var(--brand-navy);
   --color-brand-navy-foreground: var(--brand-navy-foreground);
   --color-brand-red: var(--brand-red);
+  --color-auth-header: var(--auth-header);
+  --color-auth-header-foreground: var(--auth-header-foreground);
+  --color-auth-title: var(--auth-title);
+  --color-auth-action: var(--auth-action);
+  --color-auth-register: var(--auth-register);
 }
 
 :root {
+  --auth-header: #1D3F7C;
+  --auth-header-foreground: #ffffff;
+  --auth-title: #2e4482;
+  --auth-action: #3B6CF6;
+  --auth-register: #00A550;
   --radius: 0.875rem;
 
   /* Light-blue page background from mock */
