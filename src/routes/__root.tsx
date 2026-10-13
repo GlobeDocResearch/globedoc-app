@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 
@@ -38,7 +39,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   return (
@@ -83,8 +84,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "GlobeDoc" },
       { property: "og:description", content: "Your Deep Health" },
       { name: "twitter:description", content: "Your Deep Health" },
-      { property: "og:image", content: "https://ai.globedoc.com/og-image.png" },
-      { name: "twitter:image", content: "https://ai.globedoc.com/og-image.png" },
       { property: "og:url", content: "https://ai.globedoc.com" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
