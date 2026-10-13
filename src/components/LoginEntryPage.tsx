@@ -130,7 +130,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                 <Button variant="plain"
                   type="button"
                   onClick={() => setShowPw((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground hover:text-foreground [&_svg]:size-5"
                   aria-label={showPw ? "Hide password" : "Show password"}
                 >
                   {showPw ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -142,7 +142,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
               <Button variant="plain"
                 type="button"
                 onClick={() => { setResetEmail(email); setResetSent(false); setMode("forgot"); }}
-                className="text-base text-muted-foreground hover:text-foreground"
+                className="h-auto p-0 text-base text-muted-foreground hover:text-foreground"
               >
                 Forgot password?
               </Button>
@@ -151,7 +151,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
             <Button variant="plain"
               type="submit"
               disabled={submitting}
-              className="mt-4 w-full rounded-full bg-auth-action px-4 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+              className="mt-4 h-auto w-full rounded-full bg-auth-action px-4 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
             >
               {t("login.submit")}
             </Button>
@@ -174,7 +174,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                 <Button variant="plain"
                   type="button"
                   onClick={() => setMode("login")}
-                  className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  className="h-auto p-0 text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
                 >
                   Back to login
                 </Button>
@@ -199,7 +199,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                 <Button variant="plain"
                   type="submit"
                   disabled={resetSubmitting}
-                  className="mt-6 w-full rounded-full bg-auth-title px-4 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+                  className="mt-6 h-auto w-full rounded-full bg-auth-title px-4 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
                 >
                   {resetSubmitting ? "Sending..." : "Send reset link"}
                 </Button>
@@ -207,7 +207,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                   <Button variant="plain"
                     type="button"
                     onClick={() => setMode("login")}
-                    className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                    className="h-auto p-0 text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
                   >
                     Back to login
                   </Button>
