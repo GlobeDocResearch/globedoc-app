@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { BriefcaseMedical, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { z } from "zod";
 
 import { Hexagon } from "@/components/Hexagon";
@@ -11,6 +11,35 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import globeLogo from "@/assets/globedoc-globe.svg";
+
+const HUB_HEX_CLIP = "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)";
+
+function RoleHexagon({
+  to,
+  background,
+  icon,
+  title,
+  subtitle,
+}: {
+  to: string;
+  background: string;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <Link to={to} className="block">
+      <div
+        style={{ clipPath: HUB_HEX_CLIP, WebkitClipPath: HUB_HEX_CLIP, background }}
+        className="flex aspect-[0.866] w-36 flex-col items-center justify-center px-3 text-center drop-shadow-[0_10px_18px_rgba(20,48,74,0.15)] transition-transform duration-200 hover:scale-105 sm:w-44"
+      >
+        <span className="mb-1 text-[#14304a] [&_svg]:h-7 [&_svg]:w-7 sm:[&_svg]:h-9 sm:[&_svg]:w-9">{icon}</span>
+        <span className="text-sm font-semibold leading-tight text-[#14304a] sm:text-base">{title}</span>
+        <span className="mt-1 break-words text-[10px] text-[#2c4a66] sm:text-xs">{subtitle}</span>
+      </div>
+    </Link>
+  );
+}
 
 
 const loginSchema = z.object({
