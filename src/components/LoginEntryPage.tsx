@@ -295,7 +295,9 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
 
             {/* Healthcare Professionals section */}
             <section className="mt-8 w-full max-w-md text-center">
-              <h2 className="text-xl font-bold text-foreground">Healthcare Professionals</h2>
+              <h2 className="text-xl font-bold text-foreground">
+                {audience === "professional" ? "Healthcare professional sign-in" : "Healthcare Professionals"}
+              </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Enter your patient’s pairing code to connect to their GlobeDoc
               </p>
