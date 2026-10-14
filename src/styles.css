@@ -41,6 +41,10 @@
   --color-auth-title: var(--auth-title);
   --color-auth-action: var(--auth-action);
   --color-auth-register: var(--auth-register);
+  --color-role-patient: var(--role-patient);
+  --color-role-professional: var(--role-professional);
+  --color-role-ink: var(--role-ink);
+  --color-role-subtitle: var(--role-subtitle);
 }
 
 :root {
@@ -49,6 +53,11 @@
   --auth-title: #2e4482;
   --auth-action: #3B6CF6;
   --auth-register: #00A550;
+  --role-patient: #a9cbea;
+  --role-professional: #bdd7ef;
+  --role-ink: #14304a;
+  --role-subtitle: #2c4a66;
+  --shadow-role: 0 10px 18px rgba(20,48,74,0.15);
   --radius: 0.875rem;
 
   /* Light-blue page background from mock */
