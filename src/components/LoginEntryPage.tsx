@@ -16,13 +16,13 @@ const HUB_HEX_CLIP = "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)
 
 function RoleHexagon({
   to,
-  background,
+  backgroundClass,
   icon,
   title,
   subtitle,
 }: {
   to: string;
-  background: string;
+  backgroundClass: string;
   icon: React.ReactNode;
   title: string;
   subtitle: string;
@@ -30,12 +30,12 @@ function RoleHexagon({
   return (
     <Link to={to} className="block">
       <div
-        style={{ clipPath: HUB_HEX_CLIP, WebkitClipPath: HUB_HEX_CLIP, background }}
-        className="flex aspect-[0.866] w-36 flex-col items-center justify-center px-3 text-center drop-shadow-[0_10px_18px_rgba(20,48,74,0.15)] transition-transform duration-200 hover:scale-105 sm:w-44"
+        style={{ clipPath: HUB_HEX_CLIP, WebkitClipPath: HUB_HEX_CLIP }}
+        className={`flex aspect-[0.866] w-36 flex-col items-center justify-center px-1 text-center drop-shadow-[var(--shadow-role)] transition-transform duration-200 motion-safe:hover:scale-105 sm:w-44 ${backgroundClass}`}
       >
-        <span className="mb-1 text-[#14304a] [&_svg]:h-7 [&_svg]:w-7 sm:[&_svg]:h-9 sm:[&_svg]:w-9">{icon}</span>
-        <span className="text-sm font-semibold leading-tight text-[#14304a] sm:text-base">{title}</span>
-        <span className="mt-1 break-words text-[10px] text-[#2c4a66] sm:text-xs">{subtitle}</span>
+        <span className="mb-1 flex h-7 w-7 items-center justify-center text-role-ink [&_svg]:h-7 [&_svg]:w-7 sm:h-9 sm:w-9 sm:[&_svg]:h-9 sm:[&_svg]:w-9">{icon}</span>
+        <span className="h-5 whitespace-nowrap text-sm font-semibold leading-5 text-role-ink sm:text-base">{title}</span>
+        <span className="mt-1 h-4 whitespace-nowrap text-[10px] leading-4 text-role-subtitle sm:text-[11px]">{subtitle}</span>
       </div>
     </Link>
   );
@@ -76,7 +76,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       return;
     }
     const isPro = (data.user?.user_metadata as { account_type?: string } | null)?.account_type === "professional";
-    if (audience === "patient" && isPro) {
+    if ((audience === "patient" && isPro) || (audience === "professional" && !isPro)) {
       await supabase.auth.signOut();
       setWrongArea(true);
       return;
@@ -131,14 +131,14 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           <div className="mt-10 flex justify-center gap-[6px]">
             <RoleHexagon
               to="/patient"
-              background="#a9cbea"
+              backgroundClass="bg-role-patient"
               icon={<User strokeWidth={1.5} />}
               title="Patient login"
               subtitle="Co-own your health record"
             />
             <RoleHexagon
               to="/pro"
-              background="#bdd7ef"
+              backgroundClass="bg-role-professional"
               icon={<BriefcaseMedical strokeWidth={1.5} />}
               title="Professional login"
               subtitle="Access with patient consent"
@@ -149,14 +149,20 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
         {audience === "patient" && mode === "login" && (
           <h2 className="mt-8 text-xl font-bold text-foreground">Patient sign-in</h2>
         )}
+        {audience === "professional" && mode === "login" && (
+          <div className="mt-8 text-center">
+            <p className="mb-2 text-xs font-semibold text-auth-header">Professional</p>
+            <h2 className="text-xl font-bold text-foreground">Healthcare professional sign-in</h2>
+          </div>
+        )}
 
-        {audience !== "professional" && audience !== "chooser" && (mode === "login" ? (
+        {audience !== "chooser" && (mode === "login" ? (
           <form
             onSubmit={onSubmit}
             className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]"
           >
             <div className="space-y-5">
-              <Field id="email" label={t("login.email")} icon={<Mail className="h-5 w-5" />}>
+              <Field id="email" label={audience === "professional" ? "Email address" : t("login.email")} icon={<Mail className="h-5 w-5" />}>
                 <input
                   id="email"
                   type="email"
@@ -207,17 +213,30 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
 
             {wrongArea && (
               <p className="mt-4 rounded-lg border border-input bg-background p-3 text-center text-sm text-foreground">
-                This is a healthcare professional account. Please use the{" "}
-                <Link to="/pro" className="font-semibold text-auth-register hover:opacity-90">
-                  professional sign-in
+                {audience === "professional" ? "This is a patient account. Please use the " : "This is a healthcare professional account. Please use the "}
+                <Link to={audience === "professional" ? "/patient" : "/pro"} className="font-semibold text-auth-register hover:opacity-90">
+                  {audience === "professional" ? "patient sign-in" : "professional sign-in"}
                 </Link>{" "}
                 instead.
               </p>
             )}
 
+            {audience === "professional" && (
+              <>
+                <div className="my-5 flex items-center gap-3 text-sm text-muted-foreground">
+                  <span className="h-px flex-1 bg-border" />
+                  <span>or</span>
+                  <span className="h-px flex-1 bg-border" />
+                </div>
+                <Button asChild variant="outline" className="h-auto w-full whitespace-normal rounded-full border-auth-header bg-card px-4 py-3.5 text-base font-semibold text-auth-header">
+                  <Link to="/connect">Connect with a patient’s pairing code</Link>
+                </Button>
+              </>
+            )}
+
             <p className="mt-5 text-center">
-              <Link to="/signup" className="text-base font-semibold text-auth-register hover:opacity-90">
-                Create an account
+              <Link to={audience === "professional" ? "/signup-pro" : "/signup"} className="text-base font-semibold text-auth-register hover:opacity-90">
+                {audience === "professional" ? "Create a professional account" : "Create an account"}
               </Link>
             </p>
             {audience === "patient" && (
@@ -225,6 +244,14 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                 Not a patient?{" "}
                 <Link to="/pro" className="font-semibold text-auth-register hover:opacity-90">
                   Sign in as a healthcare professional
+                </Link>
+              </p>
+            )}
+            {audience === "professional" && (
+              <p className="mt-3 text-center text-sm text-muted-foreground">
+                Not a healthcare professional?{" "}
+                <Link to="/patient" className="font-semibold text-auth-register hover:opacity-90">
+                  Sign in as a patient
                 </Link>
               </p>
             )}
@@ -284,7 +311,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           </div>
         ))}
 
-        {audience !== "patient" && audience !== "chooser" && mode === "login" && (
+        {audience === "combined" && mode === "login" && (
           <>
             {/* Divider */}
             {audience === "combined" && (
@@ -296,7 +323,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
             {/* Healthcare Professionals section */}
             <section className="mt-8 w-full max-w-md text-center">
               <h2 className="text-xl font-bold text-foreground">
-                {audience === "professional" ? "Healthcare professional sign-in" : "Healthcare Professionals"}
+                Healthcare Professionals
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Enter your patient’s pairing code to connect to their GlobeDoc
@@ -318,14 +345,6 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                   Create a Professional Account
                 </Link>
               </p>
-              {audience === "professional" && (
-                <p className="mt-3 text-center text-sm text-muted-foreground">
-                  Not a healthcare professional?{" "}
-                  <Link to="/patient" className="font-semibold text-auth-register hover:opacity-90">
-                    Sign in as a patient
-                  </Link>
-                </p>
-              )}
             </section>
           </>
         )}
@@ -334,11 +353,13 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       <footer className="w-full bg-auth-header text-auth-header-foreground">
         <div className="mx-auto flex w-full max-w-md flex-col items-center gap-1 px-4 py-5 text-center text-xs">
           <div className="flex flex-wrap items-center justify-center gap-x-2 text-auth-header-foreground/80">
-            <span>© 2026 {audience === "combined" ? "GlobeDoc" : "GlobeDoc Research Hub (non-profit, in formation)"}</span>
-            <span aria-hidden>·</span>
-            <a href={audience === "combined" ? "/legal" : "https://globedoc.com/privacy"} className="hover:text-auth-header-foreground">Privacy Policy</a>
-            <span aria-hidden>·</span>
-            <a href={audience === "combined" ? "/legal" : "https://globedoc.com/terms"} className="hover:text-auth-header-foreground">Terms of Service</a>
+            <span className={audience === "combined" ? undefined : "w-full"}>© 2026 {audience === "combined" ? "GlobeDoc" : "GlobeDoc Research Hub (non-profit, in formation)"}</span>
+            {audience === "combined" && <span aria-hidden>·</span>}
+            <span className="inline-flex items-center gap-x-2">
+              <a href={audience === "combined" ? "/legal" : "https://globedoc.com/privacy"} className="hover:text-auth-header-foreground">Privacy Policy</a>
+              <span aria-hidden>·</span>
+              <a href={audience === "combined" ? "/legal" : "https://globedoc.com/terms"} className="hover:text-auth-header-foreground">Terms of Service</a>
+            </span>
           </div>
         </div>
       </footer>
