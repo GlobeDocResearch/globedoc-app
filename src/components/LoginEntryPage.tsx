@@ -205,11 +205,29 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
               {t("login.submit")}
             </Button>
 
+            {wrongArea && (
+              <p className="mt-4 rounded-lg border border-input bg-background p-3 text-center text-sm text-foreground">
+                This is a healthcare professional account. Please use the{" "}
+                <Link to="/pro" className="font-semibold text-auth-register hover:opacity-90">
+                  professional sign-in
+                </Link>{" "}
+                instead.
+              </p>
+            )}
+
             <p className="mt-5 text-center">
               <Link to="/signup" className="text-base font-semibold text-auth-register hover:opacity-90">
                 Create an account
               </Link>
             </p>
+            {audience === "patient" && (
+              <p className="mt-3 text-center text-sm text-muted-foreground">
+                Not a patient?{" "}
+                <Link to="/pro" className="font-semibold text-auth-register hover:opacity-90">
+                  Sign in as a healthcare professional
+                </Link>
+              </p>
+            )}
           </form>
         ) : (
           <div className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]">
