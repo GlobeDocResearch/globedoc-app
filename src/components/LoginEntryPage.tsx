@@ -318,6 +318,14 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                   Create a Professional Account
                 </Link>
               </p>
+              {audience === "professional" && (
+                <p className="mt-3 text-center text-sm text-muted-foreground">
+                  Not a healthcare professional?{" "}
+                  <Link to="/patient" className="font-semibold text-auth-register hover:opacity-90">
+                    Sign in as a patient
+                  </Link>
+                </p>
+              )}
             </section>
           </>
         )}
