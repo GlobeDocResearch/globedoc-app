@@ -4,6 +4,6 @@
 - [x] Apply required package security update and check preview.
 
 # Sign-in presentation fixes
-- [ ] Correct footer separators and align role chooser content.
-- [ ] Match professional entry to the patient sign-in card and preserve existing sign-in and pairing flows.
-- [ ] Verify the updated pages and controls.
+- [x] Correct footer separators and align role chooser content.
+- [x] Match professional entry to the patient sign-in card and preserve existing sign-in and pairing flows.
+- [x] Verify the updated pages and controls.

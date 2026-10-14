@@ -229,7 +229,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                   <span className="h-px flex-1 bg-border" />
                 </div>
                 <Button asChild variant="outline" className="h-auto w-full whitespace-normal rounded-full border-auth-header bg-card px-4 py-3.5 text-base font-semibold text-auth-header">
-                  <Link to="/connect">Connect with a patient’s pairing code</Link>
+                  <Link to="/connect" className="text-center">Connect with a patient’s pairing code</Link>
                 </Button>
               </>
             )}
