@@ -47,7 +47,7 @@ const loginSchema = z.object({
   password: z.string().min(1).max(128),
 });
 
-export function LoginEntryPage({ audience = "combined" }: { audience?: "combined" | "patient" | "professional" }) {
+export function LoginEntryPage({ audience = "combined" }: { audience?: "combined" | "patient" | "professional" | "chooser" }) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -58,6 +58,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
   const [resetEmail, setResetEmail] = useState("");
   const [resetSent, setResetSent] = useState(false);
   const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [wrongArea, setWrongArea] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +68,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       return;
     }
     setSubmitting(true);
+    setWrongArea(false);
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
     setSubmitting(false);
     if (error) {
@@ -74,6 +76,11 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       return;
     }
     const isPro = (data.user?.user_metadata as { account_type?: string } | null)?.account_type === "professional";
+    if (audience === "patient" && isPro) {
+      await supabase.auth.signOut();
+      setWrongArea(true);
+      return;
+    }
     navigate({ to: isPro ? "/connect" : "/home" });
   };
 
