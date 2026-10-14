@@ -284,7 +284,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           </div>
         ))}
 
-        {audience !== "patient" && mode === "login" && (
+        {audience !== "patient" && audience !== "chooser" && mode === "login" && (
           <>
             {/* Divider */}
             {audience === "combined" && (
