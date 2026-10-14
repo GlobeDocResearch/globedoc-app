@@ -32,6 +32,7 @@ function ProSignInPage() {
   const [resetEmail, setResetEmail] = useState("");
   const [resetSent, setResetSent] = useState(false);
   const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [wrongArea, setWrongArea] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +42,7 @@ function ProSignInPage() {
       return;
     }
     setSubmitting(true);
+    setWrongArea(false);
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
     setSubmitting(false);
     if (error) {
@@ -50,7 +52,7 @@ function ProSignInPage() {
     const isPro = (data.user?.user_metadata as { account_type?: string } | null)?.account_type === "professional";
     if (!isPro) {
       await supabase.auth.signOut();
-      toast.error("This account is not a Professional account. Please use the patient login.");
+      setWrongArea(true);
       return;
     }
     navigate({ to: "/connect" });
@@ -140,14 +142,25 @@ function ProSignInPage() {
                 {submitting ? "Signing in..." : "Sign in"}
               </button>
 
+              {wrongArea && (
+                <p className="mt-4 rounded-lg border border-input bg-background p-3 text-center text-sm text-foreground">
+                  This is a patient account. Please use the{" "}
+                  <Link to="/patient" className="font-semibold text-[#00A550] hover:opacity-90">
+                    patient sign-in
+                  </Link>{" "}
+                  instead.
+                </p>
+              )}
+
               <p className="mt-5 text-center">
                 <Link to="/signup-pro" className="text-base font-semibold text-[#00A550] hover:opacity-90">
                   Create a Professional Account
                 </Link>
               </p>
               <p className="mt-3 text-center text-sm text-muted-foreground">
-                <Link to="/signin" className="hover:underline">
-                  Back to patient login
+                Not a healthcare professional?{" "}
+                <Link to="/patient" className="font-semibold text-[#00A550] hover:opacity-90">
+                  Sign in as a patient
                 </Link>
               </p>
             </form>

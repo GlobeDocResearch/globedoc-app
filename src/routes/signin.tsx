@@ -14,5 +14,5 @@ export const Route = createFileRoute("/signin")({
 });
 
 function EntryPage() {
-  return <LoginEntryPage audience="combined" />;
+  return <LoginEntryPage audience="chooser" />;
 }

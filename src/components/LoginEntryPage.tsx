@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { BriefcaseMedical, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { z } from "zod";
 
 import { Hexagon } from "@/components/Hexagon";
@@ -12,13 +12,42 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import globeLogo from "@/assets/globedoc-globe.svg";
 
+const HUB_HEX_CLIP = "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)";
+
+function RoleHexagon({
+  to,
+  background,
+  icon,
+  title,
+  subtitle,
+}: {
+  to: string;
+  background: string;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <Link to={to} className="block">
+      <div
+        style={{ clipPath: HUB_HEX_CLIP, WebkitClipPath: HUB_HEX_CLIP, background }}
+        className="flex aspect-[0.866] w-36 flex-col items-center justify-center px-3 text-center drop-shadow-[0_10px_18px_rgba(20,48,74,0.15)] transition-transform duration-200 hover:scale-105 sm:w-44"
+      >
+        <span className="mb-1 text-[#14304a] [&_svg]:h-7 [&_svg]:w-7 sm:[&_svg]:h-9 sm:[&_svg]:w-9">{icon}</span>
+        <span className="text-sm font-semibold leading-tight text-[#14304a] sm:text-base">{title}</span>
+        <span className="mt-1 break-words text-[10px] text-[#2c4a66] sm:text-xs">{subtitle}</span>
+      </div>
+    </Link>
+  );
+}
+
 
 const loginSchema = z.object({
   email: z.string().trim().email().max(255),
   password: z.string().min(1).max(128),
 });
 
-export function LoginEntryPage({ audience = "combined" }: { audience?: "combined" | "patient" | "professional" }) {
+export function LoginEntryPage({ audience = "combined" }: { audience?: "combined" | "patient" | "professional" | "chooser" }) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -29,6 +58,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
   const [resetEmail, setResetEmail] = useState("");
   const [resetSent, setResetSent] = useState(false);
   const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [wrongArea, setWrongArea] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +68,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       return;
     }
     setSubmitting(true);
+    setWrongArea(false);
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
     setSubmitting(false);
     if (error) {
@@ -45,6 +76,11 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       return;
     }
     const isPro = (data.user?.user_metadata as { account_type?: string } | null)?.account_type === "professional";
+    if (audience === "patient" && isPro) {
+      await supabase.auth.signOut();
+      setWrongArea(true);
+      return;
+    }
     navigate({ to: isPro ? "/connect" : "/home" });
   };
 
@@ -91,12 +127,30 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           <h1 className="mt-4 text-3xl font-normal tracking-normal text-auth-title">GlobeDoc</h1>
         </div>
 
+        {audience === "chooser" && (
+          <div className="mt-10 flex justify-center gap-[6px]">
+            <RoleHexagon
+              to="/patient"
+              background="#a9cbea"
+              icon={<User strokeWidth={1.5} />}
+              title="Patient login"
+              subtitle="Co-own your health record"
+            />
+            <RoleHexagon
+              to="/pro"
+              background="#bdd7ef"
+              icon={<BriefcaseMedical strokeWidth={1.5} />}
+              title="Professional login"
+              subtitle="Access with patient consent"
+            />
+          </div>
+        )}
 
+        {audience === "patient" && mode === "login" && (
+          <h2 className="mt-8 text-xl font-bold text-foreground">Patient sign-in</h2>
+        )}
 
-
-
-
-        {audience !== "professional" && (mode === "login" ? (
+        {audience !== "professional" && audience !== "chooser" && (mode === "login" ? (
           <form
             onSubmit={onSubmit}
             className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]"
@@ -151,11 +205,29 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
               {t("login.submit")}
             </Button>
 
+            {wrongArea && (
+              <p className="mt-4 rounded-lg border border-input bg-background p-3 text-center text-sm text-foreground">
+                This is a healthcare professional account. Please use the{" "}
+                <Link to="/pro" className="font-semibold text-auth-register hover:opacity-90">
+                  professional sign-in
+                </Link>{" "}
+                instead.
+              </p>
+            )}
+
             <p className="mt-5 text-center">
               <Link to="/signup" className="text-base font-semibold text-auth-register hover:opacity-90">
                 Create an account
               </Link>
             </p>
+            {audience === "patient" && (
+              <p className="mt-3 text-center text-sm text-muted-foreground">
+                Not a patient?{" "}
+                <Link to="/pro" className="font-semibold text-auth-register hover:opacity-90">
+                  Sign in as a healthcare professional
+                </Link>
+              </p>
+            )}
           </form>
         ) : (
           <div className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]">
@@ -212,7 +284,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           </div>
         ))}
 
-        {audience !== "patient" && mode === "login" && (
+        {audience !== "patient" && audience !== "chooser" && mode === "login" && (
           <>
             {/* Divider */}
             {audience === "combined" && (
@@ -223,7 +295,9 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
 
             {/* Healthcare Professionals section */}
             <section className="mt-8 w-full max-w-md text-center">
-              <h2 className="text-xl font-bold text-foreground">Healthcare Professionals</h2>
+              <h2 className="text-xl font-bold text-foreground">
+                {audience === "professional" ? "Healthcare professional sign-in" : "Healthcare Professionals"}
+              </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Enter your patient’s pairing code to connect to their GlobeDoc
               </p>
@@ -244,6 +318,14 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                   Create a Professional Account
                 </Link>
               </p>
+              {audience === "professional" && (
+                <p className="mt-3 text-center text-sm text-muted-foreground">
+                  Not a healthcare professional?{" "}
+                  <Link to="/patient" className="font-semibold text-auth-register hover:opacity-90">
+                    Sign in as a patient
+                  </Link>
+                </p>
+              )}
             </section>
           </>
         )}
