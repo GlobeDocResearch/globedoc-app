@@ -150,10 +150,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           <h2 className="mt-8 text-xl font-bold text-foreground">Patient sign-in</h2>
         )}
         {audience === "professional" && mode === "login" && (
-          <div className="mt-8 text-center">
-            <p className="mb-2 text-xs font-semibold text-auth-header">Professional</p>
-            <h2 className="text-xl font-bold text-foreground">Healthcare professional sign-in</h2>
-          </div>
+          <h2 className="mt-8 text-xl font-bold text-foreground">Healthcare professional sign-in</h2>
         )}
 
         {audience !== "chooser" && (mode === "login" ? (
