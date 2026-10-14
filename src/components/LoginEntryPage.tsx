@@ -127,12 +127,30 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           <h1 className="mt-4 text-3xl font-normal tracking-normal text-auth-title">GlobeDoc</h1>
         </div>
 
+        {audience === "chooser" && (
+          <div className="mt-10 flex justify-center gap-[6px]">
+            <RoleHexagon
+              to="/patient"
+              background="#a9cbea"
+              icon={<User strokeWidth={1.5} />}
+              title="Patient login"
+              subtitle="Co-own your health record"
+            />
+            <RoleHexagon
+              to="/pro"
+              background="#bdd7ef"
+              icon={<BriefcaseMedical strokeWidth={1.5} />}
+              title="Professional login"
+              subtitle="Access with patient consent"
+            />
+          </div>
+        )}
 
+        {audience === "patient" && mode === "login" && (
+          <h2 className="mt-8 text-xl font-bold text-foreground">Patient sign-in</h2>
+        )}
 
-
-
-
-        {audience !== "professional" && (mode === "login" ? (
+        {audience !== "professional" && audience !== "chooser" && (mode === "login" ? (
           <form
             onSubmit={onSubmit}
             className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]"
