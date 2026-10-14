@@ -41,6 +41,7 @@ function ProSignInPage() {
       return;
     }
     setSubmitting(true);
+    setWrongArea(false);
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
     setSubmitting(false);
     if (error) {
@@ -50,7 +51,7 @@ function ProSignInPage() {
     const isPro = (data.user?.user_metadata as { account_type?: string } | null)?.account_type === "professional";
     if (!isPro) {
       await supabase.auth.signOut();
-      toast.error("This account is not a Professional account. Please use the patient login.");
+      setWrongArea(true);
       return;
     }
     navigate({ to: "/connect" });
