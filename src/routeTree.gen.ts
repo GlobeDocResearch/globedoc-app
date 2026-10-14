@@ -9,145 +9,50 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppRouteImport } from './routes/app'
-import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
-import { Route as ConnectRouteImport } from './routes/connect'
-import { Route as HomeRouteImport } from './routes/home'
-import { Route as LaunchRouteImport } from './routes/launch'
-import { Route as LegalRouteImport } from './routes/legal'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PairingRouteImport } from './routes/pairing'
-import { Route as PatientRouteImport } from './routes/patient'
-import { Route as ProRouteImport } from './routes/pro'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as RecordsRouteImport } from './routes/records'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as SigninRouteImport } from './routes/signin'
-import { Route as SigninProRouteImport } from './routes/signin-pro'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SignupProRouteImport } from './routes/signup-pro'
-import { Route as TravelRouteImport } from './routes/travel'
-import { Route as VerifiedRouteImport } from './routes/verified'
-import { Route as VerifiedProRouteImport } from './routes/verified-pro'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
-import { Route as HealthPassIndexRouteImport } from './routes/health-pass.index'
-import { Route as HealthPassSectionRouteImport } from './routes/health-pass.$section'
+import { Route as VerifiedProRouteImport } from './routes/verified-pro'
+import { Route as VerifiedRouteImport } from './routes/verified'
+import { Route as TravelRouteImport } from './routes/travel'
+import { Route as SignupProRouteImport } from './routes/signup-pro'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninProRouteImport } from './routes/signin-pro'
+import { Route as SigninRouteImport } from './routes/signin'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RecordsRouteImport } from './routes/records'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ProRouteImport } from './routes/pro'
+import { Route as PatientRouteImport } from './routes/patient'
+import { Route as PairingRouteImport } from './routes/pairing'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LegalRouteImport } from './routes/legal'
+import { Route as LaunchRouteImport } from './routes/launch'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as ConnectRouteImport } from './routes/connect'
+import { Route as ConfirmEmailProRouteImport } from './routes/confirm-email-pro'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProIndexRouteImport } from './routes/pro.index'
-import { Route as ProPatientsRouteImport } from './routes/pro.patients'
-import { Route as ProProfileRouteImport } from './routes/pro.profile'
+import { Route as HealthPassIndexRouteImport } from './routes/health-pass.index'
 import { Route as ProSettingsRouteImport } from './routes/pro.settings'
-import { Route as ApiPublicConnectActiveRouteImport } from './routes/api/public/connect.active'
-import { Route as ApiPublicConnectEntryRouteImport } from './routes/api/public/connect.entry'
-import { Route as ApiPublicConnectExtendRouteImport } from './routes/api/public/connect.extend'
-import { Route as ApiPublicConnectFileRouteImport } from './routes/api/public/connect.file'
-import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
-import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
-import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
-import { Route as ApiPublicConnectRevokeRouteImport } from './routes/api/public/connect.revoke'
-import { Route as ApiPublicConnectStatusRouteImport } from './routes/api/public/connect.status'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as ProProfileRouteImport } from './routes/pro.profile'
+import { Route as ProPatientsRouteImport } from './routes/pro.patients'
+import { Route as HealthPassSectionRouteImport } from './routes/health-pass.$section'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicConnectStatusRouteImport } from './routes/api/public/connect.status'
+import { Route as ApiPublicConnectRevokeRouteImport } from './routes/api/public/connect.revoke'
+import { Route as ApiPublicConnectPassportRouteImport } from './routes/api/public/connect.passport'
+import { Route as ApiPublicConnectPairRouteImport } from './routes/api/public/connect.pair'
+import { Route as ApiPublicConnectNoteRouteImport } from './routes/api/public/connect.note'
+import { Route as ApiPublicConnectFileRouteImport } from './routes/api/public/connect.file'
+import { Route as ApiPublicConnectExtendRouteImport } from './routes/api/public/connect.extend'
+import { Route as ApiPublicConnectEntryRouteImport } from './routes/api/public/connect.entry'
+import { Route as ApiPublicConnectActiveRouteImport } from './routes/api/public/connect.active'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConfirmEmailProRoute = ConfirmEmailProRouteImport.update({
-  id: '/confirm-email-pro',
-  path: '/confirm-email-pro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConnectRoute = ConnectRouteImport.update({
-  id: '/connect',
-  path: '/connect',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LaunchRoute = LaunchRouteImport.update({
-  id: '/launch',
-  path: '/launch',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LegalRoute = LegalRouteImport.update({
-  id: '/legal',
-  path: '/legal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PairingRoute = PairingRouteImport.update({
-  id: '/pairing',
-  path: '/pairing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PatientRoute = PatientRouteImport.update({
-  id: '/patient',
-  path: '/patient',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProRoute = ProRouteImport.update({
-  id: '/pro',
-  path: '/pro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecordsRoute = RecordsRouteImport.update({
-  id: '/records',
-  path: '/records',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SigninRoute = SigninRouteImport.update({
-  id: '/signin',
-  path: '/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SigninProRoute = SigninProRouteImport.update({
-  id: '/signin-pro',
-  path: '/signin-pro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupProRoute = SignupProRouteImport.update({
-  id: '/signup-pro',
-  path: '/signup-pro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TravelRoute = TravelRouteImport.update({
-  id: '/travel',
-  path: '/travel',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifiedRoute = VerifiedRouteImport.update({
-  id: '/verified',
-  path: '/verified',
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifiedProRoute = VerifiedProRouteImport.update({
@@ -155,19 +60,104 @@ const VerifiedProRoute = VerifiedProRouteImport.update({
   path: '/verified-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VerifyEmailRoute = VerifyEmailRouteImport.update({
-  id: '/verify-email',
-  path: '/verify-email',
+const VerifiedRoute = VerifiedRouteImport.update({
+  id: '/verified',
+  path: '/verified',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HealthPassIndexRoute = HealthPassIndexRouteImport.update({
-  id: '/health-pass/',
-  path: '/health-pass/',
+const TravelRoute = TravelRouteImport.update({
+  id: '/travel',
+  path: '/travel',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HealthPassSectionRoute = HealthPassSectionRouteImport.update({
-  id: '/health-pass/$section',
-  path: '/health-pass/$section',
+const SignupProRoute = SignupProRouteImport.update({
+  id: '/signup-pro',
+  path: '/signup-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninProRoute = SigninProRouteImport.update({
+  id: '/signin-pro',
+  path: '/signin-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordsRoute = RecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProRoute = ProRouteImport.update({
+  id: '/pro',
+  path: '/pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientRoute = PatientRouteImport.update({
+  id: '/patient',
+  path: '/patient',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PairingRoute = PairingRouteImport.update({
+  id: '/pairing',
+  path: '/pairing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LaunchRoute = LaunchRouteImport.update({
+  id: '/launch',
+  path: '/launch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmEmailProRoute = ConfirmEmailProRouteImport.update({
+  id: '/confirm-email-pro',
+  path: '/confirm-email-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProIndexRoute = ProIndexRouteImport.update({
@@ -175,9 +165,14 @@ const ProIndexRoute = ProIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProRoute,
 } as any)
-const ProPatientsRoute = ProPatientsRouteImport.update({
-  id: '/patients',
-  path: '/patients',
+const HealthPassIndexRoute = HealthPassIndexRouteImport.update({
+  id: '/health-pass/',
+  path: '/health-pass/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProSettingsRoute = ProSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => ProRoute,
 } as any)
 const ProProfileRoute = ProProfileRouteImport.update({
@@ -185,65 +180,14 @@ const ProProfileRoute = ProProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => ProRoute,
 } as any)
-const ProSettingsRoute = ProSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const ProPatientsRoute = ProPatientsRouteImport.update({
+  id: '/patients',
+  path: '/patients',
   getParentRoute: () => ProRoute,
 } as any)
-const ApiPublicConnectActiveRoute = ApiPublicConnectActiveRouteImport.update({
-  id: '/api/public/connect/active',
-  path: '/api/public/connect/active',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectEntryRoute = ApiPublicConnectEntryRouteImport.update({
-  id: '/api/public/connect/entry',
-  path: '/api/public/connect/entry',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectExtendRoute = ApiPublicConnectExtendRouteImport.update({
-  id: '/api/public/connect/extend',
-  path: '/api/public/connect/extend',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectFileRoute = ApiPublicConnectFileRouteImport.update({
-  id: '/api/public/connect/file',
-  path: '/api/public/connect/file',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectNoteRoute = ApiPublicConnectNoteRouteImport.update({
-  id: '/api/public/connect/note',
-  path: '/api/public/connect/note',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectPairRoute = ApiPublicConnectPairRouteImport.update({
-  id: '/api/public/connect/pair',
-  path: '/api/public/connect/pair',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectPassportRoute =
-  ApiPublicConnectPassportRouteImport.update({
-    id: '/api/public/connect/passport',
-    path: '/api/public/connect/passport',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicConnectRevokeRoute = ApiPublicConnectRevokeRouteImport.update({
-  id: '/api/public/connect/revoke',
-  path: '/api/public/connect/revoke',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicConnectStatusRoute = ApiPublicConnectStatusRouteImport.update({
-  id: '/api/public/connect/status',
-  path: '/api/public/connect/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
+const HealthPassSectionRoute = HealthPassSectionRouteImport.update({
+  id: '/health-pass/$section',
+  path: '/health-pass/$section',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailQueueProcessRoute =
@@ -252,6 +196,62 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectStatusRoute = ApiPublicConnectStatusRouteImport.update({
+  id: '/api/public/connect/status',
+  path: '/api/public/connect/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectRevokeRoute = ApiPublicConnectRevokeRouteImport.update({
+  id: '/api/public/connect/revoke',
+  path: '/api/public/connect/revoke',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectPassportRoute =
+  ApiPublicConnectPassportRouteImport.update({
+    id: '/api/public/connect/passport',
+    path: '/api/public/connect/passport',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicConnectPairRoute = ApiPublicConnectPairRouteImport.update({
+  id: '/api/public/connect/pair',
+  path: '/api/public/connect/pair',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectNoteRoute = ApiPublicConnectNoteRouteImport.update({
+  id: '/api/public/connect/note',
+  path: '/api/public/connect/note',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectFileRoute = ApiPublicConnectFileRouteImport.update({
+  id: '/api/public/connect/file',
+  path: '/api/public/connect/file',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectExtendRoute = ApiPublicConnectExtendRouteImport.update({
+  id: '/api/public/connect/extend',
+  path: '/api/public/connect/extend',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectEntryRoute = ApiPublicConnectEntryRouteImport.update({
+  id: '/api/public/connect/entry',
+  path: '/api/public/connect/entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicConnectActiveRoute = ApiPublicConnectActiveRouteImport.update({
+  id: '/api/public/connect/active',
+  path: '/api/public/connect/active',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -548,144 +548,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/confirm-email-pro': {
-      id: '/confirm-email-pro'
-      path: '/confirm-email-pro'
-      fullPath: '/confirm-email-pro'
-      preLoaderRoute: typeof ConfirmEmailProRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/connect': {
-      id: '/connect'
-      path: '/connect'
-      fullPath: '/connect'
-      preLoaderRoute: typeof ConnectRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home': {
-      id: '/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/launch': {
-      id: '/launch'
-      path: '/launch'
-      fullPath: '/launch'
-      preLoaderRoute: typeof LaunchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legal': {
-      id: '/legal'
-      path: '/legal'
-      fullPath: '/legal'
-      preLoaderRoute: typeof LegalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pairing': {
-      id: '/pairing'
-      path: '/pairing'
-      fullPath: '/pairing'
-      preLoaderRoute: typeof PairingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/patient': {
-      id: '/patient'
-      path: '/patient'
-      fullPath: '/patient'
-      preLoaderRoute: typeof PatientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pro': {
-      id: '/pro'
-      path: '/pro'
-      fullPath: '/pro'
-      preLoaderRoute: typeof ProRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/records': {
-      id: '/records'
-      path: '/records'
-      fullPath: '/records'
-      preLoaderRoute: typeof RecordsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signin': {
-      id: '/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof SigninRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signin-pro': {
-      id: '/signin-pro'
-      path: '/signin-pro'
-      fullPath: '/signin-pro'
-      preLoaderRoute: typeof SigninProRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup-pro': {
-      id: '/signup-pro'
-      path: '/signup-pro'
-      fullPath: '/signup-pro'
-      preLoaderRoute: typeof SignupProRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/travel': {
-      id: '/travel'
-      path: '/travel'
-      fullPath: '/travel'
-      preLoaderRoute: typeof TravelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/verified': {
-      id: '/verified'
-      path: '/verified'
-      fullPath: '/verified'
-      preLoaderRoute: typeof VerifiedRouteImport
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verified-pro': {
@@ -695,25 +562,144 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifiedProRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verify-email': {
-      id: '/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailRouteImport
+    '/verified': {
+      id: '/verified'
+      path: '/verified'
+      fullPath: '/verified'
+      preLoaderRoute: typeof VerifiedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/health-pass/': {
-      id: '/health-pass/'
-      path: '/health-pass'
-      fullPath: '/health-pass/'
-      preLoaderRoute: typeof HealthPassIndexRouteImport
+    '/travel': {
+      id: '/travel'
+      path: '/travel'
+      fullPath: '/travel'
+      preLoaderRoute: typeof TravelRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/health-pass/$section': {
-      id: '/health-pass/$section'
-      path: '/health-pass/$section'
-      fullPath: '/health-pass/$section'
-      preLoaderRoute: typeof HealthPassSectionRouteImport
+    '/signup-pro': {
+      id: '/signup-pro'
+      path: '/signup-pro'
+      fullPath: '/signup-pro'
+      preLoaderRoute: typeof SignupProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin-pro': {
+      id: '/signin-pro'
+      path: '/signin-pro'
+      fullPath: '/signin-pro'
+      preLoaderRoute: typeof SigninProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pro': {
+      id: '/pro'
+      path: '/pro'
+      fullPath: '/pro'
+      preLoaderRoute: typeof ProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient': {
+      id: '/patient'
+      path: '/patient'
+      fullPath: '/patient'
+      preLoaderRoute: typeof PatientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pairing': {
+      id: '/pairing'
+      path: '/pairing'
+      fullPath: '/pairing'
+      preLoaderRoute: typeof PairingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/launch': {
+      id: '/launch'
+      path: '/launch'
+      fullPath: '/launch'
+      preLoaderRoute: typeof LaunchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirm-email-pro': {
+      id: '/confirm-email-pro'
+      path: '/confirm-email-pro'
+      fullPath: '/confirm-email-pro'
+      preLoaderRoute: typeof ConfirmEmailProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pro/': {
@@ -723,11 +709,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProIndexRouteImport
       parentRoute: typeof ProRoute
     }
-    '/pro/patients': {
-      id: '/pro/patients'
-      path: '/patients'
-      fullPath: '/pro/patients'
-      preLoaderRoute: typeof ProPatientsRouteImport
+    '/health-pass/': {
+      id: '/health-pass/'
+      path: '/health-pass'
+      fullPath: '/health-pass/'
+      preLoaderRoute: typeof HealthPassIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pro/settings': {
+      id: '/pro/settings'
+      path: '/settings'
+      fullPath: '/pro/settings'
+      preLoaderRoute: typeof ProSettingsRouteImport
       parentRoute: typeof ProRoute
     }
     '/pro/profile': {
@@ -737,81 +730,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProProfileRouteImport
       parentRoute: typeof ProRoute
     }
-    '/pro/settings': {
-      id: '/pro/settings'
-      path: '/settings'
-      fullPath: '/pro/settings'
-      preLoaderRoute: typeof ProSettingsRouteImport
+    '/pro/patients': {
+      id: '/pro/patients'
+      path: '/patients'
+      fullPath: '/pro/patients'
+      preLoaderRoute: typeof ProPatientsRouteImport
       parentRoute: typeof ProRoute
     }
-    '/api/public/connect/active': {
-      id: '/api/public/connect/active'
-      path: '/api/public/connect/active'
-      fullPath: '/api/public/connect/active'
-      preLoaderRoute: typeof ApiPublicConnectActiveRouteImport
+    '/health-pass/$section': {
+      id: '/health-pass/$section'
+      path: '/health-pass/$section'
+      fullPath: '/health-pass/$section'
+      preLoaderRoute: typeof HealthPassSectionRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/connect/entry': {
-      id: '/api/public/connect/entry'
-      path: '/api/public/connect/entry'
-      fullPath: '/api/public/connect/entry'
-      preLoaderRoute: typeof ApiPublicConnectEntryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/extend': {
-      id: '/api/public/connect/extend'
-      path: '/api/public/connect/extend'
-      fullPath: '/api/public/connect/extend'
-      preLoaderRoute: typeof ApiPublicConnectExtendRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/file': {
-      id: '/api/public/connect/file'
-      path: '/api/public/connect/file'
-      fullPath: '/api/public/connect/file'
-      preLoaderRoute: typeof ApiPublicConnectFileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/note': {
-      id: '/api/public/connect/note'
-      path: '/api/public/connect/note'
-      fullPath: '/api/public/connect/note'
-      preLoaderRoute: typeof ApiPublicConnectNoteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/pair': {
-      id: '/api/public/connect/pair'
-      path: '/api/public/connect/pair'
-      fullPath: '/api/public/connect/pair'
-      preLoaderRoute: typeof ApiPublicConnectPairRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/passport': {
-      id: '/api/public/connect/passport'
-      path: '/api/public/connect/passport'
-      fullPath: '/api/public/connect/passport'
-      preLoaderRoute: typeof ApiPublicConnectPassportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/revoke': {
-      id: '/api/public/connect/revoke'
-      path: '/api/public/connect/revoke'
-      fullPath: '/api/public/connect/revoke'
-      preLoaderRoute: typeof ApiPublicConnectRevokeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/connect/status': {
-      id: '/api/public/connect/status'
-      path: '/api/public/connect/status'
-      fullPath: '/api/public/connect/status'
-      preLoaderRoute: typeof ApiPublicConnectStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/webhook': {
@@ -821,11 +758,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/status': {
+      id: '/api/public/connect/status'
+      path: '/api/public/connect/status'
+      fullPath: '/api/public/connect/status'
+      preLoaderRoute: typeof ApiPublicConnectStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/revoke': {
+      id: '/api/public/connect/revoke'
+      path: '/api/public/connect/revoke'
+      fullPath: '/api/public/connect/revoke'
+      preLoaderRoute: typeof ApiPublicConnectRevokeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/passport': {
+      id: '/api/public/connect/passport'
+      path: '/api/public/connect/passport'
+      fullPath: '/api/public/connect/passport'
+      preLoaderRoute: typeof ApiPublicConnectPassportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/pair': {
+      id: '/api/public/connect/pair'
+      path: '/api/public/connect/pair'
+      fullPath: '/api/public/connect/pair'
+      preLoaderRoute: typeof ApiPublicConnectPairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/note': {
+      id: '/api/public/connect/note'
+      path: '/api/public/connect/note'
+      fullPath: '/api/public/connect/note'
+      preLoaderRoute: typeof ApiPublicConnectNoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/file': {
+      id: '/api/public/connect/file'
+      path: '/api/public/connect/file'
+      fullPath: '/api/public/connect/file'
+      preLoaderRoute: typeof ApiPublicConnectFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/extend': {
+      id: '/api/public/connect/extend'
+      path: '/api/public/connect/extend'
+      fullPath: '/api/public/connect/extend'
+      preLoaderRoute: typeof ApiPublicConnectExtendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/entry': {
+      id: '/api/public/connect/entry'
+      path: '/api/public/connect/entry'
+      fullPath: '/api/public/connect/entry'
+      preLoaderRoute: typeof ApiPublicConnectEntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/connect/active': {
+      id: '/api/public/connect/active'
+      path: '/api/public/connect/active'
+      fullPath: '/api/public/connect/active'
+      preLoaderRoute: typeof ApiPublicConnectActiveRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
