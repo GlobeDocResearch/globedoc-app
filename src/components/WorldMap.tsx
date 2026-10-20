@@ -94,8 +94,8 @@ export default function WorldMap({ locations }: { locations: MapLocation[] }) {
         <g>
           {points.map((p) => (
             <g key={p.id} transform={`translate(${p.cx} ${p.cy})`}>
-              <circle r={10} fill="#3B82F6" className="map-dot-pulse" />
-              <circle r={4} fill="#3B82F6" />
+              <circle r={10} className="map-dot-pulse workspace-map-dot" />
+              <circle r={4} className="workspace-map-dot" />
               <circle r={4} fill="none" stroke="#FFFFFF" strokeWidth={1.5} />
             </g>
           ))}
