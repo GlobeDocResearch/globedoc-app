@@ -16,6 +16,7 @@ import { I18nProvider } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { DomTranslator } from "@/components/DomTranslator";
+import { TranslationPrivacyNote } from "@/components/TranslationPrivacyNote";
 
 function NotFoundComponent() {
   return (
@@ -145,6 +146,7 @@ function RootComponent() {
         
         <AuthSync />
         <DomTranslator />
+        <TranslationPrivacyNote />
         <Outlet />
         <Toaster />
       </I18nProvider>
