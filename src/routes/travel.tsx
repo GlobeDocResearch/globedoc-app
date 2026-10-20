@@ -222,7 +222,7 @@ function TravelPage() {
           <button
             type="button"
             onClick={handleFindClinics}
-            className="mt-4 flex w-full items-center gap-2 rounded-lg border border-gray-100 bg-hub-bg px-3 py-2.5 text-sm font-medium text-[#2563EB] hover:bg-gray-100"
+            className="mt-4 flex w-full items-center gap-2 rounded-lg border border-[#253F78] bg-hub-bg px-3 py-2.5 text-sm font-medium text-[#253F78] hover:bg-gray-100"
           >
             <MapPin className="h-4 w-4" />
             Find vaccination clinics near you
