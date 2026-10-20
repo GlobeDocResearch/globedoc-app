@@ -10,6 +10,7 @@ import { useI18n } from "@/lib/i18n";
 import { useLanguages } from "@/lib/useLanguages";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { TranslationPrivacyInfo } from "@/components/TranslationPrivacyNote";
 
 /** Shared dialog that lists every supported UI language. */
 export function LanguagePickerDialog({
@@ -101,7 +102,8 @@ export function LanguagePickerRow() {
   const LANGUAGES = useLanguages();
   const current = LANGUAGES.find((l) => l.code === langCode) ?? LANGUAGES[0];
   return (
-    <>
+    <span className="inline-flex items-center gap-1">
+      <TranslationPrivacyInfo />
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -112,6 +114,6 @@ export function LanguagePickerRow() {
         <span>{current.nativeName}</span>
       </button>
       <LanguagePickerDialog open={open} onOpenChange={setOpen} />
-    </>
+    </span>
   );
 }
