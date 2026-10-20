@@ -200,7 +200,7 @@ export function BetaSurvey({ open, onClose, userId, role }: Props) {
                     rows={8}
                     maxLength={2000}
                     placeholder="Tell us what's on your mind…"
-                    className="mt-4 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+                    className="mt-4 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none"
                   />
                   <p className="mt-1 text-right text-xs text-gray-400">{q6.length}/2000</p>
                 </div>

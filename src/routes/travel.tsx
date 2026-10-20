@@ -134,7 +134,7 @@ function TravelPage() {
                 }
               }}
               placeholder="Search destination country..."
-              className="w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#4472B8] focus:outline-none"
+              className="w-full rounded-md border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#253F78] focus:outline-none"
             />
             {open && filteredCountries.length > 0 && (
               <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-md">

@@ -240,7 +240,7 @@ function Field({
         disabled={disabled}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none disabled:bg-gray-50 disabled:text-gray-500"
+        className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none disabled:bg-gray-50 disabled:text-gray-500"
       />
     </div>
   );

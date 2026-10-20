@@ -412,7 +412,7 @@ function PairingPage() {
               maxLength={500}
               rows={3}
               placeholder="Describe your symptoms or reason for visit..."
-              className="mt-3 w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+              className="mt-3 w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#253F78] focus:outline-none focus:ring-1 focus:ring-[#253F78]"
             />
             <div className="mt-1 flex items-center justify-between">
               <span className="text-[11px] text-gray-400">{reasonText.length}/500</span>

@@ -431,7 +431,7 @@ function RecordsPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t.searchPh}
-          className="mt-4 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+          className="mt-4 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#253F78] focus:outline-none"
         />
 
         {loading ? null : view === "feed" ? (
@@ -788,7 +788,7 @@ function UploadModal({
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
           />
         </label>
 
@@ -798,7 +798,7 @@ function UploadModal({
             value={body}
             onChange={e => setBody(e.target.value)}
             rows={4}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
           />
         </label>
 
@@ -951,7 +951,7 @@ function EntryDetail({
             onChange={e => setDraft(e.target.value)}
             placeholder={t.addComment}
             rows={1}
-            className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
           />
           <Button variant="plain" type="button" disabled={posting || !draft.trim()} onClick={postComment} className="h-auto inline-flex h-9 items-center gap-1 rounded-full bg-hub-navy px-3 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40">
             <Send className="h-4 w-4" /> {t.post}

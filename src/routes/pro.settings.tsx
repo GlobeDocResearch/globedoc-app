@@ -90,7 +90,7 @@ function SettingsTab() {
               value={newPw}
               onChange={(e) => setNewPw(e.target.value)}
               placeholder="New password (min. 8 characters)"
-              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none"
             />
             <SaveButton
               onSave={onChangePassword}

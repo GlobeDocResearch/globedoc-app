@@ -187,7 +187,7 @@ function ProPatientsTab() {
         <select
           value={selectedId}
           onChange={(e) => onSelect(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none"
         >
           <option value="">— Choose a patient —</option>
           {pairings.map(p => (
@@ -270,7 +270,7 @@ function ProPatientsTab() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search records…"
-            className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+            className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#253F78] focus:outline-none"
           />
           {loading ? (
             <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
@@ -466,7 +466,7 @@ function ProEntryComposer({
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="Title"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none"
           />
           {type !== "document" ? (
             <textarea
@@ -474,7 +474,7 @@ function ProEntryComposer({
               onChange={e => setBody(e.target.value)}
               rows={6}
               placeholder={type === "suggestion" ? "Describe the suggested passport update…" : "Write your clinical note…"}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
             />
           ) : (
             <input
