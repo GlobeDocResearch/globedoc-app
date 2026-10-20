@@ -117,20 +117,20 @@ function HomePage() {
         <section className="mt-6 workspace-card bg-hub-highlight p-5">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-hub-navy">
-              <Sparkles className="h-6 w-6 text-white" />
+              <Sparkles className="h-6 w-6 text-hub-on-navy" />
             </div>
             <div className="flex-1">
               <h2 className="text-lg workspace-heading">{t("home.passportTitle")}</h2>
               <p className="mt-1 text-sm text-[#0D1B2A]">{t("home.passportSubtitle")}</p>
             </div>
           </div>
-          <Link
+          <Button asChild variant="plain" className="h-auto p-0 mt-4 rounded-full"><Link
             to="/health-pass"
-            className="mt-4 inline-flex items-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:opacity-90"
           >
             <Sparkles className="h-4 w-4" />
             {t("home.passportCta")}
-          </Link>
+          </Link></Button>
         </section>
 
         {/* World map of record locations */}

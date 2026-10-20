@@ -189,6 +189,7 @@
   background: var(--hub-navy);
   box-shadow: none;
 }
+.workspace-header > div:last-child:not(.workspace-brand) { margin-left: auto; }
 .workspace-wordmark, .workspace-heading {
   font-family: "Source Serif 4 Variable", serif;
   letter-spacing: 0;

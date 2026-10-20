@@ -116,7 +116,7 @@ function TravelPage() {
               <Plane className="h-5 w-5" style={{ color: "#4472B8" }} />
             </span>
             <div>
-              <h2 className="text-base font-bold text-[#0D1B2A]">Travel vaccine planner</h2>
+              <h2 className="text-base workspace-heading">Travel vaccine planner</h2>
               <p className="text-xs text-gray-500">Based on your vaccine history</p>
             </div>
           </div>
@@ -236,7 +236,7 @@ function TravelPage() {
               <Syringe className="h-5 w-5" style={{ color: "#6B4FB8" }} />
             </span>
             <div>
-              <h2 className="text-base font-bold text-[#0D1B2A]">Vaccination card</h2>
+              <h2 className="text-base workspace-heading">Vaccination card</h2>
               <p className="text-xs text-gray-500">Your full immunisation record</p>
             </div>
           </div>
@@ -245,15 +245,14 @@ function TravelPage() {
           <VaxGroup title="Travel vaccines" rows={travel} />
           <VaxGroup title="Other vaccines" rows={other} />
 
-          <button
+          <Button variant="plain"
             type="button"
             onClick={() => window.print()}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold"
-            style={{ background: "#EEEAF7", color: "#4A357E" }}
+            className="h-auto mt-5 flex w-full items-center justify-center gap-2 workspace-action px-4 py-2.5 text-sm font-semibold"
           >
             <Download className="h-4 w-4" />
             Share or download card
-          </button>
+          </Button>
         </section>
       </main>
 

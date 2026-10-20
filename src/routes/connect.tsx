@@ -209,7 +209,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
       )}
 
       <main className="mx-auto w-full max-w-xl px-5 py-8">
-        <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">
+        <h1 className={isAuthed ? "workspace-heading text-2xl" : "text-2xl font-bold text-[#0D1B2A]"}>
           Connect with a pairing code to your patient's GlobeDoc
         </h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -541,7 +541,7 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-card p-6  workspace-card">
+    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-white p-6 shadow-sm">
       <div>
         <label className="text-sm font-semibold text-[#0D1B2A]">Pairing code</label>
         <input
@@ -588,25 +588,25 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
         </label>
       )}
 
-      <Button variant="plain"
+      <button
         type="submit"
         disabled={busy}
-        className="h-auto flex w-full items-center justify-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
         {busy ? "Connecting..." : mode === "signin" ? "Sign in & connect" : "Create account & connect"}
-      </Button>
+      </button>
 
       <p className="text-center text-xs text-gray-500">
         {mode === "signin" ? (
           <>Don't have a Pro account?{" "}
-            <button type="button" onClick={() => setMode("signup")} className="font-semibold text-hub-navy hover:underline">
+            <button type="button" onClick={() => setMode("signup")} className="font-semibold text-[#2563EB] hover:underline">
               Create one
             </button>
           </>
         ) : (
           <>Already have a Pro account?{" "}
-            <button type="button" onClick={() => setMode("signin")} className="font-semibold text-hub-navy hover:underline">
+            <button type="button" onClick={() => setMode("signin")} className="font-semibold text-[#2563EB] hover:underline">
               Sign in
             </button>
           </>
