@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, INTERFACE_LABELS } from "@/lib/i18n";
+import { isPublicEntryPath } from "@/lib/translationPolicy";
 import { translateBatch } from "@/lib/translate.functions";
 
 /**
@@ -58,6 +59,13 @@ export function DomTranslator() {
       return false;
     }
 
+    // Inside the logged-in app only fixed dictionary labels may be sent;
+    // anything else (names, diagnoses, notes, values, dates) never leaves the device.
+    function isAllowed(text: string): boolean {
+      if (isPublicEntryPath(window.location.pathname)) return true;
+      return INTERFACE_LABELS.has(text);
+    }
+
     function collect(root: Node, out: Text[]) {
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
         acceptNode: (n) => {
@@ -66,6 +74,7 @@ export function DomTranslator() {
           if (text.length < 2) return NodeFilter.FILTER_REJECT;
           if (!/[A-Za-z]/.test(text)) return NodeFilter.FILTER_REJECT;
           if (shouldSkip(n)) return NodeFilter.FILTER_REJECT;
+          if (!isAllowed(text)) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_ACCEPT;
         },
       });
@@ -81,6 +90,7 @@ export function DomTranslator() {
         const raw = n.nodeValue ?? "";
         const key = raw.trim();
         if (!key) continue;
+        if (!isAllowed(key)) continue;
         if (!originalRef.current.has(n)) originalRef.current.set(n, raw);
         const cached = cache.get(key);
         if (cached !== undefined) {

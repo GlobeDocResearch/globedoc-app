@@ -338,6 +338,11 @@ const dicts: Record<Lang, Record<string, string>> = { en, sv };
 
 export type TKey = keyof typeof en;
 
+/** Fixed English interface labels from the static dictionary — the only text allowed to reach machine translation inside the logged-in app. */
+export const INTERFACE_LABELS: ReadonlySet<string> = new Set(
+  Object.values(en).filter((v) => !v.includes("{")).map((v) => v.trim()),
+);
+
 type Ctx = {
   /** Base dictionary lang. Only "en" or "sv". Other selected languages fall back to "en" and are translated at the DOM level. */
   lang: Lang;
