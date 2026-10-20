@@ -1,7 +1,7 @@
 # Entry page split
 # Optional patient identity
-- [ ] Add optional profile fields and paired clinician display, protecting saved answers from translation.
-- [ ] Verify saving, readback, export and limits.
+- [x] Add optional profile fields and paired clinician display, protecting saved answers from translation.
+- [x] Verify saving, readback, export and limits.
 
 # Logged-in frame styling
 - [x] Align patient and professional headers, bottom navigation and general frame styling without changing Health Passport colours or behaviour.
