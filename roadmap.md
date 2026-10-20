@@ -16,3 +16,4 @@
 - [x] Match header, typography, colours, cards and footer on chooser and sign-in pages only.
 - [x] Add device-specific installation guidance and supported browser install button without caching.
 - [x] Verify navigation, password reset, language selection and desktop/mobile presentation.
+- [x] Always show both installation instructions with the visitor's device first; remove the other-devices toggle.
