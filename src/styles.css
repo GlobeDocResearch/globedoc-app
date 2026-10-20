@@ -39,6 +39,9 @@
   --color-brand-navy-foreground: var(--brand-navy-foreground);
   --color-brand-red: var(--brand-red);
   --color-auth-header: var(--auth-header);
+  --color-auth-heading: var(--auth-heading);
+  --color-auth-accent: var(--auth-accent);
+  --color-auth-footer: var(--auth-footer);
   --color-auth-header-foreground: var(--auth-header-foreground);
   --color-auth-title: var(--auth-title);
   --color-auth-action: var(--auth-action);
@@ -120,16 +123,19 @@
 
 /* Scope the research site's visual language to public entry pages only. */
 .entry-page {
-  --auth-header: oklch(0.375220085 0.09675069 267.912213);
-  --auth-header-foreground: oklch(1 0 0);
+  --auth-header: #253F78;
+  --auth-header-foreground: #FFFFFF;
+  --auth-heading: #1F3A4D;
+  --auth-accent: #CFE1F2;
+  --auth-footer: #DDE3F2;
   --auth-title: var(--auth-header);
   --auth-action: var(--auth-header);
   --auth-register: var(--auth-header);
-  --background: oklch(0.968350592 0.002497225 165.075382);
+  --background: #F3F5F4;
   --card: oklch(1 0 0);
   --foreground: oklch(0.33600943 0.047159209 240.79519);
   --muted-foreground: oklch(0.432825834 0.024012887 234.442605);
-  --border: oklch(0.909918457 0.007983736 177.306448);
+  --border: #DCE3E1;
   --input: var(--border);
   --brand-blue: var(--auth-header);
   --ring: var(--auth-header);

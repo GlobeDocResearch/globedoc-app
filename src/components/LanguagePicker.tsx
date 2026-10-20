@@ -73,7 +73,7 @@ export function LanguageGlobeButton({ className, appearance = "default" }: { cla
         data-no-translate
         className={cn(
           appearance === "header"
-            ? "h-9 w-9 shrink-0 rounded-full border border-auth-header-foreground/35 bg-transparent p-0 text-auth-header-foreground/90 hover:bg-auth-header-foreground/10"
+            ? "h-9 w-9 shrink-0 rounded-full border border-auth-header-foreground/40 bg-transparent p-0 text-auth-header-foreground hover:bg-transparent hover:text-auth-accent"
             : "inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/60 text-foreground shadow-sm backdrop-blur transition hover:bg-card",
           className,
         )}

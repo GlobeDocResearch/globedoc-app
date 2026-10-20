@@ -107,12 +107,12 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
     <div className="entry-page relative flex min-h-screen flex-col bg-background">
       {/* Site header (matches globedoc.com) */}
       <header className="m-0 w-full rounded-none border-0 bg-auth-header px-0 text-auth-header-foreground">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-5 py-3 sm:px-8">
           <a href="https://globedoc.com" aria-label="GlobeDoc website" className="flex items-center gap-3">
-          <span className="entry-logo flex h-12 w-12 shrink-0 items-center justify-center bg-card">
-            <img src={headerLogo} alt="" className="h-8 w-8" />
+          <span className="entry-logo flex h-[50px] w-[50px] shrink-0 items-center justify-center bg-card">
+            <img src={headerLogo} alt="" className="h-9 w-9" />
           </span>
-          <span className="entry-brand text-xl sm:text-2xl"><strong className="font-bold">GlobeDoc</strong>{" "}<span className="font-normal text-auth-header-foreground/80">Research Hub</span></span>
+          <span className="entry-brand text-2xl"><strong className="font-semibold">GlobeDoc</strong>{" "}<span className="font-normal text-auth-accent">Research Hub</span></span>
           </a>
           <LanguageGlobeButton appearance="header" />
         </div>
@@ -120,7 +120,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
 
       <main className="relative flex w-full flex-1 flex-col items-center px-5 pb-12 pt-12 sm:pt-14">
         {audience === "chooser" && <div className="text-center">
-          <h1 className="text-3xl font-semibold text-auth-title">Sign in to GlobeDoc</h1>
+          <h1 className="text-2xl font-semibold text-auth-heading sm:text-3xl">Sign in to GlobeDoc</h1>
           <p className="mt-3 text-base text-muted-foreground">Choose how you want to sign in.</p>
         </div>}
 
@@ -144,16 +144,16 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
         )}
 
         {audience === "patient" && mode === "login" && (
-          <h1 className="text-center text-3xl font-semibold text-auth-title">Patient sign-in</h1>
+          <h1 className="text-center text-2xl font-semibold text-auth-heading sm:text-3xl">Patient sign-in</h1>
         )}
         {audience === "professional" && mode === "login" && (
-          <h1 className="text-center text-3xl font-semibold text-auth-title">Healthcare professional sign-in</h1>
+          <h1 className="text-center text-2xl font-semibold text-auth-heading sm:text-3xl">Healthcare professional sign-in</h1>
         )}
 
         {audience !== "chooser" && (mode === "login" ? (
           <form
             onSubmit={onSubmit}
-            className="mt-7 w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-7"
+            className="mt-7 w-full max-w-md rounded-[14px] border border-border bg-card p-6 sm:p-7"
           >
             <div className="space-y-5">
               <Field id="email" label={audience === "professional" ? "Email address" : t("login.email")} icon={<Mail className="h-5 w-5" />}>
@@ -200,7 +200,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
             <Button variant="plain"
               type="submit"
               disabled={submitting}
-              className="mt-4 h-auto w-full rounded-full bg-auth-action px-4 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+              className="mt-4 h-auto w-full rounded-full bg-auth-action px-4 py-3.5 text-sm font-medium text-auth-header-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {t("login.submit")}
             </Button>
@@ -251,7 +251,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
             )}
           </form>
         ) : (
-          <div className="mt-7 w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-7">
+          <div className="mt-7 w-full max-w-md rounded-[14px] border border-border bg-card p-6 sm:p-7">
             <h2 className="text-center text-2xl font-bold text-foreground">Reset your password</h2>
 
             {resetSent ? (
@@ -287,7 +287,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                 <Button variant="plain"
                   type="submit"
                   disabled={resetSubmitting}
-                  className="mt-6 h-auto w-full rounded-full bg-auth-title px-4 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95 disabled:opacity-60"
+                  className="mt-6 h-auto w-full rounded-full bg-auth-title px-4 py-3.5 text-sm font-medium text-auth-header-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
                   {resetSubmitting ? "Sending..." : "Send reset link"}
                 </Button>
@@ -324,13 +324,13 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
               </p>
               <Button asChild variant="plain" className="mt-5 h-auto w-full rounded-full p-0"><Link
                 to="/connect"
-                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-auth-action px-6 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-auth-action px-6 py-3.5 text-sm font-medium text-auth-header-foreground transition-opacity hover:opacity-90"
               >
                 Connect with Pairing Code
               </Link></Button>
               <Button asChild variant="plain" className="mt-3 h-auto w-full rounded-full p-0"><Link
                 to="/signin-pro"
-                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-auth-title px-6 py-3.5 text-base font-semibold text-auth-header-foreground shadow-sm transition-opacity hover:opacity-95"
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-auth-title px-6 py-3.5 text-sm font-medium text-auth-header-foreground transition-opacity hover:opacity-90"
               >
                 Sign in
               </Link></Button>
@@ -346,17 +346,17 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       </main>
 
       <footer className="w-full bg-auth-header text-auth-header-foreground">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-5 py-7 text-center text-sm">
-          <div className="flex flex-wrap items-center justify-center gap-x-2 text-auth-header-foreground/80">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-5 py-8 text-center text-[15px]">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 text-auth-footer">
             <span className="w-full">© 2026 GlobeDoc Research Hub (non-profit, in formation)</span>
             <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <a href="https://globedoc.com/privacy" className="hover:text-auth-header-foreground">Privacy Policy</a>
+              <a href="https://globedoc.com/privacy" className="text-auth-footer hover:text-auth-header-foreground">Privacy Policy</a>
               <span aria-hidden>·</span>
-              <a href="https://globedoc.com/terms" className="hover:text-auth-header-foreground">Terms of Service</a>
+              <a href="https://globedoc.com/terms" className="text-auth-footer hover:text-auth-header-foreground">Terms of Service</a>
               <span aria-hidden>·</span>
-              <a href="https://globedoc.com/about" className="hover:text-auth-header-foreground">About</a>
+              <a href="https://globedoc.com/about" className="text-auth-footer hover:text-auth-header-foreground">About</a>
               <span aria-hidden>·</span>
-              <a href="https://globedoc.com/contact" className="hover:text-auth-header-foreground">Contact</a>
+              <a href="https://globedoc.com/contact" className="text-auth-footer hover:text-auth-header-foreground">Contact</a>
             </span>
           </div>
         </div>
