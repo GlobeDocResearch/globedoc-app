@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { WorkspaceBrand } from "@/components/WorkspaceBrand";
+import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Bell, LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle, Camera } from "lucide-react";
+import { LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle, Camera } from "lucide-react";
 import { useRef } from "react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
@@ -467,13 +467,11 @@ function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-hub-bg pb-24">
-      <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+      <header className="workspace-header grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-hub-navy px-5 py-3 sm:flex sm:justify-between">
         <WorkspaceBrand />
-        <div className="flex items-center gap-2">
-          <Button variant="plain" type="button" aria-label="Notifications" className="workspace-header-control flex items-center justify-center">
-            <Bell className="h-5 w-5" />
-          </Button>
-          <Button variant="plain" type="button" onClick={handleSignOut} aria-label="Log out" className="workspace-header-control flex items-center justify-center">
+        <div className="flex shrink-0 items-center gap-2">
+          <WorkspaceBell />
+          <Button variant="plain" type="button" onClick={handleSignOut} aria-label="Log out" className="workspace-header-control hidden items-center justify-center sm:inline-flex">
             <LogOut className="h-5 w-5" />
           </Button>
         </div>

@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { WorkspaceBrand } from "@/components/WorkspaceBrand";
+import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 type NavTo = "/home" | "/pairing" | "/health-pass" | "/profile" | "/travel" | "/records";
-import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
+import { LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
@@ -71,21 +71,15 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-hub-bg pb-24">
       {/* Top bar */}
-      <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+      <header className="workspace-header grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-hub-navy px-5 py-3 sm:flex sm:justify-between">
         <WorkspaceBrand />
-        <div className="flex items-center gap-2">
-          <Button variant="plain"
-            type="button"
-            aria-label="Notifications"
-            className="workspace-header-control flex items-center justify-center"
-          >
-            <Bell className="h-5 w-5" />
-          </Button>
+        <div className="flex shrink-0 items-center gap-2">
+          <WorkspaceBell />
           <Button variant="plain"
             type="button"
             onClick={handleLogout}
             aria-label="Log out"
-            className="workspace-header-control flex items-center justify-center"
+            className="workspace-header-control hidden items-center justify-center sm:inline-flex"
           >
             <LogOut className="h-5 w-5" />
           </Button>

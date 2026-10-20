@@ -1,5 +1,5 @@
 # Architecture rules
-- Keep logged-in branding in WorkspaceBrand and apply explicit workspace presentation classes only to the shared frame; clinical passport components retain their own styling and handlers remain page-owned.
+- Keep logged-in header controls in WorkspaceBrand/WorkspaceBell (shared presentation, handlers page-owned): bell shows a red unread badge only when a count is passed (no notification source yet), sign-out hides below 640px (Settings/Profile keep it), and the professional badge is a round medical-bag icon on mobile with the "PRO" text pill on desktop.
 - Keep the login entry presentation in a shared LoginEntryPage with audience variants so patient, professional, and legacy sign-in views preserve the same forms and appearance.
 - /pro is a layout with a public index entry selected by matched route ID (not target pathname); authenticate only its workspace children and send successful professional sign-in to /connect to preserve the existing destination without mounting an auth guard during navigation.
 - Use the Button plain variant when preserving pre-existing custom control styling without adding default button backgrounds.
