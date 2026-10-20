@@ -3,14 +3,12 @@ import { useState } from "react";
 import { BriefcaseMedical, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { z } from "zod";
 
-import { Hexagon } from "@/components/Hexagon";
 import { LanguageGlobeButton } from "@/components/LanguagePicker";
 
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import globeLogo from "@/assets/globedoc-globe.svg";
 import headerLogo from "@/assets/globedoc-logo-clean.svg";
 import { InstallAppSection } from "@/components/InstallAppSection";
 
@@ -193,7 +191,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
               <Button variant="plain"
                 type="button"
                 onClick={() => { setResetEmail(email); setResetSent(false); setMode("forgot"); }}
-                className="h-auto p-0 text-base text-muted-foreground hover:text-foreground"
+                className="h-auto p-0 text-base text-auth-title hover:opacity-90"
               >
                 Forgot password?
               </Button>
@@ -264,7 +262,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                 <Button variant="plain"
                   type="button"
                   onClick={() => setMode("login")}
-                  className="h-auto p-0 text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  className="h-auto p-0 text-sm text-auth-title underline underline-offset-2 hover:opacity-90"
                 >
                   Back to login
                 </Button>
@@ -297,7 +295,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
                   <Button variant="plain"
                     type="button"
                     onClick={() => setMode("login")}
-                    className="h-auto p-0 text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                    className="h-auto p-0 text-sm text-auth-title underline underline-offset-2 hover:opacity-90"
                   >
                     Back to login
                   </Button>

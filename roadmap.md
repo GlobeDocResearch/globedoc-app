@@ -9,6 +9,6 @@
 - [x] Verify the updated pages and controls.
 
 # GlobeDoc entry styling
-- [ ] Match header, typography, colours, cards and footer on chooser and sign-in pages only.
-- [ ] Add device-specific installation guidance and supported browser install button without caching.
-- [ ] Verify navigation, password reset, language selection and desktop/mobile presentation.
+- [x] Match header, typography, colours, cards and footer on chooser and sign-in pages only.
+- [x] Add device-specific installation guidance and supported browser install button without caching.
+- [x] Verify navigation, password reset, language selection and desktop/mobile presentation.
