@@ -7,3 +7,6 @@ test("fixed interface labels are translatable", () => {
 test("clinical catalog terms are never in the list", () => {
   for (const s of ["Magnesium", "Psyllium husk", "Codeine (nausea)", "CBD oil"]) expect(L).not.toContain(s);
 });
+test("answer wording that can describe a patient's saved answer is never in the list", () => {
+  for (const s of ["Underweight", "Past use only", "Current user", "Former user", "Excessive daytime sleepiness", "Climbing", "Yes", "No", "Never", "Parent"]) expect(L).not.toContain(s);
+});

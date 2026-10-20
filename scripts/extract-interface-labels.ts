@@ -68,12 +68,69 @@ function objectOwner(p: ts.Node): string {
   }
   return "";
 }
+// Dictionary keys that feed answer choices or describe a patient's saved state.
+const answerKeys = new Set<string>();
+const answerPrefixes = new Set<string>();
+const uiKeys = new Set<string>();
+function keyOf(n: ts.Node): { key?: string; prefix?: string } {
+  // t("key"), t.key, T.key, t[`pre_${x}`]
+  if (ts.isCallExpression(n) && /^(t|tr|T|L)$/.test(n.expression.getText()) && n.arguments[0]) {
+    const a = n.arguments[0];
+    if (ts.isStringLiteral(a)) return { key: a.text };
+    if (ts.isTemplateExpression(a)) return { prefix: a.head.text };
+  }
+  if (ts.isPropertyAccessExpression(n) && /^(t|T|L|tr|copy|labels)$/.test(n.expression.getText())) return { key: n.name.text };
+  if (ts.isElementAccessExpression(n) && /^(t|T|L|tr)$/.test(n.expression.getText()) && ts.isTemplateExpression(n.argumentExpression)) return { prefix: n.argumentExpression.head.text };
+  return {};
+}
+function inAnswerContext(n: ts.Node): boolean {
+  for (let p = n.parent; p; p = p.parent) {
+    if (ts.isArrayLiteralExpression(p) || ts.isReturnStatement(p) && !ts.isJsxElement(p.expression ?? p)) return true;
+    if (ts.isObjectLiteralExpression(p)) return true;
+    if (ts.isConditionalExpression(p) || (ts.isBinaryExpression(p) && /\|\||\?\?/.test(p.operatorToken.getText()))) return true;
+    if (ts.isJsxExpression(p) || ts.isJsxAttribute(p) || ts.isFunctionLike(p) || ts.isSourceFile(p)) return false;
+  }
+  return false;
+}
+function scanAnswers(file: string, sink: (s: string) => void) {
+  const src = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
+  const visit = (n: ts.Node) => {
+    const k = keyOf(n);
+    if (k.prefix !== undefined) answerPrefixes.add(k.prefix);
+    else if (k.key && inAnswerContext(n)) answerKeys.add(k.key);
+    else if (k.key) uiKeys.add(k.key);
+    // Fallbacks shown in place of a saved value, e.g. {record.x || "Parent"}
+    if ((ts.isStringLiteral(n)) && n.parent && ts.isBinaryExpression(n.parent) && /\|\||\?\?/.test(n.parent.operatorToken.getText())) sink(n.text);
+    // Literals directly in arrays/objects of option-like shape
+    if (ts.isStringLiteral(n) && n.parent && ts.isPropertyAssignment(n.parent) && /^(l|label|name|text|value|v)$/.test(n.parent.name.getText()) && insideArray(n)) sink(n.text);
+    ts.forEachChild(n, visit);
+  };
+  visit(src);
+}
+function dictEntries(file: string, onEntry: (key: string, value: string) => void) {
+  const src = ts.createSourceFile(file, readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
+  const visit = (n: ts.Node) => {
+    if (ts.isPropertyAssignment(n) && (ts.isStringLiteral(n.initializer) || ts.isNoSubstitutionTemplateLiteral(n.initializer)))
+      onEntry(n.name.getText().replace(/["']/g, ""), n.initializer.text);
+    ts.forEachChild(n, visit);
+  };
+  visit(src);
+}
 const norm = (s: string) => s.replace(/\s+/g, " ").trim();
 const clinical = new Set<string>();
 for (const f of CATALOGS) { try { literals(f, false, (s) => clinical.add(norm(s).toLowerCase())); } catch {} }
 
+const FILES = SCAN.flatMap((d) => walk(d, []));
+const answers = new Set<string>();
+for (const f of FILES) scanAnswers(f, (s) => answers.add(norm(s)));
+// Keys sharing a family prefix with answer keys (e.g. ex_*) are treated as answers unless used directly as UI text.
+const answerFamilies = new Set([...answerKeys].filter((k) => k.includes("_")).map((k) => k.split("_")[0] + "_"));
+for (const f of FILES) dictEntries(f, (key, value) => {
+  const family = key.includes("_") && answerFamilies.has(key.split("_")[0] + "_") && !uiKeys.has(key);
+  if (family || answerKeys.has(key) || [...answerPrefixes].some((p) => p && key.startsWith(p))) answers.add(norm(value));
+});
 const labels = new Set<string>();
-for (const f of SCAN.flatMap((d) => walk(d, []))) {
+for (const f of FILES) {
   literals(f, true, (raw) => {
     const s = norm(raw);
     if (s.length < 2 || s.length > 300 || !/[A-Za-z]{2}/.test(s)) return;
@@ -82,6 +139,7 @@ for (const f of SCAN.flatMap((d) => walk(d, []))) {
     if (/^(https?:|\/|#|@|mailto:)/.test(s) || /[{}<>=]/.test(s) || /^[\w.-]+@[\w.-]+$/.test(s)) return;
     if (/^[A-Z][a-z]+([A-Z][a-z]+)+$/.test(s)) return; // component names
     if (/[åäöÅÄÖ]/.test(s)) return; // Swedish comes from built-in translations
+    if (answers.has(s)) return; // can appear as a patient's saved answer
     if (clinical.has(s.toLowerCase())) return;
     labels.add(s);
   });
