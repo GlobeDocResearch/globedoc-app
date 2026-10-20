@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import globeLogo from "@/assets/globedoc-globe.svg";
+import headerLogo from "@/assets/globedoc-logo-clean.svg";
+import { InstallAppSection } from "@/components/InstallAppSection";
 
 const HUB_HEX_CLIP = "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)";
 
@@ -104,28 +106,25 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-background">
+    <div className="entry-page relative flex min-h-screen flex-col bg-background">
       {/* Site header (matches globedoc.com) */}
       <header className="m-0 w-full rounded-none border-0 bg-auth-header px-0 text-auth-header-foreground">
-        <div className="mx-auto flex w-full max-w-6xl items-center px-4 py-3">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-5 py-4 sm:px-8">
           <a href="https://globedoc.com" aria-label="GlobeDoc website" className="flex items-center gap-3">
-          <Hexagon style={{ height: "2.75rem", width: "2.75rem" }}>
-            <img src={globeLogo} alt="GlobeDoc" className="h-8 w-8" />
-          </Hexagon>
-          <span className="text-lg font-semibold tracking-normal">GlobeDoc</span>
+          <span className="entry-logo flex h-12 w-12 shrink-0 items-center justify-center bg-card">
+            <img src={headerLogo} alt="" className="h-8 w-8" />
+          </span>
+          <span className="entry-brand text-xl sm:text-2xl"><strong className="font-bold">GlobeDoc</strong>{" "}<span className="font-normal text-auth-header-foreground/80">Research Hub</span></span>
           </a>
+          <LanguageGlobeButton appearance="header" />
         </div>
       </header>
 
-      <main className="relative flex w-full flex-1 flex-col items-center px-5 pb-10 pt-10">
-        <LanguageGlobeButton className="absolute right-4 top-4 text-muted-foreground" />
-
-        <div className="flex flex-col items-center text-center">
-          <Hexagon style={{ height: "6.04rem", width: "6.04rem" }}>
-            <img src={globeLogo} alt="GlobeDoc" className="h-[4.62rem] w-[4.62rem]" />
-          </Hexagon>
-          <h1 className="mt-4 text-3xl font-normal tracking-normal text-auth-title">GlobeDoc</h1>
-        </div>
+      <main className="relative flex w-full flex-1 flex-col items-center px-5 pb-12 pt-12 sm:pt-14">
+        {audience === "chooser" && <div className="text-center">
+          <h1 className="text-3xl font-semibold text-auth-title">Sign in to GlobeDoc</h1>
+          <p className="mt-3 text-base text-muted-foreground">Choose how you want to sign in.</p>
+        </div>}
 
         {audience === "chooser" && (
           <div className="mt-10 flex justify-center gap-[6px]">
@@ -147,16 +146,16 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
         )}
 
         {audience === "patient" && mode === "login" && (
-          <h2 className="mt-8 text-xl font-bold text-foreground">Patient sign-in</h2>
+          <h1 className="text-center text-3xl font-semibold text-auth-title">Patient sign-in</h1>
         )}
         {audience === "professional" && mode === "login" && (
-          <h2 className="mt-8 text-xl font-bold text-foreground">Healthcare professional sign-in</h2>
+          <h1 className="text-center text-3xl font-semibold text-auth-title">Healthcare professional sign-in</h1>
         )}
 
         {audience !== "chooser" && (mode === "login" ? (
           <form
             onSubmit={onSubmit}
-            className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]"
+            className="mt-7 w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-7"
           >
             <div className="space-y-5">
               <Field id="email" label={audience === "professional" ? "Email address" : t("login.email")} icon={<Mail className="h-5 w-5" />}>
@@ -254,7 +253,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
             )}
           </form>
         ) : (
-          <div className="mt-8 w-full max-w-md rounded-2xl bg-card p-7 shadow-[var(--shadow-card)]">
+          <div className="mt-7 w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-7">
             <h2 className="text-center text-2xl font-bold text-foreground">Reset your password</h2>
 
             {resetSent ? (
@@ -345,17 +344,21 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
             </section>
           </>
         )}
+        <InstallAppSection />
       </main>
 
       <footer className="w-full bg-auth-header text-auth-header-foreground">
-        <div className="mx-auto flex w-full max-w-md flex-col items-center gap-1 px-4 py-5 text-center text-xs">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-5 py-7 text-center text-sm">
           <div className="flex flex-wrap items-center justify-center gap-x-2 text-auth-header-foreground/80">
-            <span className={audience === "combined" ? undefined : "w-full"}>© 2026 {audience === "combined" ? "GlobeDoc" : "GlobeDoc Research Hub (non-profit, in formation)"}</span>
-            {audience === "combined" && <span aria-hidden>·</span>}
-            <span className="inline-flex items-center gap-x-2">
-              <a href={audience === "combined" ? "/legal" : "https://globedoc.com/privacy"} className="hover:text-auth-header-foreground">Privacy Policy</a>
+            <span className="w-full">© 2026 GlobeDoc Research Hub (non-profit, in formation)</span>
+            <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+              <a href="https://globedoc.com/privacy" className="hover:text-auth-header-foreground">Privacy Policy</a>
               <span aria-hidden>·</span>
-              <a href={audience === "combined" ? "/legal" : "https://globedoc.com/terms"} className="hover:text-auth-header-foreground">Terms of Service</a>
+              <a href="https://globedoc.com/terms" className="hover:text-auth-header-foreground">Terms of Service</a>
+              <span aria-hidden>·</span>
+              <a href="https://globedoc.com/about" className="hover:text-auth-header-foreground">About</a>
+              <span aria-hidden>·</span>
+              <a href="https://globedoc.com/contact" className="hover:text-auth-header-foreground">Contact</a>
             </span>
           </div>
         </div>

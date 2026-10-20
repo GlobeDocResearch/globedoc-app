@@ -9,6 +9,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { useLanguages } from "@/lib/useLanguages";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 /** Shared dialog that lists every supported UI language. */
 export function LanguagePickerDialog({
@@ -61,22 +62,24 @@ export function LanguagePickerDialog({
 }
 
 /** Round globe icon button — used in the top-right of public pages. */
-export function LanguageGlobeButton({ className }: { className?: string }) {
+export function LanguageGlobeButton({ className, appearance = "default" }: { className?: string; appearance?: "default" | "header" }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button
+      <Button variant="plain" size="icon"
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Choose language"
         data-no-translate
         className={cn(
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/60 text-foreground shadow-sm backdrop-blur transition hover:bg-card",
+          appearance === "header"
+            ? "h-9 w-9 shrink-0 rounded-full border border-auth-header-foreground/35 bg-transparent p-0 text-auth-header-foreground/90 hover:bg-auth-header-foreground/10"
+            : "inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/60 text-foreground shadow-sm backdrop-blur transition hover:bg-card",
           className,
         )}
       >
         <Globe className="h-4 w-4" />
-      </button>
+      </Button>
       <LanguagePickerDialog open={open} onOpenChange={setOpen} />
     </>
   );

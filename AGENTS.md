@@ -2,3 +2,5 @@
 - Keep the login entry presentation in a shared LoginEntryPage with audience variants so patient, professional, and legacy sign-in views preserve the same forms and appearance.
 - /pro is a layout with a public index entry selected by matched route ID (not target pathname); authenticate only its workspace children and send successful professional sign-in to /connect to preserve the existing destination without mounting an auth guard during navigation.
 - Use the Button plain variant when preserving pre-existing custom control styling without adding default button backgrounds.
+- Scope public-entry typography and theme overrides to .entry-page so research-site styling does not alter the logged-in workspace.
+- Keep installation presentation in InstallAppSection with browser lifecycle detection; never introduce app-shell caching for home-screen support.
