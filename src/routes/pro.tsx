@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { WorkspaceBrand } from "@/components/WorkspaceBrand";
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LinkIcon, User, Settings as SettingsIcon, FileText, Bell, LogOut } from "lucide-react";
@@ -7,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pro")({
-  head: () => ({ meta: [{ title: "GlobeDoc Pro" }] }),
+  head: () => ({ meta: [{ title: "GlobeDoc Pro" }, { name: "description", content: "GlobeDoc healthcare professional workspace." }, { property: "og:title", content: "GlobeDoc Pro" }, { property: "og:description", content: "GlobeDoc healthcare professional workspace." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProLayout,
 });
 
@@ -35,11 +37,11 @@ function AuthenticatedProLayout() {
   }, [navigate]);
 
   if (!ready) {
-    return <div className="min-h-screen bg-[#F8F9FA]" />;
+    return <div className="min-h-screen bg-hub-bg" />;
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-24">
+    <div className="min-h-screen bg-hub-bg pb-24">
       <ProHeader />
       <Outlet />
       <ProBottomNav />
@@ -51,21 +53,15 @@ export function ProHeader() {
   const navigate = useNavigate();
   const handleLogout = async () => { await supabase.auth.signOut(); navigate({ to: "/signin" }); };
   return (
-    <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-      <div className="flex items-center gap-2.5">
-        <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-        <span className="text-lg font-bold text-white">GlobeDoc</span>
-        <span className="ml-1 rounded-full bg-[#2563EB] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-          Pro
-        </span>
-      </div>
+    <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+      <WorkspaceBrand professional />
       <div className="flex items-center gap-2">
-        <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+        <Button variant="plain" type="button" aria-label="Notifications" className="workspace-header-control flex items-center justify-center">
           <Bell className="h-5 w-5" />
-        </button>
-        <button type="button" onClick={handleLogout} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+        </Button>
+        <Button variant="plain" type="button" onClick={handleLogout} aria-label="Log out" className="workspace-header-control flex items-center justify-center">
           <LogOut className="h-5 w-5" />
-        </button>
+        </Button>
       </div>
     </header>
   );
@@ -81,7 +77,7 @@ export function ProBottomNav() {
     { to: "/pro/settings" as const, icon: <SettingsIcon className="h-5 w-5" />, label: t("nav.settings"), match: (p: string) => p.startsWith("/pro/settings") },
   ];
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
+    <nav className="fixed inset-x-0 bottom-0 z-10 workspace-nav border-t border-hub-navy bg-hub-navy">
       <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
         {tabs.map((tab) => {
           const active = tab.match(pathname);
@@ -90,7 +86,7 @@ export function ProBottomNav() {
               <Link
                 to={tab.to}
                 className={`flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
-                  active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"
+                  active ? "bg-hub-active text-hub-on-navy" : "text-hub-footer hover:text-hub-on-navy"
                 }`}
               >
                 {tab.icon}

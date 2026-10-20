@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link as LinkIcon, CheckCircle2, Loader2 } from "lucide-react";
@@ -9,7 +10,7 @@ import { addPairing, getActiveSessionsFromSupabase, getPastSessionsFromSupabase,
 import { ProBottomNav, ProHeader } from "./pro";
 
 export const Route = createFileRoute("/connect")({
-  head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }] }),
+  head: () => ({ meta: [{ title: "Connect with Patient — GlobeDoc" }, { name: "description", content: "Connect to a GlobeDoc patient with their consent and pairing code." }, { property: "og:title", content: "Connect with Patient — GlobeDoc" }, { property: "og:description", content: "Connect to a GlobeDoc patient with their consent and pairing code." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ConnectPageWrapper,
 });
 
@@ -34,7 +35,7 @@ function ConnectPageWrapper() {
   if (!checked) return <div className="min-h-screen bg-[#F8F9FA]" />;
 
   return (
-    <div className={isAuthed ? "min-h-screen bg-[#F8F9FA] pb-24" : ""}>
+    <div className={isAuthed ? "min-h-screen bg-hub-bg pb-24" : ""}>
       {isAuthed && <ProHeader />}
       <ConnectPage isAuthed={isAuthed} userId={userId} proMeta={meta} />
       {isAuthed && <ProBottomNav />}
@@ -208,7 +209,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
       )}
 
       <main className="mx-auto w-full max-w-xl px-5 py-8">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">
+        <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">
           Connect with a pairing code to your patient's GlobeDoc
         </h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -242,7 +243,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         )}
 
         {isAuthed && (
-          <section className="mt-8 rounded-2xl bg-white p-5 shadow-sm">
+          <section className="mt-8 rounded-2xl bg-card p-5  workspace-card">
             <h2 className="text-base font-bold text-[#0D1B2A]">Active patient connections</h2>
             {pairings.length === 0 ? (
               <p className="mt-2 text-sm text-gray-500">No active connections yet.</p>
@@ -277,7 +278,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
         )}
 
         {isAuthed && past.length > 0 && (
-          <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+          <section className="mt-6 rounded-2xl bg-card p-5  workspace-card">
             <h2 className="text-base font-bold text-[#0D1B2A]">Past connections</h2>
             <ul className="mt-3 space-y-2">
               {past.map((p) => (
@@ -309,7 +310,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
 
       {duplicate && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-5">
-          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+          <div className="w-full max-w-md rounded-2xl bg-card p-5  workspace-card">
             <h3 className="text-base font-bold text-[#0D1B2A]">Active connection already exists</h3>
             <p className="mt-2 text-sm text-gray-600">
               You already have an active connection with{" "}
@@ -349,15 +350,15 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
               >
                 Cancel
               </button>
-              <button
+              <Button variant="plain"
                 type="button"
                 onClick={handleExtend}
                 disabled={extending}
-                className="flex items-center gap-2 rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                className="h-auto flex items-center gap-2 rounded-full bg-hub-navy px-4 py-2 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40"
               >
                 {extending && <Loader2 className="h-4 w-4 animate-spin" />}
                 Extend access
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -416,7 +417,7 @@ function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMet
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-white p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-card p-6  workspace-card">
       <div>
         <label className="text-sm font-semibold text-[#0D1B2A]">Pairing code</label>
         <input
@@ -429,14 +430,14 @@ function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMet
           className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#2563EB] focus:outline-none"
         />
       </div>
-      <button
+      <Button variant="plain"
         type="submit"
         disabled={submitting || code.trim().length !== 6}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+        className="h-auto flex w-full items-center justify-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:bg-hub-navy hover:opacity-90 disabled:opacity-40"
       >
         {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
         {submitting ? "Connecting..." : "Connect to patient"}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -540,7 +541,7 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-white p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-card p-6  workspace-card">
       <div>
         <label className="text-sm font-semibold text-[#0D1B2A]">Pairing code</label>
         <input
@@ -587,25 +588,25 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
         </label>
       )}
 
-      <button
+      <Button variant="plain"
         type="submit"
         disabled={busy}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+        className="h-auto flex w-full items-center justify-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
         {busy ? "Connecting..." : mode === "signin" ? "Sign in & connect" : "Create account & connect"}
-      </button>
+      </Button>
 
       <p className="text-center text-xs text-gray-500">
         {mode === "signin" ? (
           <>Don't have a Pro account?{" "}
-            <button type="button" onClick={() => setMode("signup")} className="font-semibold text-[#2563EB] hover:underline">
+            <button type="button" onClick={() => setMode("signup")} className="font-semibold text-hub-navy hover:underline">
               Create one
             </button>
           </>
         ) : (
           <>Already have a Pro account?{" "}
-            <button type="button" onClick={() => setMode("signin")} className="font-semibold text-[#2563EB] hover:underline">
+            <button type="button" onClick={() => setMode("signin")} className="font-semibold text-hub-navy hover:underline">
               Sign in
             </button>
           </>

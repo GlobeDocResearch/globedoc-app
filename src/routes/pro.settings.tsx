@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/pro/settings")({
-  head: () => ({ meta: [{ title: "Settings — GlobeDoc Pro" }] }),
+  head: () => ({ meta: [{ title: "Settings — GlobeDoc Pro" }, { name: "description", content: "Manage your GlobeDoc professional account settings." }, { property: "og:title", content: "Settings — GlobeDoc Pro" }, { property: "og:description", content: "Manage your GlobeDoc professional account settings." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: SettingsTab,
 });
 
@@ -56,9 +56,9 @@ function SettingsTab() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-5 py-6">
-      <h1 className="text-2xl font-bold text-[#0D1B2A]">Settings</h1>
+      <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">Settings</h1>
 
-      <section className="mt-4 divide-y divide-gray-100 rounded-2xl bg-white shadow-sm">
+      <section className="mt-4 divide-y divide-gray-100 rounded-2xl bg-card  workspace-card">
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
             <Globe className="h-5 w-5 text-gray-500" />
@@ -94,7 +94,7 @@ function SettingsTab() {
             />
             <SaveButton
               onSave={onChangePassword}
-              className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 flex items-center gap-2"
+              className="rounded-full bg-hub-navy px-4 py-2 text-sm font-semibold text-hub-on-navy hover:opacity-90 flex items-center gap-2"
             >
               Update password
             </SaveButton>
@@ -122,7 +122,7 @@ function SettingsTab() {
         </Link>
       </section>
 
-      <section className="mt-6 rounded-2xl bg-white shadow-sm">
+      <section className="mt-6 rounded-2xl bg-card  workspace-card">
         <div className="px-5 pt-4 pb-2">
           <h2 className="text-sm font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
         </div>
@@ -133,7 +133,7 @@ function SettingsTab() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-2xl bg-white shadow-sm">
+      <section className="mt-6 rounded-2xl bg-card  workspace-card">
         <button
           type="button"
           onClick={() => setDeleteOpen(true)}

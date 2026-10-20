@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Camera, ShieldCheck, User as UserIcon, Upload, FileText } from "lucide-react";
@@ -7,7 +8,7 @@ import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/pro/profile")({
-  head: () => ({ meta: [{ title: "Profile — GlobeDoc Pro" }] }),
+  head: () => ({ meta: [{ title: "Profile — GlobeDoc Pro" }, { name: "description", content: "Manage your GlobeDoc healthcare professional profile." }, { property: "og:title", content: "Profile — GlobeDoc Pro" }, { property: "og:description", content: "Manage your GlobeDoc healthcare professional profile." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProfileTab,
 });
 
@@ -115,26 +116,26 @@ function ProfileTab() {
 
   return (
     <main className="mx-auto w-full max-w-xl px-5 py-6">
-      <h1 className="text-2xl font-bold text-[#0D1B2A]">Profile</h1>
+      <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">Profile</h1>
 
       {/* Avatar */}
       <div className="mt-4 flex flex-col items-center">
-        <button
+        <Button variant="plain"
           type="button"
           onClick={() => avatarInputRef.current?.click()}
           disabled={uploadingAvatar}
           aria-label="Change profile photo"
-          className="relative h-24 w-24 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
+          className="h-auto relative h-24 w-24 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
         >
           {meta.avatar_url ? (
             <img src={meta.avatar_url} alt="" className="h-full w-full object-cover" />
           ) : (
             <UserIcon className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
           )}
-          <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-[#2563EB] text-white shadow ring-2 ring-white">
+          <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-hub-navy text-hub-on-navy shadow ring-2 ring-white">
             <Camera className="h-3.5 w-3.5" />
           </span>
-        </button>
+        </Button>
         <input
           ref={avatarInputRef}
           type="file"
@@ -145,7 +146,7 @@ function ProfileTab() {
         />
       </div>
 
-      <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm opacity-70">
+      <div className="mt-4 flex items-center gap-3 rounded-2xl bg-card p-4  opacity-70 workspace-card">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400">
           <ShieldCheck className="h-5 w-5" />
         </div>
@@ -155,7 +156,7 @@ function ProfileTab() {
         </div>
       </div>
 
-      <form onSubmit={onSave} className="mt-4 space-y-4 rounded-2xl bg-white p-6 shadow-sm">
+      <form onSubmit={onSave} className="mt-4 space-y-4 rounded-2xl bg-card p-6  workspace-card">
         <Field label="Full name" value={meta.full_name ?? ""} onChange={(v) => update("full_name", v)} />
         <div className="grid grid-cols-2 gap-3">
           <Field label="Title" value={meta.pro_title ?? ""} onChange={(v) => update("pro_title", v)} />
@@ -188,7 +189,7 @@ function ProfileTab() {
               {uploadingDoc ? "Uploading..." : meta.license_doc_url ? "Replace file" : "Choose file"}
             </button>
             {meta.license_doc_url && (
-              <a href={meta.license_doc_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#2563EB] underline">
+              <a href={meta.license_doc_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-hub-navy underline">
                 <FileText className="h-3.5 w-3.5" /> {meta.license_doc_name ?? "View"}
               </a>
             )}
@@ -212,7 +213,7 @@ function ProfileTab() {
         <SaveButton
           type="submit"
           onSave={() => onSave()}
-          className="w-full rounded-full bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:opacity-95 flex items-center justify-center gap-2"
+          className="w-full rounded-full bg-hub-navy px-4 py-3 text-sm font-semibold text-hub-on-navy  hover:opacity-90 flex items-center justify-center gap-2"
         >
           Save changes
         </SaveButton>

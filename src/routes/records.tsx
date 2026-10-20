@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { WorkspaceBrand } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -20,7 +22,7 @@ import {
 import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/records")({
-  head: () => ({ meta: [{ title: "Records — GlobeDoc" }] }),
+  head: () => ({ meta: [{ title: "Records — GlobeDoc" }, { name: "description", content: "View and manage your personal GlobeDoc health records." }, { property: "og:title", content: "Records — GlobeDoc" }, { property: "og:description", content: "View and manage your personal GlobeDoc health records." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: RecordsPage,
 });
 
@@ -357,45 +359,42 @@ function RecordsPage() {
   const openEntry = useMemo(() => entries.find(e => e.id === openEntryId) ?? null, [entries, openEntryId]);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-28">
-      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-          <span className="text-lg font-bold text-white">GlobeDoc</span>
-        </div>
+    <div className="min-h-screen bg-hub-bg pb-28">
+      <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+        <WorkspaceBrand />
         <div className="flex items-center gap-2">
-          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <Button variant="plain" type="button" aria-label="Notifications" className="workspace-header-control flex items-center justify-center">
             <Bell className="h-5 w-5" />
-          </button>
-          <button type="button" onClick={handleLogout} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          </Button>
+          <Button variant="plain" type="button" onClick={handleLogout} aria-label="Log out" className="workspace-header-control flex items-center justify-center">
             <LogOut className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 py-6">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
+        <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
         <p className="mt-1 text-sm text-gray-500">{t.sub}</p>
 
         <div className="mt-4 inline-flex rounded-full border border-gray-200 bg-white p-1 text-sm">
-          <button
+          <Button variant="plain"
             type="button"
             onClick={() => setView("feed")}
             className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
-              view === "feed" ? "bg-[#2563EB] text-white" : "text-gray-600 hover:bg-gray-50"
+              view === "feed" ? "bg-hub-navy text-hub-on-navy" : "text-gray-600 hover:bg-gray-50"
             }`}
           >
-            <Rows className="h-4 w-4" /> {t.viewFeed}
-          </button>
-          <button
+            <Rows className="h-auto h-4 w-4" /> {t.viewFeed}
+          </Button>
+          <Button variant="plain"
             type="button"
             onClick={() => setView("timeline")}
             className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
-              view === "timeline" ? "bg-[#2563EB] text-white" : "text-gray-600 hover:bg-gray-50"
+              view === "timeline" ? "bg-hub-navy text-hub-on-navy" : "text-gray-600 hover:bg-gray-50"
             }`}
           >
-            <CalendarDays className="h-4 w-4" /> {t.viewTimeline}
-          </button>
+            <CalendarDays className="h-auto h-4 w-4" /> {t.viewTimeline}
+          </Button>
         </div>
 
         <div className="mt-3 -mx-5 px-5">
@@ -410,18 +409,18 @@ function RecordsPage() {
             ]).map((chip) => {
               const active = activeFilter === chip.key;
               return (
-                <button
+                <Button variant="plain"
                   key={chip.key}
                   type="button"
                   onClick={() => setActiveFilter(chip.key)}
                   className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition whitespace-nowrap ${
                     active
-                      ? "bg-[#2563EB] text-white"
+                      ? "bg-hub-navy text-hub-on-navy"
                       : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   {chip.label}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -437,7 +436,7 @@ function RecordsPage() {
 
         {loading ? null : view === "feed" ? (
           filteredEntries.length === 0 ? (
-            <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
+            <div className="mt-6 flex flex-col items-center rounded-2xl bg-card p-10 text-center  workspace-card">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                 <FileText className="h-7 w-7 text-gray-400" />
               </div>
@@ -462,7 +461,7 @@ function RecordsPage() {
             </ul>
           )
         ) : timelineGroups.length === 0 ? (
-          <div className="mt-6 flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm">
+          <div className="mt-6 flex flex-col items-center rounded-2xl bg-card p-10 text-center  workspace-card">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
               <CalendarDays className="h-7 w-7 text-gray-400" />
             </div>
@@ -473,7 +472,7 @@ function RecordsPage() {
             <ol className="relative space-y-6 border-l-2 border-gray-200 pl-6">
               {timelineGroups.map(([year, items]) => (
                 <li key={year} className="relative">
-                  <span className="absolute -left-[34px] flex h-6 min-w-[3rem] items-center justify-center rounded-full bg-[#2563EB] px-2 text-xs font-bold text-white">
+                  <span className="absolute -left-[34px] flex h-6 min-w-[3rem] items-center justify-center rounded-full bg-hub-navy px-2 text-xs font-bold text-hub-on-navy">
                     {year}
                   </span>
                   <ul className="space-y-3">
@@ -500,14 +499,14 @@ function RecordsPage() {
       </main>
 
       {/* Floating + */}
-      <button
+      <Button variant="plain"
         type="button"
         onClick={() => setPickerOpen(true)}
         aria-label={t.add}
-        className="fixed bottom-24 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg hover:bg-[#1d4ed8]"
+        className="h-auto fixed bottom-24 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-hub-navy text-hub-on-navy shadow-lg hover:bg-hub-navy hover:opacity-90"
       >
         <Plus className="h-6 w-6" />
-      </button>
+      </Button>
 
       {pickerOpen && (
         <TypePicker
@@ -540,7 +539,7 @@ function RecordsPage() {
         />
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
+      <nav className="fixed inset-x-0 bottom-0 z-10 workspace-nav border-t border-hub-navy bg-hub-navy">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={i18nT("nav.home")} />
           <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={i18nT("nav.health")} />
@@ -579,7 +578,7 @@ function RecordEntryCard({
 
   return (
     <li>
-      <article className="rounded-2xl bg-white p-4 shadow-sm">
+      <article className="rounded-2xl bg-card p-4  workspace-card">
         <div className="flex items-start gap-3">
           <Avatar name={authorName} url={avatarUrl} />
           <div className="min-w-0 flex-1">
@@ -658,7 +657,7 @@ function RecordEntryCard({
 function Avatar({ name, url }: { name: string; url: string | null }) {
   if (url) return <img src={url} alt="" className="h-10 w-10 rounded-full object-cover" />;
   return (
-    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-sm font-semibold text-white">
+    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-hub-navy text-sm font-semibold text-hub-on-navy">
       {initials(name) || "U"}
     </div>
   );
@@ -673,7 +672,7 @@ function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: Ent
   ];
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
-      <div className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-bold text-[#0D1B2A]">{t.pickType}</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
@@ -776,7 +775,7 @@ function UploadModal({
 
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
-      <div className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="inline-flex items-center gap-2 text-base font-bold text-[#0D1B2A]">
             <meta.Icon className="h-5 w-5" /> {meta.label}
@@ -834,7 +833,7 @@ function UploadModal({
             onSave={submit}
             disabled={busy}
             savingLabel={t.uploading}
-            className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8] flex items-center gap-2"
+            className="rounded-full bg-hub-navy px-4 py-2 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 flex items-center gap-2"
           >
             {t.save}
           </SaveButton>
@@ -884,11 +883,11 @@ function EntryDetail({
   const isPdf = entry.file_mime === "application/pdf";
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-[#F8F9FA]">
+    <div className="fixed inset-0 z-40 flex flex-col bg-hub-bg">
       <header className="flex items-center gap-3 bg-white px-4 py-3 shadow-sm">
-        <button type="button" onClick={onClose} aria-label={t.back} className="rounded-md p-1 hover:bg-gray-100">
+        <Button variant="plain" type="button" onClick={onClose} aria-label={t.back} className="rounded-md p-1 hover:bg-gray-100">
           <ArrowLeft className="h-5 w-5" />
-        </button>
+        </Button>
         <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${meta.color}`}>
           <meta.Icon className="h-3 w-3" /> {meta.label}
         </span>
@@ -908,7 +907,7 @@ function EntryDetail({
           {entry.body && <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{entry.body}</p>}
 
           {entry.file_path && fileUrl && (
-            <div className="mt-4 rounded-2xl bg-white p-3 shadow-sm">
+            <div className="mt-4 rounded-2xl bg-card p-3  workspace-card">
               {isImage ? (
                 <img src={fileUrl} alt={entry.file_name ?? ""} className="w-full rounded-lg" />
               ) : isPdf ? (
@@ -919,7 +918,7 @@ function EntryDetail({
                   <span className="truncate">{entry.file_name}</span>
                 </div>
               )}
-              <a href={fileUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-[#2563EB] hover:underline">
+              <a href={fileUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-hub-navy hover:underline">
                 <Download className="h-3 w-3" /> {t.download}
               </a>
             </div>
@@ -954,9 +953,9 @@ function EntryDetail({
             rows={1}
             className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
           />
-          <button type="button" disabled={posting || !draft.trim()} onClick={postComment} className="inline-flex h-9 items-center gap-1 rounded-lg bg-[#2563EB] px-3 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60">
+          <Button variant="plain" type="button" disabled={posting || !draft.trim()} onClick={postComment} className="h-auto inline-flex h-9 items-center gap-1 rounded-full bg-hub-navy px-3 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40">
             <Send className="h-4 w-4" /> {t.post}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -964,7 +963,7 @@ function EntryDetail({
 }
 
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to: "/home" | "/health-pass" | "/travel" | "/records" | "/pairing" | "/profile" }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"}`;
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-hub-active text-hub-on-navy" : "text-hub-footer hover:text-hub-on-navy"}`;
   return (
     <li>
       <Link to={to} className={className}>{icon}<span data-no-translate>{label}</span></Link>
