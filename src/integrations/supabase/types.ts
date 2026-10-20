@@ -1111,11 +1111,14 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           first_name: string | null
+          gender_identity: string | null
+          gender_identity_description: string | null
           id: string
           language: string
           last_name: string | null
           nationality: string | null
           phone: string | null
+          pronouns: string | null
           setup_dismissed_at: string | null
           updated_at: string
           user_id: string
@@ -1130,11 +1133,14 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           first_name?: string | null
+          gender_identity?: string | null
+          gender_identity_description?: string | null
           id?: string
           language?: string
           last_name?: string | null
           nationality?: string | null
           phone?: string | null
+          pronouns?: string | null
           setup_dismissed_at?: string | null
           updated_at?: string
           user_id: string
@@ -1149,11 +1155,14 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           first_name?: string | null
+          gender_identity?: string | null
+          gender_identity_description?: string | null
           id?: string
           language?: string
           last_name?: string | null
           nationality?: string | null
           phone?: string | null
+          pronouns?: string | null
           setup_dismissed_at?: string | null
           updated_at?: string
           user_id?: string
