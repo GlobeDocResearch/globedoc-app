@@ -15,7 +15,9 @@ import { Button } from "@/components/ui/button";
 export function LanguagePickerDialog({
   open,
   onOpenChange,
+  appearance = "default",
 }: {
+  appearance?: "default" | "hub";
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
@@ -24,11 +26,16 @@ export function LanguagePickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm" data-no-translate>
+      <DialogContent
+        className={appearance === "hub"
+          ? "language-panel-hub w-[calc(100%-32px)] max-w-sm max-h-[85dvh] gap-4 overflow-y-auto rounded-xl border-hub-line bg-language-panel p-6 font-sans text-language-ink"
+          : "max-w-sm"}
+        data-no-translate
+      >
         <DialogHeader>
-          <DialogTitle>Choose language</DialogTitle>
+          <DialogTitle className={appearance === "hub" ? "text-lg font-semibold" : undefined}>Choose language</DialogTitle>
         </DialogHeader>
-        <ul className="max-h-[60vh] divide-y divide-gray-100 overflow-y-auto">
+        <ul className={appearance === "hub" ? "space-y-1" : "max-h-[60vh] divide-y divide-gray-100 overflow-y-auto"}>
           {LANGUAGES.map((l) => {
             const selected = l.code === langCode;
             return (
@@ -39,7 +46,9 @@ export function LanguagePickerDialog({
                     setLangCode(l.code);
                     onOpenChange(false);
                   }}
-                  className={cn(
+                  className={appearance === "hub"
+                    ? cn("flex h-11 w-full items-center justify-between rounded-md px-3 text-left text-sm hover:bg-language-hover", selected && "bg-language-selected text-language-blue")
+                    : cn(
                     "flex w-full items-center justify-between px-3 py-3 text-left text-sm hover:bg-gray-50",
                     selected && "font-semibold text-[#2563EB]",
                   )}
@@ -73,14 +82,14 @@ export function LanguageGlobeButton({ className, appearance = "default" }: { cla
         data-no-translate
         className={cn(
           appearance === "header"
-            ? "h-9 w-9 shrink-0 rounded-full border border-auth-header-foreground/40 bg-transparent p-0 text-auth-header-foreground hover:bg-transparent hover:text-auth-accent"
+            ? "h-9 w-9 shrink-0 rounded-full border border-hub-on-navy/40 bg-transparent p-0 text-hub-on-navy hover:bg-transparent hover:text-hub-sky"
             : "inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/60 text-foreground shadow-sm backdrop-blur transition hover:bg-card",
           className,
         )}
       >
-        <Globe className="h-4 w-4" />
+        <Globe className="h-4 w-4" strokeWidth={appearance === "header" ? 1.5 : undefined} />
       </Button>
-      <LanguagePickerDialog open={open} onOpenChange={setOpen} />
+      <LanguagePickerDialog open={open} onOpenChange={setOpen} appearance={appearance === "header" ? "hub" : "default"} />
     </>
   );
 }
