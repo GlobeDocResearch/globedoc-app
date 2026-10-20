@@ -1,4 +1,5 @@
 # Architecture rules
+- Store optional identity and pronouns on profiles so existing owner RLS, full-profile JSON export and profile deletion cover them; render saved identity via PatientIdentity with explicit translation exclusion, and exclude choice values from the generated label list.
 - Keep logged-in header controls in WorkspaceBrand/WorkspaceBell (shared presentation, handlers page-owned): bell shows a red unread badge only when a count is passed (no notification source yet), sign-out hides below 640px (Settings/Profile keep it), and the professional badge is a round medical-bag icon on mobile with the "PRO" text pill on desktop.
 - Keep the login entry presentation in a shared LoginEntryPage with audience variants so patient, professional, and legacy sign-in views preserve the same forms and appearance.
 - /pro is a layout with a public index entry selected by matched route ID (not target pathname); authenticate only its workspace children and send successful professional sign-in to /connect to preserve the existing destination without mounting an auth guard during navigation.

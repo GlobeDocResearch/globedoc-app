@@ -7,6 +7,7 @@
 import ts from "typescript";
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { GENDER_IDENTITY_OPTIONS } from "../src/lib/profileIdentity";
 
 const SCAN = ["src/routes", "src/components"];
 const SKIP = [/\/api\//, /\/lovable\//, /\.test\./];
@@ -121,7 +122,7 @@ const clinical = new Set<string>();
 for (const f of CATALOGS) { try { literals(f, false, (s) => clinical.add(norm(s).toLowerCase())); } catch {} }
 
 const FILES = SCAN.flatMap((d) => walk(d, []));
-const answers = new Set<string>();
+const answers = new Set<string>(GENDER_IDENTITY_OPTIONS);
 for (const f of FILES) scanAnswers(f, (s) => answers.add(norm(s)));
 // Keys sharing a family prefix with answer keys (e.g. ex_*) are treated as answers unless used directly as UI text.
 const answerFamilies = new Set([...answerKeys].filter((k) => k.includes("_")).map((k) => k.split("_")[0] + "_"));

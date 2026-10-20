@@ -81,6 +81,9 @@ export const Route = createFileRoute("/api/public/connect/passport")({
             biological_sex: profile.data?.biological_sex,
             nationality: profile.data?.nationality,
             blood_group: profile.data?.blood_group,
+            gender_identity: profile.data?.gender_identity,
+            gender_identity_description: profile.data?.gender_identity_description,
+            pronouns: profile.data?.pronouns,
           },
           medical_history: {
             summary: mcs.data,

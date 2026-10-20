@@ -1,7 +1,9 @@
 import { useMemo } from "react";
+import { PatientIdentity } from "@/components/PatientIdentity";
+import type { ProfileIdentity } from "@/lib/profileIdentity";
 
 type Passport = {
-  patient?: {
+  patient?: ProfileIdentity & {
     name?: string;
     date_of_birth?: string | null;
     biological_sex?: string | null;
@@ -186,7 +188,10 @@ export function PatientHealthPassportView({ passport }: { passport: Passport }) 
     <div className="space-y-4">
       {/* Patient summary */}
       <div className="rounded-2xl bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-bold text-[#0D1B2A]">{p.name || "Patient"}</h2>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h2 className="text-lg font-bold text-[#0D1B2A]">{p.name || "Patient"}</h2>
+          <PatientIdentity patient={p} />
+        </div>
         {summaryFields.length === 0 ? (
           <p className="mt-2 text-sm text-gray-400 italic">No demographic data recorded.</p>
         ) : (

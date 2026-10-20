@@ -7,6 +7,7 @@ import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPair
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/save-button";
 import { PatientHealthPassportView } from "@/components/PatientHealthPassportView";
+import { PatientIdentity } from "@/components/PatientIdentity";
 
 export const Route = createFileRoute("/pro/patients")({
   head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }, { name: "description", content: "View patient-approved Health Passports and records in GlobeDoc." }, { property: "og:title", content: "Patients — GlobeDoc Pro" }, { property: "og:description", content: "View patient-approved Health Passports and records in GlobeDoc." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -246,6 +247,12 @@ function ProPatientsTab() {
         </div>
       ) : (
         <>
+          {passport?.patient && (
+            <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h2 data-no-translate translate="no" className="workspace-heading text-lg">{passport.patient.name || patientName}</h2>
+              <PatientIdentity patient={passport.patient} />
+            </div>
+          )}
           <div className="mt-4 flex flex-wrap gap-2">
             {filterChips.map((chip) => {
               const active = filterType === chip.key;
