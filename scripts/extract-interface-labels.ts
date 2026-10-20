@@ -81,6 +81,7 @@ for (const f of SCAN.flatMap((d) => walk(d, []))) {
     if (/^[\w-]+(:[\w-]+)*(\s+[\w:/\[\]().#%-]+)*$/.test(s) && /[-:\[]/.test(s)) return; // class-like
     if (/^(https?:|\/|#|@|mailto:)/.test(s) || /[{}<>=]/.test(s) || /^[\w.-]+@[\w.-]+$/.test(s)) return;
     if (/^[A-Z][a-z]+([A-Z][a-z]+)+$/.test(s)) return; // component names
+    if (/[åäöÅÄÖ]/.test(s)) return; // Swedish comes from built-in translations
     if (clinical.has(s.toLowerCase())) return;
     labels.add(s);
   });
