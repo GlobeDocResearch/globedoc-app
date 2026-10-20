@@ -319,7 +319,7 @@ function PairingPage() {
             <LinkIcon className="h-6 w-6 text-[#0D1B2A]" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-[#0D1B2A]">Share your GlobeDoc Health Passport</h2>
+            <h2 className="text-base workspace-heading">Share your GlobeDoc Health Passport</h2>
             <p className="text-xs text-gray-600">One-time use · You choose validity</p>
           </div>
         </div>
@@ -330,7 +330,7 @@ function PairingPage() {
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
                 <LinkIcon className="h-6 w-6 text-gray-400" />
               </div>
-              <h3 className="mt-3 text-base font-bold text-[#0D1B2A]">
+              <h3 className="mt-3 text-base workspace-heading">
                 {expired ? "Code expired" : "No active code"}
               </h3>
               <p className="mt-1 text-sm text-gray-500">Generate a code when you are with a clinician</p>
@@ -412,7 +412,7 @@ function PairingPage() {
               maxLength={500}
               rows={3}
               placeholder="Describe your symptoms or reason for visit..."
-              className="mt-3 w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+              className="mt-3 w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#253F78] focus:outline-none focus:ring-1 focus:ring-[#253F78]"
             />
             <div className="mt-1 flex items-center justify-between">
               <span className="text-[11px] text-gray-400">{reasonText.length}/500</span>
@@ -532,7 +532,7 @@ function PairingPage() {
                         <button
                           type="button"
                           onClick={() => setExtendId(null)}
-                          className="rounded-full border border-gray-200 px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                          className="rounded-full border border-[#253F78] px-4 py-2 text-xs font-medium text-[#253F78] hover:bg-gray-50"
                         >
                           Cancel
                         </button>
@@ -589,7 +589,7 @@ function PairingPage() {
       {revokeId && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-5">
           <div className="w-full max-w-sm rounded-2xl bg-card p-5  workspace-card">
-            <h3 className="text-base font-bold text-[#0D1B2A]">Revoke access?</h3>
+            <h3 className="text-base workspace-heading">Revoke access?</h3>
             <p className="mt-1 text-sm text-gray-600">
               This professional will immediately lose access to your Passport and Records.
             </p>
@@ -597,7 +597,7 @@ function PairingPage() {
               <button
                 type="button"
                 onClick={() => setRevokeId(null)}
-                className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                className="rounded-full border border-[#253F78] px-4 py-2 text-sm font-medium text-[#253F78] hover:bg-gray-50"
               >
                 Cancel
               </button>

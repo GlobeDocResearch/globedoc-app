@@ -90,7 +90,7 @@ function SettingsTab() {
               value={newPw}
               onChange={(e) => setNewPw(e.target.value)}
               placeholder="New password (min. 8 characters)"
-              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none"
             />
             <SaveButton
               onSave={onChangePassword}
@@ -124,7 +124,7 @@ function SettingsTab() {
 
       <section className="mt-6 rounded-2xl bg-card  workspace-card">
         <div className="px-5 pt-4 pb-2">
-          <h2 className="text-sm font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
+          <h2 className="text-sm workspace-heading">Advanced Security & Privacy</h2>
         </div>
         <div className="divide-y divide-gray-100">
           <ComingSoonRow icon="🔗" label="GlobeDoc Chain" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />

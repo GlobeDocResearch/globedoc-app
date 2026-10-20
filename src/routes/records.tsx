@@ -431,7 +431,7 @@ function RecordsPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t.searchPh}
-          className="mt-4 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#2563EB] focus:outline-none"
+          className="mt-4 w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-[#0D1B2A] placeholder:text-gray-400 focus:border-[#253F78] focus:outline-none"
         />
 
         {loading ? null : view === "feed" ? (
@@ -674,7 +674,7 @@ function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: Ent
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
       <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#0D1B2A]">{t.pickType}</h2>
+          <h2 className="text-base workspace-heading">{t.pickType}</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
         </div>
         <ul className="space-y-2">
@@ -777,7 +777,7 @@ function UploadModal({
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
       <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="inline-flex items-center gap-2 text-base font-bold text-[#0D1B2A]">
+          <h2 className="inline-flex items-center gap-2 text-base workspace-heading">
             <meta.Icon className="h-5 w-5" /> {meta.label}
           </h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
@@ -788,7 +788,7 @@ function UploadModal({
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
           />
         </label>
 
@@ -798,7 +798,7 @@ function UploadModal({
             value={body}
             onChange={e => setBody(e.target.value)}
             rows={4}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
           />
         </label>
 
@@ -951,7 +951,7 @@ function EntryDetail({
             onChange={e => setDraft(e.target.value)}
             placeholder={t.addComment}
             rows={1}
-            className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#2563EB] focus:outline-none"
+            className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
           />
           <Button variant="plain" type="button" disabled={posting || !draft.trim()} onClick={postComment} className="h-auto inline-flex h-9 items-center gap-1 rounded-full bg-hub-navy px-3 text-sm font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40">
             <Send className="h-4 w-4" /> {t.post}

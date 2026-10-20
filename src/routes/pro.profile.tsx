@@ -183,7 +183,7 @@ function ProfileTab() {
               type="button"
               onClick={() => docInputRef.current?.click()}
               disabled={uploadingDoc}
-              className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-xs font-semibold text-[#0D1B2A] hover:bg-gray-50 disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-full border border-[#253F78] px-4 py-2 text-xs font-semibold text-[#253F78] hover:bg-gray-50 disabled:opacity-60"
             >
               <Upload className="h-4 w-4" />
               {uploadingDoc ? "Uploading..." : meta.license_doc_url ? "Replace file" : "Choose file"}
@@ -240,7 +240,7 @@ function Field({
         disabled={disabled}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none disabled:bg-gray-50 disabled:text-gray-500"
+        className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none disabled:bg-gray-50 disabled:text-gray-500"
       />
     </div>
   );

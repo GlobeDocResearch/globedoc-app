@@ -25,14 +25,14 @@ export function BetaSurveyCard({ onOpen }: { onOpen: () => void }) {
       onClick={onOpen}
       className="flex w-full items-start gap-3 rounded-2xl bg-white p-5 text-left shadow-sm transition hover:bg-gray-50"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#2563EB]">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EDF1F7] text-[#253F78]">
         <MessageSquare className="h-5 w-5" />
       </div>
       <div className="flex-1">
         <p className="text-sm font-semibold text-[#0D1B2A]">GlobeDoc Beta Survey</p>
         <p className="text-xs text-gray-500">Share your feedback — takes 1 minute.</p>
       </div>
-      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#2563EB]">
+      <span className="rounded-full bg-[#EDF1F7] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#253F78]">
         Beta
       </span>
     </button>
@@ -200,7 +200,7 @@ export function BetaSurvey({ open, onClose, userId, role }: Props) {
                     rows={8}
                     maxLength={2000}
                     placeholder="Tell us what's on your mind…"
-                    className="mt-4 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#2563EB] focus:outline-none"
+                    className="mt-4 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#253F78] focus:outline-none"
                   />
                   <p className="mt-1 text-right text-xs text-gray-400">{q6.length}/2000</p>
                 </div>
@@ -217,7 +217,7 @@ export function BetaSurvey({ open, onClose, userId, role }: Props) {
               type="button"
               disabled={step === 1}
               onClick={() => setStep((s) => Math.max(1, s - 1))}
-              className="rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-[#0D1B2A] hover:bg-gray-50 disabled:opacity-40"
+              className="rounded-full border border-[#253F78] px-5 py-2.5 text-sm font-semibold text-[#253F78] hover:bg-gray-50 disabled:opacity-40"
             >
               Back
             </button>
