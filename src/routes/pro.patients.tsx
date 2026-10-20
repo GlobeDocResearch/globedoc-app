@@ -390,7 +390,7 @@ function ProTypePicker({ onPick, onClose }: { onPick: (t: ProEntryType) => void;
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
       <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#0D1B2A]">Choose entry type</h2>
+          <h2 className="text-base workspace-heading">Choose entry type</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
         </div>
         <ul className="space-y-2">
@@ -458,7 +458,7 @@ function ProEntryComposer({
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
       <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#0D1B2A]">{titleLabel}</h2>
+          <h2 className="text-base workspace-heading">{titleLabel}</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
         </div>
         <div className="space-y-3">
@@ -486,7 +486,7 @@ function ProEntryComposer({
           )}
         </div>
         <div className="mt-4 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
+          <button type="button" onClick={onClose} className="rounded-full border border-[#253F78] px-4 py-2 text-sm font-medium text-[#253F78] hover:bg-gray-50">Cancel</button>
           <SaveButton
             onSave={submit}
             disabled={busy}

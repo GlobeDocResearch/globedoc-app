@@ -674,7 +674,7 @@ function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: Ent
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
       <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#0D1B2A]">{t.pickType}</h2>
+          <h2 className="text-base workspace-heading">{t.pickType}</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
         </div>
         <ul className="space-y-2">
@@ -777,7 +777,7 @@ function UploadModal({
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
       <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="inline-flex items-center gap-2 text-base font-bold text-[#0D1B2A]">
+          <h2 className="inline-flex items-center gap-2 text-base workspace-heading">
             <meta.Icon className="h-5 w-5" /> {meta.label}
           </h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>

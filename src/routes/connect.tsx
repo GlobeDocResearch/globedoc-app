@@ -244,7 +244,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
 
         {isAuthed && (
           <section className="mt-8 rounded-2xl bg-card p-5  workspace-card">
-            <h2 className="text-base font-bold text-[#0D1B2A]">Active patient connections</h2>
+            <h2 className="text-base workspace-heading">Active patient connections</h2>
             {pairings.length === 0 ? (
               <p className="mt-2 text-sm text-gray-500">No active connections yet.</p>
             ) : (
@@ -279,7 +279,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
 
         {isAuthed && past.length > 0 && (
           <section className="mt-6 rounded-2xl bg-card p-5  workspace-card">
-            <h2 className="text-base font-bold text-[#0D1B2A]">Past connections</h2>
+            <h2 className="text-base workspace-heading">Past connections</h2>
             <ul className="mt-3 space-y-2">
               {past.map((p) => (
                 <li
@@ -311,7 +311,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
       {duplicate && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 p-5">
           <div className="w-full max-w-md rounded-2xl bg-card p-5  workspace-card">
-            <h3 className="text-base font-bold text-[#0D1B2A]">Active connection already exists</h3>
+            <h3 className="text-base workspace-heading">Active connection already exists</h3>
             <p className="mt-2 text-sm text-gray-600">
               You already have an active connection with{" "}
               <span className="font-semibold text-[#0D1B2A]">{duplicate.existing_pro_name}</span>.
@@ -346,7 +346,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
                 type="button"
                 onClick={() => setDuplicate(null)}
                 disabled={extending}
-                className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-full border border-[#253F78] px-4 py-2 text-sm font-medium text-[#253F78] hover:bg-gray-50 disabled:opacity-50"
               >
                 Cancel
               </button>

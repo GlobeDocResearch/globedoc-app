@@ -521,14 +521,14 @@ function ProfilePage() {
         {/* Personal Information */}
         <Card>
           <div className="flex items-start justify-between">
-            <h2 className="text-base font-bold text-[#0D1B2A]">{t.personal}</h2>
+            <h2 className="text-base workspace-heading">{t.personal}</h2>
             {!editing ? (
               <button onClick={startEdit} className="rounded-full p-2 text-gray-500 hover:bg-gray-100" aria-label="Edit">
                 <Pencil className="h-4 w-4" />
               </button>
             ) : (
               <div className="flex gap-2">
-                <button onClick={cancelEdit} className="rounded-md border border-gray-200 px-3 py-1 text-xs">{t.cancel}</button>
+                <button onClick={cancelEdit} className="rounded-md border border-[#253F78] px-3 py-1 text-xs text-[#253F78]">{t.cancel}</button>
                 <SaveButton onSave={save} className="rounded-full bg-hub-navy px-3 py-1 text-xs font-semibold text-hub-on-navy flex items-center gap-1">{t.save}</SaveButton>
               </div>
             )}
@@ -572,7 +572,7 @@ function ProfilePage() {
 
         {/* Security */}
         <Card>
-          <h2 className="text-base font-bold text-[#0D1B2A]">{t.security}</h2>
+          <h2 className="text-base workspace-heading">{t.security}</h2>
           <div className="mt-3 divide-y divide-gray-100">
             <ComingSoonRow icon="🏦" label={t.bankid} badge={t.comingSoon} />
             <ComingSoonRow icon="🔐" label={t.threeFactor} badge={t.comingSoon} />
@@ -582,7 +582,7 @@ function ProfilePage() {
 
         {/* Account */}
         <Card>
-          <h2 className="text-base font-bold text-[#0D1B2A]">{t.account}</h2>
+          <h2 className="text-base workspace-heading">{t.account}</h2>
           <div className="mt-3 space-y-3">
             <div>
               <p className="text-xs text-gray-500">{t.email}</p>
@@ -590,7 +590,7 @@ function ProfilePage() {
             </div>
             <div className="flex items-center justify-between">
               <p className="text-sm text-[#0D1B2A]">{t.changePwd}</p>
-              <button onClick={sendReset} className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-hub-navy">{t.changePwdBtn}</button>
+              <button onClick={sendReset} className="rounded-md border border-[#253F78] px-3 py-1.5 text-xs font-medium text-hub-navy">{t.changePwdBtn}</button>
             </div>
           </div>
         </Card>
@@ -599,7 +599,7 @@ function ProfilePage() {
 
         {/* Settings */}
         <Card>
-          <h2 className="text-base font-bold text-[#0D1B2A]">{t.settings}</h2>
+          <h2 className="text-base workspace-heading">{t.settings}</h2>
           <div className="mt-3 flex items-center justify-between">
             <p className="text-sm text-[#0D1B2A]">{t.appLang}</p>
             <LanguagePickerRow />
@@ -611,7 +611,7 @@ function ProfilePage() {
           <div className="flex items-start gap-3">
             <Shield className="mt-0.5 h-5 w-5 text-hub-navy" />
             <div>
-              <h2 className="text-base font-bold text-[#0D1B2A]">{t.privacy}</h2>
+              <h2 className="text-base workspace-heading">{t.privacy}</h2>
               <p className="text-xs text-gray-500">{t.privacySub}</p>
             </div>
           </div>
@@ -620,13 +620,13 @@ function ProfilePage() {
               action={
                 <div className="flex gap-2">
                   <Button variant="plain" onClick={exportPDF} className="h-auto inline-flex items-center gap-1 rounded-full bg-hub-navy px-3 py-1.5 text-xs font-semibold text-hub-on-navy"><FileTextIcon className="h-3 w-3" /> PDF</Button>
-                  <button onClick={exportJSON} className="inline-flex items-center gap-1 rounded-md border border-[#2563EB] px-3 py-1.5 text-xs font-semibold text-hub-navy"><FileJson className="h-3 w-3" /> JSON</button>
+                  <button onClick={exportJSON} className="inline-flex items-center gap-1 rounded-md border border-[#253F78] px-3 py-1.5 text-xs font-semibold text-hub-navy"><FileJson className="h-3 w-3" /> JSON</button>
                 </div>
               } />
             <PrivacyRow icon={<Eye className="h-4 w-4" />} title={t.consentTitle} subtitle={t.consentSub}
-              action={<button onClick={openConsent} className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium">{t.view}</button>} />
+              action={<button onClick={openConsent} className="rounded-md border border-[#253F78] px-3 py-1.5 text-xs font-medium text-[#253F78]">{t.view}</button>} />
             <PrivacyRow icon={<FileText className="h-4 w-4" />} title={t.legalTitle} subtitle={t.legalSub}
-              action={<Link to="/legal" className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium">{t.open}</Link>} />
+              action={<Link to="/legal" className="rounded-md border border-[#253F78] px-3 py-1.5 text-xs font-medium text-[#253F78]">{t.open}</Link>} />
             <PrivacyRow icon={<AlertTriangle className="h-4 w-4 text-red-600" />} title={<span className="text-red-600">{t.deleteTitle}</span>} subtitle={t.deleteSub}
               action={<button onClick={() => setDeleteOpen(true)} className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white">{t.del}</button>} />
           </div>
@@ -634,7 +634,7 @@ function ProfilePage() {
 
         {/* Advanced Security & Privacy */}
         <Card>
-          <h2 className="text-base font-bold text-[#0D1B2A]">Advanced Security & Privacy</h2>
+          <h2 className="text-base workspace-heading">Advanced Security & Privacy</h2>
           <div className="mt-3 divide-y divide-gray-100">
             <ComingSoonRow icon="🔗" label="GlobeDoc Chain" badge="Coming Soon" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
             <ComingSoonRow icon="🔐" label="Homomorphic Encryption" badge="Coming Soon" subtitle="Your data can be analysed without ever being decrypted" />
@@ -662,7 +662,7 @@ function ProfilePage() {
         <Modal onClose={() => setDeleteOpen(false)} title={t.deleteTitle} closeLabel={t.cancel}>
           <p className="text-sm text-gray-700">{t.deleteConfirm}</p>
           <div className="mt-4 flex justify-end gap-2">
-            <button onClick={() => setDeleteOpen(false)} className="rounded-md border border-gray-200 px-3 py-1.5 text-xs">{t.cancel}</button>
+            <button onClick={() => setDeleteOpen(false)} className="rounded-md border border-[#253F78] px-3 py-1.5 text-xs text-[#253F78]">{t.cancel}</button>
             <button onClick={deleteAccount} className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white">{t.del}</button>
           </div>
         </Modal>
