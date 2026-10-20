@@ -71,6 +71,7 @@ function objectOwner(p: ts.Node): string {
 // Dictionary keys that feed answer choices or describe a patient's saved state.
 const answerKeys = new Set<string>();
 const answerPrefixes = new Set<string>();
+const uiKeys = new Set<string>();
 function keyOf(n: ts.Node): { key?: string; prefix?: string } {
   // t("key"), t.key, T.key, t[`pre_${x}`]
   if (ts.isCallExpression(n) && /^(t|tr|T|L)$/.test(n.expression.getText()) && n.arguments[0]) {
@@ -97,6 +98,7 @@ function scanAnswers(file: string, sink: (s: string) => void) {
     const k = keyOf(n);
     if (k.prefix !== undefined) answerPrefixes.add(k.prefix);
     else if (k.key && inAnswerContext(n)) answerKeys.add(k.key);
+    else if (k.key) uiKeys.add(k.key);
     // Fallbacks shown in place of a saved value, e.g. {record.x || "Parent"}
     if ((ts.isStringLiteral(n)) && n.parent && ts.isBinaryExpression(n.parent) && /\|\||\?\?/.test(n.parent.operatorToken.getText())) sink(n.text);
     // Literals directly in arrays/objects of option-like shape
@@ -121,8 +123,11 @@ for (const f of CATALOGS) { try { literals(f, false, (s) => clinical.add(norm(s)
 const FILES = SCAN.flatMap((d) => walk(d, []));
 const answers = new Set<string>();
 for (const f of FILES) scanAnswers(f, (s) => answers.add(norm(s)));
+// Keys sharing a family prefix with answer keys (e.g. ex_*) are treated as answers unless used directly as UI text.
+const answerFamilies = new Set([...answerKeys].filter((k) => k.includes("_")).map((k) => k.split("_")[0] + "_"));
 for (const f of FILES) dictEntries(f, (key, value) => {
-  if (answerKeys.has(key) || [...answerPrefixes].some((p) => p && key.startsWith(p))) answers.add(norm(value));
+  const family = key.includes("_") && answerFamilies.has(key.split("_")[0] + "_") && !uiKeys.has(key);
+  if (family || answerKeys.has(key) || [...answerPrefixes].some((p) => p && key.startsWith(p))) answers.add(norm(value));
 });
 const labels = new Set<string>();
 for (const f of FILES) {
