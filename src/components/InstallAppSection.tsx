@@ -8,10 +8,19 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+const PLATFORM_LABELS = {
+  ios: { title: "iPhone / iPad · Safari", steps: "Share → “Add to Home Screen”" },
+  android: { title: "Android · Chrome", steps: "Menu ⋮ → “Install app” or “Add to Home screen”" },
+} as const;
+
+const INSTALL_STEPS: Record<"ios" | "android", Array<"ios" | "android">> = {
+  ios: ["ios", "android"],
+  android: ["android", "ios"],
+};
+
 export function InstallAppSection() {
   const [device, setDevice] = useState<InstallDevice | null>(null);
   const [installed, setInstalled] = useState(false);
-  const [showOthers, setShowOthers] = useState(false);
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
   const [prompting, setPrompting] = useState(false);
 
@@ -60,13 +69,20 @@ export function InstallAppSection() {
         GlobeDoc can be installed on your phone like an app. It updates automatically, so you always have the latest version. No app store needed.
       </p>
       <div className="mt-3 space-y-3 text-sm leading-6 text-muted-foreground">
-        {device === "desktop" && <p>On your phone, open this page to install GlobeDoc as an app.</p>}
-        {(device === "ios" || showOthers) && <p><strong className="font-medium text-foreground">iPhone / iPad · Safari</strong><br />Share → “Add to Home Screen”</p>}
-        {(device === "android" || showOthers) && <p><strong className="font-medium text-foreground">Android · Chrome</strong><br />Menu ⋮ → “Install app” or “Add to Home screen”</p>}
+        {device === "desktop" ? (
+          <p>On your phone, open this page to install GlobeDoc as an app.</p>
+        ) : (
+          INSTALL_STEPS[device].map((platform) => (
+            <p key={platform}>
+              <strong className="font-medium text-foreground">{PLATFORM_LABELS[platform].title}</strong>
+              <br />
+              {PLATFORM_LABELS[platform].steps}
+            </p>
+          ))
+        )}
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-4">
         {prompt && <Button variant="plain" onClick={install} disabled={prompting} className="bg-auth-action text-auth-header-foreground hover:opacity-90"><Download />Install app</Button>}
-        {device !== "desktop" && <Button variant="plain" onClick={() => setShowOthers((value) => !value)} className="h-auto p-0 text-sm text-auth-title underline underline-offset-4">{showOthers ? "Hide other devices" : "Show other devices"}</Button>}
       </div>
     </section>
   );
