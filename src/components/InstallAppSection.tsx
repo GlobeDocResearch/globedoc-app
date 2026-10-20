@@ -52,7 +52,7 @@ export function InstallAppSection() {
 
   return (
     <section aria-labelledby="install-heading" className="mt-9 w-full max-w-md border-t border-border pt-6 text-left">
-      <h2 id="install-heading" className="flex items-center gap-2.5 text-xl font-semibold text-auth-title">
+      <h2 id="install-heading" className="flex items-center gap-2.5 text-xl font-semibold text-auth-heading">
         <Smartphone aria-hidden="true" className="size-5 shrink-0" strokeWidth={1.5} />
         Use GlobeDoc as an app
       </h2>
