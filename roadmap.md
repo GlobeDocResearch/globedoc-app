@@ -7,3 +7,8 @@
 - [x] Correct footer separators and align role chooser content.
 - [x] Match professional entry to the patient sign-in card and preserve existing sign-in and pairing flows.
 - [x] Verify the updated pages and controls.
+
+# GlobeDoc entry styling
+- [x] Match header, typography, colours, cards and footer on chooser and sign-in pages only.
+- [x] Add device-specific installation guidance and supported browser install button without caching.
+- [x] Verify navigation, password reset, language selection and desktop/mobile presentation.
