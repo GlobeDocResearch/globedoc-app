@@ -58,6 +58,8 @@
   --color-hub-line: var(--hub-line);
   --color-hub-ink: var(--hub-ink);
   --color-hub-body: var(--hub-body);
+  --color-hub-highlight: var(--hub-highlight);
+  --color-hub-active: var(--hub-active);
   --color-language-panel: var(--language-panel);
   --color-language-ink: var(--language-ink);
   --color-language-blue: var(--language-blue);
@@ -69,6 +71,8 @@
   --hub-navy: #253F78; --hub-on-navy: #FFFFFF; --hub-sky: #CFE1F2; --hub-footer: #DDE3F2;
   --hub-bg: #F3F5F4; --hub-line: #DCE3E1; --hub-ink: #1F3A4D;
   --hub-body: oklch(0.33600943 0.047159209 240.79519);
+  --hub-highlight: #EDF1F7;
+  --hub-active: #465C8B;
   --language-panel: #EEF2FF; --language-ink: #0F172A; --language-blue: #2563EB;
   --language-selected: #EFF4FF; --language-hover: #E4EBFF;
   --auth-header: #1D3F7C;
@@ -176,3 +180,38 @@
 .entry-logo {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
+
+/* Explicit frame classes never override the clinical passport components. */
+.workspace-header {
+  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--hub-navy);
+  box-shadow: none;
+}
+.workspace-header > div:last-child:not(.workspace-brand) { margin-left: auto; }
+.workspace-wordmark, .workspace-heading {
+  font-family: "Source Serif 4 Variable", serif;
+  letter-spacing: 0;
+}
+.workspace-heading { color: var(--hub-ink); font-weight: 600; }
+.workspace-header-control {
+  height: 36px; width: 36px; padding: 0;
+  border: 1px solid color-mix(in srgb, var(--hub-on-navy) 40%, transparent);
+  border-radius: 50%; color: var(--hub-on-navy); background: transparent;
+}
+.workspace-header-control:hover { color: var(--hub-sky); background: transparent; }
+.workspace-header-control svg { width: 20px; height: 20px; }
+.workspace-nav { font-family: "IBM Plex Sans Variable", sans-serif; }
+.workspace-nav ul { gap: 2px; }
+.workspace-nav li { min-width: 0; flex: 1; }
+.workspace-nav li > a, .workspace-nav li > button {
+  padding-left: 4px; padding-right: 4px; min-height: 48px;
+}
+.workspace-nav span { max-width: 100%; overflow-wrap: anywhere; text-align: center; }
+.workspace-card { border: 1px solid var(--hub-line); border-radius: 14px; box-shadow: none; }
+.workspace-action { border-radius: 9999px; background: var(--hub-navy); color: var(--hub-on-navy); box-shadow: none; }
+.workspace-action:hover { background: var(--hub-navy); opacity: .9; }
+.workspace-action:disabled { opacity: .4; }
+.workspace-map-dot { fill: var(--hub-navy); }
+@media (min-width: 640px) { .workspace-header { padding-left: 32px; padding-right: 32px; } }

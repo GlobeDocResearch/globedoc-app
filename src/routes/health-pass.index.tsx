@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { WorkspaceBrand } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, ChevronRight, FileText } from "lucide-react";
@@ -8,7 +10,7 @@ import { PassportSetupModal } from "@/components/PassportSetupModal";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/health-pass/")({
-  head: () => ({ meta: [{ title: "Health Passport — GlobeDoc" }] }),
+  head: () => ({ meta: [{ title: "Health Passport — GlobeDoc" }, { name: "description", content: "View your GlobeDoc Health Passport sections." }, { property: "og:title", content: "Health Passport — GlobeDoc" }, { property: "og:description", content: "View your GlobeDoc Health Passport sections." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: PassportPage,
 });
 
@@ -152,26 +154,23 @@ function PassportPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-24">
+    <div className="min-h-screen bg-hub-bg pb-24">
       {/* Top bar */}
-      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-          <span className="text-lg font-bold text-white">GlobeDoc</span>
-        </div>
+      <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+        <WorkspaceBrand />
         <div className="flex items-center gap-2">
-          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <Button variant="plain" type="button" aria-label="Notifications" className="workspace-header-control flex items-center justify-center">
             <Bell className="h-5 w-5" />
-          </button>
-          <button type="button" onClick={handleLogout} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          </Button>
+          <Button variant="plain" type="button" onClick={handleLogout} aria-label="Log out" className="workspace-header-control flex items-center justify-center">
             <LogOut className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </header>
 
       {/* Section 1 — Progress */}
       <section className="px-5 pt-6">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">Health Passport</h1>
+        <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">Health Passport</h1>
         <p className="mt-1 text-sm text-gray-500">My Passport · {completed}/{total} sections</p>
         <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
           <div className="h-full rounded-full bg-[#3B82F6] transition-all" style={{ width: `${percent}%` }} />
@@ -263,7 +262,7 @@ function PassportPage() {
       </section>
 
       {/* Bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
+      <nav className="fixed inset-x-0 bottom-0 z-10 workspace-nav border-t border-hub-navy bg-hub-navy">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} />
           <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={t("nav.health")} active />
@@ -312,7 +311,7 @@ function Hex({ children, color, filled = true, pageBg, style, onClick }: { child
 
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/health-pass" | "/travel" | "/records" | "/pairing" | "/profile" }) {
   const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
-    active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"
+    active ? "bg-hub-active text-hub-on-navy" : "text-hub-footer hover:text-hub-on-navy"
   }`;
   return (
     <li>

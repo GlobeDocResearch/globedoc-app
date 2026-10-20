@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { WorkspaceBrand } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link as LinkIcon, Copy, Check, Home as HomeIcon, Globe, Plane, User, FileText, Trash2, Clock, Bell, LogOut, RefreshCw } from "lucide-react";
@@ -7,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pairing")({
-  head: () => ({ meta: [{ title: "Pairing Code — GlobeDoc" }] }),
+  head: () => ({ meta: [{ title: "Pairing Code — GlobeDoc" }, { name: "description", content: "Manage patient-approved access to your GlobeDoc Health Passport." }, { property: "og:title", content: "Pairing Code — GlobeDoc" }, { property: "og:description", content: "Manage patient-approved access to your GlobeDoc Health Passport." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: PairingPage,
 });
 
@@ -290,32 +292,29 @@ function PairingPage() {
   const fmtDateTime = (s: string) => new Date(s).toLocaleString();
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-24">
-      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-          <span className="text-lg font-bold text-white">GlobeDoc</span>
-        </div>
+    <div className="min-h-screen bg-hub-bg pb-24">
+      <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+        <WorkspaceBrand />
         <div className="flex items-center gap-2">
-          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <Button variant="plain" type="button" aria-label="Notifications" className="workspace-header-control flex items-center justify-center">
             <Bell className="h-5 w-5" />
-          </button>
-          <button
+          </Button>
+          <Button variant="plain"
             type="button"
             onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
             aria-label="Log out"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+            className="workspace-header-control flex items-center justify-center"
           >
             <LogOut className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-5 py-5">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">Pairing Code</h1>
+        <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">Pairing Code</h1>
         <p className="mt-1 text-sm text-gray-500">Share your Health Passport with a clinician</p>
 
-        <div className="mt-4 flex items-center gap-4 rounded-2xl bg-gray-100 p-4 shadow-sm">
+        <div className="mt-4 flex items-center gap-4 workspace-card bg-hub-highlight p-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
             <LinkIcon className="h-6 w-6 text-[#0D1B2A]" />
           </div>
@@ -325,7 +324,7 @@ function PairingPage() {
           </div>
         </div>
 
-        <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm">
+        <div className="mt-4 rounded-2xl bg-card p-5  workspace-card">
           {!code || expired ? (
             <div className="flex flex-col items-center text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
@@ -358,7 +357,7 @@ function PairingPage() {
 
         {/* Validity selector */}
         {(!code || expired) && (
-          <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+          <div className="mt-4 rounded-2xl bg-card p-4  workspace-card">
             <label className="flex items-center gap-2 text-sm font-semibold text-[#0D1B2A]">
               <Clock className="h-4 w-4" /> Code validity
             </label>
@@ -370,7 +369,7 @@ function PairingPage() {
                   onClick={() => setValidity(opt.value)}
                   className={`rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
                     validity === opt.value
-                      ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                      ? "border-hub-navy bg-hub-highlight text-hub-navy"
                       : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
@@ -383,7 +382,7 @@ function PairingPage() {
 
         {/* Reason for visit (optional) */}
         {(!code || expired) && (
-          <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+          <div className="mt-4 rounded-2xl bg-card p-4  workspace-card">
             <h3 className="text-sm font-semibold text-[#0D1B2A]">Reason for visit (optional)</h3>
             <p className="mt-0.5 text-xs text-gray-500">
               Help your clinician prepare — you can also explain verbally
@@ -398,7 +397,7 @@ function PairingPage() {
                     onClick={() => toggleReasonChip(chip)}
                     className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                       active
-                        ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                        ? "border-hub-navy bg-hub-highlight text-hub-navy"
                         : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                     }`}
                   >
@@ -421,7 +420,7 @@ function PairingPage() {
                 <button
                   type="button"
                   onClick={() => { setReasonChips([]); setReasonText(""); }}
-                  className="text-xs font-semibold text-[#2563EB] hover:underline"
+                  className="text-xs font-semibold text-hub-navy hover:underline"
                 >
                   Skip
                 </button>
@@ -431,22 +430,22 @@ function PairingPage() {
         )}
 
         {!code || expired ? (
-          <button
+          <Button variant="plain"
             type="button"
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#2563EB] px-5 py-3.5 text-sm font-semibold text-white shadow-sm hover:opacity-95 disabled:opacity-60"
+            className="h-auto mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-hub-navy px-5 py-3.5 text-sm font-semibold text-hub-on-navy  hover:opacity-90 disabled:opacity-40"
           >
             <LinkIcon className="h-4 w-4" />
             {loading ? "Generating..." : "Generate pairing code"}
-          </button>
+          </Button>
         ) : (
           <>
             <button
               type="button"
               onClick={handleGenerate}
               disabled={loading}
-              className="mt-4 w-full text-center text-sm font-semibold text-[#2563EB] hover:underline"
+              className="mt-4 w-full text-center text-sm font-semibold text-hub-navy hover:underline"
             >
               Generate new code
             </button>
@@ -462,9 +461,9 @@ function PairingPage() {
 
         {/* My paired professionals */}
         <section className="mt-8">
-          <h2 className="text-lg font-bold text-[#0D1B2A]">My paired professionals</h2>
+          <h2 className="text-lg workspace-heading">My paired professionals</h2>
           {pros.length === 0 ? (
-            <div className="mt-3 rounded-2xl bg-white p-5 text-center shadow-sm">
+            <div className="mt-3 rounded-2xl bg-card p-5 text-center  workspace-card">
               <p className="text-sm text-gray-500">
                 No paired professionals yet — share your pairing code with a clinician to connect.
               </p>
@@ -472,7 +471,7 @@ function PairingPage() {
           ) : (
             <ul className="mt-3 space-y-3">
               {pros.map((p) => (
-                <li key={p.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                <li key={p.id} className="rounded-2xl bg-card p-4  workspace-card">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h3 className="text-sm font-bold text-[#0D1B2A]">
@@ -504,7 +503,7 @@ function PairingPage() {
                       <button
                         type="button"
                         onClick={() => { setExtendId(p.id); setExtendMinutes(60); }}
-                        className="flex items-center gap-1 rounded-full border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+                        className="flex items-center gap-1 rounded-full border border-hub-line bg-card px-3 py-1.5 text-xs font-semibold text-hub-navy hover:bg-hub-highlight"
                       >
                         <RefreshCw className="h-3.5 w-3.5" /> Extend access
                       </button>
@@ -521,7 +520,7 @@ function PairingPage() {
                             onClick={() => setExtendMinutes(opt.value)}
                             className={`rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
                               extendMinutes === opt.value
-                                ? "border-[#2563EB] bg-blue-50 text-[#2563EB]"
+                                ? "border-hub-navy bg-hub-highlight text-hub-navy"
                                 : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                             }`}
                           >
@@ -537,14 +536,14 @@ function PairingPage() {
                         >
                           Cancel
                         </button>
-                        <button
+                        <Button variant="plain"
                           type="button"
                           onClick={() => handleExtendConfirm(p.id, extendMinutes)}
                           disabled={extending}
-                          className="rounded-full bg-[#2563EB] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+                          className="h-auto rounded-full bg-hub-navy px-4 py-2 text-xs font-semibold text-hub-on-navy hover:bg-hub-navy hover:opacity-90 disabled:opacity-40"
                         >
                           {extending ? "Saving..." : "Confirm extend"}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -556,16 +555,16 @@ function PairingPage() {
 
         {/* Past connections */}
         <section className="mt-8">
-          <h2 className="text-lg font-bold text-[#0D1B2A]">Past connections</h2>
+          <h2 className="text-lg workspace-heading">Past connections</h2>
           <p className="mt-1 text-xs text-gray-500">Expired pairings from the last 30 days</p>
           {pastPros.length === 0 ? (
-            <div className="mt-3 rounded-2xl bg-white p-5 text-center shadow-sm">
+            <div className="mt-3 rounded-2xl bg-card p-5 text-center  workspace-card">
               <p className="text-sm text-gray-500">No past connections in the last 30 days.</p>
             </div>
           ) : (
             <ul className="mt-3 space-y-3">
               {pastPros.map((p) => (
-                <li key={p.id} className="rounded-2xl bg-white p-4 shadow-sm opacity-90">
+                <li key={p.id} className="rounded-2xl bg-card p-4  opacity-90 workspace-card">
                   <h3 className="text-sm font-bold text-[#0D1B2A]">
                     {p.pro_name}
                     {p.pro_title ? <span className="font-normal text-gray-600"> · {p.pro_title}</span> : null}
@@ -589,7 +588,7 @@ function PairingPage() {
       {/* Revoke confirmation */}
       {revokeId && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-5">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl">
+          <div className="w-full max-w-sm rounded-2xl bg-card p-5  workspace-card">
             <h3 className="text-base font-bold text-[#0D1B2A]">Revoke access?</h3>
             <p className="mt-1 text-sm text-gray-600">
               This professional will immediately lose access to your Passport and Records.
@@ -614,7 +613,7 @@ function PairingPage() {
         </div>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
+      <nav className="fixed inset-x-0 bottom-0 z-10 workspace-nav border-t border-hub-navy bg-hub-navy">
         <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
           <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label="Home" />
           <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label="Health" />
@@ -630,7 +629,7 @@ function PairingPage() {
 
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/health-pass" | "/travel" | "/records" | "/pairing" | "/profile" }) {
   const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${
-    active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"
+    active ? "bg-hub-active text-hub-on-navy" : "text-hub-footer hover:text-hub-on-navy"
   }`;
   return (
     <li>

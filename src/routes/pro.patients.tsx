@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
@@ -8,7 +9,7 @@ import { SaveButton } from "@/components/ui/save-button";
 import { PatientHealthPassportView } from "@/components/PatientHealthPassportView";
 
 export const Route = createFileRoute("/pro/patients")({
-  head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }] }),
+  head: () => ({ meta: [{ title: "Patients — GlobeDoc Pro" }, { name: "description", content: "View patient-approved Health Passports and records in GlobeDoc." }, { property: "og:title", content: "Patients — GlobeDoc Pro" }, { property: "og:description", content: "View patient-approved Health Passports and records in GlobeDoc." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProPatientsTab,
 });
 
@@ -178,7 +179,7 @@ function ProPatientsTab() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-6">
-      <h1 className="text-2xl font-bold text-[#0D1B2A]">Patients</h1>
+      <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">Patients</h1>
       <p className="mt-1 text-sm text-gray-500">View and contribute to your patients' records.</p>
 
       <div className="mt-5">
@@ -227,7 +228,7 @@ function ProPatientsTab() {
       </div>
 
       {!selectedId ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+        <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-card p-10 text-center workspace-card">
           <FileText className="mx-auto h-7 w-7 text-gray-400" />
           <p className="mt-3 text-sm text-gray-600">
             {activeTab === "passport"
@@ -249,18 +250,18 @@ function ProPatientsTab() {
             {filterChips.map((chip) => {
               const active = filterType === chip.key;
               return (
-                <button
+                <Button variant="plain"
                   key={chip.key}
                   type="button"
                   onClick={() => setFilterType(chip.key)}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                     active
-                      ? "bg-[#2563EB] text-white"
+                      ? "bg-hub-navy text-hub-on-navy"
                       : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   {chip.label}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -274,11 +275,11 @@ function ProPatientsTab() {
           {loading ? (
             <div className="mt-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
           ) : entries.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-card p-10 text-center workspace-card">
               <p className="text-sm text-gray-600">No records yet for {patientName}.</p>
             </div>
           ) : filteredEntries.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-card p-10 text-center workspace-card">
               <p className="text-sm text-gray-600">No records match your search.</p>
             </div>
           ) : (
@@ -287,7 +288,7 @@ function ProPatientsTab() {
             const m = typeMeta(e.entry_type);
             return (
               <li key={e.id}>
-                <article className="rounded-2xl bg-white p-4 shadow-sm">
+                <article className="rounded-2xl bg-card p-4  workspace-card">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-[#0D1B2A]">
@@ -329,14 +330,14 @@ function ProPatientsTab() {
 
 
       {selectedId && activeTab === "records" && (
-        <button
+        <Button variant="plain"
           type="button"
           onClick={() => setPickerOpen(true)}
           aria-label="Add entry"
-          className="fixed bottom-24 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-lg hover:bg-[#1d4ed8]"
+          className="h-auto fixed bottom-24 right-6 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-hub-navy text-hub-on-navy shadow-lg hover:bg-hub-navy hover:opacity-90"
         >
           <Plus className="h-6 w-6" />
-        </button>
+        </Button>
       )}
 
       {pickerOpen && (
@@ -387,7 +388,7 @@ function ProTypePicker({ onPick, onClose }: { onPick: (t: ProEntryType) => void;
   ];
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
-      <div className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-bold text-[#0D1B2A]">Choose entry type</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
@@ -455,7 +456,7 @@ function ProEntryComposer({
 
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
-      <div className="w-full max-w-md rounded-t-2xl bg-white p-5 sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-md rounded-t-2xl bg-card p-5 sm:rounded-2xl workspace-card" onClick={e => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-bold text-[#0D1B2A]">{titleLabel}</h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 hover:bg-gray-100"><X className="h-5 w-5" /></button>
@@ -490,7 +491,7 @@ function ProEntryComposer({
             onSave={submit}
             disabled={busy}
             savingLabel="Saving…"
-            className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 flex items-center gap-2"
+            className="rounded-full bg-hub-navy px-4 py-2 text-sm font-semibold text-hub-on-navy hover:opacity-90 flex items-center gap-2"
           >
             Save
           </SaveButton>

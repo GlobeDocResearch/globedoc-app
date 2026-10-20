@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { WorkspaceBrand } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Bell, LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle, Camera } from "lucide-react";
@@ -16,7 +18,7 @@ import { LanguagePickerRow } from "@/components/LanguagePicker";
 import { SaveButton } from "@/components/ui/save-button";
 
 export const Route = createFileRoute("/profile")({
-  head: () => ({ meta: [{ title: "Profile — GlobeDoc" }] }),
+  head: () => ({ meta: [{ title: "Profile — GlobeDoc" }, { name: "description", content: "Manage your GlobeDoc patient profile and account." }, { property: "og:title", content: "Profile — GlobeDoc" }, { property: "og:description", content: "Manage your GlobeDoc patient profile and account." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProfilePage,
 });
 
@@ -464,43 +466,40 @@ function ProfilePage() {
   const sexLabel = (s?: string | null) => s === "male" ? t.male : s === "female" ? t.female : s === "other" ? t.other : "—";
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-24">
-      <header className="flex items-center justify-between bg-[#1D3F7C] px-5 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <Hexagon className="h-[50px] w-[50px]"><img src={logo} alt="GlobeDoc" className="h-9 w-9" /></Hexagon>
-          <span className="text-lg font-bold text-white">GlobeDoc</span>
-        </div>
+    <div className="min-h-screen bg-hub-bg pb-24">
+      <header className="workspace-header flex items-center justify-between bg-hub-navy px-5 py-3">
+        <WorkspaceBrand />
         <div className="flex items-center gap-2">
-          <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          <Button variant="plain" type="button" aria-label="Notifications" className="workspace-header-control flex items-center justify-center">
             <Bell className="h-5 w-5" />
-          </button>
-          <button type="button" onClick={handleSignOut} aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20">
+          </Button>
+          <Button variant="plain" type="button" onClick={handleSignOut} aria-label="Log out" className="workspace-header-control flex items-center justify-center">
             <LogOut className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl space-y-4 px-4 py-6">
-        <h1 className="text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
+        <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">{t.title}</h1>
 
         {/* Avatar + name (left-aligned) */}
         <div className="flex items-center gap-4">
-          <button
+          <Button variant="plain"
             type="button"
             onClick={handleAvatarClick}
             disabled={uploadingAvatar}
             aria-label="Change profile photo"
-            className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
+            className="h-auto relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
           >
             {profile?.avatar_url ? (
               <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
             ) : (
               <User className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
             )}
-            <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-[#2563EB] text-white shadow ring-2 ring-white">
+            <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-hub-navy text-hub-on-navy shadow ring-2 ring-white">
               <Camera className="h-3.5 w-3.5" />
             </span>
-          </button>
+          </Button>
           <div className="min-w-0">
             <p className="truncate text-lg font-semibold text-[#0D1B2A]">
               {[profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || (email ? email.split("@")[0] : "")}
@@ -530,7 +529,7 @@ function ProfilePage() {
             ) : (
               <div className="flex gap-2">
                 <button onClick={cancelEdit} className="rounded-md border border-gray-200 px-3 py-1 text-xs">{t.cancel}</button>
-                <SaveButton onSave={save} className="rounded-md bg-[#2563EB] px-3 py-1 text-xs font-semibold text-white flex items-center gap-1">{t.save}</SaveButton>
+                <SaveButton onSave={save} className="rounded-full bg-hub-navy px-3 py-1 text-xs font-semibold text-hub-on-navy flex items-center gap-1">{t.save}</SaveButton>
               </div>
             )}
           </div>
@@ -591,7 +590,7 @@ function ProfilePage() {
             </div>
             <div className="flex items-center justify-between">
               <p className="text-sm text-[#0D1B2A]">{t.changePwd}</p>
-              <button onClick={sendReset} className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-[#2563EB]">{t.changePwdBtn}</button>
+              <button onClick={sendReset} className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-hub-navy">{t.changePwdBtn}</button>
             </div>
           </div>
         </Card>
@@ -610,7 +609,7 @@ function ProfilePage() {
         {/* Privacy */}
         <Card>
           <div className="flex items-start gap-3">
-            <Shield className="mt-0.5 h-5 w-5 text-[#2563EB]" />
+            <Shield className="mt-0.5 h-5 w-5 text-hub-navy" />
             <div>
               <h2 className="text-base font-bold text-[#0D1B2A]">{t.privacy}</h2>
               <p className="text-xs text-gray-500">{t.privacySub}</p>
@@ -620,8 +619,8 @@ function ProfilePage() {
             <PrivacyRow icon={<Download className="h-4 w-4" />} title={t.exportTitle} subtitle={t.exportSub}
               action={
                 <div className="flex gap-2">
-                  <button onClick={exportPDF} className="inline-flex items-center gap-1 rounded-md bg-[#2563EB] px-3 py-1.5 text-xs font-semibold text-white"><FileTextIcon className="h-3 w-3" /> PDF</button>
-                  <button onClick={exportJSON} className="inline-flex items-center gap-1 rounded-md border border-[#2563EB] px-3 py-1.5 text-xs font-semibold text-[#2563EB]"><FileJson className="h-3 w-3" /> JSON</button>
+                  <Button variant="plain" onClick={exportPDF} className="h-auto inline-flex items-center gap-1 rounded-full bg-hub-navy px-3 py-1.5 text-xs font-semibold text-hub-on-navy"><FileTextIcon className="h-3 w-3" /> PDF</Button>
+                  <button onClick={exportJSON} className="inline-flex items-center gap-1 rounded-md border border-[#2563EB] px-3 py-1.5 text-xs font-semibold text-hub-navy"><FileJson className="h-3 w-3" /> JSON</button>
                 </div>
               } />
             <PrivacyRow icon={<Eye className="h-4 w-4" />} title={t.consentTitle} subtitle={t.consentSub}
@@ -677,7 +676,7 @@ function ProfilePage() {
 }
 
 function Card({ children }: { children: React.ReactNode }) {
-  return <section className="rounded-2xl bg-white p-5 shadow-sm">{children}</section>;
+  return <section className="rounded-2xl bg-card p-5  workspace-card">{children}</section>;
 }
 
 function FieldRow({ label, value, editing, edit, required }: { label: string; value?: string | null; editing: boolean; edit: React.ReactNode; required?: boolean }) {
@@ -728,7 +727,7 @@ function PrivacyRow({ icon, title, subtitle, action }: { icon: React.ReactNode; 
 function Modal({ children, onClose, title, closeLabel }: { children: React.ReactNode; onClose: () => void; title: string; closeLabel: string }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl bg-card p-5  workspace-card">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-base font-bold text-[#0D1B2A]">{title}</h3>
           <button onClick={onClose} className="text-xs text-gray-500">{closeLabel}</button>
@@ -757,7 +756,7 @@ function formatConsentDate(iso: string, lang: "en" | "sv") {
 function BottomNav() {
   const { t } = useI18n();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-[#1D3F7C] bg-[#1D3F7C]">
+    <nav className="fixed inset-x-0 bottom-0 z-10 workspace-nav border-t border-hub-navy bg-hub-navy">
       <ul className="mx-auto flex max-w-3xl items-center justify-around px-2 py-2">
         <NavTab to="/home" icon={<HomeIcon className="h-5 w-5" />} label={t("nav.home")} />
         <NavTab to="/health-pass" icon={<Globe className="h-5 w-5" />} label={t("nav.health")} />
@@ -770,7 +769,7 @@ function BottomNav() {
   );
 }
 function NavTab({ icon, label, active, to }: { icon: React.ReactNode; label: string; active?: boolean; to?: "/home" | "/health-pass" | "/travel" | "/records" | "/pairing" | "/profile" }) {
-  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-white/15 text-white" : "text-white/75 hover:text-white"}`;
+  const className = `flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium ${active ? "bg-hub-active text-hub-on-navy" : "text-hub-footer hover:text-hub-on-navy"}`;
   return (
     <li>
       {to ? <Link to={to} className={className}>{icon}<span data-no-translate>{label}</span></Link>
