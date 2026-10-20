@@ -9,9 +9,9 @@ export function WorkspaceBrand({ professional = false }: { professional?: boolea
       </div>
       <span className="workspace-wordmark text-2xl leading-none">
         <span className="font-semibold text-hub-on-navy">GlobeDoc</span>{" "}
-        <span className="font-normal text-hub-sky">Research Hub</span>
+        <span className="workspace-wordmark-sub font-normal text-hub-sky">Research Hub</span>
       </span>
-      {professional && <span className="shrink-0 rounded-full border border-hub-sky px-2 py-0.5 text-[10px] font-bold uppercase text-hub-sky">Pro</span>}
+      {professional && <span className="workspace-pro-badge shrink-0 rounded-full border border-hub-sky px-2 py-0.5 text-[10px] font-bold uppercase text-hub-sky">Pro</span>}
     </div>
   );
 }

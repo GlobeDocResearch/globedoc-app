@@ -106,14 +106,14 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
   return (
     <div className="entry-page flex min-h-screen flex-col bg-hub-bg font-sans text-hub-body">
       <header className="w-full bg-hub-navy">
-        <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3 sm:px-8">
+        <div className="entry-header-inner flex flex-wrap items-center justify-between gap-4 px-5 py-3 sm:px-8">
           <a href="https://globedoc.com" className="flex items-center gap-3">
             <div className="hub-hexagon flex h-[50px] w-[50px] items-center justify-center bg-white">
               <img src={headerLogo} alt="GlobeDoc" className="h-9 w-9" />
             </div>
-            <span className="font-serif text-2xl leading-none">
+            <span className="entry-header-brand font-serif text-2xl leading-none">
               <span className="font-semibold text-hub-on-navy">GlobeDoc</span>{" "}
-              <span className="font-normal text-hub-sky">Research Hub</span>
+              <span className="entry-wordmark-sub font-normal text-hub-sky">Research Hub</span>
             </span>
           </a>
           <LanguageGlobeButton appearance="header" />

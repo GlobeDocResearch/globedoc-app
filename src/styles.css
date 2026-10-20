@@ -215,3 +215,38 @@
 .workspace-action:disabled { opacity: .4; }
 .workspace-map-dot { fill: var(--hub-navy); }
 @media (min-width: 640px) { .workspace-header { padding-left: 32px; padding-right: 32px; } }
+
+/* Mobile-only header compaction: single row, smaller brand and controls. */
+@media (max-width: 639.98px) {
+  .workspace-header {
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-height: 64px;
+    padding: 12px;
+  }
+  .workspace-brand { gap: 8px; }
+  .workspace-brand .hub-hexagon { height: 40px; width: 40px; }
+  .workspace-brand .hub-hexagon img { height: 28px; width: 28px; }
+  .workspace-wordmark { font-size: 18px; white-space: nowrap; }
+  .workspace-pro-badge { padding: 1px 6px; font-size: 11px; }
+  .workspace-header-control { height: 32px; width: 32px; }
+  .workspace-header-control svg { width: 18px; height: 18px; }
+
+  .entry-header-inner {
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-height: 64px;
+    padding: 12px;
+  }
+  .entry-header-inner .hub-hexagon { height: 40px; width: 40px; }
+  .entry-header-inner .hub-hexagon img { height: 28px; width: 28px; }
+  .entry-header-brand { font-size: 18px; white-space: nowrap; }
+  .entry-header-inner a { min-width: 0; }
+  .entry-header-inner button { height: 32px; width: 32px; min-width: 32px; }
+  .entry-header-inner button svg { width: 16px; height: 16px; }
+}
+
+@media (max-width: 359.98px) {
+  .workspace-wordmark-sub,
+  .entry-wordmark-sub { display: none; }
+}
