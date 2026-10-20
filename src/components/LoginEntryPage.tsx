@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import headerLogo from "@/assets/globedoc-logo-clean.svg";
+import headerLogo from "@/assets/globedoc-globe.svg";
 import { InstallAppSection } from "@/components/InstallAppSection";
 
 const HUB_HEX_CLIP = "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)";
@@ -104,21 +104,23 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
   };
 
   return (
-    <div className="entry-page relative flex min-h-screen flex-col bg-background">
-      {/* Site header (matches globedoc.com) */}
-      <header className="m-0 w-full rounded-none border-0 bg-auth-header px-0 text-auth-header-foreground">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-5 py-3 sm:px-8">
-          <a href="https://globedoc.com" aria-label="GlobeDoc website" className="flex items-center gap-3">
-          <span className="entry-logo flex h-[50px] w-[50px] shrink-0 items-center justify-center bg-card">
-            <img src={headerLogo} alt="" className="h-9 w-9" />
-          </span>
-          <span className="entry-brand text-2xl"><strong className="font-semibold">GlobeDoc</strong>{" "}<span className="font-normal text-auth-accent">Research Hub</span></span>
+    <div className="entry-page flex min-h-screen flex-col bg-hub-bg font-sans text-hub-body">
+      <header className="w-full bg-hub-navy">
+        <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3 sm:px-8">
+          <a href="https://globedoc.com" className="flex items-center gap-3">
+            <div className="hub-hexagon flex h-[50px] w-[50px] items-center justify-center bg-white">
+              <img src={headerLogo} alt="GlobeDoc" className="h-9 w-9" />
+            </div>
+            <span className="font-serif text-2xl leading-none">
+              <span className="font-semibold text-hub-on-navy">GlobeDoc</span>{" "}
+              <span className="font-normal text-hub-sky">Research Hub</span>
+            </span>
           </a>
           <LanguageGlobeButton appearance="header" />
         </div>
       </header>
 
-      <main className="relative flex w-full flex-1 flex-col items-center px-5 pb-12 pt-12 sm:pt-14">
+      <main className="flex-1 relative flex w-full flex-col items-center px-5 pb-12 pt-12 sm:pt-14">
         {audience === "chooser" && <div className="text-center">
           <h1 className="text-2xl font-semibold text-auth-heading sm:text-3xl">Sign in to GlobeDoc</h1>
           <p className="mt-3 text-base text-muted-foreground">Choose how you want to sign in.</p>
@@ -345,21 +347,14 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
         <InstallAppSection />
       </main>
 
-      <footer className="w-full bg-auth-header text-auth-header-foreground">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-5 py-8 text-center text-[15px]">
-          <div className="flex flex-wrap items-center justify-center gap-x-2 text-auth-footer">
-            <span className="w-full">© 2026 GlobeDoc Research Hub (non-profit, in formation)</span>
-            <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <a href="https://globedoc.com/privacy" className="text-auth-footer hover:text-auth-header-foreground">Privacy Policy</a>
-              <span aria-hidden>·</span>
-              <a href="https://globedoc.com/terms" className="text-auth-footer hover:text-auth-header-foreground">Terms of Service</a>
-              <span aria-hidden>·</span>
-              <a href="https://globedoc.com/about" className="text-auth-footer hover:text-auth-header-foreground">About</a>
-              <span aria-hidden>·</span>
-              <a href="https://globedoc.com/contact" className="text-auth-footer hover:text-auth-header-foreground">Contact</a>
-            </span>
-          </div>
-        </div>
+      <footer className="w-full bg-hub-navy px-5 py-8">
+        <p className="text-center text-[15px] text-hub-footer">
+          © 2026 GlobeDoc Research Hub (non-profit, in formation) ·{" "}
+          <a href="https://globedoc.com/privacy" className="text-hub-footer transition-colors hover:text-hub-on-navy">Privacy Policy</a> ·{" "}
+          <a href="https://globedoc.com/terms" className="text-hub-footer transition-colors hover:text-hub-on-navy">Terms of Service</a> ·{" "}
+          <a href="https://globedoc.com/about" className="text-hub-footer transition-colors hover:text-hub-on-navy">About</a> ·{" "}
+          <a href="https://globedoc.com/contact" className="text-hub-footer transition-colors hover:text-hub-on-navy">Contact</a>
+        </p>
       </footer>
     </div>
   );

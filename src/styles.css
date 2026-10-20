@@ -50,9 +50,27 @@
   --color-role-professional: var(--role-professional);
   --color-role-ink: var(--role-ink);
   --color-role-subtitle: var(--role-subtitle);
+  --color-hub-navy: var(--hub-navy);
+  --color-hub-on-navy: var(--hub-on-navy);
+  --color-hub-sky: var(--hub-sky);
+  --color-hub-footer: var(--hub-footer);
+  --color-hub-bg: var(--hub-bg);
+  --color-hub-line: var(--hub-line);
+  --color-hub-ink: var(--hub-ink);
+  --color-hub-body: var(--hub-body);
+  --color-language-panel: var(--language-panel);
+  --color-language-ink: var(--language-ink);
+  --color-language-blue: var(--language-blue);
+  --color-language-selected: var(--language-selected);
+  --color-language-hover: var(--language-hover);
 }
 
 :root {
+  --hub-navy: #253F78; --hub-on-navy: #FFFFFF; --hub-sky: #CFE1F2; --hub-footer: #DDE3F2;
+  --hub-bg: #F3F5F4; --hub-line: #DCE3E1; --hub-ink: #1F3A4D;
+  --hub-body: oklch(0.33600943 0.047159209 240.79519);
+  --language-panel: #EEF2FF; --language-ink: #0F172A; --language-blue: #2563EB;
+  --language-selected: #EFF4FF; --language-hover: #E4EBFF;
   --auth-header: #1D3F7C;
   --auth-header-foreground: #ffffff;
   --auth-title: #2e4482;
@@ -139,18 +157,22 @@
   --input: var(--border);
   --brand-blue: var(--auth-header);
   --ring: var(--auth-header);
+  --font-sans: "IBM Plex Sans Variable", sans-serif;
+  --font-serif: "Source Serif 4 Variable", serif;
   font-family: "IBM Plex Sans Variable", sans-serif;
   letter-spacing: 0;
 }
+.language-panel-hub { font-family: "IBM Plex Sans Variable", sans-serif; }
 .entry-page h1,
 .entry-page h2,
 .entry-brand {
   font-family: "Source Serif 4 Variable", serif;
   letter-spacing: 0;
 }
-.entry-logo {
+.hub-hexagon {
+  -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
-@media (max-width: 380px) {
-  .entry-brand { font-size: 1.125rem; }
+.entry-logo {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
