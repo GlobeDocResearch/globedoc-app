@@ -26,16 +26,47 @@ function literals(file: string, onlyUi: boolean, sink: (s: string) => void) {
   const visit = (n: ts.Node) => {
     if (ts.isJsxText(n)) sink(n.text);
     else if (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) {
-      const p = n.parent;
-      const isClass = p && ts.isJsxAttribute(p) && /^(className|class|href|src|to|type|id|name|key|variant|size|role|data-|autoComplete|inputMode)/.test(p.name.getText());
-      const inImport = p && (ts.isImportDeclaration(p) || ts.isExportDeclaration(p) || ts.isLiteralTypeNode(p));
-      const inCall = p && ts.isCallExpression(p) && /^(cn|clsx|createFileRoute|useNavigate|navigate|from|eq|select|order|rpc|getItem|setItem|removeItem|querySelector|require|import)$|\.(from|eq|select|order|rpc|in|neq|match|getItem|setItem|removeItem)$/.test(p.expression.getText().split("(")[0]);
-      if (onlyUi && (isClass || inImport || inCall)) return;
-      sink(n.text);
+      if (!onlyUi) sink(n.text);
+      else if (isUiString(n)) sink(n.text);
     }
     ts.forEachChild(n, visit);
   };
   visit(src);
+}
+// Option lists (arrays) hold selectable clinical values that become record content: never included.
+function insideArray(n: ts.Node): boolean {
+  for (let p = n.parent; p; p = p.parent) {
+    if (ts.isArrayLiteralExpression(p)) return true;
+    if (ts.isFunctionLike(p) || ts.isSourceFile(p)) return false;
+  }
+  return false;
+}
+const UI_ATTRS = /^(placeholder|title|aria-label|label|alt|description|helperText|emptyText)$/;
+const UI_PROPS = /^(title|label|description|placeholder|message|error|hint|help|subtitle|heading|cta|empty\w*|\w*(Label|Title|Text|Hint|Error|Message))$/;
+const UI_CALLS = /^(toast(\.\w+)?|setError|setMessage|new Error|alert|confirm)$/;
+function isUiString(n: ts.Node): boolean {
+  const p = n.parent;
+  if (!p) return false;
+  if (ts.isJsxAttribute(p)) return UI_ATTRS.test(p.name.getText());
+  if (ts.isJsxExpression(p)) return ts.isJsxElement(p.parent) || ts.isJsxFragment(p.parent);
+  if (insideArray(n)) return false;
+  if (ts.isCallExpression(p) || ts.isNewExpression(p)) {
+    const callee = (ts.isNewExpression(p) ? "new " : "") + p.expression.getText();
+    return UI_CALLS.test(callee);
+  }
+  if (ts.isPropertyAssignment(p) && p.initializer === n) {
+    // local per-page dictionaries (e.g. const T = { en: {...} }) and UI-named fields
+    return UI_PROPS.test(p.name.getText().replace(/["']/g, "")) || /^(en|sv|copy|strings|text|t|T|labels|COPY|STRINGS|TEXT)$/.test(objectOwner(p));
+  }
+  if (ts.isConditionalExpression(p) || ts.isBinaryExpression(p)) return isUiString(p);
+  return false;
+}
+function objectOwner(p: ts.Node): string {
+  for (let q = p.parent; q; q = q.parent) {
+    if (ts.isPropertyAssignment(q) || ts.isVariableDeclaration(q)) return q.name.getText();
+    if (ts.isFunctionLike(q)) return "";
+  }
+  return "";
 }
 const norm = (s: string) => s.replace(/\s+/g, " ").trim();
 const clinical = new Set<string>();
@@ -49,6 +80,7 @@ for (const f of SCAN.flatMap((d) => walk(d, []))) {
     if (!/[A-Z]/.test(s[0]) && !/\s/.test(s)) return; // drop identifiers/keys
     if (/^[\w-]+(:[\w-]+)*(\s+[\w:/\[\]().#%-]+)*$/.test(s) && /[-:\[]/.test(s)) return; // class-like
     if (/^(https?:|\/|#|@|mailto:)/.test(s) || /[{}<>=]/.test(s) || /^[\w.-]+@[\w.-]+$/.test(s)) return;
+    if (/^[A-Z][a-z]+([A-Z][a-z]+)+$/.test(s)) return; // component names
     if (clinical.has(s.toLowerCase())) return;
     labels.add(s);
   });
