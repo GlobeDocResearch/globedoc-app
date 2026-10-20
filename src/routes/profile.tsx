@@ -16,13 +16,14 @@ import { deleteMyAccount } from "@/lib/account.functions";
 import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 import { LanguagePickerRow } from "@/components/LanguagePicker";
 import { SaveButton } from "@/components/ui/save-button";
+import { GENDER_IDENTITY_OPTIONS, PRONOUNS_MAX_LENGTH, IDENTITY_DESCRIPTION_MAX_LENGTH, normalizeProfileIdentity, genderIdentityDisplay, type ProfileIdentity } from "@/lib/profileIdentity";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc" }, { name: "description", content: "Manage your GlobeDoc patient profile and account." }, { property: "og:title", content: "Profile — GlobeDoc" }, { property: "og:description", content: "Manage your GlobeDoc patient profile and account." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProfilePage,
 });
 
-type Profile = {
+type Profile = ProfileIdentity & {
   first_name: string | null; last_name: string | null;
   date_of_birth: string | null; biological_sex: string | null;
   nationality: string | null; country_of_residence: string | null;
@@ -36,6 +37,10 @@ const T = {
     title: "Profile", personal: "Personal Information",
     firstName: "First name", lastName: "Last name", dob: "Date of birth",
     sex: "Biological sex", male: "Male", female: "Female", other: "Other",
+    genderLabel: "Gender identity (optional)", pronounsLabel: "Pronouns (optional)",
+    selfDescriptionLabel: "Gender identity — self-description",
+    pronounsHint: "E.g. she/her, he/him, they/them",
+    identityHelp: "Optional. Helps clinicians address you correctly. Biological sex is still needed for medical reasons such as reference values and screening.",
     nationality: "Nationality / country of origin", residence: "Country of residence",
     phone: "Phone number", address: "Address", blood: "Blood group", optional: "Optional",
     civic: "Civic registration number", civicPlaceholder: "Personal identity number",
@@ -61,6 +66,10 @@ const T = {
     title: "Profil", personal: "Personlig information",
     firstName: "Förnamn", lastName: "Efternamn", dob: "Födelsedatum",
     sex: "Biologiskt kön", male: "Man", female: "Kvinna", other: "Annat",
+    genderLabel: "Könsidentitet (valfritt)", pronounsLabel: "Pronomen (valfritt)",
+    selfDescriptionLabel: "Könsidentitet — egen beskrivning",
+    pronounsHint: "T.ex. she/her, he/him, they/them",
+    identityHelp: "Valfritt. Hjälper vårdpersonal att tilltala dig korrekt. Biologiskt kön behövs fortfarande av medicinska skäl, till exempel för referensvärden och screening.",
     nationality: "Nationalitet / ursprungsland", residence: "Bosättningsland",
     phone: "Telefonnummer", address: "Adress", blood: "Blodgrupp", optional: "Valfritt",
     civic: "Personnummer", civicPlaceholder: "Personnummer",
@@ -143,13 +152,14 @@ function ProfilePage() {
 
   const save = async () => {
     if (!draft) return false;
-    const payload: any = { ...draft };
+    const identity = normalizeProfileIdentity(draft);
+    const payload: any = { ...draft, ...identity };
     Object.keys(payload).forEach((k) => { if (payload[k] === "") payload[k] = null; });
     delete payload.language;
     const { error } = await supabase.from("profiles").update(payload).eq("user_id", userId);
     if (error) throw new Error(error.message);
     await supabase.from("audit_log").insert({ user_id: userId, table_name: "profiles", action: "update" });
-    setProfile(draft); setEditing(false); setDraft(null);
+    setProfile({ ...draft, ...identity }); setEditing(false); setDraft(null);
     toast.success(t.saved);
     return true;
   };
@@ -336,6 +346,11 @@ function ProfilePage() {
     if (profile?.address) personal.push(["Address", profile.address]);
     if (profile?.civic_registration_number) personal.push(["Civic ID", profile.civic_registration_number]);
     twoColCard("Personal Information", [29, 63, 124], personal);
+    const identityRows: { label: string; value: string }[] = [];
+    const identityGender = profile ? genderIdentityDisplay(profile) : null;
+    if (identityGender) identityRows.push({ label: "Gender identity", value: identityGender });
+    if (profile?.pronouns) identityRows.push({ label: "Pronouns", value: profile.pronouns });
+    sectionCard("Gender identity & Pronouns", [29, 63, 124], identityRows);
 
     const fetchAll = async (tbl: string) => (await supabase.from(tbl as any).select("*").eq("user_id", userId)).data ?? [];
     const [mc, hs, pm, ot, sm, di, cv, tv, ov, vco, da, fa, ea, lr, hc] = await Promise.all([
@@ -548,6 +563,31 @@ function ProfilePage() {
                   <option value="other">{t.other}</option>
                 </select>
               } />
+            <div className="space-y-3 sm:col-span-2">
+              <div>
+                <label htmlFor="gender-identity" className="mb-1 block text-xs font-medium text-muted-foreground">{t.genderLabel}</label>
+                {editing ? (
+                  <div data-no-translate translate="no" className="space-y-2">
+                    <select id="gender-identity" className={input} value={view?.gender_identity ?? ""} onChange={(e) => {
+                      updateDraft("gender_identity", e.target.value);
+                      if (e.target.value !== "Prefer to self-describe") updateDraft("gender_identity_description", null);
+                    }}>
+                      <option value="">{t.select}</option>
+                      {GENDER_IDENTITY_OPTIONS.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                    {view?.gender_identity === "Prefer to self-describe" && (
+                      <input aria-label={t.selfDescriptionLabel} className={input} maxLength={IDENTITY_DESCRIPTION_MAX_LENGTH} value={view.gender_identity_description ?? ""} onChange={(e) => updateDraft("gender_identity_description", e.target.value)} />
+                    )}
+                  </div>
+                ) : <p data-no-translate translate="no" className="text-sm text-foreground break-words">{view ? genderIdentityDisplay(view) || "—" : "—"}</p>}
+              </div>
+              <div>
+                <label htmlFor="pronouns" className="mb-1 block text-xs font-medium text-muted-foreground">{t.pronounsLabel}</label>
+                {editing ? <input id="pronouns" data-no-translate translate="no" aria-describedby="identity-help" className={input} maxLength={PRONOUNS_MAX_LENGTH} placeholder={t.pronounsHint} value={view?.pronouns ?? ""} onChange={(e) => updateDraft("pronouns", e.target.value)} />
+                  : <p data-no-translate translate="no" className="text-sm text-foreground break-words">{view?.pronouns || "—"}</p>}
+              </div>
+              <p id="identity-help" className="text-xs text-muted-foreground">{t.identityHelp}</p>
+            </div>
             <FieldRow label={t.nationality} required editing={editing} value={view?.nationality}
               edit={<CountrySelect value={view?.nationality ?? ""} onChange={(v) => updateDraft("nationality", v)} placeholder={t.select} />} />
             <FieldRow label={t.residence} editing={editing} value={view?.country_of_residence}
