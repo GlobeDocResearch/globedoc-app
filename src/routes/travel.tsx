@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { WorkspaceBrand } from "@/components/WorkspaceBrand";
+import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, X, MapPin, Check, Syringe, Download, Info, FileText } from "lucide-react";
+import { LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, X, MapPin, Check, Syringe, Download, Info, FileText } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";

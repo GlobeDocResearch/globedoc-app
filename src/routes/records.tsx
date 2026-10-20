@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { WorkspaceBrand } from "@/components/WorkspaceBrand";
+import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Bell, LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
+  LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
   Plus, MessageCircle, Pencil, Trash2, FileUp, Image as ImageIcon, FlaskConical,
   StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays,
 } from "lucide-react";

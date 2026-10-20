@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { WorkspaceBrand } from "@/components/WorkspaceBrand";
+import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 type NavTo = "/home" | "/pairing" | "/health-pass" | "/profile" | "/travel" | "/records";
-import { Bell, LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
+import { LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
