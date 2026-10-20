@@ -227,8 +227,7 @@
   .workspace-brand { gap: 8px; }
   .workspace-brand .hub-hexagon { height: 40px; width: 40px; }
   .workspace-brand .hub-hexagon img { height: 28px; width: 28px; }
-  .workspace-wordmark { font-size: 18px; white-space: nowrap; }
-  .workspace-pro-badge { padding: 1px 6px; font-size: 11px; }
+  .workspace-wordmark { font-size: 18px; white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .workspace-header-control { height: 32px; width: 32px; }
   .workspace-header-control svg { width: 18px; height: 18px; }
 
