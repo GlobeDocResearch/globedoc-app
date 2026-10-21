@@ -16,6 +16,7 @@ import { deleteMyAccount } from "@/lib/account.functions";
 import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 import { LanguagePickerRow } from "@/components/LanguagePicker";
 import { SaveButton } from "@/components/ui/save-button";
+import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { GENDER_IDENTITY_OPTIONS, PRONOUNS_MAX_LENGTH, IDENTITY_DESCRIPTION_MAX_LENGTH, normalizeProfileIdentity, genderIdentityDisplay, type ProfileIdentity } from "@/lib/profileIdentity";
 
 export const Route = createFileRoute("/profile")({
@@ -100,6 +101,7 @@ function ProfilePage() {
   const [userId, setUserId] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [profile, setProfile] = useState<Profile | null>(null);
+  const signedAvatarUrl = useAvatarUrl(profile?.avatar_url);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Profile | null>(null);
   const [consentOpen, setConsentOpen] = useState(false);
@@ -122,8 +124,7 @@ function ProfilePage() {
       const path = `${userId}/avatar-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-      const url = pub.publicUrl;
+      const url = path;
       const { error: dbErr } = await supabase.from("profiles").update({ avatar_url: url } as any).eq("user_id", userId);
       if (dbErr) throw dbErr;
       setProfile((p) => p ? { ...p, avatar_url: url } : p);
@@ -504,8 +505,8 @@ function ProfilePage() {
             aria-label="Change profile photo"
             className="h-auto relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
           >
-            {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+            {signedAvatarUrl ? (
+              <img src={signedAvatarUrl} alt="" className="h-full w-full object-cover" />
             ) : (
               <User className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
             )}
