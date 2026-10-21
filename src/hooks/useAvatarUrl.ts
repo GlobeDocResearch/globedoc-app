@@ -19,5 +19,5 @@ export function useAvatarUrl(value: string | null | undefined) {
     const timer = window.setInterval(refresh, (AVATAR_URL_LIFETIME_SECONDS - 60) * 1000);
     return () => { active = false; window.clearInterval(timer); };
   }, [value]);
-  return resolved?.value === value ? resolved.url : null;
+  return resolved && resolved.value === value ? resolved.url : null;
 }
