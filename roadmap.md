@@ -1,3 +1,8 @@
+# Avatar privacy and file backups
+- [ ] Make avatars private and preserve signed-in image display using signed URLs.
+- [ ] Verify anonymous denial and signed-in image loading.
+- [ ] Set up regular stored-file backups (blocked: Cloud does not provide automatic storage backups or permit custom service-role file-copy backup code).
+
 # Site icons and header mark
 - [x] Replace favicon, apple-touch-icon and icon-512 in public/ and the header logo with the new GlobeDoc symbol, keeping names, sizes and positions.
 - [x] Verify icons serve correctly and the header shows the new mark signed in and out.
