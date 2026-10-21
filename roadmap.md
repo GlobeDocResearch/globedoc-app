@@ -1,6 +1,6 @@
 # Avatar privacy and file backups
-- [ ] Make avatars private and preserve signed-in image display using signed URLs.
-- [ ] Verify anonymous denial and signed-in image loading.
+- [x] Make avatars private and preserve signed-in image display using signed URLs.
+- [x] Verify anonymous denial and signed-in image loading.
 - [ ] Set up regular stored-file backups (blocked: Cloud does not provide automatic storage backups or permit custom service-role file-copy backup code).
 
 # Site icons and header mark
