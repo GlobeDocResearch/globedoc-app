@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BetaSurvey, BetaSurveyCard } from "@/components/BetaSurvey";
 import { SaveButton } from "@/components/ui/save-button";
+import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 
 export const Route = createFileRoute("/pro/profile")({
   head: () => ({ meta: [{ title: "Profile — GlobeDoc Pro" }, { name: "description", content: "Manage your GlobeDoc healthcare professional profile." }, { property: "og:title", content: "Profile — GlobeDoc Pro" }, { property: "og:description", content: "Manage your GlobeDoc healthcare professional profile." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -33,6 +34,8 @@ function ProfileTab() {
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [meta, setMeta] = useState<ProMeta>({});
+  const signedAvatarUrl = useAvatarUrl(meta.avatar_url);
+  const signedLicenseUrl = useAvatarUrl(meta.license_doc_url);
   
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
@@ -64,8 +67,7 @@ function ProfileTab() {
       const path = `${userId}/pro-avatar-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-      const url = pub.publicUrl;
+      const url = path;
       const { error } = await supabase.auth.updateUser({ data: { ...meta, account_type: "professional", avatar_url: url } });
       if (error) throw error;
       update("avatar_url", url);
@@ -88,8 +90,7 @@ function ProfileTab() {
       const path = `${userId}/license-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-      const url = pub.publicUrl;
+      const url = path;
       const { error } = await supabase.auth.updateUser({
         data: { ...meta, account_type: "professional", license_doc_url: url, license_doc_name: file.name },
       });
@@ -127,8 +128,8 @@ function ProfileTab() {
           aria-label="Change profile photo"
           className="h-auto relative h-24 w-24 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
         >
-          {meta.avatar_url ? (
-            <img src={meta.avatar_url} alt="" className="h-full w-full object-cover" />
+          {signedAvatarUrl ? (
+            <img src={signedAvatarUrl} alt="" className="h-full w-full object-cover" />
           ) : (
             <UserIcon className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
           )}
@@ -188,8 +189,8 @@ function ProfileTab() {
               <Upload className="h-4 w-4" />
               {uploadingDoc ? "Uploading..." : meta.license_doc_url ? "Replace file" : "Choose file"}
             </button>
-            {meta.license_doc_url && (
-              <a href={meta.license_doc_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-hub-navy underline">
+            {signedLicenseUrl && (
+              <a href={signedLicenseUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-hub-navy underline">
                 <FileText className="h-3.5 w-3.5" /> {meta.license_doc_name ?? "View"}
               </a>
             )}

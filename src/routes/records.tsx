@@ -10,6 +10,7 @@ import {
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
+import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -653,7 +654,8 @@ function RecordEntryCard({
 }
 
 function Avatar({ name, url }: { name: string; url: string | null }) {
-  if (url) return <img src={url} alt="" className="h-10 w-10 rounded-full object-cover" />;
+  const signedUrl = useAvatarUrl(url);
+  if (signedUrl) return <img src={signedUrl} alt="" className="h-10 w-10 rounded-full object-cover" />;
   return (
     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-hub-navy text-sm font-semibold text-hub-on-navy">
       {initials(name) || "U"}

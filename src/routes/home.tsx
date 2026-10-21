@@ -9,6 +9,7 @@ import { LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, Use
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
+import { useAvatarUrl } from "@/hooks/useAvatarUrl";
 import { useI18n } from "@/lib/i18n";
 import WorldMap, { type MapLocation } from "@/components/WorldMap";
 
@@ -26,6 +27,7 @@ function HomePage() {
   const [firstName, setFirstName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const signedAvatarUrl = useAvatarUrl(avatarUrl);
   const [locations, setLocations] = useState<MapLocation[]>([]);
 
   useEffect(() => {
@@ -91,8 +93,8 @@ function HomePage() {
         <section className="flex items-center gap-4">
           <div className="relative">
             <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-100 shadow-sm ring-1 ring-gray-100">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+              {signedAvatarUrl ? (
+                <img src={signedAvatarUrl} alt="" className="h-full w-full object-cover" />
               ) : (
                 <User className="h-8 w-8 text-gray-400" />
               )}
