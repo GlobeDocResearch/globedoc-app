@@ -1,4 +1,9 @@
+# Site icons and header mark
+- [x] Replace favicon, apple-touch-icon and icon-512 in public/ and the header logo with the new GlobeDoc symbol, keeping names, sizes and positions.
+- [x] Verify icons serve correctly and the header shows the new mark signed in and out.
+
 # Entry page split
+
 # Optional patient identity
 - [x] Add optional profile fields and paired clinician display, protecting saved answers from translation.
 - [x] Verify saving, readback, export and limits.
