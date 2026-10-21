@@ -1,6 +1,7 @@
 # Site icons and header mark
 - [x] Replace favicon, apple-touch-icon and icon-512 in public/ and the header logo with the new GlobeDoc symbol, keeping names, sizes and positions.
 - [x] Verify icons serve correctly and the header shows the new mark signed in and out.
+- [x] Regenerate icon-192 and the maskable icon from the new symbol (globe inside the maskable safe zone on white) and use the full, uncropped globe on the create-account/email-confirmation pages.
 
 # Entry page split
 
