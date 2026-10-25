@@ -1,3 +1,7 @@
+# Footer licence and prototype notice
+- [x] Add a muted footer line with AGPL-3.0 and CC BY 4.0 links plus the research-prototype notice.
+- [x] Verify the line and both links on the start and sign-in pages.
+
 # Avatar privacy and file backups
 - [x] Make avatars private and preserve signed-in image display using signed URLs.
 - [x] Verify anonymous denial and signed-in image loading.

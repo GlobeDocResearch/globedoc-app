@@ -355,6 +355,13 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           <a href="https://globedoc.com/about" className="text-hub-footer transition-colors hover:text-hub-on-navy">About</a> ·{" "}
           <a href="https://globedoc.com/contact" className="text-hub-footer transition-colors hover:text-hub-on-navy">Contact</a>
         </p>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-relaxed text-hub-footer/70">
+          GlobeDoc is open-source software – source code will be released under{" "}
+          <a href="https://www.gnu.org/licenses/agpl-3.0.html" className="underline decoration-hub-footer/40 underline-offset-2 transition-colors hover:text-hub-on-navy">AGPL-3.0</a>
+          {" "}· Documentation{" "}
+          <a href="https://creativecommons.org/licenses/by/4.0/" className="underline decoration-hub-footer/40 underline-offset-2 transition-colors hover:text-hub-on-navy">CC BY 4.0</a>
+          {" "}· Research prototype, not for clinical use or real patient data.
+        </p>
       </footer>
     </div>
   );
