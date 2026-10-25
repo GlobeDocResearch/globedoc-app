@@ -360,7 +360,7 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
           <a href="https://www.gnu.org/licenses/agpl-3.0.html" className="underline decoration-hub-footer/40 underline-offset-2 transition-colors hover:text-hub-on-navy">AGPL-3.0</a>
           {" "}· Documentation{" "}
           <a href="https://creativecommons.org/licenses/by/4.0/" className="underline decoration-hub-footer/40 underline-offset-2 transition-colors hover:text-hub-on-navy">CC BY 4.0</a>
-          {" "}· Research prototype, not for clinical use or real patient data.
+          {" "} (except photographs and the GlobeDoc name and logo) · Research prototype, not for clinical use or real patient data.
         </p>
       </footer>
     </div>
