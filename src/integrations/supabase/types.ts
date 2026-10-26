@@ -967,6 +967,7 @@ export type Database = {
           code: string
           created_at: string
           expires_at: string
+          failed_attempts: number
           id: string
           reason_chips: string[] | null
           reason_text: string | null
@@ -978,6 +979,7 @@ export type Database = {
           code: string
           created_at?: string
           expires_at: string
+          failed_attempts?: number
           id?: string
           reason_chips?: string[] | null
           reason_text?: string | null
@@ -989,12 +991,34 @@ export type Database = {
           code?: string
           created_at?: string
           expires_at?: string
+          failed_attempts?: number
           id?: string
           reason_chips?: string[] | null
           reason_text?: string | null
           used?: boolean
           user_id?: string
           validity_minutes?: number
+        }
+        Relationships: []
+      }
+      pairing_failed_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string
+          reason?: string
         }
         Relationships: []
       }

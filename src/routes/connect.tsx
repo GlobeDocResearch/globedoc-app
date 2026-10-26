@@ -213,7 +213,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
           Connect with a pairing code to your patient's GlobeDoc
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          Enter the 6-character pairing code shared by the patient.
+          Enter the 8-character pairing code shared by the patient.
         </p>
 
         {lastConnection && (
@@ -375,7 +375,7 @@ function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMet
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (code.trim().length !== 6) { toast.error("Enter the 6-character code"); return; }
+    if (code.trim().length !== 8) { toast.error("Enter the 8-character code"); return; }
     setSubmitting(true);
     try {
       const proName = proMeta?.full_name || "Healthcare Professional";
@@ -423,16 +423,16 @@ function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMet
         <input
           type="text"
           required
-          maxLength={6}
+          maxLength={8}
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="ABC123"
+          placeholder="ABCD2345"
           className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#253F78] focus:outline-none"
         />
       </div>
       <Button variant="plain"
         type="submit"
-        disabled={submitting || code.trim().length !== 6}
+        disabled={submitting || code.trim().length !== 8}
         className="h-auto flex w-full items-center justify-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:bg-hub-navy hover:opacity-90 disabled:opacity-40"
       >
         {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <LinkIcon className="h-4 w-4" />}
@@ -491,7 +491,7 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (code.trim().length !== 6) { toast.error("Enter the 6-character code"); return; }
+    if (code.trim().length !== 8) { toast.error("Enter the 8-character code"); return; }
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) { toast.error("Enter a valid email"); return; }
     if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
     if (mode === "signup") {
@@ -547,10 +547,10 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
         <input
           type="text"
           required
-          maxLength={6}
+          maxLength={8}
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="ABC123"
+          placeholder="ABCD2345"
           className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#253F78] focus:outline-none"
         />
       </div>
