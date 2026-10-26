@@ -48,8 +48,15 @@ export const Route = createFileRoute("/api/public/connect/pair")({
             .maybeSingle();
           if (pcErr) throw pcErr;
           if (!pc) return fail("not_found", { error: "Code not found" }, 404);
-          if (pc.used) return fail("used", { error: "Code already used" }, 410);
-          if (new Date(pc.expires_at).getTime() < Date.now()) return fail("expired", { error: "Code expired" }, 410);
+          const failForCode = async (reason: string, body: unknown, status: number) => {
+            const next = (pc.failed_attempts ?? 0) + 1;
+            const patch: Record<string, unknown> = { failed_attempts: next };
+            if (next >= MAX_CODE_FAILS) patch.expires_at = new Date().toISOString();
+            await supabaseAdmin.from("pairing_codes").update(patch).eq("id", pc.id);
+            return fail(reason, body, status);
+          };
+          if (pc.used) return failForCode("used", { error: "Code already used" }, 410);
+          if (new Date(pc.expires_at).getTime() < Date.now()) return failForCode("expired", { error: "Code expired" }, 410);
           if ((pc.failed_attempts ?? 0) >= MAX_CODE_FAILS) {
             return fail("code_locked", { error: "This code has been locked after too many attempts." }, 429);
           }
