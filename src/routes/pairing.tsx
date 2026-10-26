@@ -16,7 +16,9 @@ export const Route = createFileRoute("/pairing")({
 function generateCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
-  for (let i = 0; i < 6; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  // 32 symbols divide 256 evenly, so masking keeps the distribution uniform.
+  const bytes = crypto.getRandomValues(new Uint8Array(6));
+  for (let i = 0; i < 6; i++) out += chars[bytes[i] % chars.length];
   return out;
 }
 
