@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/public/connect/extend")({
           const institution = String(body.institution || "").trim() || null;
           const minutes = Number(body.minutes);
 
-          if (code.length !== 6) return json({ error: "Invalid code" }, 400);
+          if (code.length !== 8) return json({ error: "Invalid code" }, 400);
           if (!proName) return json({ error: "Name required" }, 400);
           if (![10, 60, 60 * 24, 60 * 24 * 7].includes(minutes)) {
             return json({ error: "Invalid duration" }, 400);
