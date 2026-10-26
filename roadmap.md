@@ -37,3 +37,4 @@
 - [x] Add device-specific installation guidance and supported browser install button without caching.
 - [x] Verify navigation, password reset, language selection and desktop/mobile presentation.
 - [x] Always show both installation instructions with the visitor's device first; remove the other-devices toggle.
+- [x] Pairing: access level set by the server, not chosen by the caller (security fix)

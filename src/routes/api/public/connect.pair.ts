@@ -12,16 +12,14 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           const proName = String(body.pro_name || "").trim();
           const proTitle = String(body.pro_title || "").trim() || null;
           const institution = String(body.institution || "").trim() || null;
-          const accessLevel = String(body.access_level || "passport_records");
+          // Access level is fixed server-side; callers cannot choose or escalate it.
+          const accessLevel = "passport_records";
           const gdpr = !!body.gdpr_consent;
           const proUserId = typeof body.pro_user_id === "string" && body.pro_user_id.length > 0 ? body.pro_user_id : null;
 
           if (code.length !== 6) return json({ error: "Invalid code" }, 400);
           if (!proName) return json({ error: "Name required" }, 400);
           if (!gdpr) return json({ error: "Consent required" }, 400);
-          if (!["passport_records", "records_only", "records_add", "passport_suggest"].includes(accessLevel)) {
-            return json({ error: "Invalid access level" }, 400);
-          }
 
           // Look up the pairing code
           const { data: pc, error: pcErr } = await supabaseAdmin
