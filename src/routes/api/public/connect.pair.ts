@@ -48,6 +48,9 @@ export const Route = createFileRoute("/api/public/connect/pair")({
             .maybeSingle();
           if (pcErr) throw pcErr;
           if (!pc) return fail("not_found", { error: "Code not found" }, 404);
+          if ((pc.failed_attempts ?? 0) >= MAX_CODE_FAILS) {
+            return fail("code_locked", { error: "This code has been locked after too many attempts." }, 429);
+          }
           const failForCode = async (reason: string, body: unknown, status: number) => {
             const next = (pc.failed_attempts ?? 0) + 1;
             const patch: { failed_attempts: number; expires_at?: string } = { failed_attempts: next };
@@ -57,9 +60,6 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           };
           if (pc.used) return failForCode("used", { error: "Code already used" }, 410);
           if (new Date(pc.expires_at).getTime() < Date.now()) return failForCode("expired", { error: "Code expired" }, 410);
-          if ((pc.failed_attempts ?? 0) >= MAX_CODE_FAILS) {
-            return fail("code_locked", { error: "This code has been locked after too many attempts." }, 429);
-          }
 
           // Duplicate prevention: check for an existing active session with same pro identity
           const nowIso = new Date().toISOString();
