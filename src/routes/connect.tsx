@@ -426,7 +426,7 @@ function SignedInProForm({ proMeta, proUserId, onPaired, onDuplicate }: { proMet
           maxLength={8}
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="ABC123"
+          placeholder="ABCD2345"
           className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#253F78] focus:outline-none"
         />
       </div>
@@ -550,7 +550,7 @@ function UnauthedConnectFlow({ onPaired, onDuplicate, navigate }: { onPaired: (r
           maxLength={8}
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="ABC123"
+          placeholder="ABCD2345"
           className="mt-1 w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-center text-2xl font-bold tracking-[0.4em] uppercase text-[#0D1B2A] focus:border-[#253F78] focus:outline-none"
         />
       </div>

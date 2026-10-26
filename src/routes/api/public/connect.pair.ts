@@ -50,7 +50,7 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           if (!pc) return fail("not_found", { error: "Code not found" }, 404);
           const failForCode = async (reason: string, body: unknown, status: number) => {
             const next = (pc.failed_attempts ?? 0) + 1;
-            const patch: Record<string, unknown> = { failed_attempts: next };
+            const patch: { failed_attempts: number; expires_at?: string } = { failed_attempts: next };
             if (next >= MAX_CODE_FAILS) patch.expires_at = new Date().toISOString();
             await supabaseAdmin.from("pairing_codes").update(patch).eq("id", pc.id);
             return fail(reason, body, status);
