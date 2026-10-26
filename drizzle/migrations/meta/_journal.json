@@ -8,6 +8,13 @@
       "when": 1792521301135,
       "tag": "0000_add_optional_profile_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793028364222,
+      "tag": "0001_pairing_rate_limits",
+      "breakpoints": true
     }
   ]
 }
