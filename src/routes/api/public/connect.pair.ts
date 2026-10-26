@@ -17,20 +17,42 @@ export const Route = createFileRoute("/api/public/connect/pair")({
           const gdpr = !!body.gdpr_consent;
           const proUserId = typeof body.pro_user_id === "string" && body.pro_user_id.length > 0 ? body.pro_user_id : null;
 
-          if (code.length !== 6) return json({ error: "Invalid code" }, 400);
+          const ipHash = await hashIp(request);
+          // Per-IP limit: max 5 failed attempts per 10 minutes.
+          const since = new Date(Date.now() - IP_WINDOW_MS).toISOString();
+          const { count: ipFails } = await supabaseAdmin
+            .from("pairing_failed_attempts")
+            .select("id", { count: "exact", head: true })
+            .eq("ip_hash", ipHash)
+            .gte("created_at", since);
+          if ((ipFails ?? 0) >= MAX_IP_FAILS) {
+            return json({ error: "Too many attempts. Please wait 10 minutes and try again." }, 429);
+          }
+          const fail = async (reason: string, body: unknown, status: number) => {
+            await supabaseAdmin.from("pairing_failed_attempts").insert({ ip_hash: ipHash, reason });
+            console.warn(`[pairing] failed redemption: ${reason}`);
+            return json(body, status);
+          };
+
+          if (code.length !== CODE_LENGTH) return fail("invalid_format", { error: "Invalid code" }, 400);
           if (!proName) return json({ error: "Name required" }, 400);
           if (!gdpr) return json({ error: "Consent required" }, 400);
 
           // Look up the pairing code
           const { data: pc, error: pcErr } = await supabaseAdmin
             .from("pairing_codes")
-            .select("id, user_id, expires_at, used, validity_minutes, reason_chips, reason_text")
+            .select("id, user_id, expires_at, used, validity_minutes, reason_chips, reason_text, failed_attempts")
             .eq("code", code)
+            .order("created_at", { ascending: false })
+            .limit(1)
             .maybeSingle();
           if (pcErr) throw pcErr;
-          if (!pc) return json({ error: "Code not found" }, 404);
-          if (pc.used) return json({ error: "Code already used" }, 410);
-          if (new Date(pc.expires_at).getTime() < Date.now()) return json({ error: "Code expired" }, 410);
+          if (!pc) return fail("not_found", { error: "Code not found" }, 404);
+          if (pc.used) return fail("used", { error: "Code already used" }, 410);
+          if (new Date(pc.expires_at).getTime() < Date.now()) return fail("expired", { error: "Code expired" }, 410);
+          if ((pc.failed_attempts ?? 0) >= MAX_CODE_FAILS) {
+            return fail("code_locked", { error: "This code has been locked after too many attempts." }, 429);
+          }
 
           // Duplicate prevention: check for an existing active session with same pro identity
           const nowIso = new Date().toISOString();
@@ -112,6 +134,22 @@ export const Route = createFileRoute("/api/public/connect/pair")({
     },
   },
 });
+
+const CODE_LENGTH = 8;
+const MAX_IP_FAILS = 5;
+const IP_WINDOW_MS = 10 * 60 * 1000;
+const MAX_CODE_FAILS = 10;
+
+// Store only a salted hash of the IP, never the address itself.
+async function hashIp(request: Request): Promise<string> {
+  const ip =
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    "unknown";
+  const data = new TextEncoder().encode(`globedoc-pairing:${ip}`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

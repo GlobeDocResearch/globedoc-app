@@ -17,8 +17,8 @@ function generateCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
   // 32 symbols divide 256 evenly, so masking keeps the distribution uniform.
-  const bytes = crypto.getRandomValues(new Uint8Array(6));
-  for (let i = 0; i < 6; i++) out += chars[bytes[i] % chars.length];
+  const bytes = crypto.getRandomValues(new Uint8Array(8));
+  for (let i = 0; i < 8; i++) out += chars[bytes[i] % chars.length];
   return out;
 }
 
@@ -204,20 +204,26 @@ function PairingPage() {
         navigate({ to: "/login" });
         return;
       }
-      const newCode = generateCode();
       const exp = new Date(Date.now() + validity * 60 * 1000);
-      const { data, error } = await (supabase as any)
-        .from("pairing_codes")
-        .insert({
-          user_id: user.id,
-          code: newCode,
-          expires_at: exp.toISOString(),
-          validity_minutes: validity,
-          reason_chips: reasonChips.length > 0 ? reasonChips : null,
-          reason_text: reasonText.trim() ? reasonText.trim().slice(0, 500) : null,
-        })
-        .select("id");
-      if (error) throw error;
+      let newCode = "";
+      let data: any = null;
+      // Regenerate on the rare collision with another active code.
+      for (let attempt = 0; attempt < 5; attempt++) {
+        newCode = generateCode();
+        const res = await (supabase as any)
+          .from("pairing_codes")
+          .insert({
+            user_id: user.id,
+            code: newCode,
+            expires_at: exp.toISOString(),
+            validity_minutes: validity,
+            reason_chips: reasonChips.length > 0 ? reasonChips : null,
+            reason_text: reasonText.trim() ? reasonText.trim().slice(0, 500) : null,
+          })
+          .select("id");
+        if (!res.error) { data = res.data; break; }
+        if (res.error.code !== "23505" || attempt === 4) throw res.error;
+      }
       setCode(newCode);
       setCodeId((data?.[0]?.id as string) ?? null);
       setExpiresAt(exp.getTime());
