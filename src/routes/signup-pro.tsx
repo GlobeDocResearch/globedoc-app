@@ -25,7 +25,7 @@ const schema = z.object({
   fullName: z.string().trim().min(1, "Full name is required").max(160),
   email: z.string().trim().email("Invalid email").max(255),
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
-  title: z.enum(TITLES, { errorMap: () => ({ message: "Please select a title" }) }),
+  title: z.enum(TITLES, { error: "Please select a title" }),
   specialty: z.string().trim().min(1, "Specialty is required").max(160),
   institution: z.string().trim().min(1, "Institution is required").max(255),
   cityCountry: z.string().trim().min(1, "City & Country is required").max(255),
