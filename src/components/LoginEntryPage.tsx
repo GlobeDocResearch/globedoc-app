@@ -348,6 +348,9 @@ export function LoginEntryPage({ audience = "combined" }: { audience?: "combined
       </main>
 
       <footer className="w-full bg-hub-navy px-5 py-8">
+        <p className="mb-3 text-center text-[15px] text-hub-footer">
+          GlobeDoc Research Hub · Non-profit association · Org. no. 802558-6366
+        </p>
         <p className="text-center text-[15px] text-hub-footer">
           © 2026 GlobeDoc Research Hub (non-profit, in formation) ·{" "}
           <a href="https://globedoc.com/privacy" className="text-hub-footer transition-colors hover:text-hub-on-navy">Privacy Policy</a> ·{" "}
