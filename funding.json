@@ -1,0 +1,72 @@
+{
+  "version": "v1.0.0",
+  "entity": {
+    "type": "organisation",
+    "role": "owner",
+    "name": "GlobeDoc Research Hub",
+    "email": "admin@globedoc.com",
+    "description": "GlobeDoc Research Hub is a Swedish non-profit research association (ideell förening, org. no. 802558-6366, EU PIC 860142845) developing GPOC – the Global Patient co-Owned Cloud: a free, open-source health record that belongs to the patient and follows each person across borders and over a lifetime. The hub is volunteer-run and supported by an international network of academic Fellows in AI, health data governance and ethics.",
+    "webpageUrl": {
+      "url": "https://globedoc.com",
+      "wellKnown": "https://globedoc.com/.well-known/funding-manifest-urls"
+    }
+  },
+  "projects": [
+    {
+      "guid": "globedoc-app",
+      "name": "GlobeDoc (GPOC)",
+      "description": "A free, open-source, patient co-owned health record. Patients own their health passport (history, medications, allergies, vaccinations, records and files) and grant healthcare professionals time-limited, consent-based access through pairing codes. Built with Row Level Security, data export and full account deletion, and an interface in 26 languages. Research prototype aiming for recognition as a Digital Public Good.",
+      "webpageUrl": {
+        "url": "https://globedoc.com",
+        "wellKnown": "https://globedoc.com/.well-known/funding-manifest-urls"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/GlobeDocResearch/globedoc-app"
+      },
+      "licenses": ["spdx:AGPL-3.0-only"],
+      "tags": ["health", "health-records", "patient-data", "privacy", "consent", "digital-public-goods", "open-source"]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "guid": "bank",
+        "type": "bank",
+        "address": "",
+        "description": "Bank transfer to GlobeDoc Research Hub's account in Sweden. Account details on request: admin@globedoc.com"
+      }
+    ],
+    "plans": [
+      {
+        "guid": "development",
+        "status": "active",
+        "name": "Development and maintenance",
+        "description": "Core development, maintenance and documentation of the open-source GlobeDoc app towards production readiness.",
+        "amount": 50000,
+        "currency": "EUR",
+        "frequency": "yearly",
+        "channels": ["bank"]
+      },
+      {
+        "guid": "security-audit",
+        "status": "active",
+        "name": "Independent security audit",
+        "description": "An external security and privacy audit of the codebase before any use with real patient data.",
+        "amount": 25000,
+        "currency": "EUR",
+        "frequency": "one-time",
+        "channels": ["bank"]
+      }
+    ],
+    "history": [
+      {
+        "year": 2026,
+        "income": 0,
+        "expenses": 0,
+        "taxes": 0,
+        "currency": "SEK",
+        "description": "Association registered in November 2026. Development to date has been volunteer-funded."
+      }
+    ]
+  }
+}
