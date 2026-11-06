@@ -1,6 +1,6 @@
 # GlobeDoc
 
-GlobeDoc is a personal health passport developed by GlobeDoc Research Hub (non-profit, in formation). Patients co-own their health record, and healthcare professionals get access only with the patient's consent, through a time-limited pairing code.
+GlobeDoc is a personal health passport developed by GlobeDoc Research Hub, a Swedish non-profit research association (ideell förening, org. no. 802558-6366; EU PIC 860142845). Patients co-own their health record, and healthcare professionals get access only with the patient's consent, through a time-limited pairing code.
 
 This is a research prototype. It is not for clinical use or real patient data.
 
