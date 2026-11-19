@@ -145,13 +145,19 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     toast.success(`Connected to ${result.patient_name}`);
   };
 
+  const authHeaders = async (): Promise<Record<string, string>> => {
+    const { data } = await supabase.auth.getSession();
+    const t = data.session?.access_token;
+    return { "Content-Type": "application/json", ...(t ? { Authorization: `Bearer ${t}` } : {}) };
+  };
+
   const handleExtend = async () => {
     if (!duplicate) return;
     setExtending(true);
     try {
       const res = await fetch("/api/public/connect/extend", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders(),
         body: JSON.stringify({
           code: duplicate.code,
           pro_name: duplicate.pro_name,
@@ -176,7 +182,7 @@ function ConnectPage({ isAuthed, userId, proMeta }: { isAuthed: boolean; userId:
     try {
       const res = await fetch("/api/public/connect/revoke", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders(),
         body: JSON.stringify({ session_token: id }),
       });
       const json = await res.json();

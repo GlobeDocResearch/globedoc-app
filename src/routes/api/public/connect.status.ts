@@ -18,7 +18,10 @@ export const Route = createFileRoute("/api/public/connect/status")({
             .in("session_token", tokens);
           if (error) throw error;
 
-          const userIds = Array.from(new Set((rows || []).map((r: any) => r.user_id)));
+          const nowMs = Date.now();
+          const isActive = (r: any) => !r.revoked_at && new Date(r.expires_at).getTime() > nowMs;
+          // Only reveal patient names for sessions that are still active.
+          const userIds = Array.from(new Set((rows || []).filter(isActive).map((r: any) => r.user_id)));
           let nameByUser = new Map<string, string>();
           if (userIds.length > 0) {
             const { data: profiles } = await supabaseAdmin
@@ -33,14 +36,15 @@ export const Route = createFileRoute("/api/public/connect/status")({
 
           const sessions = (rows || []).map((r: any) => ({
             session_token: r.session_token,
-            patient_name: nameByUser.get(r.user_id) || "Patient",
+            patient_name: isActive(r) ? nameByUser.get(r.user_id) || "Patient" : "Patient",
             paired_at: r.paired_at,
             expires_at: r.expires_at,
             revoked_at: r.revoked_at,
           }));
           return json({ sessions });
         } catch (e: any) {
-          return json({ error: e.message || "Internal error" }, 500);
+          console.error("connect/status failed", e);
+          return json({ error: "Internal error" }, 500);
         }
       },
     },

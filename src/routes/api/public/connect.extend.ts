@@ -6,6 +6,8 @@ export const Route = createFileRoute("/api/public/connect/extend")({
     handlers: {
       POST: async ({ request }) => {
         try {
+          const callerId = await getCallerId(request);
+          if (!callerId) return json({ error: "Sign in required" }, 401);
           const body = await request.json();
           const code = String(body.code || "").trim().toUpperCase();
           const proName = String(body.pro_name || "").trim();
@@ -35,6 +37,7 @@ export const Route = createFileRoute("/api/public/connect/extend")({
             .from("pro_sessions")
             .select("id, pro_name, institution, session_token, expires_at, access_level")
             .eq("user_id", pc.user_id)
+            .eq("pro_user_id", callerId)
             .eq("pro_name", proName)
             .is("revoked_at", null)
             .gt("expires_at", nowIso)
@@ -68,12 +71,22 @@ export const Route = createFileRoute("/api/public/connect/extend")({
             extended: true,
           });
         } catch (e: any) {
-          return json({ error: e.message || "Internal error" }, 500);
+          console.error("connect action failed", e);
+          return json({ error: "Internal error" }, 500);
         }
       },
     },
   },
 });
+
+async function getCallerId(request: Request): Promise<string | null> {
+  const h = request.headers.get("authorization") || "";
+  const jwt = h.toLowerCase().startsWith("bearer ") ? h.slice(7).trim() : "";
+  if (!jwt) return null;
+  const { data, error } = await supabaseAdmin.auth.getUser(jwt);
+  if (error || !data?.user) return null;
+  return data.user.id;
+}
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

@@ -12,12 +12,14 @@ export const getPatientDisplayInfo = createServerFn({ method: "POST" })
     ).slice(0, 200);
     if (ids.length === 0) return { patients: {} as Record<string, { name: string | null; email: string | null }> };
 
-    // Verify pro has (or had) sessions for these patients
+    // Verify pro currently has active sessions for these patients
     const { data: sessions } = await supabaseAdmin
       .from("pro_sessions")
       .select("user_id")
       .eq("pro_user_id", userId)
-      .in("user_id", ids);
+      .in("user_id", ids)
+      .is("revoked_at", null)
+      .gt("expires_at", new Date().toISOString());
     const allowed = new Set((sessions || []).map((s: any) => s.user_id));
     const allowedIds = ids.filter((id) => allowed.has(id));
     if (allowedIds.length === 0) return { patients: {} };
