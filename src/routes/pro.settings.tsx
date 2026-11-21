@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Lock, FileText, Shield, Globe, AlertTriangle } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Lock, FileText, Shield, Globe, AlertTriangle, BadgeCheck, KeyRound, Fingerprint, Blocks, LockKeyhole, Network, Sparkles, AudioLines, Languages } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguagePickerRow } from "@/components/LanguagePicker";
@@ -101,9 +101,9 @@ function SettingsTab() {
           </div>
         )}
 
-        <ComingSoonRow icon="🏦" label="Connect BankID" />
-        <ComingSoonRow icon="🔐" label="Three-factor verification" />
-        <ComingSoonRow icon="👁" label="Biometric login" />
+        <ComingSoonRow icon={<BadgeCheck className="h-5 w-5 text-gray-500" />} label="Connect BankID" />
+        <ComingSoonRow icon={<KeyRound className="h-5 w-5 text-gray-500" />} label="Three-factor verification" />
+        <ComingSoonRow icon={<Fingerprint className="h-5 w-5 text-gray-500" />} label="Biometric login" />
 
         <Link to="/legal" className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50">
           <Shield className="h-5 w-5 text-gray-500" />
@@ -127,11 +127,25 @@ function SettingsTab() {
           <h2 className="text-sm workspace-heading">Advanced Security & Privacy</h2>
         </div>
         <div className="divide-y divide-gray-100">
-          <ComingSoonRow icon="🔗" label="GlobeDoc Chain" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
-          <ComingSoonRow icon="🔐" label="Homomorphic Encryption" subtitle="Your data can be analysed without ever being decrypted" />
-          <ComingSoonRow icon="🤖" label="Federated Learning" subtitle="AI that learns from your health data without it ever leaving your device" />
+          <ComingSoonRow icon={<Blocks className="h-5 w-5 text-gray-500" />} label="GlobeDoc Chain" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
+          <ComingSoonRow icon={<LockKeyhole className="h-5 w-5 text-gray-500" />} label="Homomorphic Encryption" subtitle="Your data can be analysed without ever being decrypted" />
+          <ComingSoonRow icon={<Network className="h-5 w-5 text-gray-500" />} label="Federated Learning" subtitle="AI that learns from your health data without it ever leaving your device" />
         </div>
       </section>
+
+      <section className="mt-6 rounded-2xl bg-card  workspace-card">
+        <div className="flex items-center gap-2 px-5 pt-4 pb-2">
+          <Sparkles className="h-5 w-5 text-gray-500" />
+          <h2 className="text-sm workspace-heading">AI Assistants for Professionals</h2>
+        </div>
+        <div className="divide-y divide-gray-100">
+          <ComingSoonRow icon={<AudioLines className="h-5 w-5 text-gray-500" />} label="Listen & document" subtitle="Draft clinical notes from the consultation, for you to review and approve" />
+          <ComingSoonRow icon={<FileText className="h-5 w-5 text-gray-500" />} label="Summarise" subtitle="A clear overview of the patient's shared record before the visit" />
+          <ComingSoonRow icon={<Languages className="h-5 w-5 text-gray-500" />} label="Translate & bridge" subtitle="Support across languages when patients cross borders" />
+        </div>
+      </section>
+
+      <p className="mt-2 px-1 text-xs text-gray-500">In research and development. Designed for EU regulation (MDR, AI Act).</p>
 
       <section className="mt-6 rounded-2xl bg-card  workspace-card">
         <button
@@ -175,11 +189,11 @@ function SettingsTab() {
   );
 }
 
-function ComingSoonRow({ icon, label, subtitle }: { icon: string; label: string; subtitle?: string }) {
+function ComingSoonRow({ icon, label, subtitle }: { icon: ReactNode; label: string; subtitle?: string }) {
   return (
     <div aria-disabled className="flex items-center justify-between gap-3 px-5 py-4 opacity-50 cursor-not-allowed select-none">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="text-lg shrink-0" aria-hidden>{icon}</span>
+        <span className="shrink-0" aria-hidden>{icon}</span>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-gray-500">{label}</p>
           {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}

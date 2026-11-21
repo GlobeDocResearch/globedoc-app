@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle, Camera } from "lucide-react";
+import { LogOut, Home as HomeIcon, Globe, Plane, FileText, Link as LinkIcon, User, Pencil, Shield, Download, FileJson, FileText as FileTextIcon, Eye, AlertTriangle, Camera, BadgeCheck, KeyRound, Fingerprint, Blocks, LockKeyhole, Network } from "lucide-react";
 import { useRef } from "react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
@@ -613,9 +613,9 @@ function ProfilePage() {
         <Card>
           <h2 className="text-base workspace-heading">{t.security}</h2>
           <div className="mt-3 divide-y divide-gray-100">
-            <ComingSoonRow icon="🏦" label={t.bankid} badge={t.comingSoon} />
-            <ComingSoonRow icon="🔐" label={t.threeFactor} badge={t.comingSoon} />
-            <ComingSoonRow icon="👁" label={t.biometric} badge={t.comingSoon} />
+            <ComingSoonRow icon={<BadgeCheck className="h-5 w-5 text-gray-500" />} label={t.bankid} badge={t.comingSoon} />
+            <ComingSoonRow icon={<KeyRound className="h-5 w-5 text-gray-500" />} label={t.threeFactor} badge={t.comingSoon} />
+            <ComingSoonRow icon={<Fingerprint className="h-5 w-5 text-gray-500" />} label={t.biometric} badge={t.comingSoon} />
           </div>
         </Card>
 
@@ -675,9 +675,9 @@ function ProfilePage() {
         <Card>
           <h2 className="text-base workspace-heading">Advanced Security & Privacy</h2>
           <div className="mt-3 divide-y divide-gray-100">
-            <ComingSoonRow icon="🔗" label="GlobeDoc Chain" badge="Coming Soon" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
-            <ComingSoonRow icon="🔐" label="Homomorphic Encryption" badge="Coming Soon" subtitle="Your data can be analysed without ever being decrypted" />
-            <ComingSoonRow icon="🤖" label="Federated Learning" badge="Coming Soon" subtitle="AI that learns from your health data without it ever leaving your device" />
+            <ComingSoonRow icon={<Blocks className="h-5 w-5 text-gray-500" />} label="GlobeDoc Chain" badge="Coming Soon" subtitle="Decentralised audit trail powered by DAG-based blockchain technology" />
+            <ComingSoonRow icon={<LockKeyhole className="h-5 w-5 text-gray-500" />} label="Homomorphic Encryption" badge="Coming Soon" subtitle="Your data can be analysed without ever being decrypted" />
+            <ComingSoonRow icon={<Network className="h-5 w-5 text-gray-500" />} label="Federated Learning" badge="Coming Soon" subtitle="AI that learns from your health data without it ever leaving your device" />
           </div>
         </Card>
 
@@ -730,11 +730,11 @@ function FieldRow({ label, value, editing, edit, required }: { label: string; va
   );
 }
 
-function ComingSoonRow({ icon, label, badge, subtitle }: { icon: string; label: string; badge: string; subtitle?: string }) {
+function ComingSoonRow({ icon, label, badge, subtitle }: { icon: React.ReactNode; label: string; badge: string; subtitle?: string }) {
   return (
     <div aria-disabled className="flex items-center justify-between gap-3 py-3 opacity-50 cursor-not-allowed select-none">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="text-lg shrink-0" aria-hidden>{icon}</span>
+        <span className="shrink-0" aria-hidden>{icon}</span>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-gray-500">{label}</p>
           {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
