@@ -1,11 +1,33 @@
 import logo from "@/assets/globedoc-globe.svg";
 import { Bell, BriefcaseMedical } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 /** Shared presentation only; each page retains its own header controls. */
 export function WorkspaceBrand({ professional = false }: { professional?: boolean }) {
+  const brandRef = useRef<HTMLDivElement>(null);
+
+  // Desktop sidebar starts under the header, so publish the header's height.
+  useEffect(() => {
+    const header = brandRef.current?.closest("header");
+    if (!header) return;
+    const apply = () =>
+      document.documentElement.style.setProperty(
+        "--workspace-header-h",
+        `${Math.round(header.getBoundingClientRect().height)}px`,
+      );
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(header);
+    window.addEventListener("resize", apply);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", apply);
+    };
+  }, []);
+
   return (
-    <div className="workspace-brand flex min-w-0 items-center gap-3">
+    <div ref={brandRef} className="workspace-brand flex min-w-0 items-center gap-3">
       <div className="hub-hexagon flex h-[50px] w-[50px] shrink-0 items-center justify-center bg-hub-on-navy">
         <img src={logo} alt="GlobeDoc" className="h-9 w-9" />
       </div>
