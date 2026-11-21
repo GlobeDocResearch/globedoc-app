@@ -171,6 +171,7 @@ function PassportPage() {
         </div>
       </header>
 
+      <div className="lg:mx-auto lg:max-w-[1100px]">
       {/* Section 1 — Progress */}
       <section className="px-5 pt-6">
         <h1 className="workspace-heading text-2xl font-bold text-[#0D1B2A]">Health Passport</h1>
@@ -181,8 +182,9 @@ function PassportPage() {
         <p className="mt-2 text-xs text-gray-500">{percent}% complete</p>
       </section>
 
+      <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
       {/* Section 2 — Hexagon map (tight pointy-top honeycomb) */}
-      <section className="mt-6 px-4">
+      <section className="mt-6 px-4 lg:sticky lg:top-6">
         <div className="relative mx-auto" style={{ width: 300, height: 289 }}>
           {/* Center */}
           <Hex style={{ left: 100, top: 86 }} color="#FFFFFF" filled pageBg="#F8F9FA">
@@ -263,6 +265,8 @@ function PassportPage() {
           <ChevronRight className="h-5 w-5 text-gray-500" />
         </Link>
       </section>
+      </div>
+      </div>
 
       {/* Bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 z-10 workspace-nav border-t border-hub-navy bg-hub-navy">

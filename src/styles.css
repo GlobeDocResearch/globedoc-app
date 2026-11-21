@@ -249,3 +249,20 @@
   .workspace-wordmark-sub,
   .entry-wordmark-sub { display: none; }
 }
+
+/* Desktop: bottom nav becomes a slim left sidebar; mobile unchanged */
+@media (min-width: 1024px) {
+  body:has(.workspace-nav) { padding-left: 96px; }
+  .workspace-nav {
+    top: 0; bottom: 0; left: 0; right: auto; width: 96px;
+    border-top: 0; overflow-y: auto;
+  }
+  .workspace-nav ul {
+    flex-direction: column; justify-content: flex-start;
+    gap: 8px; padding: 20px 8px; max-width: none; margin: 0;
+  }
+  .workspace-nav li { flex: none; width: 100%; }
+  .workspace-nav li > a, .workspace-nav li > button { width: 100%; }
+  body:has(.workspace-nav) .pb-24 { padding-bottom: 2rem; }
+  body:has(.workspace-nav) .fixed.inset-x-0.bottom-0:not(.workspace-nav) { left: 96px; }
+}
