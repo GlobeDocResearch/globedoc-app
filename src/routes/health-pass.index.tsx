@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { WorkspaceBrand, WorkspaceBell } from "@/components/WorkspaceBrand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, ChevronRight, FileText } from "lucide-react";
+import { LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, ChevronRight, FileText, ClipboardList, Pill, Syringe, Activity, Dna, TriangleAlert, type LucideIcon } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,18 +24,23 @@ type SectionKey =
 
 const SECTIONS: {
   key: SectionKey;
-  emoji: string;
+  icon: LucideIcon;
   title: string;
   subtitle: string;
   color: string;
 }[] = [
-  { key: "medical-history", emoji: "🏥", title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#1D3A6B" },
-  { key: "medications", emoji: "💊", title: "Medications", subtitle: "All current medications & supplements", color: "#0F8BE8" },
-  { key: "vaccinations", emoji: "💉", title: "Vaccinations", subtitle: "Complete immunisation record", color: "#F5D33A" },
-  { key: "lifestyle", emoji: "🏃", title: "Lifestyle & Risks", subtitle: "Habits that matter clinically", color: "#64C8F0" },
-  { key: "heredity", emoji: "🧬", title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#9E9E9E" },
-  { key: "allergies", emoji: "⚠️", title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#C93535" },
+  { key: "medical-history", icon: ClipboardList, title: "History", subtitle: "Diagnoses, hospitalisations & operations", color: "#1D3A6B" },
+  { key: "medications", icon: Pill, title: "Medications", subtitle: "All current medications & supplements", color: "#0F8BE8" },
+  { key: "vaccinations", icon: Syringe, title: "Vaccinations", subtitle: "Complete immunisation record", color: "#F5D33A" },
+  { key: "lifestyle", icon: Activity, title: "Lifestyle & Risks", subtitle: "Habits that matter clinically", color: "#64C8F0" },
+  { key: "heredity", icon: Dna, title: "Heredity", subtitle: "Family medical history & genetic conditions", color: "#9E9E9E" },
+  { key: "allergies", icon: TriangleAlert, title: "Allergies", subtitle: "Drug, food, environment & contrast reactions", color: "#C93535" },
 ];
+
+// Decorative section glyph, always in the same colour as the tile's text
+function SectionGlyph({ icon: Icon, color, className }: { icon: LucideIcon; color: string; className?: string }) {
+  return <Icon className={className} style={{ color }} aria-hidden="true" />;
+}
 
 // Sections whose filled background needs dark text for legibility (light backgrounds)
 const DARK_TEXT_ON_FILL: Record<string, boolean> = { vaccinations: true, lifestyle: true };
@@ -187,32 +192,32 @@ function PassportPage() {
           </Hex>
           {/* Top-left: History */}
           <Hex style={{ left: 50, top: 0 }} color={SECTIONS[0].color} filled={done["medical-history"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[0].key)}>
-            <span className="text-xl">{SECTIONS[0].emoji}</span>
+            <SectionGlyph icon={SECTIONS[0].icon} className="h-5 w-5" color={done["medical-history"] ? "#FFFFFF" : SECTIONS[0].color} />
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["medical-history"] ? "#FFFFFF" : SECTIONS[0].color }}>History</span>
           </Hex>
           {/* Top-right: Medications */}
           <Hex style={{ left: 150, top: 0 }} color={SECTIONS[1].color} filled={done["medications"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[1].key)}>
-            <span className="text-xl">{SECTIONS[1].emoji}</span>
+            <SectionGlyph icon={SECTIONS[1].icon} className="h-5 w-5" color={done["medications"] ? "#FFFFFF" : SECTIONS[1].color} />
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["medications"] ? "#FFFFFF" : SECTIONS[1].color }}>Medications</span>
           </Hex>
           {/* Right: Vaccinations */}
           <Hex style={{ left: 200, top: 86 }} color={SECTIONS[2].color} filled={done["vaccinations"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[2].key)}>
-            <span className="text-xl">{SECTIONS[2].emoji}</span>
+            <SectionGlyph icon={SECTIONS[2].icon} className="h-5 w-5" color={done["vaccinations"] ? DARK_TEXT : SECTIONS[2].color} />
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["vaccinations"] ? DARK_TEXT : SECTIONS[2].color }}>Vaccinations</span>
           </Hex>
           {/* Bottom-right: Lifestyle & Risks */}
           <Hex style={{ left: 150, top: 173 }} color={SECTIONS[3].color} filled={done["lifestyle"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[3].key)}>
-            <span className="text-xl">{SECTIONS[3].emoji}</span>
+            <SectionGlyph icon={SECTIONS[3].icon} className="h-5 w-5" color={done["lifestyle"] ? DARK_TEXT : SECTIONS[3].color} />
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["lifestyle"] ? DARK_TEXT : SECTIONS[3].color }}>Lifestyle</span>
           </Hex>
           {/* Bottom-left: Heredity */}
           <Hex style={{ left: 50, top: 173 }} color={SECTIONS[4].color} filled={done["heredity"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[4].key)}>
-            <span className="text-xl">{SECTIONS[4].emoji}</span>
+            <SectionGlyph icon={SECTIONS[4].icon} className="h-5 w-5" color={done["heredity"] ? "#FFFFFF" : SECTIONS[4].color} />
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["heredity"] ? "#FFFFFF" : SECTIONS[4].color }}>Heredity</span>
           </Hex>
           {/* Left: Allergies */}
           <Hex style={{ left: 0, top: 86 }} color={SECTIONS[5].color} filled={done["allergies"]} pageBg="#F8F9FA" onClick={() => goSection(SECTIONS[5].key)}>
-            <span className="text-xl">{SECTIONS[5].emoji}</span>
+            <SectionGlyph icon={SECTIONS[5].icon} className="h-5 w-5" color={done["allergies"] ? "#FFFFFF" : SECTIONS[5].color} />
             <span className="mt-1 text-[11px] font-bold" style={{ color: done["allergies"] ? "#FFFFFF" : SECTIONS[5].color }}>Allergies</span>
           </Hex>
         </div>
@@ -235,7 +240,7 @@ function PassportPage() {
                 borderLeft: `6px solid ${s.color}`,
               }}
             >
-              <span className="text-2xl">{s.emoji}</span>
+              <SectionGlyph icon={s.icon} className="h-6 w-6 shrink-0" color={isDone ? filledText : s.color} />
               <div className="flex-1">
                 <h3 className="text-sm font-bold" style={{ color: isDone ? filledText : s.color }}>{s.title}</h3>
                 <p className="text-xs" style={{ color: isDone ? filledSub : "#4B5563" }}>{s.subtitle}</p>
