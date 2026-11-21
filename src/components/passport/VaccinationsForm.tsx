@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { X, Pencil, Trash2, Plus, ChevronDown } from "lucide-react";
+import { X, Pencil, Trash2, Plus, ChevronDown, Syringe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { SaveButton } from "@/components/ui/save-button";
@@ -452,7 +452,7 @@ export default function VaccinationsForm() {
       <header className="px-5 pt-6 pb-7" style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${ACCENT_2} 100%)` }}>
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <span className="text-3xl leading-none">💉</span>
+            <Syringe className="h-[30px] w-[30px] shrink-0" strokeWidth={2} style={{ color: HEADER_TEXT }} aria-hidden="true" />
             <div>
               <h1 className="text-2xl font-bold" style={{ color: HEADER_TEXT }}>{t("title")}</h1>
               <p className="mt-1 text-sm" style={{ color: HEADER_TEXT, opacity: 0.8 }}>{t("subtitle")}</p>

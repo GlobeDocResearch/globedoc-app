@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2 } from "lucide-react";
+import { FileText, Plus, X, StickyNote, FileUp, MessageCircle, Loader2, ClipboardList, Paperclip, Pill } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getActiveSessionsFromSupabase, type ActiveSession } from "@/lib/proPairings";
 import { toast } from "sonner";
@@ -388,10 +388,10 @@ function ProPatientsTab() {
 }
 
 function ProTypePicker({ onPick, onClose }: { onPick: (t: ProEntryType) => void; onClose: () => void }) {
-  const opts: { t: ProEntryType; emoji: string; label: string }[] = [
-    { t: "clinical_note", emoji: "📋", label: "Clinical note" },
-    { t: "document", emoji: "📎", label: "Document upload" },
-    { t: "suggestion", emoji: "💊", label: "Passport update suggestion" },
+  const opts: { t: ProEntryType; icon: typeof FileText; label: string }[] = [
+    { t: "clinical_note", icon: ClipboardList, label: "Clinical note" },
+    { t: "document", icon: Paperclip, label: "Document upload" },
+    { t: "suggestion", icon: Pill, label: "Passport update suggestion" },
   ];
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
@@ -408,7 +408,7 @@ function ProTypePicker({ onPick, onClose }: { onPick: (t: ProEntryType) => void;
                 onClick={() => onPick(o.t)}
                 className="flex w-full items-center gap-3 rounded-xl border border-gray-200 p-3 text-left hover:bg-gray-50"
               >
-                <span className="text-2xl">{o.emoji}</span>
+                <o.icon className="h-6 w-6 shrink-0 text-[#253F78]" strokeWidth={2} aria-hidden="true" />
                 <span className="text-sm font-semibold text-[#0D1B2A]">{o.label}</span>
               </button>
             </li>
