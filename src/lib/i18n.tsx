@@ -18,6 +18,8 @@ const en = {
   "login.legal": "Privacy Policy & Terms of Service",
 
   "home.welcome": "Welcome back, {name}!",
+  "home.lastUpdated": "Last updated {date}",
+  "home.getStarted": "Let's get started",
   "home.passportTitle": "Health Passport",
   "home.passportSubtitle": "Create your global health passport",
   "home.passportCta": "Create Your Health Passport",
@@ -179,6 +181,8 @@ const sv: Record<keyof typeof en, string> = {
   "login.legal": "Integritetspolicy & Användarvillkor",
 
   "home.welcome": "Välkommen tillbaka, {name}!",
+  "home.lastUpdated": "Senast uppdaterad {date}",
+  "home.getStarted": "Nu sätter vi igång",
   "home.passportTitle": "Health Passport",
   "home.passportSubtitle": "Skapa ditt globala hälsopass",
   "home.passportCta": "Skapa ditt Health Passport",

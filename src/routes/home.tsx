@@ -22,12 +22,13 @@ export const Route = createFileRoute("/home")({
 });
 
 function HomePage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const signedAvatarUrl = useAvatarUrl(avatarUrl);
+  const [lastUpdated, setLastUpdated] = useState<string | null | undefined>(undefined);
   const [locations, setLocations] = useState<MapLocation[]>([]);
 
   useEffect(() => {
@@ -56,6 +57,17 @@ function HomePage() {
         locs.push({ id: `rl-${r.id}`, city: r.city, country: r.country });
       }
       setLocations(locs);
+      const tables = ["record_entries", "record_locations", "hospital_stays", "allergies_summary", "allergy_drug_intolerances", "childhood_vaccines", "contrast_allergies", "drug_allergies", "drug_intolerances", "environmental_allergies", "food_allergies", "heredity_conditions", "heredity_genetic_testing", "heredity_parents", "heredity_siblings", "heredity_summary", "lifestyle_risk", "medical_conditions", "medical_conditions_summary", "obstetric_history", "otc_supplements", "other_vaccines", "prescription_medications", "stopped_medications", "travel_vaccines", "vaccination_contraindications"];
+      const results = await Promise.all(tables.map((tb) =>
+        (supabase as any).from(tb).select("updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(1),
+      ));
+      if (!mounted) return;
+      let latest: string | null = null;
+      for (const r of results) {
+        const v = r.data?.[0]?.updated_at as string | undefined;
+        if (v && (!latest || v > latest)) latest = v;
+      }
+      setLastUpdated(latest);
     })();
     return () => {
       mounted = false;
@@ -105,7 +117,13 @@ function HomePage() {
             <h1 className="workspace-heading text-xl font-bold text-[#1D438C]">
               {t("home.welcome").replace("{name}", displayName)}
             </h1>
-            <p className="text-sm text-gray-500">{displayName}</p>
+            <p className="text-sm text-gray-500">
+              {lastUpdated === undefined
+                ? "\u00a0"
+                : lastUpdated
+                  ? t("home.lastUpdated").replace("{date}", new Date(lastUpdated).toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { day: "numeric", month: "short", year: "numeric" }))
+                  : t("home.getStarted")}
+            </p>
           </div>
         </section>
 

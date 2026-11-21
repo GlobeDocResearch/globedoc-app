@@ -503,13 +503,15 @@ function ProfilePage() {
             onClick={handleAvatarClick}
             disabled={uploadingAvatar}
             aria-label="Change profile photo"
-            className="h-auto relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 shadow-sm ring-2 ring-white"
+            className="relative h-24 w-24 shrink-0 rounded-full p-0"
           >
-            {signedAvatarUrl ? (
-              <img src={signedAvatarUrl} alt="" className="h-full w-full object-cover" />
-            ) : (
-              <User className="absolute inset-0 m-auto h-10 w-10 text-gray-400" />
-            )}
+            <span className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-gray-100 shadow-sm ring-1 ring-gray-100">
+              {signedAvatarUrl ? (
+                <img src={signedAvatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-10 w-10 text-gray-400" />
+              )}
+            </span>
             <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-hub-navy text-hub-on-navy shadow ring-2 ring-white">
               <Camera className="h-3.5 w-3.5" />
             </span>
