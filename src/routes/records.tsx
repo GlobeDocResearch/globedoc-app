@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   LogOut, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText,
   Plus, MessageCircle, Pencil, Trash2, FileUp, Image as ImageIcon, FlaskConical,
-  StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays,
+  StickyNote, X, Download, ArrowLeft, Send, Hospital, Rows, CalendarDays, Mic,
 } from "lucide-react";
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
@@ -21,6 +21,8 @@ import {
   firstYear,
 } from "@/lib/passportRecords";
 import { SaveButton } from "@/components/ui/save-button";
+import { VoiceInput, DictationButton } from "@/components/VoiceInput";
+import { appendDictation } from "@/lib/transcription";
 
 export const Route = createFileRoute("/records")({
   head: () => ({ meta: [{ title: "Records — GlobeDoc" }, { name: "description", content: "View and manage your personal GlobeDoc health records." }, { property: "og:title", content: "Records — GlobeDoc" }, { property: "og:description", content: "View and manage your personal GlobeDoc health records." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -63,6 +65,7 @@ const T = {
     empty: "Your Records feed is empty — add your first entry with the + button.",
     you: "You", add: "Add entry", pickType: "Choose entry type",
     note: "Personal note", noteSub: "Free text",
+    voice: "Voice note", voiceSub: "Speak – we'll write it down",
     doc: "Document", docSub: "PDF upload",
     image: "Medical image", imageSub: "JPEG / PNG upload",
     lab: "Lab result", labSub: "Upload or text entry",
@@ -93,6 +96,7 @@ const T = {
     empty: "Din journal är tom — lägg till din första post med +-knappen.",
     you: "Du", add: "Lägg till", pickType: "Välj typ av post",
     note: "Personlig anteckning", noteSub: "Fri text",
+    voice: "Röstanteckning", voiceSub: "Prata – vi skriver ned det",
     doc: "Dokument", docSub: "Ladda upp PDF",
     image: "Medicinsk bild", imageSub: "JPEG / PNG",
     lab: "Provsvar", labSub: "Ladda upp eller skriv text",
@@ -153,6 +157,8 @@ function RecordsPage() {
   const [loading, setLoading] = useState(true);
 
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [voiceDraft, setVoiceDraft] = useState("");
   const [uploadType, setUploadType] = useState<EntryType | null>(null);
   const [editingEntry, setEditingEntry] = useState<RecordEntry | null>(null);
   const [openEntryId, setOpenEntryId] = useState<string | null>(null);
@@ -510,16 +516,20 @@ function RecordsPage() {
       {pickerOpen && (
         <TypePicker
           t={t}
-          onPick={(type) => { setPickerOpen(false); setUploadType(type); }}
+          onPick={(type) => { setPickerOpen(false); if (type === "voice") setVoiceOpen(true); else { setVoiceDraft(""); setUploadType(type); } }}
           onClose={() => setPickerOpen(false)}
         />
       )}
 
+      {voiceOpen && <VoiceInput lang={lang} onClose={() => setVoiceOpen(false)} onText={text => { setVoiceDraft(text); setVoiceOpen(false); setUploadType("note"); }} />}
+
       {(uploadType || editingEntry) && (
         <UploadModal
           t={t}
+          lang={lang}
+          initialBody={voiceDraft}
           userId={userId}
-          type={editingEntry ? editingEntry.entry_type : uploadType!}
+          type={editingEntry?.entry_type ?? uploadType ?? "note"}
           existing={editingEntry}
           onClose={() => { setUploadType(null); setEditingEntry(null); }}
           onSaved={async () => { setUploadType(null); setEditingEntry(null); await reload(userId); toast.success(t.saved); }}
@@ -663,9 +673,10 @@ function Avatar({ name, url }: { name: string; url: string | null }) {
   );
 }
 
-function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: EntryType) => void; onClose: () => void }) {
-  const opts: { type: EntryType; Icon: typeof StickyNote; label: string; sub: string }[] = [
+function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: EntryType | "voice") => void; onClose: () => void }) {
+  const opts: { type: EntryType | "voice"; Icon: typeof StickyNote; label: string; sub: string }[] = [
     { type: "note", Icon: StickyNote, label: t.note, sub: t.noteSub },
+    { type: "voice", Icon: Mic, label: t.voice, sub: t.voiceSub },
     { type: "document", Icon: FileUp, label: t.doc, sub: t.docSub },
     { type: "image", Icon: ImageIcon, label: t.image, sub: t.imageSub },
     { type: "lab", Icon: FlaskConical, label: t.lab, sub: t.labSub },
@@ -680,10 +691,10 @@ function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: Ent
         <ul className="space-y-2">
           {opts.map(o => (
             <li key={o.type}>
-              <button
+              <Button variant="plain"
                 type="button"
                 onClick={() => onPick(o.type)}
-                className="flex w-full items-center gap-3 rounded-xl border border-gray-200 p-3 text-left hover:bg-gray-50"
+                className="flex h-auto w-full items-center justify-start gap-3 whitespace-normal rounded-xl border border-gray-200 p-3 text-left hover:bg-gray-50 [&_svg]:size-5"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-[#0D1B2A]">
                   <o.Icon className="h-5 w-5" />
@@ -692,7 +703,7 @@ function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: Ent
                   <span className="block text-sm font-semibold text-[#0D1B2A]">{o.label}</span>
                   <span className="block text-xs text-gray-500">{o.sub}</span>
                 </span>
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
@@ -702,13 +713,15 @@ function TypePicker({ t, onPick, onClose }: { t: typeof T.en; onPick: (type: Ent
 }
 
 function UploadModal({
-  t, userId, type, existing, onClose, onSaved,
+  t, lang, initialBody, userId, type, existing, onClose, onSaved,
 }: {
   t: typeof T.en; userId: string; type: EntryType; existing: RecordEntry | null;
+  lang: "en" | "sv"; initialBody: string;
   onClose: () => void; onSaved: () => void;
 }) {
   const [title, setTitle] = useState(existing?.title ?? "");
-  const [body, setBody] = useState(existing?.body ?? "");
+  const [body, setBody] = useState(existing?.body ?? initialBody);
+  const [dictating, setDictating] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [keepFile, setKeepFile] = useState(Boolean(existing?.file_path));
   const [busy, setBusy] = useState(false);
@@ -792,15 +805,20 @@ function UploadModal({
           />
         </label>
 
-        <label className="mt-3 block">
+        <div className="relative mt-3">
+        <label className="block">
           <span className="text-xs font-medium text-gray-600">{t.commentField}</span>
           <textarea
             value={body}
             onChange={e => setBody(e.target.value)}
             rows={4}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none"
+            data-no-translate="true" translate="no"
+            className={`mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#253F78] focus:outline-none ${type === "note" || type === "lab" ? "pr-12" : ""}`}
           />
         </label>
+        {(type === "note" || type === "lab") && <DictationButton lang={lang} onClick={() => setDictating(true)} />}
+        </div>
+        {dictating && <VoiceInput lang={lang} onClose={() => setDictating(false)} onText={text => { setBody(value => appendDictation(value, text)); setDictating(false); }} />}
 
         {allowsFile && (
           <div className="mt-3">
