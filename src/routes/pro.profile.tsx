@@ -53,7 +53,10 @@ function ProfileTab() {
       if (!user) { navigate({ to: "/signin" }); return; }
       setUserId(user.id);
       setEmail(user.email ?? "");
-      setMeta((user.user_metadata ?? {}) as ProMeta);
+      const m = (user.user_metadata ?? {}) as ProMeta;
+      // Same place as the patient photo: the professional's own profile row.
+      const { data: prof } = await supabase.from("profiles").select("avatar_url").eq("user_id", user.id).maybeSingle();
+      setMeta(prof?.avatar_url ? { ...m, avatar_url: prof.avatar_url } : m);
     })();
   }, [navigate]);
 
@@ -82,12 +85,18 @@ function ProfileTab() {
       const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
       const url = path;
+      const { data: existing, error: readErr } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+      if (readErr) throw readErr;
+      const { error: dbErr } = existing
+        ? await supabase.from("profiles").update({ avatar_url: url } as any).eq("user_id", userId)
+        : await supabase.from("profiles").insert({ user_id: userId, avatar_url: url } as any);
+      if (dbErr) throw dbErr;
       const { error } = await supabase.auth.updateUser({ data: { ...meta, account_type: "professional", avatar_url: url } });
       if (error) throw error;
       update("avatar_url", url);
       toast.success("Photo updated");
     } catch (err: any) {
-      toast.error(err?.message ?? "Upload failed");
+      toast.error(`Photo upload failed: ${err?.message ?? "please try again"}`);
     } finally {
       setUploadingAvatar(false);
       if (avatarInputRef.current) avatarInputRef.current.value = "";
