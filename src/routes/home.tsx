@@ -29,6 +29,7 @@ function HomePage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const signedAvatarUrl = useAvatarUrl(avatarUrl);
   const [lastUpdated, setLastUpdated] = useState<string | null | undefined>(undefined);
+  const [hasPassport, setHasPassport] = useState(false);
   const [locations, setLocations] = useState<MapLocation[]>([]);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ function HomePage() {
         if (v && (!latest || v > latest)) latest = v;
       }
       setLastUpdated(latest);
+      setHasPassport(results.some((r, i) => i >= 2 && (r.data?.length ?? 0) > 0));
     })();
     return () => {
       mounted = false;
@@ -134,7 +136,7 @@ function HomePage() {
               <Sparkles className="h-6 w-6 text-hub-on-navy" />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg workspace-heading">{t("home.passportTitle")}</h2>
+              <h2 className="text-lg workspace-heading">{hasPassport ? t("home.passportTitleExisting") : t("home.passportTitle")}</h2>
               <p className="mt-1 text-sm text-[#0D1B2A]">{t("home.passportSubtitle")}</p>
             </div>
           </div>
@@ -143,12 +145,13 @@ function HomePage() {
             className="inline-flex items-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:opacity-90"
           >
             <Sparkles className="h-4 w-4" />
-            {t("home.passportCta")}
+            {hasPassport ? t("home.passportCtaExisting") : t("home.passportCta")}
           </Link></Button>
         </section>
 
         {/* World map of record locations */}
-        <section className="mt-6 aspect-[800/380] w-full">
+        <p className="mt-6 text-sm font-medium text-gray-500">{t("home.mapCaption")}</p>
+        <section className="mt-2 aspect-[800/380] w-full">
           <WorldMap locations={locations} />
         </section>
       </main>
