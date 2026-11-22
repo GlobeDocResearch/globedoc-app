@@ -4,7 +4,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 type NavTo = "/home" | "/pairing" | "/health-pass" | "/profile" | "/travel" | "/records";
-import { LogOut, Sparkles, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
+import { LogOut, IdCard, Home as HomeIcon, Globe, Plane, Link as LinkIcon, User, FileText } from "lucide-react";
 
 import logo from "@/assets/globedoc-logo.svg";
 import { Hexagon } from "@/components/Hexagon";
@@ -133,20 +133,19 @@ function HomePage() {
         <section className="mt-6 workspace-card bg-hub-highlight p-5">
           <div className="flex items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-hub-navy">
-              <Sparkles className="h-6 w-6 text-hub-on-navy" />
+              <IdCard className="h-6 w-6 text-hub-on-navy" />
             </div>
             <div className="flex-1">
               <h2 className="text-lg workspace-heading">{hasPassport ? t("home.passportTitleExisting") : t("home.passportTitle")}</h2>
               <p className="mt-1 text-sm text-[#0D1B2A]">{t("home.passportSubtitle")}</p>
+              <Button asChild variant="plain" className="h-auto p-0 mt-4 rounded-full"><Link
+                to="/health-pass"
+                className="inline-flex items-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:opacity-90"
+              >
+                {hasPassport ? t("home.passportCtaExisting") : t("home.passportCta")}
+              </Link></Button>
             </div>
           </div>
-          <Button asChild variant="plain" className="h-auto p-0 mt-4 rounded-full"><Link
-            to="/health-pass"
-            className="inline-flex items-center gap-2 rounded-full bg-hub-navy px-5 py-3 text-sm font-semibold text-hub-on-navy  hover:opacity-90"
-          >
-            <Sparkles className="h-4 w-4" />
-            {hasPassport ? t("home.passportCtaExisting") : t("home.passportCta")}
-          </Link></Button>
         </section>
 
         {/* World map of record locations */}
